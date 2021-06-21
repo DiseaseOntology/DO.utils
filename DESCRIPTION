@@ -1,11 +1,13 @@
 Package: DO.utils
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Support Management of the Disease Ontology (DO)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: J. Allen Baron
+Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
+Description: This package is used to automate management of the Human Disease
+    Ontology (DO). Functionality is currently limited to tracking citations but
+    will eventually include automating preparation of terms and definitions to
+    speed the curation process.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
