@@ -3,3 +3,7 @@
 .RData
 .Ruserdata
 renv/
+
+# extra working dirs
+/TMP/
+/scripts/
