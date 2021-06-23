@@ -1,3 +1,39 @@
+#' Concatenate PubMed Citations (from txt file)
+#'
+#' Concatenates citations spanning multiple lines, usually obtained
+#' by downloading a text file from PubMed
+#'
+#' @param file path to .txt file; or another possible input to `readLines()`
+#'
+#' @md
+#' @export
+concat_pm_citation <- function(file) {
+    txt_citations <- readLines(file) %>%
+        stringr::str_trim()
+
+    # identify spacer after each citation & citation start/end locations
+    spacer_loc <- c(
+        stringr::str_which(txt_citations, "^$"),
+        length(txt_citations)
+    )
+    start_loc <- c(1, stats::na.omit(dplyr::lag(spacer_loc)) + 1)
+    end_loc <- spacer_loc - 1
+
+    # collapse citations
+    citations <- purrr::map2_chr(
+        .x = start_loc,
+        .y = end_loc,
+        ~ paste0(txt_citations[.x:.y], collapse = " ")
+    ) %>%
+        # remove empty citations
+        {.[!stringr::str_detect(., "^[NA ]+$")]} %>%
+        # remove extra whitespace
+        stringr::str_squish()
+
+    citations
+}
+
+
 #' Extract Publication Date from PubMed Citations
 #'
 #' Extracts most complete publication date possible from Pubmed citations.
