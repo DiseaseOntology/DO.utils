@@ -3,4 +3,8 @@
 export("%>%")
 export(concat_pm_citation)
 export(extract_pm_date)
+export(is_blank)
+export(is_missing)
+export(is_negative)
+export(is_positive)
 importFrom(magrittr,"%>%")
