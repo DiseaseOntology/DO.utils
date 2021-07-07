@@ -49,3 +49,13 @@ is_negative <- function(x) {
     assert_numeric(x)
     x < 0 & is.finite(x)
 }
+
+
+# Type assertions for internal use only
+assert_character <- function(x) {
+    assertthat::assert_that(is.character(x))
+}
+
+assert_numeric <- function(x) {
+    assertthat::assert_that(is.numeric(x))
+}
