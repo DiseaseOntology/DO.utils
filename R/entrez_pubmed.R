@@ -29,7 +29,7 @@ tidy_pubmed_summary <- function(pm_summary, addl_items = NULL) {
     if (rlang::is_empty(summary_list$authors)) {
         authors <- NULL
     } else {
-        authors <- tidy_esummary_authors(summary_list$authors)
+        authors <- tidy_pubmed_authors(summary_list$authors)
     }
 
     summary_list$authors <- NULL
