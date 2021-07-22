@@ -28,10 +28,10 @@ bioc_stat_baseurl <- purrr::set_names(
 )
 
 bioc_stat_dumps <- purrr::set_names(
-        stringr::str_replace_all(
+        stringr::str_replace(
             bioc_stat_baseurl,
-            c("stats/$" = "stats/bioc/bioc_pkg_stats.tab",
-              "([a-z]+)\\.html" = "\\1/\\1_pkg_stats.tab")
+            "([a-z]+)/$",
+            "\\1/\\1_pkg_stats.tab"
         ),
         bioc_pkg_types
     )
