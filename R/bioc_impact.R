@@ -9,20 +9,20 @@ bioc_pkg_types <- c("software", "annotation", "experiment", "workflow")
 #   * download score = average downloads over 12 month period
 bioc_stat_sites <- purrr::set_names(
         c(
-            "http://bioconductor.org/packages/stats/",
-            "http://bioconductor.org/packages/stats/data-annotation.html",
-            "http://bioconductor.org/packages/stats/data-experiment.html",
-            "http://bioconductor.org/packages/stats/workflows.html"
+            "https://bioconductor.org/packages/stats/",
+            "https://bioconductor.org/packages/stats/data-annotation.html",
+            "https://bioconductor.org/packages/stats/data-experiment.html",
+            "https://bioconductor.org/packages/stats/workflows.html"
         ),
         bioc_pkg_types
     )
 
 bioc_stat_baseurl <- purrr::set_names(
     c(
-        "http://bioconductor.org/packages/stats/bioc/",
-        "http://bioconductor.org/packages/stats/data-annotation/",
-        "http://bioconductor.org/packages/stats/data-experiment/",
-        "http://bioconductor.org/packages/stats/workflows/"
+        "https://bioconductor.org/packages/stats/bioc/",
+        "https://bioconductor.org/packages/stats/data-annotation/",
+        "https://bioconductor.org/packages/stats/data-experiment/",
+        "https://bioconductor.org/packages/stats/workflows/"
     ),
     bioc_pkg_types
 )
