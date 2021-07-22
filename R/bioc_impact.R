@@ -7,32 +7,30 @@ bioc_pkg_types <- c("software", "annotation", "experiment", "workflow")
 #   download score dump file
 #
 #   * download score = average downloads over 12 month period
-#
-# NOTE: stat_dumps & score_dumps are defined as functions to delay run time;
-#   use of package `restore_names()` fails on build w/o delay
-bioc_stat <- list(
-    sites = c(
-        software = "http://bioconductor.org/packages/stats/",
-        annotation = "http://bioconductor.org/packages/stats/data-annotation.html",
-        experiment = "http://bioconductor.org/packages/stats/data-experiment.html",
-        workflow = "http://bioconductor.org/packages/stats/workflows.html"
-    ),
-    stat_dumps = function() {
+bioc_stat_sites <- purrr::set_names(
+        c(
+            "http://bioconductor.org/packages/stats/",
+            "http://bioconductor.org/packages/stats/data-annotation.html",
+            "http://bioconductor.org/packages/stats/data-experiment.html",
+            "http://bioconductor.org/packages/stats/workflows.html"
+        ),
+        bioc_pkg_types
+    )
+
+bioc_stat_dumps <- purrr::set_names(
         stringr::str_replace_all(
-            bioc_stat$sites,
+            bioc_stat_sites,
             c("stats/$" = "stats/bioc/bioc_pkg_stats.tab",
               "([a-z]+)\\.html" = "\\1/\\1_pkg_stats.tab")
-        ) %>%
-            # temporary requirement (hopefully)
-            restore_names(names(bioc_stat$sites))
-    },
-    score_dumps = function() {
+        ),
+        bioc_pkg_types
+    )
+
+bioc_score_dumps <- purrr::set_names(
         stringr::str_replace(
-            bioc_stat$stat_dumps(),
+            bioc_stat_dumps,
             "stats\\.",
             "scores\\."
-        ) %>%
-            # temporary requirement (hopefully)
-            restore_names(names(bioc_stat$sites))
-    }
-)
+        ),
+        bioc_pkg_types
+    )
