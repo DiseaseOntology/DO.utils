@@ -1,3 +1,6 @@
+# DO R packages
+DO_dep_pkg <- list(software = "DOSE", annotation = "DO.db")
+
 # list bioconductor statistics web resources - main site, statistics dump file,
 #   download score dump file
 #
