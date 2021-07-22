@@ -2,6 +2,7 @@
 
 export("%>%")
 export(concat_pm_citation)
+export(cur_yr)
 export(extract_pm_date)
 export(is_blank)
 export(is_missing)
