@@ -4,6 +4,5 @@
 .Ruserdata
 renv/
 
-# extra working dirs
+# temporary working dir
 /TMP/
-/scripts/
