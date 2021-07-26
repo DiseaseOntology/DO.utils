@@ -19,6 +19,8 @@ Imports:
     lubridate,
     magrittr,
     purrr,
+    readr,
     rentrez,
     rlang,
+    stats,
     stringr
