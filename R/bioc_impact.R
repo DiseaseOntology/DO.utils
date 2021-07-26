@@ -53,6 +53,7 @@ get_bioc_pkg_stats <- function(pkg, pkg_type, yr, delay_rng) {
     pkg_stats
 }
 
+# Single-package version
 get_bioc_pkg_stats_ <- function(pkg, pkg_type, url) {
 
     assertthat::assert_that(rlang::is_scalar_character(pkg))
@@ -71,6 +72,8 @@ get_bioc_pkg_stats_ <- function(pkg, pkg_type, url) {
     df
 }
 
+# Bioconductor URL generator (individual pkg stats files)
+# NOTE: Returns from only 1 yr as implemented
 build_bioc_pkg_stat_url <- function(pkg, pkg_type, yr) {
     assertthat::assert_that(is_scalar_character(yr))
 
@@ -83,8 +86,14 @@ build_bioc_pkg_stat_url <- function(pkg, pkg_type, yr) {
 }
 
 
+# Bioconductor pkg/url info -----------------------------------------------
+
 # DO R packages
-DO_dep_pkg <- list(software = "DOSE", annotation = "DO.db")
+DO_dep_pkg <- tibble::tribble(
+    ~pkg, ~pkg_type,
+    "DOSE", "software",
+    "DO.db", "annotation"
+)
 
 bioc_pkg_types <- c("software", "annotation", "experiment", "workflow")
 
