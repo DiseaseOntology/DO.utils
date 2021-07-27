@@ -146,7 +146,7 @@ dl_read_AGR <- function(url, dest_dir) {
     dest_file <- file.path(dest_dir, filename)
 
     # download
-    resp <- download.file(url, dest_file)
+    resp <- utils::download.file(url, dest_file)
 
     assertthat::assert_that(
         resp == 0,
@@ -165,7 +165,7 @@ dl_read_AGR <- function(url, dest_dir) {
     AGR_df <- readr::read_tsv(
         dest_file,
         skip = header_end,
-        col_types = cols(.default = col_character())
+        col_types = readr::cols(.default = readr::col_character())
     )
 
     AGR_df

@@ -23,4 +23,5 @@ Imports:
     rentrez,
     rlang,
     stats,
-    stringr
+    stringr,
+    tidyr
