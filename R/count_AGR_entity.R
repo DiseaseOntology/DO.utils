@@ -53,7 +53,6 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
     mod_count
 }
 
-
 #' Assign AGR Entities to MODs
 #'
 #' Assigns Alliance of Genome Resource (AGR) entities to the appropriate model
@@ -116,4 +115,58 @@ id_mod <- function(x) {
     )
 
     dplyr::recode(x, !!!mod_codes)
+}
+
+#' Download and Read AGR .tsv.gz files
+#'
+#' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
+#' Resources (AGR) and reads that file into R as a tibble. Files can be found at
+#' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
+#' of a desired file and select "Copy Link" to get the file URL.
+#'
+#' The file is downloaded for the purpose of reproducibility and future
+#' reference. A date stamp will be added to the base file name.
+#'
+#' @param url URL to AGR file
+#' @param dest_dir path to directory where file will be saved
+#'
+#' @return
+#' A dataframe.
+#'
+#' @export
+dl_read_AGR <- function(url, dest_dir) {
+
+    # build destination file path from URL
+    date_stamp <- format(Sys.time(), "%Y%m%d")
+    filename <- stringr::str_replace(
+        basename(url),
+        "(^.*)\\.tsv\\.gz",
+        paste0("\\1-", date_stamp, ".tsv.gz")
+    )
+    dest_file <- file.path(dest_dir, filename)
+
+    # download
+    resp <- download.file(url, dest_file)
+
+    assertthat::assert_that(
+        resp == 0,
+        msg = paste0("Download failed with exit code: ", resp)
+    )
+
+    # read
+    ## identify header (to skip)
+    ##  Skipping instead of using comment = "#" because data gets truncated
+    ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
+    header_end <- readr::read_lines(dest_file, n_max = 100) %>%
+        stringr::str_detect("^#") %>%
+        which() %>%
+        max()
+
+    AGR_df <- readr::read_tsv(
+        dest_file,
+        skip = header_end,
+        col_types = cols(.default = col_character())
+    )
+
+    AGR_df
 }
