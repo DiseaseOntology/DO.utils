@@ -118,3 +118,25 @@ id_mod <- function(x) {
     dplyr::recode(x, !!!mod_codes)
 }
 
+#' Build URL to AGR "All disease associations" .tsv File
+#'
+#' Creates the URL to the Alliance of Genome Resource (AGR) "All disease
+#' associations" .tsv.gz file.
+#'
+#' @param AGR_release_version AGR release version (check the
+#' [AGR website](https://www.alliancegenome.org/))
+#'
+#' @noRd
+build_AGR_DO_dl_url <- function(AGR_release_version) {
+    AGR_dl_baseurl <- "https://download.alliancegenome.org/downloads"
+    AGR_DO_file <- "DISEASE-ALLIANCE_COMBINED_47.tsv.gz"
+
+    AGR_DO_tsv_url <- paste0(
+        AGR_dl_baseurl, "/",
+        v, "/",
+        "DISEASE-ALLIANCE/COMBINED/",
+        AGR_DO_file
+    )
+
+    AGR_DO_tsv_url
+}
