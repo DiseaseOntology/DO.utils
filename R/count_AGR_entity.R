@@ -21,30 +21,33 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
         mod_count <- mod_assigned_df %>%
             dplyr::mutate(
                 type = dplyr::recode(
-                    DBobjectType,
+                    .data$DBobjectType,
                     "affected_genomic_model" = "model"
                 ),
-                type = factor(type, levels = c("gene", "allele", "model"))
+                type = factor(.data$type, levels = c("gene", "allele", "model"))
             ) %>%
             dplyr::count(
-                mod_assigned, type,
+                .data$mod_assigned, .data$type,
                 name = "entity_n"
             )
 
         if (isTRUE(pivot)) {
             mod_count <- mod_count %>%
                 tidyr::pivot_wider(
-                    names_from = type,
-                    values_from = entity_n
+                    names_from = .data$type,
+                    values_from = .data$entity_n
                 ) %>%
                 # dplyr::select(mod_assigned, gene, allele, model) %>%
-                dplyr::rename_with(.fn = ~paste0(.x, "_n"), .cols = -mod_assigned)
+                dplyr::rename_with(
+                    .fn = ~paste0(.x, "_n"),
+                    .cols = -.data$mod_assigned
+                )
         }
 
     } else {
 
         mod_count <- dplyr::count(
-            mod_assigned_df, mod_assigned,
+            mod_assigned_df, .data$mod_assigned,
             name = "entity_n"
         )
 
@@ -81,20 +84,20 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 assign_entity_to_mod <- function(AGR_df) {
     df_out <- dplyr::mutate(
         AGR_df,
-        namespace_id = stringr::str_remove(DBObjectID, ":.*"),
-        ortholog_namespace_id = stringr::str_remove(WithOrthologs, ":.*"),
+        namespace_id = stringr::str_remove(.data$DBObjectID, ":.*"),
+        ortholog_namespace_id = stringr::str_remove(.data$WithOrthologs, ":.*"),
         mod = dplyr::case_when(
-            Source != "Alliance" ~ Source,
-            namespace_id != "HGNC" ~ namespace_id,
-            !is.na(ortholog_namespace_id) ~ ortholog_namespace_id,
-            TRUE ~ Source
+            .data$Source != "Alliance" ~ .data$Source,
+            .data$namespace_id != "HGNC" ~ .data$namespace_id,
+            !is.na(.data$ortholog_namespace_id) ~ .data$ortholog_namespace_id,
+            TRUE ~ .data$Source
         ),
-        mod_assigned = id_mod(mod)
+        mod_assigned = id_mod(.data$mod)
     )
 
     df_out <- dplyr::select(
         df_out,
-        -namespace_id, -ortholog_namespace_id, -mod
+        -.data$namespace_id, -.data$ortholog_namespace_id, -.data$mod
     )
 
     df_out
