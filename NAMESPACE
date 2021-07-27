@@ -2,6 +2,7 @@
 
 export("%>%")
 export(concat_pm_citation)
+export(count_AGR_entity)
 export(cur_yr)
 export(extract_pm_date)
 export(get_bioc_pkg_stats)

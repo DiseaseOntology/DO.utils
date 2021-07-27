@@ -1,3 +1,59 @@
+#' Count AGR Entities
+#'
+#' Counts entities in data from the Alliance of Genome Resources (AGR) by model
+#' organism database (MOD) and, optionally, by entity type.
+#'
+#' @inheritParams assign_entity_to_mod
+#' @param by_type logical indicating whether to count by entity type
+#' @param pivot logical indicating whether to pivot type to columns; ignored if
+#'     type = FALSE
+#'
+#' @return
+#' A summary tibble.
+#'
+#' @export
+count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
+
+    mod_assigned_df <- assign_entity_to_mod(AGR_df)
+
+    if (isTRUE(by_type)) {
+
+        mod_count <- mod_assigned_df %>%
+            dplyr::mutate(
+                type = dplyr::recode(
+                    DBobjectType,
+                    "affected_genomic_model" = "model"
+                ),
+                type = factor(type, levels = c("gene", "allele", "model"))
+            ) %>%
+            dplyr::count(
+                mod_assigned, type,
+                name = "entity_n"
+            )
+
+        if (isTRUE(pivot)) {
+            mod_count <- mod_count %>%
+                tidyr::pivot_wider(
+                    names_from = type,
+                    values_from = entity_n
+                ) %>%
+                # dplyr::select(mod_assigned, gene, allele, model) %>%
+                dplyr::rename_with(.fn = ~paste0(.x, "_n"), .cols = -mod_assigned)
+        }
+
+    } else {
+
+        mod_count <- dplyr::count(
+            mod_assigned_df, mod_assigned,
+            name = "entity_n"
+        )
+
+    }
+
+    mod_count
+}
+
+
 #' Assign AGR Entities to MODs
 #'
 #' Assigns Alliance of Genome Resource (AGR) entities to the appropriate model
