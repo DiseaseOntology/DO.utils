@@ -176,7 +176,7 @@ read_AGR <- function(AGR_tsv) {
 #' Although it's possbile to directly read a file from the URL, downloading it
 #' promotes reproducibility and ensures future access if needed.
 #'
-#' @param url URL to AGR file
+#' @param url URL to AGR file; if not provided, will be requested at console
 #' @param dest_dir path to directory where file will be saved
 #'
 #' @return
@@ -185,6 +185,16 @@ read_AGR <- function(AGR_tsv) {
 #'
 #' @export
 download_AGR <- function(url, dest_dir) {
+
+    # Ask for URL if missing
+    if (missing(url)) {
+        url <- readline(
+            prompt = "Please enter the URL of the file to be downloaded from AGR.
+    Files can be found at https://www.alliancegenome.org/downloads. Right-click
+    on the 'tsv' link of a desired file, select 'Copy Link'. Then paste it in
+    this console and press ENTER: "
+        )
+    }
 
     # build destination file path from URL
     date_stamp <- format(Sys.time(), "%Y%m%d")
@@ -197,4 +207,5 @@ download_AGR <- function(url, dest_dir) {
 
     # download
     utils::download.file(url, dest_file)
+
 }

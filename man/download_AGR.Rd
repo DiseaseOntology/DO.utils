@@ -7,7 +7,7 @@
 download_AGR(url, dest_dir)
 }
 \arguments{
-\item{url}{URL to AGR file}
+\item{url}{URL to AGR file; if not provided, will be requested at console}
 
 \item{dest_dir}{path to directory where file will be saved}
 }
