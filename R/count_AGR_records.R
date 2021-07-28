@@ -180,8 +180,7 @@ read_AGR <- function(AGR_tsv) {
 #' @param dest_dir path to directory where file will be saved
 #'
 #' @return
-#' Likely, an (invisible) integer code, 0 for success and non-zero for failure.
-#' See Value section of [utils::download.file()] for more details.
+#' Path to saved file.
 #'
 #' @export
 download_AGR <- function(url, dest_dir) {
@@ -213,4 +212,5 @@ download_AGR <- function(url, dest_dir) {
         msg = paste0("Download failed with exit code: ", dl_exit)
     )
 
+    dest_file
 }

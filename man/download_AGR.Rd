@@ -12,8 +12,7 @@ download_AGR(url, dest_dir)
 \item{dest_dir}{path to directory where file will be saved}
 }
 \value{
-Likely, an (invisible) integer code, 0 for success and non-zero for failure.
-See Value section of \code{\link[utils:download.file]{utils::download.file()}} for more details.
+Path to saved file.
 }
 \description{
 Downloads a URL-specified .tsv.gz file from the Alliance of Genome
