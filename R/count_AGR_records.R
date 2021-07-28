@@ -196,7 +196,7 @@ download_AGR <- function(url, dest_dir) {
     }
 
     # build destination file path from URL
-    date_stamp <- format(Sys.time(), "%Y%m%d")
+    date_stamp <- today_datestamp()
     filename <- stringr::str_replace(
         basename(url),
         "(^.*)\\.tsv\\.gz",
