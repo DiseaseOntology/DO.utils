@@ -4,6 +4,11 @@
 #' organism database (MOD) and, optionally, by object type. A record, as used
 #' here, is a row in the data (after removing likely duplicates, see NOTE).
 #'
+#' @section NOTE:
+#' For disease-related data, some exact duplicates (reason unknown) and records
+#' that differ by seemingly unimportant information (e.g. only the date differs)
+#' have existed. These types of duplicates are removed prior to record counts.
+#'
 #' @inheritParams assign_record_to_mod
 #' @param by_type logical indicating whether to count by object type
 #' @param pivot logical indicating whether to pivot values to type columns;
@@ -15,7 +20,13 @@
 #' @export
 count_AGR_records <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 
-    mod_assigned_df <- assign_record_to_mod(AGR_df)
+    # remove exact & date duplicates
+    AGR_dedup <- dplyr::filter(
+        AGR_df,
+        !duplicated(dplyr::select(AGR_df, -Date))
+    )
+
+    mod_assigned_df <- assign_record_to_mod(AGR_dedup)
 
     if (isTRUE(by_type)) {
 

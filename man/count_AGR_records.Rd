@@ -23,3 +23,10 @@ Counts records in data from the Alliance of Genome Resources (AGR) by model
 organism database (MOD) and, optionally, by object type. A record, as used
 here, is a row in the data (after removing likely duplicates, see NOTE).
 }
+\section{NOTE}{
+
+For disease-related data, some exact duplicates (reason unknown) and records
+that differ by seemingly unimportant information (e.g. only the date differs)
+have existed. These types of duplicates are removed prior to record counts.
+}
+
