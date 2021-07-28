@@ -44,7 +44,7 @@ tidy_pubmed_summary <- function(pm_summary, addl_items = NULL) {
 # clusterid is dropped if it contains only blank values
 tidy_pubmed_authors <- function(authors_df) {
     authors_tidy <- authors_df %>%
-        dplyr::rename(authors = name, auth_clusterid = clusterid) %>%
+        dplyr::rename(authors = .data$name, auth_clusterid = .data$clusterid) %>%
         purrr::map_dfc(
             function(x) {
                 unique_if_invariant(x) %>%
@@ -53,7 +53,7 @@ tidy_pubmed_authors <- function(authors_df) {
         )
 
     if (DO.utils::is_blank(authors_tidy$auth_clusterid)) {
-        authors_tidy <- dplyr::select(authors_tidy, -auth_clusterid)
+        authors_tidy <- dplyr::select(.data$authors_tidy, -.data$auth_clusterid)
     }
 
     authors_tidy
