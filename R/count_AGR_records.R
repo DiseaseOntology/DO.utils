@@ -1,20 +1,21 @@
-#' Count AGR Entities
+#' Count AGR Records
 #'
-#' Counts entities in data from the Alliance of Genome Resources (AGR) by model
-#' organism database (MOD) and, optionally, by entity type.
+#' Counts records in data from the Alliance of Genome Resources (AGR) by model
+#' organism database (MOD) and, optionally, by object type. A record, as used
+#' here, is a row in the data (after removing likely duplicates, see NOTE).
 #'
-#' @inheritParams assign_entity_to_mod
-#' @param by_type logical indicating whether to count by entity type
-#' @param pivot logical indicating whether to pivot type to columns; ignored if
-#'     type = FALSE
+#' @inheritParams assign_record_to_mod
+#' @param by_type logical indicating whether to count by object type
+#' @param pivot logical indicating whether to pivot values to type columns;
+#' ignored if type = FALSE
 #'
 #' @return
 #' A summary tibble.
 #'
 #' @export
-count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
+count_AGR_records <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 
-    mod_assigned_df <- assign_entity_to_mod(AGR_df)
+    mod_assigned_df <- assign_record_to_mod(AGR_df)
 
     if (isTRUE(by_type)) {
 
@@ -28,14 +29,14 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
             ) %>%
             dplyr::count(
                 .data$mod_assigned, .data$type,
-                name = "entity_n"
+                name = "record_n"
             )
 
         if (isTRUE(pivot)) {
             mod_count <- mod_count %>%
                 tidyr::pivot_wider(
                     names_from = .data$type,
-                    values_from = .data$entity_n
+                    values_from = .data$record_n
                 ) %>%
                 # dplyr::select(mod_assigned, gene, allele, model) %>%
                 dplyr::rename_with(
@@ -48,7 +49,7 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 
         mod_count <- dplyr::count(
             mod_assigned_df, .data$mod_assigned,
-            name = "entity_n"
+            name = "record_n"
         )
 
     }
@@ -56,14 +57,14 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
     mod_count
 }
 
-#' Assign AGR Entities to MODs
+#' Assign AGR Records to MODs
 #'
-#' Assigns Alliance of Genome Resource (AGR) entities to the appropriate model
-#' organism database (MOD) using a step-wise approach. AGR entities may be
-#' "sourced" from the "Alliance" obscuring which MOD the annotations were
+#' Assigns Alliance of Genome Resource (AGR) records to the appropriate model
+#' organism database (MOD) using a step-wise approach. AGR records may be
+#' "sourced" from the "Alliance" obscuring which MOD the records were
 #' originally made in.
 #'
-#' The step-wise approach used to assign entities is as follows:
+#' The step-wise approach used to assign records is as follows:
 #'
 #' 1. `Source` is used where it pertains to a MOD (and not the "Alliance");
 #' **Note:** "OMIM Via RGD" is assigned to RGD
@@ -72,7 +73,7 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 #'
 #' 3. `WithOrthologs` is used where the ID comes from a MOD
 #'
-#' 4. Any remaining entities are left assigned to the "Alliance" because their
+#' 4. Any remaining records are left assigned to the "Alliance" because their
 #' original source can not be identified
 #'
 #' @return
@@ -81,7 +82,7 @@ count_AGR_entity <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 #'
 #' @param AGR_df a dataframe derived from AGR data (usually a
 #' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
-assign_entity_to_mod <- function(AGR_df) {
+assign_record_to_mod <- function(AGR_df) {
     df_out <- dplyr::mutate(
         AGR_df,
         namespace_id = stringr::str_remove(.data$DBObjectID, ":.*"),
