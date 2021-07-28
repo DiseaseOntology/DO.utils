@@ -132,24 +132,59 @@ id_mod <- function(x) {
     dplyr::recode(x, !!!mod_codes)
 }
 
-#' Download and Read AGR .tsv.gz files
+#' Read AGR .tsv.gz File
 #'
-#' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
-#' Resources (AGR) and reads that file into R as a tibble. Files can be found at
-#' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
-#' of a desired file and select "Copy Link" to get the file URL.
+#' Reads in a .tsv or .tsv.gz file from the Alliance of Genome Resources (AGR)
+#' as a tibble. It is recommended that AGR files be downloaded using
+#' [download_AGR()].
 #'
-#' The file is downloaded for the purpose of reproducibility and future
-#' reference. A date stamp will be added to the base file name.
-#'
-#' @param url URL to AGR file
-#' @param dest_dir path to directory where file will be saved
+#' @param AGR_tsv path to AGR .tsv or .tsv.gz file
 #'
 #' @return
 #' A dataframe.
 #'
 #' @export
-dl_read_AGR <- function(url, dest_dir) {
+read_AGR <- function(AGR_tsv) {
+
+    ## identify header (to skip)
+    ##  Skipping instead of using comment = "#" because data gets truncated
+    ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
+    header_end <- readr::read_lines(AGR_tsv, n_max = 100) %>%
+        stringr::str_detect("^#") %>%
+        which() %>%
+        max()
+
+    AGR_df <- readr::read_tsv(
+        AGR_tsv,
+        skip = header_end,
+        col_types = readr::cols(.default = readr::col_character())
+    )
+
+    AGR_df
+}
+
+#' Download AGR .tsv.gz File
+#'
+#' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
+#' Resources (AGR). Files can be found at
+#' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
+#' of a desired file and select "Copy Link" to get the file URL.
+#'
+#' A date stamp indicating download date is added to the base file name.
+#'
+#' @section Recommendation:
+#' Although it's possbile to directly read a file from the URL, downloading it
+#' promotes reproducibility and ensures future access if needed.
+#'
+#' @param url URL to AGR file
+#' @param dest_dir path to directory where file will be saved
+#'
+#' @return
+#' Likely, an (invisible) integer code, 0 for success and non-zero for failure.
+#' See Value section of [utils::download.file()] for more details.
+#'
+#' @export
+download_AGR <- function(url, dest_dir) {
 
     # build destination file path from URL
     date_stamp <- format(Sys.time(), "%Y%m%d")
@@ -161,27 +196,5 @@ dl_read_AGR <- function(url, dest_dir) {
     dest_file <- file.path(dest_dir, filename)
 
     # download
-    resp <- utils::download.file(url, dest_file)
-
-    assertthat::assert_that(
-        resp == 0,
-        msg = paste0("Download failed with exit code: ", resp)
-    )
-
-    # read
-    ## identify header (to skip)
-    ##  Skipping instead of using comment = "#" because data gets truncated
-    ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
-    header_end <- readr::read_lines(dest_file, n_max = 100) %>%
-        stringr::str_detect("^#") %>%
-        which() %>%
-        max()
-
-    AGR_df <- readr::read_tsv(
-        dest_file,
-        skip = header_end,
-        col_types = readr::cols(.default = readr::col_character())
-    )
-
-    AGR_df
+    utils::download.file(url, dest_file)
 }
