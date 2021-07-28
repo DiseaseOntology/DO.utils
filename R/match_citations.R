@@ -5,8 +5,9 @@
 #'
 #' @section NOTES:
 #' Fuzzy string matching is _SLOW_. Expect this function to take >1 min for
-#' comparisons of more than 500 citations for all methods ("lcs" faster than
-#' "osa", and seems to work better).
+#' comparisons of more than 500 citations for all methods.
+#'
+#' "lcs" method is faster than "osa" and seems to work better.
 #'
 #'
 #' @param x citations to find matches for
@@ -19,7 +20,7 @@
 #' columns = "x", "ref_match", "dist".
 #'
 #' @export
-match_citations <- function(x, ref, method = "lcs", maxDist = 115, ...) {
+match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
 
     ref_match_idx <- stringdist::amatch(
         x,
