@@ -206,6 +206,11 @@ download_AGR <- function(url, dest_dir) {
     dest_file <- file.path(dest_dir, filename)
 
     # download
-    utils::download.file(url, dest_file)
+    dl_exit <- utils::download.file(url, dest_file)
+
+    assertthat::assert_that(
+        dl_exit == 0,
+        msg = paste0("Download failed with exit code: ", dl_exit)
+    )
 
 }
