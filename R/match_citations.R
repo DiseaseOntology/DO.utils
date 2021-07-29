@@ -49,3 +49,47 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
     match_df
 }
 
+#' Identify Publication ID Type
+#'
+#' Returns one of pmid, pmcid, doi based on standards
+#'
+#' @param x a vector of same-type IDs
+#' @noRd
+type_pub_id <- function(x) {
+
+    id_type <- case_when(
+        stringr::str_detect(x, "^10.+/.+$") ~ "doi",
+        stringr::str_detect(x, "^PMC[0-9]+$") ~ "pmcid",
+        stringr::str_detect(x, "^[0-9]+$") ~ "pmid",
+        !is.na(x) ~ "not identifiable"
+    )
+
+    id_no_type <- id_type == "not identifiable"
+
+    assertthat::assert_that(
+        !any(na.omit(id_no_type)),
+        msg = paste0(
+            "The following IDs could not be identified: ",
+            vctr_to_string(x[id_no_type], delim = ", ")
+        )
+    )
+
+    id_type <- unique(na.omit(id_type))
+    assertthat::assert_that(
+        length(id_type) > 0,
+        msg = "No ID type could be identified"
+    )
+
+    assertthat::assert_that(
+        length(id_type) == 1,
+        msg = paste0(
+            "All IDs must be of the same type. Types identified: ",
+            vctr_to_string(
+                sort(id_type, na.last = TRUE),
+                delim = ", "
+            )
+        )
+    )
+
+    id_type
+}
