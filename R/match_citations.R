@@ -54,6 +54,12 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
 #' Identifies columns in a data.frame with publication IDs BY NAME
 #' (case-insensitive).
 #'
+#' @section NOTE:
+#' Identifying publication ID columns by typing all columns in a data.frame
+#' might possibly be safe for PMCIDs or DOIs but would not be safe for PMIDs
+#' (underlying regex matches _any_ integer). Therefore, columns are identified
+#' by name.
+#'
 #' @param df a data.frame
 #'
 #' @return
@@ -101,6 +107,7 @@ type_pub_id <- function(x) {
     )
 
     id_type <- unique(na.omit(id_type))
+
     assertthat::assert_that(
         length(id_type) > 0,
         msg = "No ID type could be identified"
