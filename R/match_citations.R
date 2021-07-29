@@ -67,12 +67,12 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
 #'
 #' @noRd
 find_pub_id_cols <- function(df) {
-    df_lc <- dplyr::rename_with(tolower)
+    df_lc <- dplyr::rename_with(df, tolower)
 
-    id_cols <- pub_id_types() %in% names(df_lc)
+    id_cols <- pub_id_types()[pub_id_types() %in% names(df_lc)]
 
     assertthat::assert_that(
-        length(id_cols > 0),
+        length(id_cols) > 0,
         msg = "No publication ID columns could be identified. At least one
         column must be named 'pmid', 'pmcid', or 'doi'"
     )
