@@ -65,6 +65,12 @@ find_pub_id_cols <- function(df) {
 
     id_cols <- pub_id_types() %in% names(df_lc)
 
+    assertthat::assert_that(
+        length(id_cols > 0),
+        msg = "No publication ID columns could be identified. At least one
+        column must be named 'pmid', 'pmcid', or 'doi'"
+    )
+
     id_cols
 }
 
@@ -111,5 +117,17 @@ type_pub_id <- function(x) {
         )
     )
 
+    assertthat::assert_that(
+        id_type %in% pub_id_types()
+    )
+
     id_type
+}
+
+
+#' Returns List of Publication IDs
+#'
+#' @noRd
+pub_id_types <- function() {
+    c("pmid", "pmcid", "doi")
 }
