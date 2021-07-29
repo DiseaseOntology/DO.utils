@@ -49,6 +49,26 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
     match_df
 }
 
+#' Identifies Publication ID Columns
+#'
+#' Identifies columns in a data.frame with publication IDs BY NAME
+#' (case-insensitive).
+#'
+#' @param df a data.frame
+#'
+#' @return
+#' A character vector of publication ID column names.
+#'
+#' @noRd
+find_pub_id_cols <- function(df) {
+    df_lc <- dplyr::rename_with(tolower)
+
+    id_cols <- pub_id_types() %in% names(df_lc)
+
+    id_cols
+}
+
+
 #' Identify Publication ID Type
 #'
 #' Returns one of pmid, pmcid, doi based on standards
