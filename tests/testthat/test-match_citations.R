@@ -65,7 +65,7 @@ test_that("mismatches fail", {
 
 # find_pub_id_cols() tests ------------------------------------------------
 
-test_that("it works", {
+test_that("find cols works", {
     expect_equal(find_pub_id_cols(df_pmid), "pmid")
     expect_equal(find_pub_id_cols(df_all), c("pmid", "pmcid", "doi"))
 })
