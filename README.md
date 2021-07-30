@@ -1,6 +1,6 @@
 # DO.utils
 
-This R package provides a variety of functions used to support the operations of the Human Disease Ontology (DO; <disease-ontology.org>).
+This R package provides a variety of functions used to support the operations of the Human Disease Ontology (DO; [disease-ontology.org]).
 
 Currently, the package provides for:
 
@@ -27,6 +27,7 @@ The scientometric capabilities included in this package are:
 
 - Bibliometrics
     - NCBI Entrez Utilities: `tidy_pubmed_summary()`
+    - Citation matching: `match_citations()`
 - Quantifying DO annotations in the Alliance of Genome Resources model organism databases (MODs)
     - `download_AGR()`, `read_AGR()`, `count_AGR_records()`
 - Quantifying metrics for DO-dependent Bioconductor packages (DOSE, DO.db) _[INCOMPLETE]_
@@ -37,9 +38,12 @@ The scientometric capabilities included in this package are:
 
 The basic utilities included in this package simplify the following in R:
 
-- Dates: `cur_yr()`, `today_datestamp()`
+- Sorting: `priority_sort()`
 - Type Predicates
     - character: `is_blank()`, `is_missing()`
     - numeric: `is_positive()`, `is_negative()`
+    - mix: `is_vctr_or_df()`
 - Vector to scalar conversion: `vctr_to_string()`, `unique_if_invariant()`
+- Unintuitive results: `match_carefully()`
+- Dates: `cur_yr()`, `today_datestamp()`
 - Temporary workarounds: `restore_names()`
