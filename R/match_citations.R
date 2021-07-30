@@ -104,16 +104,6 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
         ref_type <- find_pub_id_cols(ref)
     }
 
-    if (is.vector(x) && is.vector(ref)) {
-        assertthat::assert_that(
-            identical(x_type, ref_type)
-        )
-
-        match_idx <- match_carefully(x, ref, nomatch)
-
-        return(match_idx)
-    }
-
     type_both <- x_type[x_type %in% ref_type]
 
     assertthat::assert_that(
@@ -121,6 +111,10 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
     )
 
     if (length(type_both) == 1) {
+        if (is.data.frame(x) && is.data.frame(ref)) {
+            message("Matching by type: ", type_both)
+        }
+
         if (is.data.frame(x)) {
             x <- x[[type_both]]
         }
@@ -128,8 +122,6 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
         if (is.data.frame(ref)) {
             ref <- ref[[type_both]]
         }
-
-        message("Matching by type: ", type_both)
 
         match_idx <- match_carefully(x, ref, nomatch)
 
