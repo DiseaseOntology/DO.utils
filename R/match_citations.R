@@ -219,7 +219,7 @@ find_pub_id_cols <- function(df) {
 #' @noRd
 type_pub_id <- function(x) {
 
-    id_type <- case_when(
+    id_type <- dplyr::case_when(
         stringr::str_detect(x, "^10.+/.+$") ~ "doi",
         stringr::str_detect(x, "^PMC[0-9]+$") ~ "pmcid",
         stringr::str_detect(x, "^[0-9]+$") ~ "pmid",
@@ -229,14 +229,14 @@ type_pub_id <- function(x) {
     id_no_type <- id_type == "not identifiable"
 
     assertthat::assert_that(
-        !any(na.omit(id_no_type)),
+        !any(stats::na.omit(id_no_type)),
         msg = paste0(
             "The following IDs could not be identified: ",
             vctr_to_string(x[id_no_type], delim = ", ")
         )
     )
 
-    id_type <- unique(na.omit(id_type))
+    id_type <- unique(stats::na.omit(id_type))
 
     assertthat::assert_that(
         length(id_type) > 0,

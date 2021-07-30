@@ -23,7 +23,7 @@ count_AGR_records <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
     # remove exact & date duplicates
     AGR_dedup <- dplyr::filter(
         AGR_df,
-        !duplicated(dplyr::select(AGR_df, -Date))
+        !duplicated(dplyr::select(AGR_df, -.data$Date))
     )
 
     mod_assigned_df <- assign_record_to_mod(AGR_dedup)
