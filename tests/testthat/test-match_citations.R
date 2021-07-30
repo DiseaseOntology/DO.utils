@@ -27,9 +27,40 @@ doi_na <- c("10.1093/nar/gki050", "10.1093/nar/gkm829", "10.1038/nbt1346",
 # df - good
 df_pmid <- data.frame(n = 1:5, pmid = pmid)
 df_all <- dplyr::mutate(df_pmid, pmcid = pmcid, doi = doi)
+df_no_pmid <- dplyr::select(df_all, -pmid)
+df_name_type_mismatch <- dplyr::mutate(df_pmid, pmid = pmcid)
+df_all_na <- data.frame(n = 1:5, pmid = pmid_na, pmcid = pmcid_na, doi = doi_na)
 
 # df - bad
 df_wrong_name <- dplyr::rename(df_pmid, bad_name = pmid)
+
+
+# match_citations() tests -------------------------------------------------
+
+test_that("exact matches work", {
+    expect_identical(match_citations(pmid, pmid), 1:5)
+    expect_identical(match_citations(pmid, pmid), 1:5)
+    expect_message(
+        expect_identical(match_citations(df_all, df_all), 1:5)
+    )
+})
+
+test_that("partial matches work", {
+    expect_identical(match_citations(pmid, pmid_na), c(1:2, rep(NA, 3)))
+    expect_message(
+        expect_identical(match_citations(df_all, df_all_na), c(1:2, rep(NA, 3)))
+    )
+})
+
+
+test_that("single vctr-df matches work", {
+    expect_identical(match_citations(df_pmid, pmid), 1:5)
+    expect_identical(match_citations(pmid, df_pmid), 1:5)
+})
+
+test_that("mismatches fail", {
+    expect_error(match_citations(pmid, pmcid), NULL)
+})
 
 
 # find_pub_id_cols() tests ------------------------------------------------

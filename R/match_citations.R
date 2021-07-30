@@ -49,6 +49,111 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
     match_df
 }
 
+#' Citation Matching
+#'
+#' Returns a vector of the positions of (first) matches of a citations
+#' dataframe (first argument) in a reference citations dataframe (second
+#' argument); essentially, [base::match()] but tailored to citations.
+#'
+#' The "citations" dataframe should consist of one or more column(s) containing
+#' one type of the three standard, consistent publication identifiers (PMID,
+#' PMCID, or DOI) with columns named accordingly. The same identifier columns
+#' should exist in both input dataframes. These identifiers are not
+#' always available for every publication; sometimes only one exists and rarely
+#' none. Where more than one are provided they each will be used to mat
+#'
+#' @param df,ref_df a vector of PMID, PMCID, or DOI IDs; or a "citation"
+#' dataframe with 1 or more of these as columns (column names should correspond
+#' to ID type; case-insensitive)
+#' @param add_col logical; if FALSE (default), returns a vector; if TRUE,
+#' [dplyr::mutate()]s the dataframe by adding a `cite_match` column
+#' @inheritParams base::match
+#'
+#' @return
+#' If `x` is a vector or `add_col` is FALSE (default), an integer vector of the
+#' same length as `x` (if a dataframe, of length equal to the number of rows).
+#' If `x` is a dataframe and `add_col` is TRUE, a mutated dataframe with a
+#' `cite_match` integer column identifying matches added.
+#'
+#' @export
+match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
+
+    # validate inputs
+    assertthat::assert_that(
+        is_vctr_or_df(x),
+        is_vctr_or_df(ref),
+        is.logical(add_col)
+    )
+
+    if (is.vector(x)) {
+        x_type <- type_pub_id(x)
+    } else {
+        x_type <- find_pub_id_cols(x)
+    }
+
+    if (is.vector(ref)) {
+        ref_type <- type_pub_id(ref)
+    } else {
+        ref_type <- find_pub_id_cols(ref)
+    }
+
+    if (is.vector(x) && is.vector(ref)) {
+        assertthat::assert_that(
+            identical(x_type, ref_type)
+        )
+
+        match_idx <- match_carefully(x, ref, nomatch)
+
+        return(match_idx)
+    }
+
+    type_both <- x_type[x_type %in% ref_type]
+
+    assertthat::assert_that(
+        length(type_both) > 0
+    )
+
+    if (length(type_both) == 1) {
+        if (is.data.frame(x)) {
+            x <- x[[type_both]]
+        }
+
+        if (is.data.frame(ref)) {
+            ref <- ref[[type_both]]
+        }
+
+        match_idx <- match_carefully(x, ref, nomatch)
+
+        return(match_idx)
+    }
+
+    # for both data.frame (guaranteed if length(type_both) > 1)
+    types <- sort(
+        factor(type_both, levels = pub_id_types())
+    )
+
+    message("Matching by types: ", vctr_to_string(types, delim = ", "))
+
+    id_matches <- purrr::map_dfc(
+        .x = types,
+        function(type) {
+            x_col <- get_pub_id_col(x, type)
+            ref_col <- get_pub_id_col(ref, type)
+            match_res <- match_carefully(x_col, ref_col, nomatch)
+        }
+    )
+
+    match_vctr <- dplyr::coalesce(!!!id_matches)
+
+    if (is.data.frame(x) && isTRUE(add_cols)) {
+        match_df <- dplyr::mutate(x, cite_match = match_vctr)
+        return(match_df)
+    }
+
+    match_vctr
+}
+
+
 #' Get Publication ID Column
 #'
 #' Gets a publication ID column from a data.frame and ensures the data matches
