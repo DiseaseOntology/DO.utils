@@ -31,7 +31,6 @@ is_missing <- function(x) {
 #' These value predicates are designed to identify common values that appear
 #' in numeric vectors.
 #'
-#'
 #' @inheritParams char_val_predicates
 #' @name num_val_predicates
 NULL
@@ -51,7 +50,11 @@ is_negative <- function(x) {
 }
 
 
-# Type assertions for internal use only
+# Type tests for internal use only
+is_vctr_or_df <- function(x) {
+    is.vector(x) || is.data.frame(x)
+}
+
 assert_character <- function(x) {
     assertthat::assert_that(is.character(x))
 }
