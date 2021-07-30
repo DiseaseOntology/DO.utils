@@ -48,7 +48,7 @@ test_that("exact matches work", {
 test_that("partial matches work", {
     expect_identical(match_citations(pmid, pmid_na), c(1:2, rep(NA, 3)))
     expect_message(
-        expect_identical(match_citations(df_all, df_all_na), c(1:2, rep(NA, 3)))
+        expect_identical(match_citations(df_all, df_all_na), c(1:4, NA))
     )
 })
 

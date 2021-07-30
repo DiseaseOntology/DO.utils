@@ -143,7 +143,7 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
 
     match_vctr <- dplyr::coalesce(!!!id_matches)
 
-    if (is.data.frame(x) && isTRUE(add_cols)) {
+    if (is.data.frame(x) && isTRUE(add_col)) {
         match_df <- dplyr::mutate(x, cite_match = match_vctr)
         return(match_df)
     }
