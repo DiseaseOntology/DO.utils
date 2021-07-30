@@ -51,29 +51,36 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
 
 #' Citation Matching
 #'
-#' Returns a vector of the positions of (first) matches of a citations
-#' dataframe (first argument) in a reference citations dataframe (second
-#' argument); essentially, [base::match()] but tailored to citations.
+#' Essentially, [base::match()] but tailored to citations. Returns a vector of
+#' the positions of (first) matches of a citation input (first argument)
+#' in a reference citation input (second argument) based on common
+#' publication IDs (PMID, PMCID, DOI).
 #'
-#' The "citations" dataframe should consist of one or more column(s) containing
-#' one type of the three standard, consistent publication identifiers (PMID,
-#' PMCID, or DOI) with columns named accordingly. The same identifier columns
-#' should exist in both input dataframes. These identifiers are not
-#' always available for every publication; sometimes only one exists and rarely
-#' none. Where more than one are provided they each will be used to mat
+#' The citation inputs can be vectors, data.frames, or a mix. For matching,
+#' each input requires at least one vector containing one of the three standard,
+#' consistent publication identifiers (PMID, PMCID, or DOI). Columns in
+#' data.frames are identified by name (case-insensitive, e.g. 'PMID' or 'pmid').
 #'
-#' @param df,ref_df a vector of PMID, PMCID, or DOI IDs; or a "citation"
+#' When both inputs are data.frames, `match_citations()` will match on all
+#' ID types present in both inputs, returning matches from the highest priority
+#' ID type (priority: PMID > PMCID > DOI). It also tells the user what ID
+#' columns are identified and the order used in a message.
+#'
+#' When no matching citation from `ref` can be found, `NA` is returned.
+#'
+#' @param x,ref a vector of PMID, PMCID, or DOI IDs; or a "citation"
 #' dataframe with 1 or more of these as columns (column names should correspond
 #' to ID type; case-insensitive)
 #' @param add_col logical; if FALSE (default), returns a vector; if TRUE,
-#' [dplyr::mutate()]s the dataframe by adding a `cite_match` column
+#' [mutates][dplyr::mutate()] the data.frame by adding a `cite_match` column;
+#' ignored when `x` is a vector
 #' @inheritParams base::match
 #'
 #' @return
 #' If `x` is a vector or `add_col` is FALSE (default), an integer vector of the
-#' same length as `x` (if a dataframe, of length equal to the number of rows).
-#' If `x` is a dataframe and `add_col` is TRUE, a mutated dataframe with a
-#' `cite_match` integer column identifying matches added.
+#' same length as `x` (if a data.frame, of length equal to the number of rows).
+#' If `x` is a data.frame and `add_col` is TRUE, a mutated data.frame with a
+#' `cite_match` integer column identifying match positions in `ref`.
 #'
 #' @export
 match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
@@ -122,6 +129,8 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
             ref <- ref[[type_both]]
         }
 
+        message("Matching by type: ", type_both)
+
         match_idx <- match_carefully(x, ref, nomatch)
 
         return(match_idx)
@@ -130,7 +139,7 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
     # for both data.frame (guaranteed if length(type_both) > 1)
     types <- priority_sort(type_both, levels = pub_id_types())
 
-    message("Matching by types: ", vctr_to_string(types, delim = ", "))
+    message("Matching by types: ", vctr_to_string(types, delim = " > "))
 
     id_matches <- purrr::map(
         .x = types,

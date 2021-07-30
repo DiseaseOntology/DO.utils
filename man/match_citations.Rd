@@ -7,35 +7,39 @@
 match_citations(x, ref, add_col = FALSE, nomatch = NA_integer_)
 }
 \arguments{
-\item{x}{vector or \code{NULL}: the values to be matched.
-    \link[base]{Long vectors} are supported.}
+\item{x, ref}{a vector of PMID, PMCID, or DOI IDs; or a "citation"
+dataframe with 1 or more of these as columns (column names should correspond
+to ID type; case-insensitive)}
 
 \item{add_col}{logical; if FALSE (default), returns a vector; if TRUE,
-\code{\link[dplyr:mutate]{dplyr::mutate()}}s the dataframe by adding a \code{cite_match} column}
+\link[dplyr:mutate]{mutates} the data.frame by adding a \code{cite_match} column;
+ignored when \code{x} is a vector}
 
 \item{nomatch}{the value to be returned in the case when no match is
     found.  Note that it is coerced to \code{integer}.}
-
-\item{df, ref_df}{a vector of PMID, PMCID, or DOI IDs; or a "citation"
-dataframe with 1 or more of these as columns (column names should correspond
-to ID type; case-insensitive)}
 }
 \value{
 If \code{x} is a vector or \code{add_col} is FALSE (default), an integer vector of the
-same length as \code{x} (if a dataframe, of length equal to the number of rows).
-If \code{x} is a dataframe and \code{add_col} is TRUE, a mutated dataframe with a
-\code{cite_match} integer column identifying matches added.
+same length as \code{x} (if a data.frame, of length equal to the number of rows).
+If \code{x} is a data.frame and \code{add_col} is TRUE, a mutated data.frame with a
+\code{cite_match} integer column identifying match positions in \code{ref}.
 }
 \description{
-Returns a vector of the positions of (first) matches of a citations
-dataframe (first argument) in a reference citations dataframe (second
-argument); essentially, \code{\link[base:match]{base::match()}} but tailored to citations.
+Essentially, \code{\link[base:match]{base::match()}} but tailored to citations. Returns a vector of
+the positions of (first) matches of a citation input (first argument)
+in a reference citation input (second argument) based on common
+publication IDs (PMID, PMCID, DOI).
 }
 \details{
-The "citations" dataframe should consist of one or more column(s) containing
-one type of the three standard, consistent publication identifiers (PMID,
-PMCID, or DOI) with columns named accordingly. The same identifier columns
-should exist in both input dataframes. These identifiers are not
-always available for every publication; sometimes only one exists and rarely
-none. Where more than one are provided they each will be used to mat
+The citation inputs can be vectors, data.frames, or a mix. For matching,
+each input requires at least one vector containing one of the three standard,
+consistent publication identifiers (PMID, PMCID, or DOI). Columns in
+data.frames are identified by name (case-insensitive, e.g. 'PMID' or 'pmid').
+
+When both inputs are data.frames, \code{match_citations()} will match on all
+ID types present in both inputs, returning matches from the highest priority
+ID type (priority: PMID > PMCID > DOI). It also tells the user what ID
+columns are identified and the order used in a message.
+
+When no matching citation from \code{ref} can be found, \code{NA} is returned.
 }

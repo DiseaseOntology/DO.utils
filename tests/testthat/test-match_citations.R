@@ -41,6 +41,9 @@ test_that("exact matches work", {
     expect_identical(match_citations(pmid, pmid), 1:5)
     expect_identical(match_citations(pmid, pmid), 1:5)
     expect_message(
+        expect_identical(match_citations(df_pmid, df_pmid), 1:5)
+    )
+    expect_message(
         expect_identical(match_citations(df_all, df_all), 1:5)
     )
 })
