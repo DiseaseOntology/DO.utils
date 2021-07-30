@@ -128,9 +128,7 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
     }
 
     # for both data.frame (guaranteed if length(type_both) > 1)
-    types <- sort(
-        factor(type_both, levels = pub_id_types())
-    )
+    types <- priority_sort(type_both, levels = pub_id_types())
 
     message("Matching by types: ", vctr_to_string(types, delim = ", "))
 
