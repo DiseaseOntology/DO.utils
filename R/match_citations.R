@@ -132,7 +132,7 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
 
     message("Matching by types: ", vctr_to_string(types, delim = ", "))
 
-    id_matches <- purrr::map_dfc(
+    id_matches <- purrr::map(
         .x = types,
         function(type) {
             x_col <- get_pub_id_col(x, type)
