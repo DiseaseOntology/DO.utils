@@ -44,6 +44,19 @@ test_that("missing col fails", {
 })
 
 
+# get_pub_id_col() tests --------------------------------------------------
+
+test_that("get cols works", {
+    expect_identical(get_pub_id_col(df_pmid, "pmid"), pmid)
+    expect_identical(get_pub_id_col(df_all, "pmcid"), pmcid)
+    expect_identical(get_pub_id_col(df_all, "doi"), doi)
+})
+
+test_that("df name-type mismatch fails", {
+    expect_error(get_pub_id_col(df_name_type_mismatch, "pmid"), NULL)
+})
+
+
 # type_pub_id() tests -----------------------------------------------------
 
 test_that("types identifiable", {

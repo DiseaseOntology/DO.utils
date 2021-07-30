@@ -49,6 +49,32 @@ match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
     match_df
 }
 
+#' Get Publication ID Column
+#'
+#' Gets a publication ID column from a data.frame and ensures the data matches
+#' the specified type
+#' @param df a data.frame
+#' @param type the expected publication ID type (derived from the column name)
+#'
+#' @noRd
+get_pub_id_col <- function(df, type) {
+
+    x <- df[[type]]
+
+    # confirm type
+    computed_type <- type_pub_id(x)
+
+    assertthat::assert_that(
+        identical(type, computed_type),
+        msg = paste0(
+            "type (", type, ") not identical to computed type: ", computed_type
+        )
+    )
+
+    x
+}
+
+
 #' Identifies Publication ID Columns
 #'
 #' Identifies columns in a data.frame with publication IDs BY NAME
