@@ -30,3 +30,29 @@ extract_pmid.pmc_search <- function(x) {
 
     pmids
 }
+
+#' @export
+extract_pmid.data.frame <- function(x) {
+    df <- dplyr::rename_with(x, .fn = tolower)
+
+    if (!"pmid" %in% names(df)) {
+        stop("PMID column could not be identified. Name must be 'pmid' or 'PMID').")
+    }
+
+    pmids <- df$pmid
+
+    pmid_missing <- is.na(pmids)
+    if (any(pmid_missing)) {
+        n_missing <- sum(pmid_missing)
+        n_id <- length(pmids)
+        pct_missing <- round(n_missing / n_id, 2)
+
+        warning(
+            n_missing, " of ", n_id, " (", pct_missing, "%)",
+            " PMIDs are missing. Consider extracting alternate IDs.",
+            call. = FALSE
+        )
+    }
+
+    pmids
+}
