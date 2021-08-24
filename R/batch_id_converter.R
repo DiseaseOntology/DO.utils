@@ -8,7 +8,6 @@
 #'
 #' @export
 batch_id_converter <- function(x, type = NULL, ...) {
-    uniq <-
     n <- length(x)
 
     if (n <= 200) {
