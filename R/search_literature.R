@@ -63,9 +63,9 @@ search_pmc <- function(term, config = NULL, retmode = "xml",
         ...
     )
 
-    # Add PMC if missing from all IDs
-    #   (output is PMCID; https://www.ncbi.nlm.nih.gov/labs/pmc/tools/get-pmcids/)
-    if (all(!stringr::str_detect(pmc_res$ids, "pmc|PMC"))) {
+    # Add PMC to complete full ID - output is only numeric portion of PMCID;
+    #   https://www.ncbi.nlm.nih.gov/labs/pmc/tools/get-pmcids/)
+    if (!rlang::is_empty(pmc_res$ids)) {
         pmc_res$ids <- paste0("PMC", pmc_res$ids)
     }
 
