@@ -72,7 +72,8 @@ search_pmc <- function(term, config = NULL, retmode = "xml",
     class(pmc_res) <- append("pmc_search", class(pmc_res))
 
     if (isTRUE(pmid)) {
-        pmc_res$pmids <- rcrossref::id_converter(pmc_res$ids)$records$pmid
+        all_ids <- batch_id_converter(pmc_res$ids)
+        pmc_res$pmids <- extract_pmid(all_ids)
     }
 
     pmc_res
