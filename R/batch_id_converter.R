@@ -18,7 +18,7 @@ batch_id_converter <- function(x, type = NULL, ...) {
         pages <- seq(round_up(n / 200))
         s <- 200 * (pages - 1) + 1
         e <- 200 * pages
-        e[-1] <- n
+        e[length(e)] <- n
 
         res_list <- purrr::map2(
             .x = s,
