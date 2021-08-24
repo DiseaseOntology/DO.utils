@@ -16,5 +16,6 @@ see examples. required.}
 }
 \description{
 Batches inputs to convert any number of IDs using PubMed Centrals ID
-converter API, via \link[rcrossref:id_converter]{rcrossref::id_converter}.
+converter API, via \link[rcrossref:id_converter]{rcrossref::id_converter}. Input cannot have missing
+values and \emph{should} be unique.
 }
