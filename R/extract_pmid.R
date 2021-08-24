@@ -58,7 +58,7 @@ extract_pmid.data.frame <- function(x) {
 
         warning(
             n_missing, " of ", n_id, " (", pct_missing, "%)",
-            " PMIDs are missing. Consider extracting alternate IDs.",
+            " PMIDs are missing. Consider extracting alternate IDs, if available.",
             call. = FALSE
         )
     }
