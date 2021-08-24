@@ -71,9 +71,13 @@ search_pmc <- function(term, config = NULL, retmode = "xml",
 
     class(pmc_res) <- append("pmc_search", class(pmc_res))
 
-    if (isTRUE(pmid) && !rlang::is_empty(pmc_res$ids)) {
-        all_ids <- batch_id_converter(pmc_res$ids)
-        pmc_res$pmids <- extract_pmid(all_ids)
+    if (isTRUE(pmid)) {
+        if (rlang::is_empty(pmc_res$ids)) {
+            pmc_res$pmids <- NULL
+        } else {
+            all_ids <- batch_id_converter(pmc_res$ids)
+            pmc_res$pmids <- extract_pmid(all_ids)
+        }
     }
 
     pmc_res
