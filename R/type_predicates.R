@@ -30,7 +30,14 @@ is_missing <- function(x) {
 #' These value predicates are designed to identify common values that appear
 #' in numeric vectors.
 #'
+#' `is_whole_number()` should generally be used when a whole number is
+#' desired (whether integer or double) instead of [base::is.integer] or the
+#' [rlang::is_integer] family because those test the data type no the value.
+#'
 #' @inheritParams char_val_predicates
+#' @param tol value specifiying precision desired (see [.Machine] or [double]
+#' for more info)
+#'
 #' @name num_val_predicates
 NULL
 
@@ -46,6 +53,19 @@ is_positive <- function(x) {
 is_negative <- function(x) {
     assert_numeric(x)
     x < 0 & is.finite(x)
+}
+
+#' @export
+#' @rdname num_val_predicates
+is_whole_number <- function(x, tol = .Machine$double.eps)  {
+    assert_numeric(x)
+    abs(x - round(x)) < tol
+}
+
+#' @export
+#' @rdname num_val_predicates
+is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
+    rlang::is_scalar_atomic(x) && is_whole_number(x, tol = tol)
 }
 
 

@@ -4,16 +4,30 @@
 \alias{num_val_predicates}
 \alias{is_positive}
 \alias{is_negative}
+\alias{is_whole_number}
+\alias{is_scalar_whole_number}
 \title{Number value predicates}
 \usage{
 is_positive(x)
 
 is_negative(x)
+
+is_whole_number(x, tol = .Machine$double.eps)
+
+is_scalar_whole_number(x, tol = .Machine$double.eps)
 }
 \arguments{
 \item{x}{vector to be tested}
+
+\item{tol}{value specifiying precision desired (see \link{.Machine} or \link{double}
+for more info)}
 }
 \description{
 These value predicates are designed to identify common values that appear
 in numeric vectors.
+}
+\details{
+\code{is_whole_number()} should generally be used when a whole number is
+desired (whether integer or double) instead of \link[base:integer]{base::is.integer} or the
+\link[rlang:type-predicates]{rlang::is_integer} family because those test the data type no the value.
 }
