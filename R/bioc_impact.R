@@ -75,7 +75,6 @@ get_bioc_pkg_stats_ <- function(pkg, pkg_type, url) {
 # Bioconductor URL generator (individual pkg stats files)
 # NOTE: Returns from only 1 yr as implemented
 build_bioc_pkg_stat_url <- function(pkg, pkg_type, yr) {
-    assertthat::assert_that(rlang::is_scalar_character(yr))
 
     type_base_url <- dplyr::recode(pkg_type, !!!bioc_stat_baseurl)
     pkg_stat_url <- paste0(

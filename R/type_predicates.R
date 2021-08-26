@@ -21,7 +21,6 @@ is_blank <- function(x) {
 #' @export
 #' @rdname char_val_predicates
 is_missing <- function(x) {
-    assert_character(x)
     is.na(x) | is_blank(x)
 }
 
