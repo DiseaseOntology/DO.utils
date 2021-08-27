@@ -1,3 +1,31 @@
+#' Execute Robot Commands
+#'
+#' Light wrapper for system ROBOT program (OBO Foundry). See
+#' [ROBOT documentation](http://robot.obolibrary.org/) for information about
+#' subcommands and arguments.
+#'
+#' @section NOTE:
+#' Requires installation of the OBO Foundry ROBOT tool in the system path. This
+#' can be achieved with [install_robot()].
+#'
+#' @section Citation:
+#' R.C. Jackson, J.P. Balhoff, E. Douglass, N.L. Harris, C.J. Mungall, and
+#' J.A. Overton. ROBOT: A tool for automating ontology workflows.
+#' BMC Bioinformatics, vol. 20, July 2019.
+#'
+#' @param params string specifying subcommand and all arguments
+#' @param ... arguments passed on to [base::system2]
+#'
+#' @export
+robot <- function(params, ...) {
+    system2(
+        # use system robot command
+        command = "robot",
+        args = params
+    )
+}
+
+
 #' Execute Robot Query
 #'
 #' Wrapper for system ROBOT program (OBO Foundry) that executes the query
