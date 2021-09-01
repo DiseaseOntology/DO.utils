@@ -97,7 +97,7 @@ assign_record_to_mod <- function(alliance_tbl) {
     df_out <- dplyr::mutate(
         alliance_tbl,
         namespace_id = stringr::str_remove(.data$DBObjectID, ":.*"),
-        ortholog_namespace_id = stringr::str_remove(.data$WithOrthologs, ":.*"),
+        ortholog_namespace_id = stringr::str_remove(.data$WithOrtholog, ":.*"),
         mod = dplyr::case_when(
             .data$Source != "Alliance" ~ .data$Source,
             .data$namespace_id != "HGNC" ~ .data$namespace_id,
