@@ -70,10 +70,10 @@ count_alliance_records <- function(alliance_tbl,
     if (assign_to == "curator") {
         record_df <- alliance_dedup %>%
             dplyr::mutate(
-                mod_assigned = id_mod(Source),
+                curator = id_mod(Source),
                 Source = NULL
             )
-        count_by <- "mod_assigned"
+        count_by <- "curator"
     } else {
         record_df <- alliance_dedup
         count_by <- "SpeciesName"
@@ -89,7 +89,13 @@ count_alliance_records <- function(alliance_tbl,
     if (isTRUE(by_type)) {
         record_count <- record_df %>%
             dplyr::select(c(count_by, cols_include, "obj_type")) %>%
-            unique() %>%
+            unique()
+
+        if (assign_to == "curator") {
+            record_count <- rm_dup_curator_alliance(record_count)
+        }
+
+        record_count <- record_count %>%
             dplyr::count(
                 dplyr::across(c(count_by, "obj_type")),
                 name = "record_n"
@@ -101,7 +107,7 @@ count_alliance_records <- function(alliance_tbl,
                     names_from = .data$obj_type,
                     values_from = .data$record_n
                 ) %>%
-                # dplyr::select(mod_assigned, gene, allele, model) %>%
+                # dplyr::select(curator, gene, allele, model) %>%
                 dplyr::rename_with(
                     .fn = ~paste0(.x, "_n"),
                     .cols = -count_by
@@ -112,7 +118,13 @@ count_alliance_records <- function(alliance_tbl,
 
         record_count <- record_df %>%
             dplyr::select(c(count_by, cols_include)) %>%
-            unique() %>%
+            unique()
+
+        if (assign_to == "curator") {
+            record_count <- rm_dup_curator_alliance(record_count)
+        }
+
+        record_count <- record_count %>%
             dplyr::count(
                 dplyr::across(count_by),
                 name = "record_n"
