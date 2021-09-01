@@ -258,3 +258,17 @@ alliance_version <- function(alliance_tsv) {
 
     vd_list
 }
+
+#' Remove Curator Duplicates
+#'
+#' Removes Alliance records that are only unique because they are curated by a
+#' MOD and the Alliance
+#'
+#' @noRd
+rm_dup_curator_alliance <- function(df) {
+    dup <- df %>%
+        dplyr::select(-.data$curator) %>%
+        all_duplicated()
+
+    filter(df, !(dup & .data$curator == "Alliance"))
+}
