@@ -214,3 +214,21 @@ download_AGR <- function(url, dest_dir) {
 
     dest_file
 }
+
+Alliance_version <- function(AGR_tsv) {
+
+    header <- readLines(AGR_tsv, n = 30)
+    version_date <- grep(
+        "^#.*(version|date).*:",
+        header,
+        ignore.case = TRUE,
+        value = TRUE
+    )
+
+    version <- vctr_to_string(
+        stringr::str_replace(version_date, ".*: ([^ ]+).*", "\\1"),
+        delim = "_"
+    )
+
+    version
+}
