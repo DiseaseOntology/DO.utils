@@ -9,7 +9,8 @@
 #' that differ by seemingly unimportant information (e.g. only the date differs)
 #' have existed. These types of duplicates are removed prior to record counts.
 #'
-#' @inheritParams assign_record_to_mod
+#' @param alliance_tbl a dataframe derived from Alliance data (usually a
+#' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
 #' @param by_type logical indicating whether to count by object type
 #' @param pivot logical indicating whether to pivot values to type columns;
 #' ignored if type = FALSE
@@ -32,7 +33,8 @@ count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE,
     )
 
     if (assign_to == "curator") {
-        record_df <- assign_record_to_mod(alliance_dedup)
+        record_df <- alliance_dedup %>%
+            dplyr::mutate(mod_assigned = id_mod(Source))
         count_by <- "mod_assigned"
     } else {
         record_df <- alliance_dedup
@@ -76,52 +78,6 @@ count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE,
     record_count
 }
 
-#' Assign Alliance Records to MODs
-#'
-#' Assigns Alliance of Genome Resource records to the appropriate model
-#' organism database (MOD) using a step-wise approach. Alliance records may be
-#' "sourced" from the "Alliance" obscuring which MOD the records were
-#' originally made in.
-#'
-#' The step-wise approach used to assign records is as follows:
-#'
-#' 1. `Source` is used where it pertains to a MOD (and not the "Alliance");
-#' **Note:** "OMIM Via RGD" is assigned to RGD
-#'
-#' 2. `DBObjectID` is used where it comes from a MOD (i.e. not "HGNC")
-#'
-#' 3. `WithOrthologs` is used where the ID comes from a MOD
-#'
-#' 4. Any remaining records are left assigned to the "Alliance" because their
-#' original source can not be identified
-#'
-#' @return
-#' The input dataframe with an additional column (`mod_assigned`) indicating the
-#' assignment.
-#'
-#' @param alliance_tbl a dataframe derived from Alliance data (usually a
-#' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
-assign_record_to_mod <- function(alliance_tbl) {
-    df_out <- dplyr::mutate(
-        alliance_tbl,
-        namespace_id = stringr::str_remove(.data$DBObjectID, ":.*"),
-        ortholog_namespace_id = stringr::str_remove(.data$WithOrtholog, ":.*"),
-        mod = dplyr::case_when(
-            .data$Source != "Alliance" ~ .data$Source,
-            .data$namespace_id != "HGNC" ~ .data$namespace_id,
-            !is.na(.data$ortholog_namespace_id) ~ .data$ortholog_namespace_id,
-            TRUE ~ .data$Source
-        ),
-        mod_assigned = id_mod(.data$mod)
-    )
-
-    df_out <- dplyr::select(
-        df_out,
-        -.data$namespace_id, -.data$ortholog_namespace_id, -.data$mod
-    )
-
-    df_out
-}
 
 #' Identifies Alliance MOD
 #'
