@@ -1,6 +1,6 @@
-#' Count AGR Records
+#' Count Alliance Records
 #'
-#' Counts records in data from the Alliance of Genome Resources (AGR) by model
+#' Counts records in data from the Alliance of Genome Resources by model
 #' organism database (MOD) and, optionally, by object type. A record, as used
 #' here, is a row in the data (after removing likely duplicates, see NOTE).
 #'
@@ -18,15 +18,15 @@
 #' A summary tibble.
 #'
 #' @export
-count_AGR_records <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
+count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE) {
 
     # remove exact & date duplicates
-    AGR_dedup <- dplyr::filter(
-        AGR_df,
-        !duplicated(dplyr::select(AGR_df, -.data$Date))
+    alliance_dedup <- dplyr::filter(
+        alliance_tbl,
+        !duplicated(dplyr::select(alliance_tbl, -.data$Date))
     )
 
-    mod_assigned_df <- assign_record_to_mod(AGR_dedup)
+    mod_assigned_df <- assign_record_to_mod(alliance_dedup)
 
     if (isTRUE(by_type)) {
 
@@ -68,10 +68,10 @@ count_AGR_records <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
     mod_count
 }
 
-#' Assign AGR Records to MODs
+#' Assign Alliance Records to MODs
 #'
-#' Assigns Alliance of Genome Resource (AGR) records to the appropriate model
-#' organism database (MOD) using a step-wise approach. AGR records may be
+#' Assigns Alliance of Genome Resource records to the appropriate model
+#' organism database (MOD) using a step-wise approach. Alliance records may be
 #' "sourced" from the "Alliance" obscuring which MOD the records were
 #' originally made in.
 #'
@@ -91,11 +91,11 @@ count_AGR_records <- function(AGR_df, by_type = TRUE, pivot = TRUE) {
 #' The input dataframe with an additional column (`mod_assigned`) indicating the
 #' assignment.
 #'
-#' @param AGR_df a dataframe derived from AGR data (usually a
+#' @param alliance_tbl a dataframe derived from Alliance data (usually a
 #' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
-assign_record_to_mod <- function(AGR_df) {
+assign_record_to_mod <- function(alliance_tbl) {
     df_out <- dplyr::mutate(
-        AGR_df,
+        alliance_tbl,
         namespace_id = stringr::str_remove(.data$DBObjectID, ":.*"),
         ortholog_namespace_id = stringr::str_remove(.data$WithOrthologs, ":.*"),
         mod = dplyr::case_when(
@@ -132,41 +132,41 @@ id_mod <- function(x) {
     dplyr::recode(x, !!!mod_codes)
 }
 
-#' Read AGR .tsv.gz File
+#' Read Alliance .tsv.gz File
 #'
-#' Reads in a .tsv or .tsv.gz file from the Alliance of Genome Resources (AGR)
-#' as a tibble. It is recommended that AGR files be downloaded using
-#' [download_AGR()].
+#' Reads in a .tsv or .tsv.gz file from the Alliance of Genome Resources
+#' as a tibble. It is recommended that Alliance files be downloaded using
+#' [download_alliance_tsv()].
 #'
-#' @param AGR_tsv path to AGR .tsv or .tsv.gz file
+#' @param alliance_tsv path to Alliance .tsv or .tsv.gz file
 #'
 #' @return
 #' A dataframe.
 #'
 #' @export
-read_AGR <- function(AGR_tsv) {
+read_alliance <- function(alliance_tsv) {
 
     ## identify header (to skip)
     ##  Skipping instead of using comment = "#" because data gets truncated
     ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
-    header_end <- readr::read_lines(AGR_tsv, n_max = 100) %>%
+    header_end <- readr::read_lines(alliance_tsv, n_max = 100) %>%
         stringr::str_detect("^#") %>%
         which() %>%
         max()
 
-    AGR_df <- readr::read_tsv(
-        AGR_tsv,
+    alliance_tbl <- readr::read_tsv(
+        alliance_tsv,
         skip = header_end,
         col_types = readr::cols(.default = readr::col_character())
     )
 
-    AGR_df
+    alliance_tbl
 }
 
-#' Download AGR .tsv.gz File
+#' Download Alliance .tsv.gz File
 #'
 #' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
-#' Resources (AGR). Files can be found at
+#' Resources. Files can be found at
 #' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
 #' of a desired file and select "Copy Link" to get the file URL.
 #'
@@ -176,22 +176,23 @@ read_AGR <- function(AGR_tsv) {
 #' Although it's possbile to directly read a file from the URL, downloading it
 #' promotes reproducibility and ensures future access if needed.
 #'
-#' @param url URL to AGR file; if not provided, will be requested at console
+#' @param url URL to Alliance file; if not provided, will be requested at console
 #' @param dest_dir path to directory where file will be saved
 #'
 #' @return
 #' Path to saved file.
 #'
 #' @export
-download_AGR <- function(url, dest_dir) {
+download_alliance_tsv <- function(url, dest_dir) {
 
     # Ask for URL if missing
     if (missing(url)) {
         url <- readline(
-            prompt = "Please enter the URL of the file to be downloaded from AGR.
-    Files can be found at https://www.alliancegenome.org/downloads. Right-click
-    on the 'tsv' link of a desired file, select 'Copy Link'. Then paste it in
-    this console and press ENTER: "
+            prompt = "Please enter the URL of the file to be downloaded from the
+            Alliance. Files can be found at
+            https://www.alliancegenome.org/downloads. Right-click on the 'tsv'
+            link of a desired file, select 'Copy Link'. Then paste it in this
+            console and press ENTER: "
         )
     }
 
@@ -215,9 +216,9 @@ download_AGR <- function(url, dest_dir) {
     dest_file
 }
 
-Alliance_version <- function(AGR_tsv) {
+alliance_version <- function(alliance_tsv) {
 
-    header <- readLines(AGR_tsv, n = 30)
+    header <- readLines(alliance_tsv, n = 30)
     version_date <- grep(
         "^#.*(version|date).*:",
         header,
