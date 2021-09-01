@@ -13,12 +13,17 @@
 #' @param by_type logical indicating whether to count by object type
 #' @param pivot logical indicating whether to pivot values to type columns;
 #' ignored if type = FALSE
+#' @param assign_to how to assign records when counting; one of "species" or
+#' "curator" (e.g. MOD responsible for curating record)
 #'
 #' @return
 #' A summary tibble.
 #'
 #' @export
-count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE) {
+count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE,
+                                   assign_to = c("species", "curator")) {
+
+    assign_to <- match.arg(assign_to, choices = c("species", "curator"))
 
     # remove exact & date duplicates
     alliance_dedup <- dplyr::filter(
@@ -26,11 +31,16 @@ count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE) {
         !duplicated(dplyr::select(alliance_tbl, -.data$Date))
     )
 
-    mod_assigned_df <- assign_record_to_mod(alliance_dedup)
+    if (assign_to == "curator") {
+        record_df <- assign_record_to_mod(alliance_dedup)
+        count_by <- "mod_assigned"
+    } else {
+        record_df <- alliance_dedup
+        count_by <- "SpeciesName"
+    }
 
     if (isTRUE(by_type)) {
-
-        mod_count <- mod_assigned_df %>%
+        record_count <- record_df %>%
             dplyr::mutate(
                 type = dplyr::recode(
                     .data$DBobjectType,
@@ -38,13 +48,10 @@ count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE) {
                 ),
                 type = factor(.data$type, levels = c("gene", "allele", "model"))
             ) %>%
-            dplyr::count(
-                .data$mod_assigned, .data$type,
-                name = "record_n"
-            )
+            dplyr::count(dplyr::across(c(count_by, "type")), name = "record_n")
 
         if (isTRUE(pivot)) {
-            mod_count <- mod_count %>%
+            record_count <- record_count %>%
                 tidyr::pivot_wider(
                     names_from = .data$type,
                     values_from = .data$record_n
@@ -52,20 +59,21 @@ count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE) {
                 # dplyr::select(mod_assigned, gene, allele, model) %>%
                 dplyr::rename_with(
                     .fn = ~paste0(.x, "_n"),
-                    .cols = -.data$mod_assigned
+                    .cols = -count_by
                 )
         }
 
     } else {
 
-        mod_count <- dplyr::count(
-            mod_assigned_df, .data$mod_assigned,
+        record_count <- dplyr::count(
+            record_df,
+            dplyr::across(count_by),
             name = "record_n"
         )
 
     }
 
-    mod_count
+    record_count
 }
 
 #' Assign Alliance Records to MODs

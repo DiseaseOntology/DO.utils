@@ -4,7 +4,12 @@
 \alias{count_alliance_records}
 \title{Count Alliance Records}
 \usage{
-count_alliance_records(alliance_tbl, by_type = TRUE, pivot = TRUE)
+count_alliance_records(
+  alliance_tbl,
+  by_type = TRUE,
+  pivot = TRUE,
+  assign_to = c("species", "curator")
+)
 }
 \arguments{
 \item{alliance_tbl}{a dataframe derived from Alliance data (usually a
@@ -14,6 +19,9 @@ count_alliance_records(alliance_tbl, by_type = TRUE, pivot = TRUE)
 
 \item{pivot}{logical indicating whether to pivot values to type columns;
 ignored if type = FALSE}
+
+\item{assign_to}{how to assign records when counting; one of "species" or
+"curator" (e.g. MOD responsible for curating record)}
 }
 \value{
 A summary tibble.
