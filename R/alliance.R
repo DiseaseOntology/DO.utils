@@ -40,7 +40,13 @@ count_alliance_records <- function(alliance_tbl,
                                    record_lvl = c("doid", "unique"),
                                    assign_to = c("species", "curator")) {
 
+    # validate arguments
+    record_lvl <- match.arg(record_lvl, choices = c("doid", "unique"))
     assign_to <- match.arg(assign_to, choices = c("species", "curator"))
+    assertthat::assert_that(
+        rlang::is_scalar_logical(by_type),
+        rlang::is_scalar_logical(pivot)
+    )
 
     # tidy input data
     alliance_dedup <- dplyr::filter(
