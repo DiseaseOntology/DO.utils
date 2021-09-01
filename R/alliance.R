@@ -160,6 +160,12 @@ read_alliance <- function(alliance_tsv) {
         col_types = readr::cols(.default = readr::col_character())
     )
 
+    # set version and date attributes for Alliance data
+    attributes(alliance_tbl) <- c(
+        attributes(alliance_tbl),
+        alliance_version(alliance_tsv)
+    )
+
     alliance_tbl
 }
 
