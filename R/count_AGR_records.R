@@ -223,12 +223,18 @@ Alliance_version <- function(AGR_tsv) {
         header,
         ignore.case = TRUE,
         value = TRUE
+    ) %>%
+        stringr::str_remove("#") %>%
+        stringr::str_squish() %>%
+        stringr::str_split(": ")
+
+    vd_list <- purrr::set_names(
+        purrr::map(version_date, 2),
+        nm = stringr::str_replace_all(
+            purrr::map(version_date, 1),
+            c(" " = "_", "[()]" = "")
+        )
     )
 
-    version <- vctr_to_string(
-        stringr::str_replace(version_date, ".*: ([^ ]+).*", "\\1"),
-        delim = "_"
-    )
-
-    version
+    vd_list
 }
