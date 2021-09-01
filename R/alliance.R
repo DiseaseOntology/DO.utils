@@ -222,6 +222,11 @@ download_alliance_tsv <- function(url, dest_dir) {
     dest_file
 }
 
+#' Get Alliance Version (internal)
+#'
+#' Gets version of Alliance of Genome Resources directly from .tsv file header.
+#'
+#' @noRd
 alliance_version <- function(alliance_tsv) {
 
     header <- readLines(alliance_tsv, n = 30)
