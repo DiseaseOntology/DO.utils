@@ -8,6 +8,7 @@ count_alliance_records(
   alliance_tbl,
   by_type = TRUE,
   pivot = TRUE,
+  record_lvl = c("doid", "unique"),
   assign_to = c("species", "curator")
 )
 }
@@ -20,16 +21,32 @@ count_alliance_records(
 \item{pivot}{logical indicating whether to pivot values to type columns;
 ignored if type = FALSE}
 
+\item{record_lvl}{a string indicating the desired specificity of records;
+one of "doid" or "unique"}
+
 \item{assign_to}{how to assign records when counting; one of "species" or
-"curator" (e.g. MOD responsible for curating record)}
+"curator" (i.e. the organization responsible for curating the record)}
 }
 \value{
-A summary tibble.
+A summary tibble with the count of unique object annotations defined by
+\code{record_lvl}, aggregated according to species/curator (\code{assign_to}) and,
+optionally, object type (\code{by_type}).
 }
 \description{
-Counts records in data from the Alliance of Genome Resources by model
-organism database (MOD) and, optionally, by object type. A record, as used
-here, is a row in the data (after removing likely duplicates, see NOTE).
+Counts records in data from the Alliance of Genome Resources. Counts can
+be ascribed to the species the record is associated with or the Model
+Organism Database (MOD) that curated it, optionally by object type.
+\code{count_alliance_records()} was primarily designed to count records in the
+Alliance Disease Associations File. \emph{There is no guarantee that any/all}
+\emph{options will work for other files.}
+}
+\details{
+A record is, as defined here, is the information annotated to a unique object
+(gene, allele, model). That means for the following \code{record_lvl} values:
+\itemize{
+\item "doid" counts unique DOID-object annotations
+\item "unique" counts full non-duplicate records
+}
 }
 \section{NOTE}{
 

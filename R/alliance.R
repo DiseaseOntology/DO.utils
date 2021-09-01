@@ -1,8 +1,18 @@
 #' Count Alliance Records
 #'
-#' Counts records in data from the Alliance of Genome Resources by model
-#' organism database (MOD) and, optionally, by object type. A record, as used
-#' here, is a row in the data (after removing likely duplicates, see NOTE).
+#' Counts records in data from the Alliance of Genome Resources. Counts can
+#' be ascribed to the species the record is associated with or the Model
+#' Organism Database (MOD) that curated it, optionally by object type.
+#' `count_alliance_records()` was primarily designed to count records in the
+#' Alliance Disease Associations File. _There is no guarantee that any/all_
+#' _options will work for other files._
+#'
+#' A record is, as defined here, is the information annotated to a unique object
+#' (gene, allele, model). That means for the following `record_lvl` values:
+#'
+#' * "doid" counts unique DOID-object annotations
+#'
+#' * "unique" counts full non-duplicate records
 #'
 #' @section NOTE:
 #' For disease-related data, some exact duplicates (reason unknown) and records
@@ -11,51 +21,78 @@
 #'
 #' @param alliance_tbl a dataframe derived from Alliance data (usually a
 #' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
+#' @param record_lvl a string indicating the desired specificity of records;
+#' one of "doid" or "unique"
 #' @param by_type logical indicating whether to count by object type
 #' @param pivot logical indicating whether to pivot values to type columns;
 #' ignored if type = FALSE
 #' @param assign_to how to assign records when counting; one of "species" or
-#' "curator" (e.g. MOD responsible for curating record)
+#' "curator" (i.e. the organization responsible for curating the record)
 #'
 #' @return
-#' A summary tibble.
+#' A summary tibble with the count of unique object annotations defined by
+#' `record_lvl`, aggregated according to species/curator (`assign_to`) and,
+#' optionally, object type (`by_type`).
 #'
 #' @export
-count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE,
+count_alliance_records <- function(alliance_tbl,
+                                   by_type = TRUE, pivot = TRUE,
+                                   record_lvl = c("doid", "unique"),
                                    assign_to = c("species", "curator")) {
 
     assign_to <- match.arg(assign_to, choices = c("species", "curator"))
 
-    # remove exact & date duplicates
+    # tidy input data
     alliance_dedup <- dplyr::filter(
         alliance_tbl,
+        # remove exact & date duplicates
         !duplicated(dplyr::select(alliance_tbl, -.data$Date))
-    )
+    ) %>%
+        # simplify object type and set desired print order
+        dplyr::mutate(
+            obj_type = dplyr::recode(
+                .data$DBobjectType,
+                "affected_genomic_model" = "model"
+            ),
+            obj_type = factor(
+                .data$obj_type,
+                levels = c("gene", "allele", "model")
+            ),
+            DBObjectType = NULL
+        )
 
     if (assign_to == "curator") {
         record_df <- alliance_dedup %>%
-            dplyr::mutate(mod_assigned = id_mod(Source))
+            dplyr::mutate(
+                mod_assigned = id_mod(Source),
+                Source = NULL
+            )
         count_by <- "mod_assigned"
     } else {
         record_df <- alliance_dedup
         count_by <- "SpeciesName"
     }
 
+    # set columns to use for record counts
+    cols_include <- switch(
+        record_lvl,
+        doid = c("DBObjectID", "DOID"),
+        unique = names(record_df)
+    )
+
     if (isTRUE(by_type)) {
         record_count <- record_df %>%
-            dplyr::mutate(
-                type = dplyr::recode(
-                    .data$DBobjectType,
-                    "affected_genomic_model" = "model"
-                ),
-                type = factor(.data$type, levels = c("gene", "allele", "model"))
-            ) %>%
-            dplyr::count(dplyr::across(c(count_by, "type")), name = "record_n")
+            dplyr::select(c(count_by, cols_include, "obj_type")) %>%
+            unique() %>%
+            dplyr::count(
+                dplyr::across(c(count_by, "obj_type")),
+                name = "record_n"
+            )
 
         if (isTRUE(pivot)) {
             record_count <- record_count %>%
                 tidyr::pivot_wider(
-                    names_from = .data$type,
+                    names_from = .data$obj_type,
                     values_from = .data$record_n
                 ) %>%
                 # dplyr::select(mod_assigned, gene, allele, model) %>%
@@ -67,12 +104,13 @@ count_alliance_records <- function(alliance_tbl, by_type = TRUE, pivot = TRUE,
 
     } else {
 
-        record_count <- dplyr::count(
-            record_df,
-            dplyr::across(count_by),
-            name = "record_n"
-        )
-
+        record_count <- record_df %>%
+            dplyr::select(c(count_by, cols_include)) %>%
+            unique() %>%
+            dplyr::count(
+                dplyr::across(count_by),
+                name = "record_n"
+            )
     }
 
     record_count
