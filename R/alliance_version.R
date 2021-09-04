@@ -9,11 +9,37 @@
 #'
 #' @noRd
 alliance_version <- function(alliance_obj, as_string = FALSE) {
+    UseMethod("alliance_version")
+}
+
+
+#' @export
+alliance_version.alliance_tbl <- function(alliance_obj, as_string = FALSE) {
 
     # validate
     assertthat::assert_that(rlang::is_scalar_logical(as_string))
 
-    header <- readLines(alliance_tsv, n = 30)
+    v <- attributes(alliance_obj)[c("Alliance_Database_Version", "Date_file_generated_UTC")]
+
+    if (as_string) {
+        v <- v %>%
+            unlist() %>%
+            vctr_to_string(delim = "_") %>%
+            stringr::str_replace_all(
+                c("[-:]" = "", " " = "_")
+            )
+    }
+
+    v
+}
+
+#' @export
+alliance_version.default <- function(alliance_obj, as_string = FALSE) {
+
+    # validate
+    assertthat::assert_that(rlang::is_scalar_logical(as_string))
+
+    header <- readLines(alliance_obj, n = 30)
     version_date <- grep(
         "^#.*(version|date).*:",
         header,
