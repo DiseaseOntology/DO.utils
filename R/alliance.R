@@ -131,6 +131,11 @@ count_alliance_records <- function(alliance_tbl,
             )
     }
 
+    attributes(record_count) <- c(
+        attributes(record_count),
+        attributes(alliance_tbl)[c("Alliance_Database_Version", "Date_file_generated_UTC")]
+    )
+
     record_count
 }
 
