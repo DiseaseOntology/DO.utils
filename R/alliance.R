@@ -101,13 +101,7 @@ read_alliance <- function(alliance_tsv) {
         col_types = readr::cols(.default = readr::col_character())
     )
 
-    # set version and date attributes for Alliance data
-    attributes(alliance_tbl) <- c(
-        attributes(alliance_tbl),
-        alliance_version(alliance_tsv)
-    )
-
-    alliance_tbl
+    set_alliance_tbl(alliance_tbl, version_info = alliance_tsv)
 }
 
 
@@ -244,16 +238,34 @@ count_alliance_records <- function(alliance_tbl,
             )
     }
 
-    attributes(record_count) <- c(
-        attributes(record_count),
-        attributes(alliance_tbl)[c("Alliance_Database_Version", "Date_file_generated_UTC")]
-    )
-
-    record_count
+    set_alliance_tbl(record_count, version_info = alliance_tbl)
 }
 
 
 # Alliance helpers --------------------------------------------------------
+
+alliance_class <- c("alliance_tbl", tibble:::tibble_class)
+
+#' Set alliance_tbl
+#'
+#' Set attributes to create an Alliance tbl
+#'
+#' @param data data.frame or tibble to convert to alliance_tbl
+#' @param version_info where to get version and file datetime info
+#'
+#' @noRd
+set_alliance_tbl <- function(data, version_info) {
+
+    attributes(data) <- c(
+        attributes(data),
+        alliance_version(version_info)
+    )
+
+    class(data) <- alliance_class
+
+    data
+}
+
 
 #' Identifies Alliance MOD
 #'
