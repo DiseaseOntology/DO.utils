@@ -189,6 +189,7 @@ read_alliance <- function(alliance_tsv) {
     alliance_tbl
 }
 
+
 #' Download Alliance .tsv.gz File
 #'
 #' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
@@ -202,24 +203,18 @@ read_alliance <- function(alliance_tsv) {
 #' Although it's possbile to directly read a file from the URL, downloading it
 #' promotes reproducibility and ensures future access if needed.
 #'
-#' @param url URL to Alliance file; if not provided, will be requested at console
 #' @param dest_dir path to directory where file will be saved
+#' @param url URL to Alliance file; if not provided, will be requested at console
 #'
 #' @return
 #' Path to saved file.
 #'
 #' @export
-download_alliance_tsv <- function(url, dest_dir) {
+download_alliance_tsv <- function(dest_dir, url = NULL) {
 
     # Ask for URL if missing
     if (missing(url)) {
-        url <- readline(
-            prompt = "Please enter the URL of the file to be downloaded from the
-            Alliance. Files can be found at
-            https://www.alliancegenome.org/downloads. Right-click on the 'tsv'
-            link of a desired file, select 'Copy Link'. Then paste it in this
-            console and press ENTER: "
-        )
+        url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
     }
 
     # build destination file path from URL
