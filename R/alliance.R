@@ -217,16 +217,43 @@ download_alliance_tsv <- function(dest_dir, url = NULL) {
         url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
     }
 
-    # build destination file path from URL
-    date_stamp <- today_datestamp()
-    filename <- stringr::str_replace(
-        basename(url),
-        "(^.*)\\.tsv\\.gz",
-        paste0("\\1-", date_stamp, ".tsv.gz")
-    )
-    dest_file <- file.path(dest_dir, filename)
+    dest_file <- file.path(dest_dir, basename(url))
 
-    # download
+    # avoid overwrite if file exists
+    if (file.exists(dest_file)) {
+        message(dest_file, " exists. Archiving...\n")
+        file_version <- alliance_version(dest_file, as_string = TRUE)
+        archive_file <- stringr::str_replace(
+            dest_file,
+            "\\.tsv\\.gz",
+            paste0("-", file_version, ".tsv.gz")
+        )
+        # if archive already exists validate 2 files are identical & delete
+        # instead of moving file (or fail if not identical)
+        if (file.exists(archive_file)) {
+            dest_file_md5 <- tools::md5sum(dest_file)
+            archive_md5 <- tools::md5sum(archive_file)
+
+            if (dest_file_md5 == archive_md5) {
+                message("Archive file ", archive_file,
+                        " already exists.\n Removing ", dest_file, "\n")
+
+                file.remove(dest_file)
+            } else {
+                stop(
+                    paste0("Archive file ", archive_file,
+                    " already exists but md5sums differ. Aborting...")
+                )
+            }
+        # if archive does not exist rename file with alliance version & file
+        # datetime
+        } else {
+            message("File archived as ", archive_file, "\n")
+            file.rename(dest_file, archive_file)
+        }
+    }
+
+    # download new file
     dl_exit <- utils::download.file(url, dest_file)
 
     assertthat::assert_that(
