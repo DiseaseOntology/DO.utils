@@ -1,3 +1,116 @@
+#' Download Alliance .tsv.gz File
+#'
+#' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
+#' Resources. Files can be found at
+#' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
+#' of a desired file and select "Copy Link" to get the file URL.
+#'
+#' A date stamp indicating download date is added to the base file name.
+#'
+#' @section Recommendation:
+#' Although it's possbile to directly read a file from the URL, downloading it
+#' promotes reproducibility and ensures future access if needed.
+#'
+#' @param dest_dir path to directory where file will be saved
+#' @param url URL to Alliance file; if not provided, will be requested at console
+#'
+#' @return
+#' Path to saved file.
+#'
+#' @export
+download_alliance_tsv <- function(dest_dir, url = NULL) {
+
+    # Ask for URL if missing
+    if (missing(url)) {
+        url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
+    }
+
+    dest_file <- file.path(dest_dir, basename(url))
+
+    # avoid overwrite if file exists
+    if (file.exists(dest_file)) {
+        message(dest_file, " exists. Archiving...\n")
+        file_version <- alliance_version(dest_file, as_string = TRUE)
+        archive_file <- stringr::str_replace(
+            dest_file,
+            "\\.tsv\\.gz",
+            paste0("-", file_version, ".tsv.gz")
+        )
+        # if archive already exists validate 2 files are identical & delete
+        # instead of moving file (or fail if not identical)
+        if (file.exists(archive_file)) {
+            dest_file_md5 <- tools::md5sum(dest_file)
+            archive_md5 <- tools::md5sum(archive_file)
+
+            if (dest_file_md5 == archive_md5) {
+                message("Archive file ", archive_file,
+                        " already exists.\n Removing ", dest_file, "\n")
+
+                file.remove(dest_file)
+            } else {
+                stop(
+                    paste0("Archive file ", archive_file,
+                    " already exists but md5sums differ. Aborting...")
+                )
+            }
+        # if archive does not exist rename file with alliance version & file
+        # datetime
+        } else {
+            message("File archived as ", archive_file, "\n")
+            file.rename(dest_file, archive_file)
+        }
+    }
+
+    # download new file
+    dl_exit <- utils::download.file(url, dest_file)
+
+    assertthat::assert_that(
+        dl_exit == 0,
+        msg = paste0("Download failed with exit code: ", dl_exit)
+    )
+
+    dest_file
+}
+
+
+#' Read Alliance .tsv.gz File
+#'
+#' Reads in a .tsv or .tsv.gz file from the Alliance of Genome Resources
+#' as a tibble. It is recommended that Alliance files be downloaded using
+#' [download_alliance_tsv()].
+#'
+#' @param alliance_tsv path to Alliance .tsv or .tsv.gz file
+#'
+#' @return
+#' A dataframe.
+#'
+#' @export
+read_alliance <- function(alliance_tsv) {
+
+    ## identify header (to skip)
+    ##  Skipping instead of using comment = "#" because data gets truncated
+    ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
+    header_end <- readr::read_lines(alliance_tsv, n_max = 100) %>%
+        stringr::str_detect("^#") %>%
+        which() %>%
+        max()
+
+    alliance_tbl <- readr::read_tsv(
+        alliance_tsv,
+        skip = header_end,
+        col_types = readr::cols(.default = readr::col_character())
+    )
+
+    # set version and date attributes for Alliance data
+    attributes(alliance_tbl) <- c(
+        attributes(alliance_tbl),
+        alliance_version(alliance_tsv)
+    )
+
+    alliance_tbl
+}
+
+
 #' Count Alliance Records
 #'
 #' Counts records in data from the Alliance of Genome Resources. Counts can
@@ -140,136 +253,9 @@ count_alliance_records <- function(alliance_tbl,
 }
 
 
-#' Identifies Alliance MOD
-#'
-#' Replace Alliance MOD codes with recognizable abbreviation or name used by
-#' the Alliance.
-#'
-#' @param x character vector of Alliance "Source" codes
-#'
-#' @noRd
-id_mod <- function(x) {
-    mod_codes <- c(
-        FB = "FlyBase", MGI = "MGD", RGD = "RGD", `OMIM Via RGD` = "RGD",
-        SGD = "SGD", WB = "WormBase", ZFIN = "ZFIN" #, Alliance = "Alliance"
-    )
+# Alliance helpers --------------------------------------------------------
 
-    dplyr::recode(x, !!!mod_codes)
-}
-
-#' Read Alliance .tsv.gz File
-#'
-#' Reads in a .tsv or .tsv.gz file from the Alliance of Genome Resources
-#' as a tibble. It is recommended that Alliance files be downloaded using
-#' [download_alliance_tsv()].
-#'
-#' @param alliance_tsv path to Alliance .tsv or .tsv.gz file
-#'
-#' @return
-#' A dataframe.
-#'
-#' @export
-read_alliance <- function(alliance_tsv) {
-
-    ## identify header (to skip)
-    ##  Skipping instead of using comment = "#" because data gets truncated
-    ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
-    header_end <- readr::read_lines(alliance_tsv, n_max = 100) %>%
-        stringr::str_detect("^#") %>%
-        which() %>%
-        max()
-
-    alliance_tbl <- readr::read_tsv(
-        alliance_tsv,
-        skip = header_end,
-        col_types = readr::cols(.default = readr::col_character())
-    )
-
-    # set version and date attributes for Alliance data
-    attributes(alliance_tbl) <- c(
-        attributes(alliance_tbl),
-        alliance_version(alliance_tsv)
-    )
-
-    alliance_tbl
-}
-
-
-#' Download Alliance .tsv.gz File
-#'
-#' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
-#' Resources. Files can be found at
-#' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
-#' of a desired file and select "Copy Link" to get the file URL.
-#'
-#' A date stamp indicating download date is added to the base file name.
-#'
-#' @section Recommendation:
-#' Although it's possbile to directly read a file from the URL, downloading it
-#' promotes reproducibility and ensures future access if needed.
-#'
-#' @param dest_dir path to directory where file will be saved
-#' @param url URL to Alliance file; if not provided, will be requested at console
-#'
-#' @return
-#' Path to saved file.
-#'
-#' @export
-download_alliance_tsv <- function(dest_dir, url = NULL) {
-
-    # Ask for URL if missing
-    if (missing(url)) {
-        url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
-    }
-
-    dest_file <- file.path(dest_dir, basename(url))
-
-    # avoid overwrite if file exists
-    if (file.exists(dest_file)) {
-        message(dest_file, " exists. Archiving...\n")
-        file_version <- alliance_version(dest_file, as_string = TRUE)
-        archive_file <- stringr::str_replace(
-            dest_file,
-            "\\.tsv\\.gz",
-            paste0("-", file_version, ".tsv.gz")
-        )
-        # if archive already exists validate 2 files are identical & delete
-        # instead of moving file (or fail if not identical)
-        if (file.exists(archive_file)) {
-            dest_file_md5 <- tools::md5sum(dest_file)
-            archive_md5 <- tools::md5sum(archive_file)
-
-            if (dest_file_md5 == archive_md5) {
-                message("Archive file ", archive_file,
-                        " already exists.\n Removing ", dest_file, "\n")
-
-                file.remove(dest_file)
-            } else {
-                stop(
-                    paste0("Archive file ", archive_file,
-                    " already exists but md5sums differ. Aborting...")
-                )
-            }
-        # if archive does not exist rename file with alliance version & file
-        # datetime
-        } else {
-            message("File archived as ", archive_file, "\n")
-            file.rename(dest_file, archive_file)
-        }
-    }
-
-    # download new file
-    dl_exit <- utils::download.file(url, dest_file)
-
-    assertthat::assert_that(
-        dl_exit == 0,
-        msg = paste0("Download failed with exit code: ", dl_exit)
-    )
-
-    dest_file
-}
-
-#' Get Alliance Version (internal)
+#' Get Alliance Version
 #'
 #' Gets version of Alliance of Genome Resources directly from .tsv file header.
 #'
@@ -317,6 +303,25 @@ alliance_version <- function(alliance_tsv, as_string = FALSE) {
 
     vd_list
 }
+
+
+#' Identifies Alliance MOD
+#'
+#' Replace Alliance MOD codes with recognizable abbreviation or name used by
+#' the Alliance.
+#'
+#' @param x character vector of Alliance "Source" codes
+#'
+#' @noRd
+id_mod <- function(x) {
+    mod_codes <- c(
+        FB = "FlyBase", MGI = "MGD", RGD = "RGD", `OMIM Via RGD` = "RGD",
+        SGD = "SGD", WB = "WormBase", ZFIN = "ZFIN" #, Alliance = "Alliance"
+    )
+
+    dplyr::recode(x, !!!mod_codes)
+}
+
 
 #' Remove Curator Duplicates
 #'
