@@ -177,7 +177,7 @@ count_alliance_records <- function(alliance_tbl,
     if (assign_to == "curator") {
         record_df <- alliance_dedup %>%
             dplyr::mutate(
-                curator = id_mod(Source),
+                curator = id_mod(.data$Source),
                 Source = NULL
             )
         count_by <- "curator"
