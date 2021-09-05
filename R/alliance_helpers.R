@@ -50,5 +50,5 @@ rm_dup_curator_alliance <- function(df) {
         dplyr::select(-.data$curator) %>%
         all_duplicated()
 
-    filter(df, !(dup & .data$curator == "Alliance"))
+    dplyr::filter(df, !(dup & .data$curator == "Alliance"))
 }

@@ -87,7 +87,7 @@ install_robot <- function(...) {
     exit <- integer()
 
     # get robot batch file
-    exit[1] <- download.file(
+    exit[1] <- utils::download.file(
         url = "https://raw.githubusercontent.com/ontodev/robot/master/bin/robot",
         destfile = robot_file,
         ...
@@ -103,7 +103,7 @@ install_robot <- function(...) {
     )
 
     # get latest robot.jar file
-    exit[3] <- download.file(
+    exit[3] <- utils::download.file(
         url = "https://github.com/ontodev/robot/releases/latest/download/robot.jar",
         destfile = jar_file,
         ...

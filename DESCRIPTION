@@ -19,6 +19,7 @@ Imports:
     lubridate,
     magrittr,
     purrr,
+    rcrossref,
     readr,
     rentrez,
     rlang,
@@ -26,7 +27,8 @@ Imports:
     stringdist,
     stringr,
     tibble,
-    tidyr
+    tidyr,
+    utils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
