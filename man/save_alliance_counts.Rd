@@ -18,6 +18,6 @@ save_alliance_counts(counts_tbl, file, ...)
 Returns the \code{counts_tbl} with its version info footer invisibly.
 }
 \description{
-Writes Alliance record counts from alliance_tbl to a .csv file with the
-version info of the Alliance file it came from as a footer.
+Writes Alliance record counts to a .csv file with the version info of the
+Alliance file it came from as a footer.
 }

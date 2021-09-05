@@ -244,8 +244,8 @@ count_alliance_records <- function(alliance_tbl,
 
 #' Writes Alliance Counts to File
 #'
-#' Writes Alliance record counts from alliance_tbl to a .csv file with the
-#' version info of the Alliance file it came from as a footer.
+#' Writes Alliance record counts to a .csv file with the version info of the
+#' Alliance file it came from as a footer.
 #'
 #' @param counts_tbl record counts as `alliance_tbl` (e.g. output from
 #' [count_alliance_records()])
