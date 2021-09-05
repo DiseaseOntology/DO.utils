@@ -7,7 +7,7 @@
 #' @param x rentrez API result
 #'
 #' @export
-extract_pmid <- function(x, ...) {
+extract_pmid <- function(x) {
     UseMethod("extract_pmid")
 }
 

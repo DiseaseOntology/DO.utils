@@ -4,7 +4,7 @@
 \alias{extract_pmid}
 \title{Extract PubMed ID}
 \usage{
-extract_pmid(x, ...)
+extract_pmid(x)
 }
 \arguments{
 \item{x}{rentrez API result}
