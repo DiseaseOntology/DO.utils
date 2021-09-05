@@ -24,9 +24,10 @@ concat_pm_citation <- function(file) {
         .x = start_loc,
         .y = end_loc,
         ~ paste0(txt_citations[.x:.y], collapse = " ")
-    ) %>%
-        # remove empty citations
-        {.[!stringr::str_detect(., "^[NA ]+$")]} %>%
+    )
+
+    # remove empty citations
+    citations <- citations[!stringr::str_detect(citations, "^[NA ]+$")] %>%
         # remove extra whitespace
         stringr::str_squish()
 
