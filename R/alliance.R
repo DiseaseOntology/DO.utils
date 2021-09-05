@@ -240,3 +240,51 @@ count_alliance_records <- function(alliance_tbl,
 
     set_alliance_tbl(record_count, version_info = alliance_tbl)
 }
+
+
+#' Writes Alliance Counts to File
+#'
+#' Writes Alliance record counts from alliance_tbl to a .csv file with the
+#' version info of the Alliance file it came from as a footer.
+#'
+#' @param counts_tbl record counts as `alliance_tbl` (e.g. output from
+#' [count_alliance_records()])
+#' @param file file to write to
+#' @param ... arguments to pass on to [readr::write_csv()]
+#'
+#' @returns
+#' Returns the `counts_tbl` with its version info footer invisibly.
+#' @export
+save_alliance_counts <- function(counts_tbl, file, ...) {
+
+    # prepare empty row as spacer between data and version info
+    col_n <- ncol(counts_tbl)
+    tmp_col_names <- paste0("c", 1:col_n)
+    spacer <- matrix("", nrow = 1, ncol = col_n) %>%
+        tibble::as_tibble(.name_repair = ~tmp_col_names)
+
+    # create version info footer (with spacer)
+    v <- alliance_version(counts_tbl)
+    v_footer <- matrix("", nrow = 2, ncol = col_n) %>%
+        tibble::as_tibble(.name_repair = ~tmp_col_names) %>%
+        dplyr::mutate(
+            c1 = names(v),
+            c2 = unlist(v)
+        ) %>%
+        dplyr::add_row(!!!spacer, .before = 1) %>%
+        purrr::set_names(names(counts_tbl))
+
+    tbl_out <- counts_tbl %>%
+        # convert all to character to avoid type mismatch errors
+        dplyr::mutate(
+            dplyr::across(
+                dplyr::everything(),
+                as.character
+            )
+        ) %>%
+        # add version info footer
+        dplyr::bind_rows(v_footer)
+
+    # write converting NA to 0
+    readr::write_csv(tbl_out, file = file, na = "0", ...)
+}
