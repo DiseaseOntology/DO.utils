@@ -7,3 +7,4 @@
 # extra working dirs
 ^TMP/
 ^scripts/
+^data-raw$
