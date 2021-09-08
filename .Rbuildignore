@@ -5,5 +5,7 @@
 ^LICENSE\.md$
 
 # extra working dirs
-^TMP/
-^scripts/
+^TMP$
+^scripts$
+^data-raw$
+^exploration$
