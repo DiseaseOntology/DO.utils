@@ -4,8 +4,9 @@ This R package provides a variety of functions used to support the operations of
 
 Currently, the package provides for:
 
-1. DO Scientometrics
-2. Simplifying common R tasks (basic utilities)
+1. DO Managements/Analysis
+2. DO Scientometrics
+3. Simplifying common R tasks (basic utilities)
 
 _It is very much a work in progress._ If you are interested in contributing, feel free to reach out.
 
@@ -19,6 +20,11 @@ devtools::install_github("allenbaron/DO.utils")
 ```
 
 
+## DO Management/Analysis
+
+Currently includes functions to install and use the system OBO tool [ROBOT](http://robot.obolibrary.org/).
+
+
 ## DO Scientometrics
 
 Here scientometrics focuses on measuring the impact of DO on science. This includes measures that are citation-based (bibliometrics) and those that are not.
@@ -28,8 +34,10 @@ The scientometric capabilities included in this package are:
 - Bibliometrics
     - NCBI Entrez Utilities: `tidy_pubmed_summary()`
     - Citation matching: `match_citations()`
+    - Helpers
+        - `batch_id_converter()`
 - Quantifying DO annotations in the Alliance of Genome Resources model organism databases (MODs)
-    - `download_AGR()`, `read_AGR()`, `count_AGR_records()`
+    - `download_alliance_tsv()`, `read_alliance()`, `count_alliance_records()`, `save_alliance_counts()`
 - Quantifying metrics for DO-dependent Bioconductor packages (DOSE, DO.db) _[INCOMPLETE]_
     - `get_bioc_pkg_stats()`
 
