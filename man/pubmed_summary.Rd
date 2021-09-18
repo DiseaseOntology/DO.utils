@@ -9,7 +9,7 @@ pubmed_summary(
   web_history = NULL,
   config = NULL,
   version = "2.0",
-  retmode = "json",
+  retmode = "xml",
   always_return_list = TRUE,
   ...
 )
@@ -23,8 +23,12 @@ NCBI accession followed by a version number (eg AF123456.1 or AF123456.2)}
 
 \item{config}{vector configuration options passed to \code{httr::GET}}
 
-\item{version, retmode, always_return_list}{preferred defaults are set but
+\item{version, always_return_list}{preferred defaults are set but
 included here for flexibility; see \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} for details}
+
+\item{retmode}{"xml" (default) or "json"; "xml" is preferred because of a
+higher limit. This default is opposite the \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}}
+default.}
 
 \item{...}{character Additional terms to add to the request, see NCBI
 documentation linked to in references for a complete list}
