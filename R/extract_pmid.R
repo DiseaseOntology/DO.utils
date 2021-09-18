@@ -5,19 +5,20 @@
 #' package.
 #'
 #' @param x rentrez API result
+#' @param ... Arguments passed on to methods.
 #'
 #' @export
-extract_pmid <- function(x) {
+extract_pmid <- function(x, ...) {
     UseMethod("extract_pmid")
 }
 
 #' @export
-extract_pmid.pm_search <- function(x) {
+extract_pmid.pm_search <- function(x, ...) {
     x$ids
 }
 
 #' @export
-extract_pmid.pmc_search <- function(x) {
+extract_pmid.pmc_search <- function(x, ...) {
     pmids <- x$pmids
 
     if (length(pmids) == 0) {
@@ -41,7 +42,7 @@ extract_pmid.pmc_search <- function(x) {
 }
 
 #' @export
-extract_pmid.data.frame <- function(x) {
+extract_pmid.data.frame <- function(x, ...) {
     df <- dplyr::rename_with(x, .fn = tolower)
 
     if (!"pmid" %in% names(df)) {
@@ -76,9 +77,10 @@ extract_pmid.data.frame <- function(x) {
 #' only necessary if more than one `linkname` is returned from PubMed.
 #' @param quietly Suppress PubMed linkname message when `linkname` is not
 #' specified and multiple results exist in an `elink` object.
+#' @param ... Unused, included for generic consistency only.
 #'
 #' @export
-extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE) {
+extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE, ...) {
     nm <- names(x$links)
     pm_res <- stringr::str_detect(nm, "_pubmed")
     pm_n <- sum(pm_res)

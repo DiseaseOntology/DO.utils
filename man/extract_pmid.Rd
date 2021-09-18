@@ -4,10 +4,12 @@
 \alias{extract_pmid}
 \title{Extract PubMed ID}
 \usage{
-extract_pmid(x)
+extract_pmid(x, ...)
 }
 \arguments{
 \item{x}{rentrez API result}
+
+\item{...}{Arguments passed on to methods.}
 }
 \description{
 \code{extract_pmid} is a generic function that extracts a vector of PubMed IDs from
