@@ -10,8 +10,7 @@
 #' @return A tibble, where `uid` is the esummary input identifier
 #' @export
 tidy.esummary_list <- function(x, ...) {
-    x %>%
-        tibble::enframe(name = "tmp1", value = "tmp2") %>%
-        tidyr::unnest_wider(col = "tmp2") %>%
-        dplyr::select(-tmp1)
+    tidied <- x %>%
+        tibble::enframe(name = "esummary_id", value = "tmp") %>%
+        tidyr::unnest_wider(col = "tmp")
 }
