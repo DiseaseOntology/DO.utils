@@ -7,15 +7,11 @@
 #' @inheritParams rentrez::entrez_summary
 #' @param version,retmode,always_return_list preferred defaults are set but
 #' included here for flexibility; see [rentrez::entrez_summary()] for details
-#' @param tidy TRUE to return a [tibble][tibble::tibble] (default), or FALSE
-#' to return an `esummary_list`
 #'
 #' @export
 pubmed_summary <- function(id = NULL, web_history = NULL, config = NULL,
                            version = "2.0", retmode = "json",
-                           always_return_list = TRUE, tidy = TRUE, ...) {
-
-    assert_scalar_logical(tidy)
+                           always_return_list = TRUE, ...) {
 
     if (is.null(web_history) & length(id) > 200) {
         web_history <- rentrez::entrez_post("pubmed", id = id)
@@ -32,10 +28,6 @@ pubmed_summary <- function(id = NULL, web_history = NULL, config = NULL,
         config = config,
         ...
     )
-
-    if(tidy) {
-        pm_summary <- tidy(pm_summary)
-    }
 
     pm_summary
 }
