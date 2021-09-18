@@ -73,11 +73,3 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 is_vctr_or_df <- function(x) {
     is.vector(x) || is.data.frame(x)
 }
-
-assert_character <- function(x) {
-    assertthat::assert_that(is.character(x))
-}
-
-assert_numeric <- function(x) {
-    assertthat::assert_that(is.numeric(x))
-}

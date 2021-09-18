@@ -23,3 +23,8 @@ NULL
 #' @noRd
 #' @importFrom rlang .data
 NULL
+
+
+#' @importFrom generics tidy
+#' @export
+generics::tidy
