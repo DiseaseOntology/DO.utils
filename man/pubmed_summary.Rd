@@ -11,6 +11,7 @@ pubmed_summary(
   version = "2.0",
   retmode = "json",
   always_return_list = TRUE,
+  tidy = TRUE,
   ...
 )
 }
@@ -25,6 +26,9 @@ NCBI accession followed by a version number (eg AF123456.1 or AF123456.2)}
 
 \item{version, retmode, always_return_list}{preferred defaults are set but
 included here for flexibility; see \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} for details}
+
+\item{tidy}{TRUE to return a \link[tibble:tibble]{tibble} (default), or FALSE
+to return an \code{esummary_list}}
 
 \item{...}{character Additional terms to add to the request, see NCBI
 documentation linked to in references for a complete list}
