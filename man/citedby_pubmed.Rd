@@ -2,7 +2,7 @@
 % Please edit documentation in R/citedby.R
 \name{citedby_pubmed}
 \alias{citedby_pubmed}
-\title{Gets Cited By List from PubMed}
+\title{Get Cited By List from PubMed}
 \usage{
 citedby_pubmed(
   id = NULL,
@@ -28,7 +28,7 @@ ID in \code{id}.}
 documentation linked to in references for a complete list}
 }
 \description{
-Lists the publications citing those specified by \code{web_history} or \code{id},
-potentially split \code{by_id}. \code{pubmed_citedby} can handle cases where the
-number of input IDs is >200.
+List PubMed IDs of publications citing those specified by \code{web_history} or
+\code{id}, potentially split \code{by_id}. \code{citedby_pubmed} can handle cases where the
+number of input IDs is >200 automatically (unlike \link[rentrez:entrez_link]{rentrez::entrez_link}).
 }
