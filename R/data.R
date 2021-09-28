@@ -3,14 +3,17 @@
 #' A dataset of identifiers for official DO publications, along with their
 #' title and NLM-formatted citations.
 #'
-#' @format A data frame with 8 rows and 8 variables:
+#' @format A data frame with 8 rows and 9 variables:
 #' \describe{
-#'   \item{internal_id}{short-version identifier used by the DO team}
+#'   \item{internal_id}{short-version identifier used by the DO team for DO
+#'   publications}
 #'   \item{pmid}{PubMed ID}
 #'   \item{pmcid}{PubMed Central ID}
 #'   \item{doi}{DOI}
-#'   \item{scopus_eid}{Scopus Electronic Identification}
+#'   \item{scopus_eid}{Scopus Electronic Identification, not the same as a
+#'   Scopus ID}
 #'   \item{semantic_scholar_id}{Semantic Scholar Corpus ID}
+#'   \item{first_author}{Publication First Author}
 #'   \item{title}{Publication Title}
 #'   \item{citation_nlm}{full NLM-formatted citation}
 #' }
