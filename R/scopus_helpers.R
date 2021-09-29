@@ -1,3 +1,11 @@
+# classes
+
+ss_class <- c("scopus_search", "list")
+ss_list_class <- c("scopus_search_list", "list")
+
+
+# internal functions
+
 #' Create a REFTITLE query
 #'
 #' Creates a single quoted REFTITLE (reference title) query for the Scopus
