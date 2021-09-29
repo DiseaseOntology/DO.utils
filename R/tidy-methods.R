@@ -14,3 +14,21 @@ tidy.esummary_list <- function(x, ...) {
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
 }
+
+#' @export
+tidy.scopus_search <- function(x, ...) {
+    # tidy results
+    tidied <- x$entries %>%
+        tibble::enframe(name = "tmp", value = "tmp2") %>%
+        tidyr::unnest_wider(col = "tmp2") %>%
+        dplyr::select(-tmp)
+
+    # add date attribute (last API call)
+    get_stmt <- x$get_statments
+    attributes(tidied) <- c(
+        attributes(tidied),
+        date = dplyr::last(get_stmt[names(get_stmt) == "date"])
+    )
+
+    tidied
+}
