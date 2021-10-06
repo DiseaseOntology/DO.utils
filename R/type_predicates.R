@@ -1,3 +1,14 @@
+#' Invariant test
+#'
+#' Test if a vector is invariant, i.e. has only one value
+#'
+#' @inheritParams dplyr::n_distinct
+#'
+#' @export
+is_invariant <- function(..., na.rm = FALSE) {
+    dplyr::n_distinct(..., na.rm = na.rm) == 1
+}
+
 #' Character value predicates
 #'
 #' These value predicates are designed to identify common values that appear
