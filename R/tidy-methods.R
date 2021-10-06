@@ -13,6 +13,7 @@ tidy.esummary_list <- function(x, ...) {
     tidied <- x %>%
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
+    tidied
 }
 
 #' @export
