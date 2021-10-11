@@ -75,7 +75,7 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
             title,
             function(t) {
                 q <- scopus_title_query(t)
-                res <- scopus_search(
+                res <- rscopus::scopus_search(
                     query = q,
                     api_key = api_key,
                     view = view,
@@ -94,7 +94,7 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
         class(cited_by) <- ss_list_class
         } else {
             q <- scopus_title_query(title)
-            cited_by <- scopus_search(
+            cited_by <- rscopus::scopus_search(
                 query = q,
                 api_key = api_key,
                 view = view,
@@ -111,3 +111,5 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
 
     cited_by
 }
+
+merge_citedby <- function() { }
