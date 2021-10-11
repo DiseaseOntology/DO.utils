@@ -3,16 +3,33 @@
 #' Returns the unique value from a vector of any length if and only if only 1
 #' unique value exists, otherwise returns the original vector
 #'
-#' @param x vector
+#' @inheritParams is_invariant
 #'
 #' @export
 #' @family vector-to-scalar functions
-unique_if_invariant <- function(x) {
-    if (dplyr::n_distinct(x) == 1) {
+unique_if_invariant <- function(x, na.rm = FALSE, ...) {
+    UseMethod("unique_if_invariant")
+}
+
+#' @export
+#' @rdname unique_if_invariant
+unique_if_invariant.character <- function(x, na.rm = FALSE, ...) {
+    if (is_invariant(x, na.rm = na.rm, ...)) {
         return(unique(x))
     }
     x
 }
+
+#' @export
+#' @rdname unique_if_invariant
+unique_if_invariant.numeric <- function(x, na.rm = FALSE,
+                                        tol = sqrt(.Machine$double.eps), ...) {
+    if (is_invariant(x, na.rm = na.rm, tol = tol, ...)) {
+        return(mean(x, na.rm = na.rm))
+    }
+    x
+}
+
 
 #' Collapse vector to string
 #'

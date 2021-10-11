@@ -2,12 +2,24 @@
 % Please edit documentation in R/vctr_to_scalar.R
 \name{unique_if_invariant}
 \alias{unique_if_invariant}
+\alias{unique_if_invariant.character}
+\alias{unique_if_invariant.numeric}
 \title{Collapse invariant vectors}
 \usage{
-unique_if_invariant(x)
+unique_if_invariant(x, na.rm = FALSE, ...)
+
+\method{unique_if_invariant}{character}(x, na.rm = FALSE, ...)
+
+\method{unique_if_invariant}{numeric}(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps), ...)
 }
 \arguments{
-\item{x}{vector}
+\item{x}{vector to be tested}
+
+\item{na.rm}{logical indicating whether to exclude NA values}
+
+\item{...}{unused; for extensibility}
+
+\item{tol}{double, tolerance to use (for numeric vectors)}
 }
 \description{
 Returns the unique value from a vector of any length if and only if only 1
