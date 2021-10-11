@@ -24,5 +24,5 @@ unique_if_invariant <- function(x) {
 #' @export
 #' @family vector-to-scalar functions
 vctr_to_string <- function(x, delim = "; ") {
-    string <- paste0(x, collapse = delim)
+    paste0(x, collapse = delim)
 }
