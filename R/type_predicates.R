@@ -1,3 +1,31 @@
+#' Test if Vector is Invariant
+#'
+#' Test if a vector is invariant (_i.e._ all values are equal, within a given
+#' tolerance for numeric vectors).
+#'
+#' @param x vector to be tested
+#' @param na.rm logical indicating whether to exclude NA values
+#' @param tol double, tolerance to use (for numeric vectors)
+#' @param ... unused; for extensibility
+#'
+#' @export
+is_invariant <- function(x, na.rm = FALSE, ...) {
+    UseMethod("is_invariant")
+}
+
+#' @export
+#' @rdname is_invariant
+is_invariant.character <- function(x, na.rm = FALSE, ...) {
+    dplyr::n_distinct(x, na.rm = na.rm) == 1
+}
+
+#' @export
+#' @rdname is_invariant
+is_invariant.numeric <- function(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps), ...) {
+    diff(range(x, na.rm = na.rm)) < tol
+}
+
+
 #' Character value predicates
 #'
 #' These value predicates are designed to identify common values that appear
