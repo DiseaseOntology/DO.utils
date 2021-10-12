@@ -1,7 +1,8 @@
-#' Collapse invariant vectors
+#' Return Unique Value for Invariant Vectors
 #'
-#' Returns the unique value from a vector of any length if and only if only 1
-#' unique value exists, otherwise returns the original vector
+#' Returns the unique value from a vector of any length, if and only if, only 1
+#' unique value exists (_i.e._ the vector is invariant), otherwise returns the
+#' original vector.
 #'
 #' @inheritParams is_invariant
 #'

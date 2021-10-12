@@ -4,7 +4,7 @@
 \alias{unique_if_invariant}
 \alias{unique_if_invariant.character}
 \alias{unique_if_invariant.numeric}
-\title{Collapse invariant vectors}
+\title{Return Unique Value for Invariant Vectors}
 \usage{
 unique_if_invariant(x, na.rm = FALSE, ...)
 
@@ -22,8 +22,9 @@ unique_if_invariant(x, na.rm = FALSE, ...)
 \item{tol}{double, tolerance to use (for numeric vectors)}
 }
 \description{
-Returns the unique value from a vector of any length if and only if only 1
-unique value exists, otherwise returns the original vector
+Returns the unique value from a vector of any length, if and only if, only 1
+unique value exists (\emph{i.e.} the vector is invariant), otherwise returns the
+original vector.
 }
 \seealso{
 Other vector-to-scalar functions: 
