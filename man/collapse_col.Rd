@@ -4,14 +4,16 @@
 \alias{collapse_col}
 \title{Collapse Column(s)}
 \usage{
-collapse_col(df, .cols, delim = "; ")
+collapse_col(df, .cols, ..., delim = "; ")
 }
 \arguments{
 \item{df}{a data.frame}
 
-\item{delim}{delimiter to place between vector elements}
+\item{.cols}{the name of the columns in the data.frame to collapse}
 
-\item{.col}{the name of the column in the data.frame to collapse}
+\item{...}{arguments passed on to \link{unique_if_invariant}}
+
+\item{delim}{delimiter to place between vector elements}
 }
 \description{
 Collapses values in the column(s) specified, concatenating unique values in
@@ -20,17 +22,24 @@ row including all columns \emph{NOT} specified in \code{.cols}).
 }
 \examples{
 cc_df <- tibble::tibble(
-     x = c(1, 2, 3, 3, 4, 4, 4),
-     y = c("a", "a", "b", "b", "c", "c", "e"),
-     z = c("Z", "Y", "X", "X", "W", "V", "U")
+     w = c(1, 2, 3, 3, 4, 4, 4, 4),
+     x = c("a", "a", "b", "b", "c", "c", "e", "e"),
+     y = c("Z", "Y", "X", "X", "W", "V", "U", "U"),
+     z = c(1.1, 1.3, 1.4, 1.4, 2.0, 1.45, 1.46)
 )
 cc_df
 
 # completely duplicated rows (3-4) are collapsed with any .cols specified
-collapse_col(cc_df, y)
-
 collapse_col(cc_df, x)
-collapse_col(cc_df, z)
-collapse_col(cc_df, c(x, z))
+
+collapse_col(cc_df, w)
+collapse_col(cc_df, y)
+collapse_col(cc_df, c(w, y))
+
+# numeric vectors with differences below the default/specified tolerance
+# are collapsed to the mean, otherwise values are concatenated and .col is
+# convertedd to character
+collapse_col(cc_df, z) # difference in row 7-8 above default tol --> character
+collapse_col(cc_df, z, tol = 0.2) # difference below tol --> mean
 
 }
