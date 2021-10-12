@@ -21,7 +21,8 @@ is_invariant.character <- function(x, na.rm = FALSE, ...) {
 
 #' @export
 #' @rdname is_invariant
-is_invariant.numeric <- function(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps), ...) {
+is_invariant.numeric <- function(x, na.rm = FALSE,
+                                 tol = sqrt(.Machine$double.eps), ...) {
     diff(range(x, na.rm = na.rm)) < tol
 }
 
