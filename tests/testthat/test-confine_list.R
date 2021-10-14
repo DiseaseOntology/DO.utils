@@ -15,8 +15,17 @@ l4_partial_names <- list(
     "a", "b",
     L1 = list(C = "c", D = "d"),
     L2 = list(
-        LL1 = list(F = "f", G = "g"),
+        LL1 = list("F" = "f", G = "g"),
         LL2 = list(H = "h", I = "i")
+    )
+)
+
+l4_nonuniq_names <- list(
+    "a", "b",
+    L1 = list(C = "c", D = "d"),
+    L1 = list(
+        LL1 = list("F" = "f", G = "g"),
+        LL1 = list(H = "h", I = "i")
     )
 )
 
@@ -36,13 +45,17 @@ c4_partial_names <- c(
     L1 = "{\"C\":[\"c\"],\"D\":[\"d\"]}",
     L2 = "{\"LL1\":{\"F\":[\"f\"],\"G\":[\"g\"]},\"LL2\":{\"H\":[\"h\"],\"I\":[\"i\"]}}"
 )
+c4_nonuniq_names <- c(
+    "[\"a\"]", "[\"b\"]",
+    L1 = "{\"C\":[\"c\"],\"D\":[\"d\"]}",
+    L1 = "{\"LL1\":{\"F\":[\"f\"],\"G\":[\"g\"]},\"LL1\":{\"H\":[\"h\"],\"I\":[\"i\"]}}"
+)
 
 # Helper Functions --------------------------------------------------------
 
 round_trip <- function(x) {
     release_list(confine_list(x))
 }
-
 
 
 # Tests -------------------------------------------------------------------
@@ -57,6 +70,11 @@ test_that("produces character of correct length", {
         character(),
         length(l4_partial_names)
     )
+    expect_vector(
+        confine_list(l4_nonuniq_names),
+        character(),
+        length(l4_nonuniq_names)
+    )
 })
 
 test_that("output is correct", {
@@ -65,6 +83,7 @@ test_that("output is correct", {
     expect_identical(confine_list(l4), c4)
     expect_identical(confine_list(l4_named), c4_named)
     expect_identical(confine_list(l4_partial_names), c4_partial_names)
+    expect_identical(confine_list(l4_nonuniq_names), c4_nonuniq_names)
 })
 
 test_that("structure is preserved", {
@@ -73,4 +92,5 @@ test_that("structure is preserved", {
     expect_identical(l4, round_trip(l4))
     expect_identical(l4_named, round_trip(l4_named))
     expect_identical(l4_partial_names, round_trip(l4_partial_names))
+    expect_identical(l4_nonuniq_names, round_trip(l4_nonuniq_names))
 })
