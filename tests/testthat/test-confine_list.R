@@ -19,7 +19,6 @@ l4_partial_names <- list(
         LL2 = list(H = "h", I = "i")
     )
 )
-
 l4_nonuniq_names <- list(
     "a", "b",
     L1 = list(C = "c", D = "d"),
@@ -28,28 +27,8 @@ l4_nonuniq_names <- list(
         LL1 = list(H = "h", I = "i")
     )
 )
+)
 
-# expected character with JSON data
-c2 <- c("[\"a\"]", "[\"b\"]")
-c3 <- c("[\"a\"]", "[\"b\"]", "[[\"c\"],[\"d\"]]")
-c4 <- c("[\"a\"]", "[\"b\"]", "[[\"c\"],[\"d\"]]",
-        "[[[\"e\"],[\"f\"]],[[\"g\"],[\"h\"]]]")
-c4_named <- c(
-    A = "[\"a\"]",
-    B = "[\"b\"]",
-    L1 = "{\"C\":[\"c\"],\"D\":[\"d\"]}",
-    L2 = "{\"LL1\":{\"F\":[\"f\"],\"G\":[\"g\"]},\"LL2\":{\"H\":[\"h\"],\"I\":[\"i\"]}}"
-)
-c4_partial_names <- c(
-    "[\"a\"]", "[\"b\"]",
-    L1 = "{\"C\":[\"c\"],\"D\":[\"d\"]}",
-    L2 = "{\"LL1\":{\"F\":[\"f\"],\"G\":[\"g\"]},\"LL2\":{\"H\":[\"h\"],\"I\":[\"i\"]}}"
-)
-c4_nonuniq_names <- c(
-    "[\"a\"]", "[\"b\"]",
-    L1 = "{\"C\":[\"c\"],\"D\":[\"d\"]}",
-    L1 = "{\"LL1\":{\"F\":[\"f\"],\"G\":[\"g\"]},\"LL1\":{\"H\":[\"h\"],\"I\":[\"i\"]}}"
-)
 
 # Helper Functions --------------------------------------------------------
 
@@ -75,15 +54,6 @@ test_that("produces character of correct length", {
         character(),
         length(l4_nonuniq_names)
     )
-})
-
-test_that("output is correct", {
-    expect_identical(confine_list(l2), c2)
-    expect_identical(confine_list(l3), c3)
-    expect_identical(confine_list(l4), c4)
-    expect_identical(confine_list(l4_named), c4_named)
-    expect_identical(confine_list(l4_partial_names), c4_partial_names)
-    expect_identical(confine_list(l4_nonuniq_names), c4_nonuniq_names)
 })
 
 test_that("structure is preserved", {
