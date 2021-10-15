@@ -21,8 +21,8 @@
 confine_list <- function(.list) {
     purrr::map_chr(
         .list,
-        jsonlite::toJSON,
-        null = "null"
+        RJSONIO::toJSON,
+        asIs = TRUE
     )
 }
 
@@ -31,9 +31,6 @@ confine_list <- function(.list) {
 release_list <- function(.json_chr) {
     purrr::map(
         .json_chr,
-        jsonlite::fromJSON,
-        simplifyVector = TRUE,
-        simplifyDataFrame = FALSE,
-        simplifyMatrix = FALSE
+        RJSONIO::fromJSON,
     )
 }
