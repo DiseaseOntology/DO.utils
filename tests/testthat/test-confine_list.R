@@ -27,6 +27,15 @@ l4_nonuniq_names <- list(
         LL1 = list(H = "h", I = "i")
     )
 )
+l4_part_names_null <- l4_named <- list(
+    "a", "b",
+    # NULL no name
+    L1 = list(NULL, D = "d"),
+    L2 = list(
+        LL1 = list(F = "f", G = "g"),
+        # NULL with name
+        LL2 = list(H = "h", I = NULL)
+    )
 )
 
 
@@ -54,6 +63,11 @@ test_that("produces character of correct length", {
         character(),
         length(l4_nonuniq_names)
     )
+    expect_vector(
+        confine_list(l4_part_names_null),
+        character(),
+        length(l4_part_names_null)
+    )
 })
 
 test_that("structure is preserved", {
@@ -63,4 +77,5 @@ test_that("structure is preserved", {
     expect_identical(l4_named, round_trip(l4_named))
     expect_identical(l4_partial_names, round_trip(l4_partial_names))
     expect_identical(l4_nonuniq_names, round_trip(l4_nonuniq_names))
+    expect_identical(l4_part_names_null, round_trip(l4_part_names_null))
 })
