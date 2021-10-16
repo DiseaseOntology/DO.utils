@@ -7,7 +7,7 @@ l4_named <- list(
     A = "a", B = "b",
     L1 = list(C = "c", D = "d"),
     L2 = list(
-        LL1 = list(F = "f", G = "g"),
+        LL1 = list("F" = "f", G = "g"),
         LL2 = list(H = "h", I = "i")
     )
 )
@@ -32,7 +32,7 @@ l4_part_names_null <- list(
     # NULL no name
     L1 = list(NULL, D = "d"),
     L2 = list(
-        LL1 = list(F = "f", G = "g"),
+        LL1 = list("F" = "f", G = "g"),
         # NULL with name
         LL2 = list(H = "h", I = NULL)
     )
@@ -42,7 +42,7 @@ l4_part_names_na <- list(
     # NA no name
     L1 = list(NA, D = "d"),
     L2 = list(
-        LL1 = list(F = "f", G = "g"),
+        LL1 = list("F" = "f", G = "g"),
         # NA with name
         LL2 = list(H = "h", I = NA)
     )
