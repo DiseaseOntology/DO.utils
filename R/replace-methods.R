@@ -42,3 +42,34 @@ replace_na.list <- function(data, replace, ...) {
     class(out) <- class(data)
     out
 }
+
+#' Replace NULLs with specified value.
+#'
+#' Replace NULLs (in lists) with specified value. `replace_null` can handle
+#' nested lists but will skip internal components that are not lists
+#' themselves (e.g. data.frames, matrices, etc). NOTE that `replace` will also
+#' be added to empty lists (i.e. `list()`) but not zero.
+#'
+#' @param data A list (or list column in a data frame).
+#' @param replace A single value to use for replacement.
+#'
+#' @export
+replace_null <- function(data, replace) {
+
+    assertthat::assert_that(is_scalar_vector(replace))
+
+    # replace NULL in top-level vectors
+    out <- data
+    out <- purrr::map_if(out, .p = is.null, ~ replace)
+
+    # identify & replace NULL in nested lists
+    out <- purrr::map_if(
+        out,
+        .p = ~ "list" %in% class(.x),
+        .f = ~ replace_null(.x, replace)
+    )
+
+    # restore special class(es) of list (if any -- no guarantees here)
+    class(out) <- class(data)
+    out
+}
