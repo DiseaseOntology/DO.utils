@@ -7,27 +7,17 @@
 \usage{
 confine_list(.list)
 
-release_list(.json_chr, nullvalue = NA)
+release_list(.json_chr)
 }
 \arguments{
-\item{.list}{a (nested) list}
+\item{.list}{A (nested) list.}
 
-\item{.json_chr}{a character vector containing JSON representation of list
-elements below the top level}
+\item{.json_chr}{A character vector containing the JSON representation of
+(nested) list elements below the top level.}
 }
 \description{
 These functions convert a (nested) list to or from a character vector of the
-same length, preserving or restoring the list structure and values with JSON
-strings. They are primarily designed to preserve the structure of simple
-nested lists (no internal data.frames, matrices, or arrays), as would result
-from an API call converted to a list without any conversion
-(e.g. flattening).
+same length, preserving and restoring the list structure and values using
+JSON strings. They do not perform \emph{any} flattening or simplification and the
+JSON strings are verbose.
 }
-\section{NOTE}{
-
-These could potentially be made to handle more diverse lists by including
-options that control how data.frames & matrices are managed, ensuring
-to/from procedures are linked and occur in predictable ways (see
-arguments for \href{jsonlite::fromJSON}{jsonlite::to/fromJSON} for details).
-}
-
