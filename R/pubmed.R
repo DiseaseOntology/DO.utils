@@ -34,3 +34,39 @@ pubmed_summary <- function(id = NULL, web_history = NULL, config = NULL,
 
     pm_summary
 }
+
+
+#' Truncate PubMed Author List (internal)
+#'
+#' Truncate Authors for any PubMed article to 120 and list the number of
+#' additional authors in the subsequent Author position.
+#'
+#' @section NOTE:
+#' The number of authors retained was determined based on JSON string conversion
+#' length and Google Sheets cell character limit. The maximum string conversion
+#' of authors to json is ~ 400 / author (mean ~ 290). Google Sheets character
+#' limit / cell = 50,000. 120 authors is a conservative limit that's unlikely
+#' to cause problems (and is plenty long).
+#'
+#' @param pubmed_df A tidy data frame, as produced by [tidy()] on a PubMed
+#' `esummary_list`
+#'
+truncate_authors <- function(pubmed_df) {
+    dplyr::mutate(
+        pubmed_df,
+        Authors = purrr::map(
+            pubmed_df$Authors,
+            function(author_list) {
+                n <- length(author_list)
+                if (n > 120) {
+                    author_list[[121]][1] <- paste0(
+                        "+ ", n - 120, " additional authors"
+                    )
+                    author_list[[121]][2:length(author_list[[121]])] <- NULL
+                    author_list[122:n] <- NULL
+                }
+                author_list
+            }
+        )
+    )
+}
