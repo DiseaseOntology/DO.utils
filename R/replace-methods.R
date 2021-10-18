@@ -62,6 +62,13 @@ replace_null <- function(data, replace) {
     out <- data
     out <- purrr::map_if(out, .p = is.null, ~ replace)
 
+    # replace NULL in empty lists
+    out <- purrr::map_if(
+        out,
+        .p = ~class(.x) == "list" && length(.x) == 0,
+        ~ list(replace)
+    )
+
     # identify & replace NULL in nested lists
     out <- purrr::map_if(
         out,
