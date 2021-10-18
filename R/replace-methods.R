@@ -1,9 +1,14 @@
 #' Replace NAs with specified value.
 #'
-#' Replace NAs in lists with specified value. This method of `replace_na` can
-#' handle nested lists but will skip internal components that are not lists or
-#' simple vectors themselves (e.g. data.frames, matrices, etc).
+#' Replace all NAs in lists with specified value. This method of `replace_na`
+#' will recurse into nested lists but will skip internal components that are
+#' not lists or simple vectors themselves (e.g. data.frames, matrices, etc).
+#' NOTE that coercion will occur where vectors in the list are of different
+#' types than `replace`, with either the vector or `replace` being coerced
+#' according to type order:
+#' logical < integer < numeric < complex < character < list.
 #'
+#' @inheritParams tidyr::replace_na
 #' @export
 replace_na.list <- function(data, replace, ...) {
 
