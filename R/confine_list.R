@@ -16,6 +16,7 @@
 #' @param .list a (nested) list
 #' @param .json_chr a character vector containing JSON representation of list
 #' elements below the top level
+#' @inheritParams RJSONIO::fromJSON
 #'
 #' @export
 confine_list <- function(.list) {
@@ -28,9 +29,11 @@ confine_list <- function(.list) {
 
 #' @rdname confine_list
 #' @export
-release_list <- function(.json_chr) {
+release_list <- function(.json_chr, nullvalue = NA) {
     purrr::map(
         .json_chr,
         RJSONIO::fromJSON,
+        nullvalue = nullvalue,
+        simplify = TRUE
     )
 }

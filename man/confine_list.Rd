@@ -7,7 +7,7 @@
 \usage{
 confine_list(.list)
 
-release_list(.json_chr)
+release_list(.json_chr, nullvalue = NA)
 }
 \arguments{
 \item{.list}{a (nested) list}
