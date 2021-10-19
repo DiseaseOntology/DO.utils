@@ -17,6 +17,7 @@ Imports:
     assertthat,
     dplyr,
     generics,
+    jsonlite,
     lubridate,
     magrittr,
     purrr,
