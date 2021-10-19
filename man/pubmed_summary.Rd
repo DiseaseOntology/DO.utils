@@ -4,37 +4,25 @@
 \alias{pubmed_summary}
 \title{Get PubMed Summary}
 \usage{
-pubmed_summary(
-  id = NULL,
-  web_history = NULL,
-  config = NULL,
-  version = "2.0",
-  retmode = "xml",
-  always_return_list = TRUE,
-  ...
-)
+pubmed_summary(input, config = NULL, version = "2.0", retmode = "xml", ...)
 }
 \arguments{
-\item{id}{vector with unique ID(s) for records in database \code{db}.
-In the case of sequence databases these IDs can take form of an
-NCBI accession followed by a version number (eg AF123456.1 or AF123456.2)}
+\item{input}{One of the following: 1) A vector with unique PubMed IDs, 2) a
+list of vectors with unique PubMed IDs (for example, output from
+\verb{citedby_pmid(.... by_id = TRUE)} > \code{extract_pmid()}), OR 3) a
+\code{web_history} object (see NCBI Entrez API documentation for information).}
 
-\item{web_history}{A web_history object}
-
-\item{config}{vector configuration options passed to \code{httr::GET}}
-
-\item{version, always_return_list}{preferred defaults are set but
-included here for flexibility; see \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} for details}
+\item{version, always_return_list}{Arguments included here for flexibility,
+but best left with the defaults as set; see \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}}
+for details.}
 
 \item{retmode}{"xml" (default) or "json"; "xml" is preferred because of a
-higher limit. This default is opposite the \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}}
-default.}
-
-\item{...}{character Additional terms to add to the request, see NCBI
-documentation linked to in references for a complete list}
+higher response limit. This default is opposite the
+\code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} default.}
 }
 \description{
 Retrieves PubMed Summary information for specified publications. Acts as a
-simple wrapper around \link[rentrez:entrez_summary]{rentrez::entrez_summary} to allow larger number of
-IDs as input (using \link[rentrez:entrez_post]{rentrez::entrez_post}).
+wrapper around \link[rentrez:entrez_summary]{rentrez::entrez_summary} to allow a larger number of
+IDs as input (using \link[rentrez:entrez_post]{rentrez::entrez_post}) and for input as an ID list (in
+addition to an \code{id} vector or \code{web_history} object).
 }
