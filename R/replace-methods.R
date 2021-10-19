@@ -80,3 +80,64 @@ replace_null <- function(data, replace) {
     class(out) <- class(data)
     out
 }
+
+
+#' Replace Blanks with Specified Value
+#'
+#' Replace blanks with specified value.
+#'
+#' @returns
+#'
+#' * If `data` is a vector, `replace_blank()` returns a vector of the same class
+#' as `data` (only blanks in character vectors are modified).
+#'
+#' * If `data` is a list, `replace_blank()` will recurse into the list (as
+#' necessary) and replace all blank values in character/list elements but will
+#' skip other internal components (e.g. data.frames, matrices, etc).
+#'
+#' @param data A data object.
+#' @param replace A string to use for replacement.
+#' @param ... Additional arguments passed on to methods. Not currently used.
+#'
+#' @export
+replace_blank <- function(data, replace = NA_character_, ...) {
+    UseMethod("replace_blank")
+}
+
+#' @export
+replace_blank.default <- function(data, replace = NA_character_, ...) {
+
+    assertthat::assert_that(rlang::is_scalar_character(replace))
+    if (!is.character(data)) {
+        return(data)
+    }
+    data[is_blank(data)] <- replace
+    data
+}
+
+#' @export
+replace_blank.list <- function(data, replace = NA_character_, ...) {
+
+    assertthat::assert_that(rlang::is_scalar_character(replace))
+
+    # identify vector elements
+    out <- data
+    element_class <- purrr::map_chr(
+        out,
+        function(.l) {
+            # use the lowest level class
+            c <- class(.l)
+            c[[length(c)]]
+        }
+    )
+
+    out <- purrr::map_if(
+        out,
+        ~ is.character(.x) | is.list(.x),
+        ~ replace_blank(data = .x, replace = replace)
+    )
+
+    # restore special class(es) of list (if any -- no guarantees here)
+    class(out) <- class(data)
+    out
+}
