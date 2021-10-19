@@ -2,7 +2,7 @@
 % Please edit documentation in R/replace-methods.R
 \name{replace_null}
 \alias{replace_null}
-\title{Replace NULLs with specified value.}
+\title{Replace NULLs with specified value}
 \usage{
 replace_null(data, replace)
 }
@@ -12,8 +12,8 @@ replace_null(data, replace)
 \item{replace}{A single value to use for replacement.}
 }
 \description{
-Replace NULLs (in lists) with specified value. \code{replace_null} can handle
-nested lists but will skip internal components that are not lists
+Replace NULLs (in lists) with specified value. \code{replace_null} will recurse
+into nested lists but will skip internal components that are not lists
 themselves (e.g. data.frames, matrices, etc). NOTE that \code{replace} will also
-be added to empty lists (i.e. \code{list()}) but not zero.
+be added to empty lists (i.e. \code{list()}) but not other zero-length vectors.
 }

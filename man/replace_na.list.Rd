@@ -2,7 +2,7 @@
 % Please edit documentation in R/replace-methods.R
 \name{replace_na.list}
 \alias{replace_na.list}
-\title{Replace NAs with specified value.}
+\title{Replace NAs with specified value}
 \usage{
 \method{replace_na}{list}(data, replace, ...)
 }

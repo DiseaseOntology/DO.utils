@@ -1,4 +1,4 @@
-#' Replace NAs with specified value.
+#' Replace NAs with specified value
 #'
 #' Replace all NAs in lists with specified value. This method of `replace_na`
 #' will recurse into nested lists but will skip internal components that are
@@ -9,10 +9,11 @@
 #' logical < integer < numeric < complex < character < list.
 #'
 #' @inheritParams tidyr::replace_na
+#'
 #' @export
 replace_na.list <- function(data, replace, ...) {
 
-    assertthat::assert_that(is_scalar_vector(replace))
+    assertthat::assert_that(rlang::is_scalar_vector(replace))
 
     # identify vector elements (standard replace_na should work for these)
     out <- data
@@ -43,12 +44,12 @@ replace_na.list <- function(data, replace, ...) {
     out
 }
 
-#' Replace NULLs with specified value.
+#' Replace NULLs with specified value
 #'
-#' Replace NULLs (in lists) with specified value. `replace_null` can handle
-#' nested lists but will skip internal components that are not lists
+#' Replace NULLs (in lists) with specified value. `replace_null` will recurse
+#' into nested lists but will skip internal components that are not lists
 #' themselves (e.g. data.frames, matrices, etc). NOTE that `replace` will also
-#' be added to empty lists (i.e. `list()`) but not zero.
+#' be added to empty lists (i.e. `list()`) but not other zero-length vectors.
 #'
 #' @param data A list (or list column in a data frame).
 #' @param replace A single value to use for replacement.
@@ -56,7 +57,7 @@ replace_na.list <- function(data, replace, ...) {
 #' @export
 replace_null <- function(data, replace) {
 
-    assertthat::assert_that(is_scalar_vector(replace))
+    assertthat::assert_that(rlang::is_scalar_vector(replace))
 
     # replace NULL in top-level vectors
     out <- data
