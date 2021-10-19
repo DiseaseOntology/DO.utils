@@ -1,12 +1,12 @@
 #' Get Cited By List from PubMed
 #'
 #' List PubMed IDs of publications citing those specified by `web_history` or
-#' `id`, potentially split `by_id`. `citedby_pubmed` can handle cases where the
+#' `id`, potentially split `by_id`. `citedby_pmid()` can handle cases where the
 #' number of input IDs is >200 automatically (unlike [rentrez::entrez_link]).
 #'
 #' @inheritParams rentrez::entrez_link
 #' @export
-citedby_pubmed <- function(id = NULL, web_history = NULL, by_id = FALSE,
+citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
                            config = NULL, ...) {
 
     if (is.null(web_history) & length(id) > 200) {
