@@ -90,14 +90,15 @@ read_alliance <- function(alliance_tsv) {
     ## identify header (to skip), if any
     ##  Skipping instead of using comment = "#" because data gets truncated
     ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
-    comment_lines <- readr::read_lines(alliance_tsv, n_max = 100) %>%
-        stringr::str_detect("^#") %>%
+    header_lines <- readr::read_lines(alliance_tsv, n_max = 100) %>%
+        stringr::str_trim() %>%
+        stringr::str_detect("^#|^$") %>%
         which()
 
-    if (length(comment_lines) == 0) {
+    if (length(header_lines) == 0) {
         header_end = 0
     } else {
-        header_end <- max(comment_lines)
+        header_end <- max(header_lines)
     }
 
     alliance_tbl <- readr::read_tsv(
