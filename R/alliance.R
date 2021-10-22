@@ -131,6 +131,7 @@ read_alliance <- function(alliance_tsv) {
 #' @param record_lvl a string indicating the desired specificity of records;
 #' one of "doid" or "unique"
 #' @param by_type logical indicating whether to count by object type
+#' @param term_subset character vector of DOIDs to limit counts to
 #' @param pivot logical indicating whether to pivot values to type columns;
 #' ignored if type = FALSE
 #' @param assign_to how to assign records when counting; one of "species" or
@@ -142,18 +143,19 @@ read_alliance <- function(alliance_tsv) {
 #' optionally, object type (`by_type`).
 #'
 #' @export
-count_alliance_records <- function(alliance_tbl,
+count_alliance_records <- function(alliance_tbl, term_subset = NULL,
                                    by_type = TRUE, pivot = TRUE,
                                    record_lvl = c("doid", "unique"),
                                    assign_to = c("species", "curator")) {
 
     # validate arguments
-    record_lvl <- match.arg(record_lvl, choices = c("doid", "unique"))
-    assign_to <- match.arg(assign_to, choices = c("species", "curator"))
     assertthat::assert_that(
+        is.null(term_subset) || is.character(term_subset),
         rlang::is_scalar_logical(by_type),
         rlang::is_scalar_logical(pivot)
     )
+    record_lvl <- match.arg(record_lvl, choices = c("doid", "unique", "type"))
+    assign_to <- match.arg(assign_to, choices = c("species", "curator"))
 
     # tidy input data
     alliance_dedup <- dplyr::filter(
@@ -173,6 +175,10 @@ count_alliance_records <- function(alliance_tbl,
             ),
             DBObjectType = NULL
         )
+
+    if (!is.null(term_subset)) {
+        alliance_dedup <- dplyr::filter(alliance_dedup, DOID %in% term_subset)
+    }
 
     if (assign_to == "curator") {
         record_df <- alliance_dedup %>%

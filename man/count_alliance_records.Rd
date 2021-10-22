@@ -6,6 +6,7 @@
 \usage{
 count_alliance_records(
   alliance_tbl,
+  term_subset = NULL,
   by_type = TRUE,
   pivot = TRUE,
   record_lvl = c("doid", "unique"),
@@ -15,6 +16,8 @@ count_alliance_records(
 \arguments{
 \item{alliance_tbl}{a dataframe derived from Alliance data (usually a
 \href{https://www.alliancegenome.org/downloads}{downloaded .tsv file})}
+
+\item{term_subset}{character vector of DOIDs to limit counts to}
 
 \item{by_type}{logical indicating whether to count by object type}
 
