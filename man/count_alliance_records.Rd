@@ -9,7 +9,7 @@ count_alliance_records(
   term_subset = NULL,
   by_type = TRUE,
   pivot = TRUE,
-  record_lvl = c("doid", "unique"),
+  record_lvl = "disease-object",
   assign_to = c("species", "curator")
 )
 }
@@ -19,13 +19,14 @@ count_alliance_records(
 
 \item{term_subset}{character vector of DOIDs to limit counts to}
 
-\item{by_type}{logical indicating whether to count by object type}
+\item{by_type}{logical indicating whether to count by Alliance object type
+(i.e. gene, allele, model)}
 
 \item{pivot}{logical indicating whether to pivot values to type columns;
-ignored if type = FALSE}
+ignored if by_type = FALSE}
 
 \item{record_lvl}{a string indicating the desired specificity of records;
-one of "doid" or "unique"}
+one of "disease-object", "unique", or "object"}
 
 \item{assign_to}{how to assign records when counting; one of "species" or
 "curator" (i.e. the organization responsible for curating the record)}
@@ -44,11 +45,13 @@ Alliance Disease Associations File. \emph{There is no guarantee that any/all}
 \emph{options will work for other files.}
 }
 \details{
-A record is, as defined here, is the information annotated to a unique object
-(gene, allele, model). That means for the following \code{record_lvl} values:
+The type of record information to use in counting should be specified with
+\code{record_lvl} which accepts the following values:
 \itemize{
-\item "doid" counts unique DOID-object annotations
-\item "unique" counts full non-duplicate records
+\item "full_record" counts full non-duplicate records
+\item "disease-object" counts unique disease-object combinations
+\item "disease" counts unique diseases
+\item "object" counts unique MOD objects (i.e. gene, allele, model identifiers)
 }
 }
 \section{NOTE}{
