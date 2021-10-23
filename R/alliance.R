@@ -124,9 +124,13 @@ read_alliance <- function(alliance_tsv) {
 #' A record is, as defined here, is the information annotated to a unique object
 #' (gene, allele, model). That means for the following `record_lvl` values:
 #'
-#' * "disease-object" counts unique DOID-object annotations
-#'
 #' * "full_record" counts full non-duplicate records
+#'
+#' * "disease-object" counts unique disease-object combinations
+#'
+#' * "disease" counts unique diseases
+#'
+#' * "object" counts unique MOD objects (i.e. gene, allele, model identifiers)
 #'
 #' @section NOTE:
 #' For disease-related data, some exact duplicates (reason unknown) and records
@@ -136,7 +140,7 @@ read_alliance <- function(alliance_tsv) {
 #' @param alliance_tbl a dataframe derived from Alliance data (usually a
 #' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
 #' @param record_lvl a string indicating the desired specificity of records;
-#' one of "disease-object" or "full_record"
+#' one of "full_record", "disease-object" (default), "disease" or "object"
 #' @param by_type logical indicating whether to count by object type
 #' @param term_subset character vector of DOIDs to limit counts to
 #' @param pivot logical indicating whether to pivot values to type columns;
@@ -163,7 +167,7 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
     )
     record_lvl <- match.arg(
         record_lvl,
-        choices = c("full_record", "disease-object")
+        choices = c("full_record", "disease-object", "disease", "object")
     )
     assign_to <- match.arg(assign_to, choices = c("species", "curator"))
 
@@ -205,8 +209,10 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
     # set columns to use for record counts
     cols_include <- switch(
         record_lvl,
+        full_record = names(record_df),
         "disease-object" = c("DBObjectID", "DOID"),
-        full_record = names(record_df)
+        disease = "DOID",
+        object = "DBObjectID"
     )
 
     # set name of count column
