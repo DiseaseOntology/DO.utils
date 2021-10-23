@@ -20,7 +20,7 @@
 #' @export
 download_alliance_tsv <- function(dest_dir, url = NULL) {
 
-    # Ask for URL if missing
+    # Use default URL, if missing
     if (missing(url)) {
         url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
     }
@@ -121,8 +121,8 @@ read_alliance <- function(alliance_tsv) {
 #' Alliance Disease Associations File. _There is no guarantee that any/all_
 #' _options will work for other files._
 #'
-#' A record is, as defined here, is the information annotated to a unique object
-#' (gene, allele, model). That means for the following `record_lvl` values:
+#' The type of record information to use in counting should be specified with
+#' `record_lvl` which accepts the following values:
 #'
 #' * "full_record" counts full non-duplicate records
 #'
@@ -138,15 +138,16 @@ read_alliance <- function(alliance_tsv) {
 #' have existed. These types of duplicates are removed prior to record counts.
 #'
 #' @param alliance_tbl a dataframe derived from Alliance data (usually a
-#' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
-#' @param record_lvl a string indicating the desired specificity of records;
-#' one of "full_record", "disease-object" (default), "disease" or "object"
-#' @param by_type logical indicating whether to count by object type
+#'     [downloaded .tsv file](https://www.alliancegenome.org/downloads))
 #' @param term_subset character vector of DOIDs to limit counts to
+#' @param by_type logical indicating whether to count by Alliance object type
+#'     (i.e. gene, allele, model)
 #' @param pivot logical indicating whether to pivot values to type columns;
-#' ignored if type = FALSE
+#'     ignored if by_type = FALSE
+#' @param record_lvl a string indicating the desired specificity of records;
+#'     one of "disease-object", "unique", or "object"
 #' @param assign_to how to assign records when counting; one of "species" or
-#' "curator" (i.e. the organization responsible for curating the record)
+#'     "curator" (i.e. the organization responsible for curating the record)
 #'
 #' @return
 #' A summary tibble with the count of unique object annotations defined by
