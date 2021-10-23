@@ -189,7 +189,8 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
                 levels = c("gene", "allele", "model")
             ),
             DBObjectType = NULL
-        )
+        ) %>%
+        dplyr::rename(species = SpeciesName)
 
     if (!is.null(term_subset)) {
         alliance_dedup <- dplyr::filter(alliance_dedup, DOID %in% term_subset)
@@ -201,10 +202,8 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
                 curator = id_mod(.data$Source),
                 Source = NULL
             )
-        count_by <- "curator"
     } else {
         record_df <- alliance_dedup
-        count_by <- "SpeciesName"
     }
 
     # set columns to use for record counts
@@ -220,7 +219,9 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
     count_col_nm <- paste0(record_lvl, "_n")
 
     if (isTRUE(by_type)) {
-        count_by <- c(count_by, "obj_type")
+        count_by <- c(assign_to, "obj_type")
+    } else {
+        count_by <- assign_to
     }
 
     record_count <- record_df %>%
@@ -245,7 +246,7 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
             ) %>%
             dplyr::rename_with(
                 .fn = ~paste0(.x, ".", record_lvl, "_n"),
-                .cols = -count_by[1]
+                .cols = -assign_to
             )
     }
 
