@@ -4,20 +4,20 @@ alliance_class <- c("alliance_tbl", tibble:::tibble_class)
 #'
 #' Set attributes to create an Alliance tbl
 #'
-#' @param data data.frame or tibble to convert to alliance_tbl
+#' @param df data.frame or tibble to convert to alliance_tbl
 #' @param version_info where to get version and file datetime info
 #'
 #' @noRd
-set_alliance_tbl <- function(data, version_info) {
+set_alliance_tbl <- function(df, version_info) {
 
-    attributes(data) <- c(
-        attributes(data),
+    attributes(df) <- c(
+        attributes(df),
         alliance_version(version_info)
     )
 
-    class(data) <- alliance_class
+    class(df) <- alliance_class
 
-    data
+    df
 }
 
 
