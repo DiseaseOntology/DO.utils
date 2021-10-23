@@ -209,6 +209,9 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
         full_record = names(record_df)
     )
 
+    # set name of count column
+    count_col_nm <- paste0(record_lvl, "_n")
+
     if (isTRUE(by_type)) {
         record_count <- record_df %>%
             dplyr::select(c(count_by, cols_include, "obj_type")) %>%
@@ -221,18 +224,18 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
         record_count <- record_count %>%
             dplyr::count(
                 dplyr::across(c(count_by, "obj_type")),
-                name = "record_n"
+                name = count_col_nm
             )
 
         if (isTRUE(pivot)) {
             record_count <- record_count %>%
                 tidyr::pivot_wider(
                     names_from = .data$obj_type,
-                    values_from = .data$record_n
+                    values_from = count_col_nm
                 ) %>%
                 # dplyr::select(curator, gene, allele, model) %>%
                 dplyr::rename_with(
-                    .fn = ~paste0(.x, "_n"),
+                    .fn = ~paste0(.x, ".", record_lvl, "_n"),
                     .cols = -count_by
                 )
         }
@@ -250,7 +253,7 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
         record_count <- record_count %>%
             dplyr::count(
                 dplyr::across(count_by),
-                name = "record_n"
+                name = count_col_nm
             )
     }
 
