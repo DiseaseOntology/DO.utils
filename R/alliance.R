@@ -124,9 +124,9 @@ read_alliance <- function(alliance_tsv) {
 #' A record is, as defined here, is the information annotated to a unique object
 #' (gene, allele, model). That means for the following `record_lvl` values:
 #'
-#' * "doid" counts unique DOID-object annotations
+#' * "disease-object" counts unique DOID-object annotations
 #'
-#' * "unique" counts full non-duplicate records
+#' * "full_record" counts full non-duplicate records
 #'
 #' @section NOTE:
 #' For disease-related data, some exact duplicates (reason unknown) and records
@@ -136,7 +136,7 @@ read_alliance <- function(alliance_tsv) {
 #' @param alliance_tbl a dataframe derived from Alliance data (usually a
 #' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
 #' @param record_lvl a string indicating the desired specificity of records;
-#' one of "doid" or "unique"
+#' one of "disease-object" or "full_record"
 #' @param by_type logical indicating whether to count by object type
 #' @param term_subset character vector of DOIDs to limit counts to
 #' @param pivot logical indicating whether to pivot values to type columns;
@@ -152,7 +152,7 @@ read_alliance <- function(alliance_tsv) {
 #' @export
 count_alliance_records <- function(alliance_tbl, term_subset = NULL,
                                    by_type = TRUE, pivot = TRUE,
-                                   record_lvl = c("doid", "unique"),
+                                   record_lvl = "disease-object",
                                    assign_to = c("species", "curator")) {
 
     # validate arguments
@@ -161,7 +161,10 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
         rlang::is_scalar_logical(by_type),
         rlang::is_scalar_logical(pivot)
     )
-    record_lvl <- match.arg(record_lvl, choices = c("doid", "unique", "type"))
+    record_lvl <- match.arg(
+        record_lvl,
+        choices = c("full_record", "disease-object")
+    )
     assign_to <- match.arg(assign_to, choices = c("species", "curator"))
 
     # tidy input data
@@ -202,8 +205,8 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
     # set columns to use for record counts
     cols_include <- switch(
         record_lvl,
-        doid = c("DBObjectID", "DOID"),
-        unique = names(record_df)
+        "disease-object" = c("DBObjectID", "DOID"),
+        full_record = names(record_df)
     )
 
     if (isTRUE(by_type)) {
