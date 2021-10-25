@@ -35,18 +35,19 @@ citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
 #' List Scopus publications citing those specified by `title` or `eid`,
 #' potentially split `by_id`.
 #'
-#' @param title Scopus Search API REFTITLE() query; see
-#' https://dev.elsevier.com/sc_search_tips.html
-#' @param by_id logical; where FALSE (default) prescribes a single query
-#' (multiple titles are separated by OR) and TRUE prescribes a separate query
-#' for each title
-#' @param id (optional) vector of unique IDs; _ignored if_ `by_id = FALSE`
+#' @param title a character vector of publication titles to be used in a
+#'     Scopus Search API REFTITLE() query; see
+#'     https://dev.elsevier.com/sc_search_tips.html.
+#' @param by_id a logical scalar where TRUE (default) splits cited by
+#'     publications by the input title they cite, and FALSE returns the unified
+#'     list of unique cited by publications.
+#' @param id a vector of unique IDs with length equal to title; _REQUIRED_ if
+#'      `by_id = TRUE`, otherwise ignored.
 #' @inheritParams rscopus::scopus_search
 #'
-#' @return A list; if `by_id = FALSE`, the list result from the Scopus Search
-#' API as produced by [rscopus::scopus_search]; if `by_id = TRUE` a list of
-#' `rscopus::scopus_search` list results labelled numerically or with `id`, if
-#' specified.
+#' @return If `by_id = FALSE`, the list result from the Scopus Search API (as
+#'     produced by [rscopus::scopus_search]). If `by_id = TRUE`, an `id` named
+#'     list of `scopus_search` result lists.
 #'
 #' @export
 citedby_scopus <- function(title, by_id = FALSE, id = NULL,
@@ -65,11 +66,8 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
     }
 
     if (by_id && length(title) > 1) {
-        if (is.null(id)) {
-            id <- seq_along(title)
-        } else {
-            assertthat::assert_that(length(title) == length(id))
-        }
+        assert_character(id)
+        assertthat::assert_that(length(title) == length(id))
 
         cited_by <- purrr::map(
             title,
