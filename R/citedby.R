@@ -86,6 +86,7 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
                     ...
                 )
                 class(res) <- ss_class
+                res
             }
         )
         names(cited_by) <- id
