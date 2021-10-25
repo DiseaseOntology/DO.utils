@@ -32,3 +32,10 @@ as_tibble.scopus_search <- function(x, ...) {
 
     tbl_out
 }
+
+#' @export
+as_tibble.scopus_search_list <- function(x, ...) {
+    purrr::map(x, as_tibble) %>%
+        purrr::set_names(nm = names(x)) %>%
+        dplyr::bind_rows(.id = "cites")
+}
