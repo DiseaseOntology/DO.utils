@@ -1,6 +1,6 @@
-#' Tidy an `esummary_list` object
+#' Convert an `esummary_list` to a Tibble
 #'
-#' Tidy converts an `esummary_list` into a [tibble][tibble::tibble].
+#' Converts an `esummary_list` into a [tibble][tibble::tibble].
 #'
 #' @param x An `esummary_list` object created by [rentrez::entrez_summary]
 #' (for single inputs `always_return_list` must be TRUE) and it's derivatives
@@ -9,27 +9,26 @@
 #'
 #' @return A tibble, where `uid` is the esummary input identifier
 #' @export
-tidy.esummary_list <- function(x, ...) {
-    tidied <- x %>%
+as_tibble.esummary_list <- function(x, ...) {
+    x %>%
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
-    tidied
 }
 
 #' @export
-tidy.scopus_search <- function(x, ...) {
+as_tibble.scopus_search <- function(x, ...) {
     # tidy results
-    tidied <- x$entries %>%
+    tbl_out <- x$entries %>%
         tibble::enframe(name = "tmp", value = "tmp2") %>%
         tidyr::unnest_wider(col = "tmp2") %>%
         dplyr::select(-tmp)
 
     # add date attribute (last API call)
     get_stmt <- x$get_statments
-    attributes(tidied) <- c(
-        attributes(tidied),
+    attributes(tbl_out) <- c(
+        attributes(tbl_out),
         date = dplyr::last(get_stmt[names(get_stmt) == "date"])
     )
 
-    tidied
+    tbl_out
 }
