@@ -7,6 +7,8 @@
 #' @param df A data.frame
 #' @param collapse A list of columns to collapse using `method` or a named
 #'     list specifying the method for each column, e.g. column_name = method.
+#' @param method A string identifying a function to use; one of "unique",
+#'     "first", or "last"
 #' @inheritParams vctr_to_string
 #'
 #' @examples
@@ -25,27 +27,32 @@
 #' collapse_col_flex(cc_df, c(x, z))
 #'
 #' @export
-collapse_col_flex <- function(df, collapse = list(), method = "unique",
+collapse_col_flex <- function(df, ..., method = "unique",
                          delim = "|") {
 
-    # validate arguments
+    # validate method argument
     valid_methods <- c("unique", "first", "last")
-    assertthat::assert_that(rlang::is_list(collapse))
     method <- match.arg(method, choices = valid_methods)
 
-    if (!is.null(names(collapse))) {
-        # validate collapse argument further if named list
-        assertthat::assert_that(all(names(collapse) %in% names(df)))
+    dots_as_strings <- rlang::enexprs(...) %>%
+        purrr::map(rlang::as_string)
+
+    if (any(names(dots_as_strings) != "")) {
+        assertthat::assert_that(all(names(dots_as_strings) %in% names(df)))
         assertthat::assert_that(
-            all(purrr::map_int(collapse, length) == 1),
-            all(collapse %in% valid_methods)
+            all(purrr::map_int(dots_as_strings, length) == 1),
+            all(dots_as_strings %in% valid_methods)
         )
 
-        collapse_vars <- names(collapse)
-        method <- collapse
+        collapse_vars <- names(dots_as_strings)
+        c_method <- dots_as_strings
     } else {
-        assertthat::assert_that(all(collapse %in% names(df)))
-        collapse_vars <- collapse
+        assertthat::assert_that(all(dots_as_strings %in% names(df)))
+        collapse_vars <- unlist(dots_as_strings)
+        c_method <- purrr::set_names(
+            rep(method, length(collapse_vars)),
+            nm = collapse_vars
+        )
     }
 
     df %>%
@@ -55,12 +62,13 @@ collapse_col_flex <- function(df, collapse = list(), method = "unique",
                 .cols = {{ collapse_vars }},
                 .fns = ~ collapse_method(
                     .x,
-                    method[[dplyr::cur_column()]],
+                    c_method[[dplyr::cur_column()]],
                     delim = delim
                 )
             )
         ) %>%
-        dplyr::ungroup()
+        dplyr::ungroup() %>%
+        dplyr::select(dplyr::one_of(names(df)))
 }
 
 # collapse_col_flex() helper (internal)

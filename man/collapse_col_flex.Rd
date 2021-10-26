@@ -4,15 +4,18 @@
 \alias{collapse_col_flex}
 \title{Collapse Column(s) Flexibly}
 \usage{
-collapse_col_flex(df, collapse = list(), method = "unique", delim = "|")
+collapse_col_flex(df, ..., method = "unique", delim = "|")
 }
 \arguments{
 \item{df}{A data.frame}
 
-\item{collapse}{A list of columns to collapse using \code{method} or a named
-list specifying the method for each column, e.g. column_name = method.}
+\item{method}{A string identifying a function to use; one of "unique",
+"first", or "last"}
 
 \item{delim}{A delimiter to place between vector elements (default: "|").}
+
+\item{collapse}{A list of columns to collapse using \code{method} or a named
+list specifying the method for each column, e.g. column_name = method.}
 }
 \description{
 Collapses values in the column(s) specified using a defined method for each
