@@ -22,12 +22,12 @@ as_tibble.scopus_search <- function(x, ...) {
         tidyr::unnest_wider(col = "tmp2") %>%
         dplyr::select(-.data$tmp)
 
-    # add date attribute (last API call)
-    get_stmt <- x$get_statments
-    attributes(tbl_out) <- c(
-        attributes(tbl_out),
-        date = dplyr::last(get_stmt[names(get_stmt) == "date"])
-    )
+    # capture datetime when added to list
+    get_stmt <- x$get_statements
+    tbl_out <- tbl_out %>%
+        dplyr::mutate(
+            added = dplyr::first(get_stmt[names(get_stmt) == "date"])
+        )
 
     tbl_out
 }
