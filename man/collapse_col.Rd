@@ -9,9 +9,9 @@ collapse_col(df, .cols, delim = "; ")
 \arguments{
 \item{df}{a data.frame}
 
-\item{delim}{delimiter to place between vector elements}
+\item{.cols}{the name of the column in the data.frame to collapse}
 
-\item{.col}{the name of the column in the data.frame to collapse}
+\item{delim}{delimiter to place between vector elements}
 }
 \description{
 Collapses values in the column(s) specified, concatenating unique values in

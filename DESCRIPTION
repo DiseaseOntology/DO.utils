@@ -25,12 +25,14 @@ Imports:
     readr,
     rentrez,
     rlang,
+    rscopus,
     stats,
     stringdist,
     stringr,
     tibble,
     tidyr,
-    utils
+    utils,
+    XML
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

@@ -17,11 +17,10 @@ as_tibble.esummary_list <- function(x, ...) {
 
 #' @export
 as_tibble.scopus_search <- function(x, ...) {
-    # tidy results
     tbl_out <- x$entries %>%
         tibble::enframe(name = "tmp", value = "tmp2") %>%
         tidyr::unnest_wider(col = "tmp2") %>%
-        dplyr::select(-tmp)
+        dplyr::select(-.data$tmp)
 
     # add date attribute (last API call)
     get_stmt <- x$get_statments

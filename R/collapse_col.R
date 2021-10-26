@@ -5,7 +5,7 @@
 #' row including all columns _NOT_ specified in `.cols`).
 #'
 #' @param df a data.frame
-#' @param .col the name of the column in the data.frame to collapse
+#' @param .cols the name of the column in the data.frame to collapse
 #' @inheritParams vctr_to_string
 #'
 #' @examples
@@ -28,7 +28,7 @@ collapse_col <- function(df, .cols, delim = "; ") {
     df %>%
         dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
         dplyr::summarize(
-            across(
+            dplyr::across(
                 .cols = {{ .cols }},
                 .fns = ~ vctr_to_string(
                     unique(.x),

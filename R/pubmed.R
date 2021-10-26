@@ -6,15 +6,16 @@
 #' addition to an `id` vector or `web_history` object).
 #'
 #' @param input One of the following: 1) A vector with unique PubMed IDs, 2) a
-#'     list of vectors with unique PubMed IDs (for example, output from
+#'     list of vectors with PubMed IDs (for example, output from
 #'     `citedby_pmid(.... by_id = TRUE)` > `extract_pmid()`), OR 3) a
 #'     `web_history` object (see NCBI Entrez API documentation for information).
-#' @param version,always_return_list Arguments included here for flexibility,
+#' @param version Argument included here for flexibility,
 #'     but best left with the defaults as set; see [rentrez::entrez_summary()]
 #'     for details.
 #' @param retmode "xml" (default) or "json"; "xml" is preferred because of a
 #'     higher response limit. This default is opposite the
 #'     [rentrez::entrez_summary()] default.
+#' @inheritParams rentrez::entrez_summary
 #'
 #' @export
 pubmed_summary <- function(input, config = NULL, version = "2.0",
