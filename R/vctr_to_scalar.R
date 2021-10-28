@@ -38,9 +38,17 @@ unique_if_invariant.numeric <- function(x, na.rm = FALSE,
 #'
 #' @param x vector
 #' @param delim delimiter to place between vector elements
+#' @param na.rm A logical scalar indicating whether `NA` values should be
+#'     removed (default: `FALSE`).
 #'
 #' @export
 #' @family vector-to-scalar functions
-vctr_to_string <- function(x, delim = "; ") {
+vctr_to_string <- function(x, delim = "; ", na.rm = FALSE) {
+    assert_scalar_logical(na.rm)
+
+    if (na.rm) {
+        x <- na.omit(x)
+    }
+
     paste0(x, collapse = delim)
 }
