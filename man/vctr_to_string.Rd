@@ -4,12 +4,12 @@
 \alias{vctr_to_string}
 \title{Convert Vectors to Strings}
 \usage{
-vctr_to_string(x, delim = "; ", na.rm = FALSE)
+vctr_to_string(x, delim = "|", na.rm = FALSE)
 }
 \arguments{
 \item{x}{A vector.}
 
-\item{delim}{A delimiter to place between vector elements (default: "; ").}
+\item{delim}{A delimiter to place between vector elements (default: "|").}
 
 \item{na.rm}{A logical scalar indicating whether \code{NA} values should be
 removed (default: \code{FALSE}).}

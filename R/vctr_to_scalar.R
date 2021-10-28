@@ -39,7 +39,7 @@ unique_if_invariant.numeric <- function(x, na.rm = FALSE,
 #' Concatenate values in a vector into a single string.
 #'
 #' @param x A vector.
-#' @param delim A delimiter to place between vector elements (default: "; ").
+#' @param delim A delimiter to place between vector elements (default: "|").
 #' @param na.rm A logical scalar indicating whether `NA` values should be
 #'     removed (default: `FALSE`).
 #'
@@ -47,7 +47,7 @@ unique_if_invariant.numeric <- function(x, na.rm = FALSE,
 #'     vector-to-string conversion method
 #'
 #' @export
-vctr_to_string <- function(x, delim = "; ", na.rm = FALSE) {
+vctr_to_string <- function(x, delim = "|", na.rm = FALSE) {
     assert_scalar_logical(na.rm)
 
     if (na.rm) {
