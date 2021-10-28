@@ -2,9 +2,12 @@
 % Please edit documentation in R/vctr_to_scalar.R
 \name{vctr_to_string}
 \alias{vctr_to_string}
+\alias{unique_to_string}
 \title{Convert Vectors to Strings}
 \usage{
 vctr_to_string(x, delim = "|", na.rm = FALSE)
+
+unique_to_string(x, delim = "|", na.rm = FALSE)
 }
 \arguments{
 \item{x}{A vector.}
@@ -16,6 +19,9 @@ removed (default: \code{FALSE}).}
 }
 \description{
 Concatenate values in a vector into a single string.
+* \code{vctr_to_string} performs simple concatenation.
+* \code{unique_to_string} reduces the vector to unique values prior to
+concatenation.
 }
 \seealso{
 \code{\link[=unique_if_invariant]{unique_if_invariant()}} for an alternative, \emph{conditional} \code{unique}

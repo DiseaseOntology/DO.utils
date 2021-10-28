@@ -37,6 +37,9 @@ unique_if_invariant.numeric <- function(x, na.rm = FALSE,
 #' Convert Vectors to Strings
 #'
 #' Concatenate values in a vector into a single string.
+#'     * `vctr_to_string` performs simple concatenation.
+#'     * `unique_to_string` reduces the vector to unique values prior to
+#'         concatenation.
 #'
 #' @param x A vector.
 #' @param delim A delimiter to place between vector elements (default: "|").
@@ -55,4 +58,10 @@ vctr_to_string <- function(x, delim = "|", na.rm = FALSE) {
     }
 
     paste0(x, collapse = delim)
+}
+
+#' @rdname vctr_to_string
+#' @export
+unique_to_string <- function(x, delim = "|", na.rm = FALSE) {
+    vctr_to_string(unique(x), delim = delim, na.rm = na.rm)
 }
