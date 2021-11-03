@@ -20,7 +20,7 @@
 #' @export
 download_alliance_tsv <- function(dest_dir, url = NULL) {
 
-    # Ask for URL if missing
+    # Use default URL, if missing
     if (missing(url)) {
         url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
     }
@@ -87,13 +87,20 @@ download_alliance_tsv <- function(dest_dir, url = NULL) {
 #' @export
 read_alliance <- function(alliance_tsv) {
 
-    ## identify header (to skip)
+    ## identify header (to skip), if any
     ##  Skipping instead of using comment = "#" because data gets truncated
     ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
-    header_end <- readr::read_lines(alliance_tsv, n_max = 100) %>%
-        stringr::str_detect("^#") %>%
+    data_start <- readr::read_lines(alliance_tsv, n_max = 100) %>%
+        stringr::str_trim() %>%
+        stringr::str_detect("^#|^$", negate = TRUE) %>%
         which() %>%
-        max()
+        min()
+
+    if (length(data_start) == 0) {
+        header_end <- 0
+    } else {
+        header_end <- data_start - 1
+    }
 
     alliance_tbl <- readr::read_tsv(
         alliance_tsv,
@@ -114,12 +121,16 @@ read_alliance <- function(alliance_tsv) {
 #' Alliance Disease Associations File. _There is no guarantee that any/all_
 #' _options will work for other files._
 #'
-#' A record is, as defined here, is the information annotated to a unique object
-#' (gene, allele, model). That means for the following `record_lvl` values:
+#' The type of record information to use in counting should be specified with
+#' `record_lvl` which accepts the following values:
 #'
-#' * "doid" counts unique DOID-object annotations
+#' * "full_record" counts full non-duplicate records
 #'
-#' * "unique" counts full non-duplicate records
+#' * "disease-object" counts unique disease-object combinations
+#'
+#' * "disease" counts unique diseases
+#'
+#' * "object" counts unique MOD objects (i.e. gene, allele, model identifiers)
 #'
 #' @section NOTE:
 #' For disease-related data, some exact duplicates (reason unknown) and records
@@ -127,14 +138,16 @@ read_alliance <- function(alliance_tsv) {
 #' have existed. These types of duplicates are removed prior to record counts.
 #'
 #' @param alliance_tbl a dataframe derived from Alliance data (usually a
-#' [downloaded .tsv file](https://www.alliancegenome.org/downloads))
-#' @param record_lvl a string indicating the desired specificity of records;
-#' one of "doid" or "unique"
-#' @param by_type logical indicating whether to count by object type
+#'     [downloaded .tsv file](https://www.alliancegenome.org/downloads))
+#' @param term_subset character vector of DOIDs to limit counts to
+#' @param by_type logical indicating whether to count by Alliance object type
+#'     (i.e. gene, allele, model)
 #' @param pivot logical indicating whether to pivot values to type columns;
-#' ignored if type = FALSE
+#'     ignored if by_type = FALSE
+#' @param record_lvl a string indicating the desired specificity of records;
+#'     one of "disease-object", "unique", or "object"
 #' @param assign_to how to assign records when counting; one of "species" or
-#' "curator" (i.e. the organization responsible for curating the record)
+#'     "curator" (i.e. the organization responsible for curating the record)
 #'
 #' @return
 #' A summary tibble with the count of unique object annotations defined by
@@ -142,18 +155,22 @@ read_alliance <- function(alliance_tsv) {
 #' optionally, object type (`by_type`).
 #'
 #' @export
-count_alliance_records <- function(alliance_tbl,
+count_alliance_records <- function(alliance_tbl, term_subset = NULL,
                                    by_type = TRUE, pivot = TRUE,
-                                   record_lvl = c("doid", "unique"),
+                                   record_lvl = "disease-object",
                                    assign_to = c("species", "curator")) {
 
     # validate arguments
-    record_lvl <- match.arg(record_lvl, choices = c("doid", "unique"))
-    assign_to <- match.arg(assign_to, choices = c("species", "curator"))
     assertthat::assert_that(
+        is.null(term_subset) || is.character(term_subset),
         rlang::is_scalar_logical(by_type),
         rlang::is_scalar_logical(pivot)
     )
+    record_lvl <- match.arg(
+        record_lvl,
+        choices = c("full_record", "disease-object", "disease", "object")
+    )
+    assign_to <- match.arg(assign_to, choices = c("species", "curator"))
 
     # tidy input data
     alliance_dedup <- dplyr::filter(
@@ -172,7 +189,12 @@ count_alliance_records <- function(alliance_tbl,
                 levels = c("gene", "allele", "model")
             ),
             DBObjectType = NULL
-        )
+        ) %>%
+        dplyr::rename(species = SpeciesName)
+
+    if (!is.null(term_subset)) {
+        alliance_dedup <- dplyr::filter(alliance_dedup, DOID %in% term_subset)
+    }
 
     if (assign_to == "curator") {
         record_df <- alliance_dedup %>%
@@ -180,61 +202,51 @@ count_alliance_records <- function(alliance_tbl,
                 curator = id_mod(.data$Source),
                 Source = NULL
             )
-        count_by <- "curator"
     } else {
         record_df <- alliance_dedup
-        count_by <- "SpeciesName"
     }
 
     # set columns to use for record counts
     cols_include <- switch(
         record_lvl,
-        doid = c("DBObjectID", "DOID"),
-        unique = names(record_df)
+        full_record = names(record_df),
+        "disease-object" = c("DBObjectID", "DOID"),
+        disease = "DOID",
+        object = "DBObjectID"
     )
 
+    # set name of count column
+    count_col_nm <- paste0(record_lvl, "_n")
+
     if (isTRUE(by_type)) {
-        record_count <- record_df %>%
-            dplyr::select(c(count_by, cols_include, "obj_type")) %>%
-            unique()
-
-        if (assign_to == "curator") {
-            record_count <- rm_dup_curator_alliance(record_count)
-        }
-
-        record_count <- record_count %>%
-            dplyr::count(
-                dplyr::across(c(count_by, "obj_type")),
-                name = "record_n"
-            )
-
-        if (isTRUE(pivot)) {
-            record_count <- record_count %>%
-                tidyr::pivot_wider(
-                    names_from = .data$obj_type,
-                    values_from = .data$record_n
-                ) %>%
-                # dplyr::select(curator, gene, allele, model) %>%
-                dplyr::rename_with(
-                    .fn = ~paste0(.x, "_n"),
-                    .cols = -count_by
-                )
-        }
-
+        count_by <- c(assign_to, "obj_type")
     } else {
+        count_by <- assign_to
+    }
 
-        record_count <- record_df %>%
-            dplyr::select(c(count_by, cols_include)) %>%
-            unique()
+    record_count <- record_df %>%
+        dplyr::select(c(count_by, cols_include)) %>%
+        unique()
 
-        if (assign_to == "curator") {
-            record_count <- rm_dup_curator_alliance(record_count)
-        }
+    if (assign_to == "curator") {
+        record_count <- rm_dup_curator_alliance(record_count)
+    }
 
+    record_count <- record_count %>%
+        dplyr::count(
+            dplyr::across(count_by),
+            name = count_col_nm
+        )
+
+    if (isTRUE(by_type) && isTRUE(pivot)) {
         record_count <- record_count %>%
-            dplyr::count(
-                dplyr::across(count_by),
-                name = "record_n"
+            tidyr::pivot_wider(
+                names_from = .data$obj_type,
+                values_from = count_col_nm
+            ) %>%
+            dplyr::rename_with(
+                .fn = ~paste0(.x, ".", record_lvl, "_n"),
+                .cols = -assign_to
             )
     }
 
