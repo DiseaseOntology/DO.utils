@@ -28,3 +28,8 @@ NULL
 #' @importFrom generics tidy
 #' @export
 generics::tidy
+
+
+#' @importFrom tidyr replace_na
+#' @export
+tidyr::replace_na

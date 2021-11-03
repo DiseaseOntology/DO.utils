@@ -17,6 +17,7 @@ Imports:
     assertthat,
     dplyr,
     generics,
+    jsonlite,
     lubridate,
     magrittr,
     purrr,
@@ -35,3 +36,4 @@ Suggests:
 Config/testthat/edition: 3
 Depends: 
     R (>= 3.5.0)
+Remotes: allenbaron/rentrez
