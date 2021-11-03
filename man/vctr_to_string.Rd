@@ -2,20 +2,28 @@
 % Please edit documentation in R/vctr_to_scalar.R
 \name{vctr_to_string}
 \alias{vctr_to_string}
-\title{Collapse vector to string}
+\alias{unique_to_string}
+\title{Convert Vectors to Strings}
 \usage{
-vctr_to_string(x, delim = "; ")
+vctr_to_string(x, delim = "|", na.rm = FALSE)
+
+unique_to_string(x, delim = "|", na.rm = FALSE)
 }
 \arguments{
-\item{x}{vector}
+\item{x}{A vector.}
 
-\item{delim}{delimiter to place between vector elements}
+\item{delim}{A delimiter to place between vector elements (default: "|").}
+
+\item{na.rm}{A logical scalar indicating whether \code{NA} values should be
+removed (default: \code{FALSE}).}
 }
 \description{
-Concatenates values in a vector into a single string.
+Concatenate values in a vector into a single string.
+* \code{vctr_to_string} performs simple concatenation.
+* \code{unique_to_string} reduces the vector to unique values prior to
+concatenation.
 }
 \seealso{
-Other vector-to-scalar functions: 
-\code{\link{unique_if_invariant}()}
+\code{\link[=unique_if_invariant]{unique_if_invariant()}} for an alternative, \emph{conditional} \code{unique}
+vector-to-string conversion method
 }
-\concept{vector-to-scalar functions}
