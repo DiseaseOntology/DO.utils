@@ -6,8 +6,10 @@
 #'
 #' @inheritParams is_invariant
 #'
+#' @seealso For _unconditional_ vector-to-string conversion methods, see the
+#'     [vctr_to_string()] family of functions.
+#'
 #' @export
-#' @family vector-to-scalar functions
 unique_if_invariant <- function(x, na.rm = FALSE, ...) {
     UseMethod("unique_if_invariant")
 }
@@ -32,17 +34,19 @@ unique_if_invariant.numeric <- function(x, na.rm = FALSE,
 }
 
 
-#' Collapse vector to string
+#' Convert Vectors to Strings
 #'
-#' Concatenates values in a vector into a single string.
+#' Concatenate values in a vector into a single string.
 #'
-#' @param x vector
-#' @param delim delimiter to place between vector elements
+#' @param x A vector.
+#' @param delim A delimiter to place between vector elements (default: "; ").
 #' @param na.rm A logical scalar indicating whether `NA` values should be
 #'     removed (default: `FALSE`).
 #'
+#' @seealso [unique_if_invariant()] for an alternative, _conditional_ `unique`
+#'     vector-to-string conversion method
+#'
 #' @export
-#' @family vector-to-scalar functions
 vctr_to_string <- function(x, delim = "; ", na.rm = FALSE) {
     assert_scalar_logical(na.rm)
 

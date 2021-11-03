@@ -27,7 +27,6 @@ unique value exists (\emph{i.e.} the vector is invariant), otherwise returns the
 original vector.
 }
 \seealso{
-Other vector-to-scalar functions: 
-\code{\link{vctr_to_string}()}
+For \emph{unconditional} vector-to-string conversion methods, see the
+\code{\link[=vctr_to_string]{vctr_to_string()}} family of functions.
 }
-\concept{vector-to-scalar functions}
