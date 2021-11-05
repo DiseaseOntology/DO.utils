@@ -64,3 +64,60 @@ check_dl_status <- function(exit_code, dest_file, abort = FALSE) {
     }
     dest_file[!failed]
 }
+
+
+#' A Reference Class to represent file download status.
+#'
+#' @field successful A character vector for paths of successfully downloaded
+#'      files.
+#' @field failed A character vector for paths of files that failed to download
+#' @field fail_status An integer vector with an exit code from [download.file()]
+#'     for each file in `failed`.
+download_status <- setRefClass(
+    "download_status",
+    fields = list(
+        successful = "character",
+        failed = "character",
+        fail_status = "numeric"
+    ),
+    methods = list(
+       check = function(status, url, destfile, abort = FALSE) {
+           "Check download status of file, with choice to abort on failure."
+            if (status == 0) {
+                successful <<- c(successful, destfile)
+            } else {
+                failed <<- c(failed, url)
+                fail_status <<- c(fail_status, status)
+            }
+
+            if (abort & length(failed) > 0) {
+                if (length(successful) > 0) {
+                    # rlang::inform(c("Successfully downloaded:", successful))
+                    successful
+                }
+                rlang::abort(
+                    message = c("Download failed (url - exit code):",
+                                paste(failed, fail_status, sep = " - ")
+                    )
+                )
+            }
+        },
+        warn = function(return_failed = FALSE) {
+            "Warn about failed downloads, with choice to return URLs."
+            if (length(failed) > 0) {
+                rlang::warn(
+                    message = c("Failed to download (file - exit code):",
+                                paste(failed, fail_status, sep = " - ")
+                    )
+                )
+            }
+            if (return_failed) {
+                failed
+            }
+        },
+        return = function() {
+            "Return path, where successful."
+            successful
+        }
+    )
+)
