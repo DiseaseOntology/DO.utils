@@ -21,8 +21,8 @@ downloads.}
 }
 \value{
 A character vector of paths to destination files that downloaded
-successfully, with a warning indicating which fail when \code{abort = FALSE}
-(default).
+successfully along with a warning indicating which failed when
+\code{abort = FALSE} (default).
 }
 \description{
 \code{download_file()} is a vectorized version of \code{\link[utils:download.file]{utils::download.file()}} that

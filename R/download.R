@@ -11,8 +11,8 @@
 #'
 #' @return
 #' A character vector of paths to destination files that downloaded
-#' successfully, with a warning indicating which failed when `abort = FALSE`
-#' (default).
+#' successfully along with a warning indicating which failed when
+#' `abort = FALSE` (default).
 #'
 #' @export
 download_file <- function(url, dest_file, abort = FALSE, ...) {
@@ -36,8 +36,8 @@ download_file <- function(url, dest_file, abort = FALSE, ...) {
 #' @param exit_code An integer vector of exit code(s) produced by
 #'     [utils::download.file()].
 #' @param dest_file A character vector of relative or absolute paths to
-#'     downloaded files. Used only for reporting purposes; the existence of
-#'     these files is not checked.
+#'     downloaded files. Used to make output and messages more informative; the
+#'     existence of these files is not tested.
 #' @param abort A logical scalar indicating whether to abort when non-zero
 #'     exit codes are produced. When `FALSE`, (default) failed downloads will
 #'     produce warnings. `TRUE` will likely only be useful for single file

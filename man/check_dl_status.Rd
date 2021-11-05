@@ -11,8 +11,8 @@ check_dl_status(exit_code, dest_file, abort = FALSE)
 \code{\link[utils:download.file]{utils::download.file()}}.}
 
 \item{dest_file}{A character vector of relative or absolute paths to
-downloaded files. Used only for reporting purposes; the existence of
-these files is not checked.}
+downloaded files. Used to make output and messages more informative; the
+existence of these files is not tested.}
 
 \item{abort}{A logical scalar indicating whether to abort when non-zero
 exit codes are produced. When \code{FALSE}, (default) failed downloads will
