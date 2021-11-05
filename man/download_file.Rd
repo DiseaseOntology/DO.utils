@@ -4,7 +4,7 @@
 \alias{download_file}
 \title{Download File(s) from the Internet}
 \usage{
-download_file(url, dest_file, abort = FALSE, ...)
+download_file(url, dest_file, on_failure = "warn", ...)
 }
 \arguments{
 \item{url}{A character vector naming the URL of resource(s) to be downloaded.}
@@ -12,10 +12,7 @@ download_file(url, dest_file, abort = FALSE, ...)
 \item{dest_file}{A character vector with the file path(s) where downloaded
 file(s) will be saved.}
 
-\item{abort}{A logical scalar indicating whether to abort when non-zero
-exit codes are produced. When \code{FALSE}, (default) failed downloads will
-produce warnings. \code{TRUE} will likely only be useful for single file
-downloads.}
+\item{on_failure}{A string indicating how to handle download failure.}
 
 \item{...}{Additional arguments passed on to \code{\link[=download.file]{download.file()}}.}
 }

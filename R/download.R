@@ -6,7 +6,7 @@
 #' @param url A character vector naming the URL of resource(s) to be downloaded.
 #' @param dest_file A character vector with the file path(s) where downloaded
 #'     file(s) will be saved.
-#' @inheritParams check_dl_status
+#' @param on_failure A string indicating how to handle download failure.
 #' @param ... Additional arguments passed on to [download.file()].
 #'
 #' @return
@@ -15,16 +15,31 @@
 #' `abort = FALSE` (default).
 #'
 #' @export
-download_file <- function(url, dest_file, abort = FALSE, ...) {
+download_file <- function(url, dest_file, on_failure = "warn", ...) {
     assertthat::assert_that(length(dest_file) == length(url))
+    on_failure <- match.arg(
+        on_failure,
+        choices = c("warn", "abort", "list_failed", "warn-list_failed", "skip"))
 
-    exit_code <- purrr::map2_int(
+    dl_status <- download_status$new()
+    purrr::map2_int(
         .x = url,
         .y = dest_file,
-        ~ download.file(.x, .y, ...)
+        ~ dl_status$check(
+            download.file(.x, .y, ...),
+            .x,
+            .y,
+            abort = on_failure == "abort"
+        )
     )
 
-    check_dl_status(exit_code, dest_file, abort = abort)
+    if (stringr::str_detect(on_failure, "^warn")) {
+        dl_status$warn()
+    }
+
+    dl_status$return(
+        w_failed = stringr::str_detect(on_failure, "list_failed$")
+    )
 }
 
 
