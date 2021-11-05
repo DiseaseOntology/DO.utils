@@ -23,7 +23,7 @@ for each file in \code{failed}.}
 \section{Methods}{
 
 \describe{
-\item{\code{check(status, url, destfile, abort = FALSE)}}{Check download status of file, with choice to abort on failure.}
+\item{\code{check(status, url, dest_file, abort = FALSE)}}{Check download status of file, with choice to abort on failure.}
 
 \item{\code{return(w_failed = FALSE)}}{Return successful file paths and, optionally, failed URLs.}
 

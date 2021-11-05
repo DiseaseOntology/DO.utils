@@ -55,10 +55,10 @@ download_status <- setRefClass(
         fail_status = "numeric"
     ),
     methods = list(
-       check = function(status, url, destfile, abort = FALSE) {
+       check = function(status, url, dest_file, abort = FALSE) {
            "Check download status of file, with choice to abort on failure."
             if (status == 0) {
-                successful <<- c(successful, destfile)
+                successful <<- c(successful, dest_file)
             } else {
                 failed <<- c(failed, url)
                 fail_status <<- c(fail_status, status)
