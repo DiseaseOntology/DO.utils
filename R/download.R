@@ -102,8 +102,8 @@ download_status <- setRefClass(
                 )
             }
         },
-        warn = function(return_failed = FALSE) {
-            "Warn about failed downloads, with choice to return URLs."
+        warn = function() {
+            "Warn about failed downloads."
             if (length(failed) > 0) {
                 rlang::warn(
                     message = c("Failed to download (file - exit code):",
@@ -111,13 +111,14 @@ download_status <- setRefClass(
                     )
                 )
             }
-            if (return_failed) {
-                failed
-            }
         },
-        return = function() {
-            "Return path, where successful."
-            successful
+        return = function(w_failed = FALSE) {
+            "Return successful file paths and, optionally, failed URLs."
+            if (return_failed) {
+                list(successful = successful, failed = failed)
+            } else {
+                successful
+            }
         }
     )
 )

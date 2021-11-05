@@ -25,8 +25,8 @@ for each file in \code{failed}.}
 \describe{
 \item{\code{check(status, url, destfile, abort = FALSE)}}{Check download status of file, with choice to abort on failure.}
 
-\item{\code{return()}}{Return path, where successful.}
+\item{\code{return(w_failed = FALSE)}}{Return successful file paths and, optionally, failed URLs.}
 
-\item{\code{warn(return_failed = FALSE)}}{Warn about failed downloads, with choice to return URLs.}
+\item{\code{warn()}}{Warn about failed downloads.}
 }}
 
