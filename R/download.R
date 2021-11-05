@@ -19,18 +19,15 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
     assertthat::assert_that(length(dest_file) == length(url))
     on_failure <- match.arg(
         on_failure,
-        choices = c("warn", "abort", "list_failed", "warn-list_failed", "skip"))
+        choices = c("warn", "abort", "list_failed", "warn-list_failed", "skip")
+    )
 
     dl_status <- download_status$new()
     purrr::map2_int(
         .x = url,
         .y = dest_file,
-        ~ dl_status$check(
-            download.file(.x, .y, ...),
-            .x,
-            .y,
-            abort = on_failure == "abort"
-        )
+        ~ download.file(.x, .y, ...) %>%
+            dl_status$check(.x, .y, abort = on_failure == "abort")
     )
 
     if (stringr::str_detect(on_failure, "^warn")) {
