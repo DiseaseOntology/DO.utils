@@ -6,13 +6,19 @@
 #' @param url A character vector naming the URL of resource(s) to be downloaded.
 #' @param dest_file A character vector with the file path(s) where downloaded
 #'     file(s) will be saved.
-#' @param on_failure A string indicating how to handle download failure.
+#' @param on_failure A string indicating how to handle download failure:
+#' - "warn" - produce a warning; includes exit codes for debugging
+#' - "abort" - abort execution
+#' - "list_failed" - list URLs that failed (_output format differs_, see
+#'     `Value`)
+#' - "warn-list_failed" - combination of "warn" and "list_failed"
+#' - "skip" - do nothing
 #' @param ... Additional arguments passed on to [download.file()].
 #'
 #' @return
-#' A character vector of paths to destination files that downloaded
-#' successfully along with a warning indicating which failed when
-#' `abort = FALSE` (default).
+#' Unless `on_failure` includes "list_failed", the successfully downloaded
+#' `dest_file`(s); otherwise, a 2-vector list where `successful` =
+#' `dest_file`(s) and `failed` = `url`(s).
 #'
 #' @export
 download_file <- function(url, dest_file, on_failure = "warn", ...) {

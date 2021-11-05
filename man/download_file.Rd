@@ -12,14 +12,22 @@ download_file(url, dest_file, on_failure = "warn", ...)
 \item{dest_file}{A character vector with the file path(s) where downloaded
 file(s) will be saved.}
 
-\item{on_failure}{A string indicating how to handle download failure.}
+\item{on_failure}{A string indicating how to handle download failure:
+\itemize{
+\item "warn" - produce a warning; includes exit codes for debugging
+\item "abort" - abort execution
+\item "list_failed" - list URLs that failed (\emph{output format differs}, see
+\code{Value})
+\item "warn-list_failed" - combination of "warn" and "list_failed"
+\item "skip" - do nothing
+}}
 
 \item{...}{Additional arguments passed on to \code{\link[=download.file]{download.file()}}.}
 }
 \value{
-A character vector of paths to destination files that downloaded
-successfully along with a warning indicating which failed when
-\code{abort = FALSE} (default).
+Unless \code{on_failure} includes "list_failed", the successfully downloaded
+\code{dest_file}(s); otherwise, a 2-vector list where \code{successful} =
+\code{dest_file}(s) and \code{failed} = \code{url}(s).
 }
 \description{
 \code{download_file()} is a vectorized version of \code{\link[utils:download.file]{utils::download.file()}} that
