@@ -4,12 +4,14 @@
 \alias{download_alliance_tsv}
 \title{Download Alliance .tsv.gz File}
 \usage{
-download_alliance_tsv(dest_dir, url = NULL)
+download_alliance_tsv(dest_dir, url = NULL, ...)
 }
 \arguments{
 \item{dest_dir}{path to directory where file will be saved}
 
 \item{url}{URL to Alliance file; if not provided, will be requested at console}
+
+\item{...}{Additional arguments passed on to \code{\link[=download.file]{download.file()}}.}
 }
 \value{
 Path to saved file.

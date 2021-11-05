@@ -13,13 +13,13 @@
 #'
 #' @param dest_dir path to directory where file will be saved
 #' @param url URL to Alliance file; if not provided, will be requested at console
+#' @inheritParams download_file
 #'
 #' @return
 #' Path to saved file.
 #'
 #' @export
-download_alliance_tsv <- function(dest_dir, url = NULL) {
-
+download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
     # Use default URL, if missing
     if (missing(url)) {
         url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
@@ -62,14 +62,7 @@ download_alliance_tsv <- function(dest_dir, url = NULL) {
     }
 
     # download new file
-    dl_exit <- utils::download.file(url, dest_file)
-
-    assertthat::assert_that(
-        dl_exit == 0,
-        msg = paste0("Download failed with exit code: ", dl_exit)
-    )
-
-    dest_file
+    download_file(url, dest_file, on_failure = "abort", ...)
 }
 
 
