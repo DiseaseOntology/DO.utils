@@ -46,6 +46,60 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
 }
 
 
+#' Download OBO Foundry Ontology File
+#'
+#' Downloads the current version of one or more ontologies from the OBO Foundry.
+#'
+#' @param ontology_id OBO Foundry ontology identifier (lowercase, as found on
+#'     http://www.obofoundry.org/). For reference, ontology identifiers are also
+#'     provided in [obofoundry_metadata] within this package.
+#' @param dest_dir Path to directory where files will be saved.
+#' @inheritParams download_file
+#'
+#' @inherit download_file return
+#'
+#' @export
+download_obo_ontology <- function(ontology_id, dest_dir, on_failure = "warn",
+                                  ...) {
+
+    # validate ontology_id
+    oid <- match.arg(
+        ontology_id,
+        choices = obofoundry_metadata$id,
+        several.ok = TRUE
+    )
+    assertthat::assert_that(
+        length(oid) == length(ontology_id),
+        msg = paste0(
+            "ontology_id(s): ",
+            vctr_to_string(ontology_id[!oid_lc %in% oid], delim = ", "),
+            " do not match OBO Foundry ontology ID(s)."
+        )
+    )
+
+    # subset to non-obsolete ontologies and set dest_file
+    obofoundry_records <- obofoundry_metadata %>%
+        dplyr::filter(id %in% oid & !is_obsolete) %>%
+        dplyr::mutate(dest_file = file.path(dest_dir, basename(ontology_purl)))
+
+    # warn about obsolete ontologies, which are not available for download
+    obsolete <- oid[!oid %in% obofoundry_records$id]
+    if (length(obsolete) > 0) {
+        rlang::warn(
+            message = c("Obsolete ontologies will be skipped", obsolete)
+        )
+    }
+
+    # download ontologies
+    download_file(
+        url = obofoundry_records$ontology_purl,
+        dest_file = obofoundry_records$dest_file,
+        on_failure = on_failure,
+        ...
+    )
+}
+
+
 #' A Reference Class to represent file download status.
 #'
 #' @field successful A character vector for paths of successfully downloaded
