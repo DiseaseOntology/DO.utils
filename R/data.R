@@ -20,3 +20,36 @@
 #'
 #' @source Compiled by J. Allen Baron; last updated 2021-09-27
 "DO_pubs"
+
+#' OBO Foundry Metadata
+#'
+#' Metadata about OBO Foundry ontologies.
+#'
+#' @format A data frame with 22 variables:
+#' \describe{
+#'   \item{id}{}
+#'   \item{title}{}
+#'   \item{domain}{}
+#'   \item{description}{}
+#'   \item{activity_status}{}
+#'   \item{is_obsolete}{}
+#'   \item{replaced_by}{}
+#'   \item{ontology_purl}{}
+#'   \item{preferred_prefix}{}
+#'   \item{homepage}{}
+#'   \item{contact_name}{}
+#'   \item{contact_email}{}
+#'   \item{contact_github}{}
+#'   \item{license_label}{}
+#'   \item{taxon_id}{}
+#'   \item{taxon_label}{}
+#'   \item{twitter}{}
+#'   \item{facebook}{}
+#'   \item{publications}{}
+#'   \item{in_foundry_order}{}
+#'   \item{in_foundry}{}
+#'   \item{build_infallible}{}
+#' }
+#'
+#' @source \url{http://www.obofoundry.org/registry/ontologies.jsonld}, last accessed 2021-11-05.
+"obofoundry_metadata"
