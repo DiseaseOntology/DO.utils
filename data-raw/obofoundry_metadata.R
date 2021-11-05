@@ -62,9 +62,12 @@ obofoundry_metadata <- obofoundry_df %>%
     dplyr::rename(contact_name = contact_label) %>%
     dplyr::select(
         id, title, domain, description, activity_status, is_obsolete,
-        replaced_by, ontology_purl, preferred_prefix, homepage, contact_email,
-        contact_github, contact_name, license_label,
-        dependencies, taxon_id, taxon_label, twitter, facebook, do_wiki,
-        publications, in_foundry_order, in_foundry, build_infallible
+        replaced_by, ontology_purl, preferred_prefix, homepage, contact_name,
+        contact_email, contact_github, license_label, taxon_id, taxon_label,
+        twitter, facebook, publications, in_foundry_order, in_foundry,
+        build_infallible
+    ) %>%
+    dplyr::mutate(
+        publications = purrr::map(release_list(publications), tibble::as_tibble)
     )
 usethis::use_data(obofoundry_metadata, overwrite = TRUE)
