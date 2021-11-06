@@ -29,7 +29,7 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
     )
 
     dl_status <- download_status$new()
-    purrr::map2_int(
+    purrr::map2(
         .x = url,
         .y = dest_file,
         .f = function(.url, .file) {
@@ -150,7 +150,7 @@ download_status <- setRefClass(
         },
         return = function(w_failed = FALSE) {
             "Return successful file paths and, optionally, failed URLs."
-            if (return_failed) {
+            if (w_failed) {
                 list(successful = successful, failed = failed)
             } else {
                 successful
