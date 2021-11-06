@@ -103,6 +103,74 @@ download_obo_ontology <- function(ontology_id, dest_dir, on_failure = "warn",
 }
 
 
+#' Download Alliance .tsv.gz File
+#'
+#' Downloads a URL-specified .tsv.gz file from the Alliance of Genome
+#' Resources. Files can be found at
+#' <https://www.alliancegenome.org/downloads>. Right-click on the "tsv" link
+#' of a desired file and select "Copy Link" to get the file URL.
+#'
+#' A date stamp indicating download date is added to the base file name.
+#'
+#' @section Recommendation:
+#' Although it's possbile to directly read a file from the URL, downloading it
+#' promotes reproducibility and ensures future access if needed.
+#'
+#' @param dest_dir path to directory where file will be saved
+#' @param url URL to Alliance file; if not provided, will be requested at console
+#' @inheritParams download_file
+#'
+#' @return
+#' Path to saved file.
+#'
+#' @export
+download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
+    # Use default URL, if missing
+    if (missing(url)) {
+        url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
+    }
+
+    dest_file <- file.path(dest_dir, basename(url))
+
+    # avoid overwrite if file exists
+    if (file.exists(dest_file)) {
+        message(dest_file, " exists. Archiving...\n")
+        file_version <- alliance_version(dest_file, as_string = TRUE)
+        archive_file <- stringr::str_replace(
+            dest_file,
+            "\\.tsv\\.gz",
+            paste0("-", file_version, ".tsv.gz")
+        )
+        # if archive already exists validate 2 files are identical & delete
+        # instead of moving file (or fail if not identical)
+        if (file.exists(archive_file)) {
+            dest_file_md5 <- tools::md5sum(dest_file)
+            archive_md5 <- tools::md5sum(archive_file)
+
+            if (dest_file_md5 == archive_md5) {
+                message("Archive file ", archive_file,
+                        " already exists.\n Removing ", dest_file, "\n")
+
+                file.remove(dest_file)
+            } else {
+                stop(
+                    paste0("Archive file ", archive_file,
+                           " already exists but md5sums differ. Aborting...")
+                )
+            }
+            # if archive does not exist rename file with alliance version & file
+            # datetime
+        } else {
+            message("File archived as ", archive_file, "\n")
+            file.rename(dest_file, archive_file)
+        }
+    }
+
+    # download new file
+    download_file(url, dest_file, on_failure = "abort", ...)
+}
+
+
 #' A Reference Class to represent file download status.
 #'
 #' @field successful A character vector for paths of successfully downloaded
