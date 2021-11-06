@@ -24,6 +24,18 @@ unnest_wider_df <- function(.df, .col, names_sep = "_") {
         dplyr::rename_with( ~ paste(col_name, .x, sep = names_sep) )
 }
 
+# define helper function to fill in 1-sided logical vectors
+fill_logical <- function(x) {
+    # get unique value(s)
+    uniq <- unique(na.omit(x))
+
+    # if not 1-sided (contains only TRUE or only FALSE), do NOT modify
+    if (length(uniq) != 1) {
+        return(x)
+    }
+    tidyr::replace_na(x, !uniq)
+}
+
 
 # source of data: http://www.obofoundry.org/registry/ontologies.jsonld
 obofoundry_data <- jsonlite::read_json(
@@ -50,7 +62,11 @@ obofoundry_df <- dplyr::bind_cols(
     unnest_wider_df(obofoundry_df, review_document)
 ) %>%
     dplyr::mutate(
-        dplyr::across(where(purrr::is_list), confine_list)
+        dplyr::across(where(purrr::is_list), confine_list),
+        dplyr::across(
+            where(is.logical),
+            fill_logical
+        )
     )
 
 readr::write_csv(obofoundry_df, "data-raw/obofoundry_metadata.csv")
