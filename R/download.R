@@ -74,9 +74,8 @@ download_obo_ontology <- function(ontology_id, dest_dir, on_failure = "warn",
     assertthat::assert_that(
         length(oid) == length(ontology_id),
         msg = paste0(
-            "ontology_id(s): ",
-            vctr_to_string(ontology_id[!oid_lc %in% oid], delim = ", "),
-            " do not match OBO Foundry ontology ID(s)."
+            "ontology_id(s) do not match OBO Foundry ontology ID(s): ",
+            vctr_to_string(ontology_id[!ontology_id %in% oid], delim = ", ")
         )
     )
 
