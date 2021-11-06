@@ -7,9 +7,10 @@
 download_obo_ontology(ontology_id, dest_dir, on_failure = "warn", ...)
 }
 \arguments{
-\item{ontology_id}{OBO Foundry ontology identifier (lowercase, as found on
-http://www.obofoundry.org/). For reference, ontology identifiers are also
-provided in \link{obofoundry_metadata} within this package.}
+\item{ontology_id}{A character vector of OBO Foundry ontology identifier(s)
+(lowercase, as found on http://www.obofoundry.org/). For reference,
+ontology identifiers are also provided in \link{obofoundry_metadata} within
+this package.}
 
 \item{dest_dir}{Path to directory where files will be saved.}
 

@@ -52,9 +52,10 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
 #'
 #' Downloads the current version of one or more ontologies from the OBO Foundry.
 #'
-#' @param ontology_id OBO Foundry ontology identifier (lowercase, as found on
-#'     http://www.obofoundry.org/). For reference, ontology identifiers are also
-#'     provided in [obofoundry_metadata] within this package.
+#' @param ontology_id A character vector of OBO Foundry ontology identifier(s)
+#'     (lowercase, as found on http://www.obofoundry.org/). For reference,
+#'     ontology identifiers are also provided in [obofoundry_metadata] within
+#'     this package.
 #' @param dest_dir Path to directory where files will be saved.
 #' @inheritParams download_file
 #'
