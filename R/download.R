@@ -32,8 +32,10 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
     purrr::map2_int(
         .x = url,
         .y = dest_file,
-        ~ download.file(.x, .y, ...) %>%
-            dl_status$check(.x, .y, abort = on_failure == "abort")
+        .f = function(.url, .file) {
+            download.file(url = .url, destfile = .file, ...) %>%
+                dl_status$check(.url, .file, abort = on_failure == "abort")
+        }
     )
 
     if (stringr::str_detect(on_failure, "^warn")) {
