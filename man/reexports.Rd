@@ -3,7 +3,7 @@
 \docType{import}
 \name{reexports}
 \alias{reexports}
-\alias{tidy}
+\alias{as_tibble}
 \alias{replace_na}
 \title{Objects exported from other packages}
 \keyword{internal}
@@ -12,7 +12,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{generics}{\code{\link[generics]{tidy}}}
+  \item{tibble}{\code{\link[tibble]{as_tibble}}}
 
   \item{tidyr}{\code{\link[tidyr]{replace_na}}}
 }}

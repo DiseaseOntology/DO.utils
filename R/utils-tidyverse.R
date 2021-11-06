@@ -25,9 +25,9 @@ NULL
 NULL
 
 
-#' @importFrom generics tidy
+#' @importFrom tibble as_tibble
 #' @export
-generics::tidy
+tibble::as_tibble
 
 
 #' @importFrom tidyr replace_na

@@ -20,14 +20,16 @@ citedby_scopus(
 )
 }
 \arguments{
-\item{title}{Scopus Search API REFTITLE() query; see
-https://dev.elsevier.com/sc_search_tips.html}
+\item{title}{a character vector of publication titles to be used in a
+Scopus Search API REFTITLE() query; see
+https://dev.elsevier.com/sc_search_tips.html.}
 
-\item{by_id}{logical; where FALSE (default) prescribes a single query
-(multiple titles are separated by OR) and TRUE prescribes a separate query
-for each title}
+\item{by_id}{a logical scalar where TRUE (default) splits cited by
+publications by the input title they cite, and FALSE returns the unified
+list of unique cited by publications.}
 
-\item{id}{(optional) vector of unique IDs; \emph{ignored if} \code{by_id = FALSE}}
+\item{id}{a vector of unique IDs with length equal to title; \emph{REQUIRED} if
+\code{by_id = TRUE}, otherwise ignored.}
 
 \item{api_key}{API Key for Elsevier}
 
@@ -54,10 +56,9 @@ requests of a single search (when records > 25)}
 \code{\link{GET}}}
 }
 \value{
-A list; if \code{by_id = FALSE}, the list result from the Scopus Search
-API as produced by \link[rscopus:scopus_search]{rscopus::scopus_search}; if \code{by_id = TRUE} a list of
-\code{rscopus::scopus_search} list results labelled numerically or with \code{id}, if
-specified.
+If \code{by_id = FALSE}, the list result from the Scopus Search API (as
+produced by \link[rscopus:scopus_search]{rscopus::scopus_search}). If \code{by_id = TRUE}, an \code{id} named
+list of \code{scopus_search} result lists.
 }
 \description{
 List Scopus publications citing those specified by \code{title} or \code{eid},

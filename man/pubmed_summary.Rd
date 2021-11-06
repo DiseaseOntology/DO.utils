@@ -8,17 +8,22 @@ pubmed_summary(input, config = NULL, version = "2.0", retmode = "xml", ...)
 }
 \arguments{
 \item{input}{One of the following: 1) A vector with unique PubMed IDs, 2) a
-list of vectors with unique PubMed IDs (for example, output from
+list of vectors with PubMed IDs (for example, output from
 \verb{citedby_pmid(.... by_id = TRUE)} > \code{extract_pmid()}), OR 3) a
 \code{web_history} object (see NCBI Entrez API documentation for information).}
 
-\item{version, always_return_list}{Arguments included here for flexibility,
+\item{config}{vector configuration options passed to \code{httr::GET}}
+
+\item{version}{Argument included here for flexibility,
 but best left with the defaults as set; see \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}}
 for details.}
 
 \item{retmode}{"xml" (default) or "json"; "xml" is preferred because of a
 higher response limit. This default is opposite the
 \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} default.}
+
+\item{...}{character Additional terms to add to the request, see NCBI
+documentation linked to in references for a complete list}
 }
 \description{
 Retrieves PubMed Summary information for specified publications. Acts as a
