@@ -20,6 +20,7 @@ Imports:
     jsonlite,
     lubridate,
     magrittr,
+    methods,
     purrr,
     rcrossref,
     readr,

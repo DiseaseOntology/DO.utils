@@ -22,7 +22,7 @@ file(s) will be saved.}
 \item "skip" - do nothing
 }}
 
-\item{...}{Additional arguments passed on to \code{\link[=download.file]{download.file()}}.}
+\item{...}{Additional arguments passed on to \code{\link[utils:download.file]{utils::download.file()}}.}
 }
 \value{
 Unless \code{on_failure} includes "list_failed", the successfully downloaded

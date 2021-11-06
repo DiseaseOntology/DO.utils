@@ -16,8 +16,8 @@ files.}
 
 \item{\code{failed}}{A character vector for paths of files that failed to download}
 
-\item{\code{fail_status}}{An integer vector with an exit code from \code{\link[=download.file]{download.file()}}
-for each file in \code{failed}.}
+\item{\code{fail_status}}{An integer vector with an exit code from
+\code{\link[utils:download.file]{utils::download.file()}} for each file in \code{failed}.}
 }}
 
 \section{Methods}{

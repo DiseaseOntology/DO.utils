@@ -115,10 +115,13 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
             ),
             DBObjectType = NULL
         ) %>%
-        dplyr::rename(species = SpeciesName)
+        dplyr::rename(species = .data$SpeciesName)
 
     if (!is.null(term_subset)) {
-        alliance_dedup <- dplyr::filter(alliance_dedup, DOID %in% term_subset)
+        alliance_dedup <- dplyr::filter(
+            alliance_dedup,
+            .data$DOID %in% term_subset
+        )
     }
 
     if (assign_to == "curator") {

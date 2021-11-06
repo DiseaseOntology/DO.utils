@@ -44,6 +44,8 @@ citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
 #' @param id a vector of unique IDs with length equal to title; _REQUIRED_ if
 #'      `by_id = TRUE`, otherwise ignored.
 #' @inheritParams rscopus::scopus_search
+#' @param headers additional headers to be added to [httr::add_headers()]
+#' @param ... Arguments to be passed to the query list for [httr::GET()]
 #'
 #' @return If `by_id = FALSE`, the list result from the Scopus Search API (as
 #'     produced by [rscopus::scopus_search]). If `by_id = TRUE`, an `id` named

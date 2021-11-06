@@ -44,16 +44,14 @@ below 25 for COMPLETE views, see
 
 \item{max_count}{Maximum count of records to be returned.}
 
-\item{headers}{additional headers to be added to
-\code{\link{add_headers}}}
+\item{headers}{additional headers to be added to \code{\link[httr:add_headers]{httr::add_headers()}}}
 
 \item{wait_time}{The time in seconds to wait across consecutive
 requests of a single search (when records > 25)}
 
 \item{verbose}{Print diagnostic messages}
 
-\item{...}{Arguments to be passed to the query list for
-\code{\link{GET}}}
+\item{...}{Arguments to be passed to the query list for \code{\link[httr:GET]{httr::GET()}}}
 }
 \value{
 If \code{by_id = FALSE}, the list result from the Scopus Search API (as

@@ -11,7 +11,7 @@ download_alliance_tsv(dest_dir, url = NULL, ...)
 
 \item{url}{URL to Alliance file; if not provided, will be requested at console}
 
-\item{...}{Additional arguments passed on to \code{\link[=download.file]{download.file()}}.}
+\item{...}{Additional arguments passed on to \code{\link[utils:download.file]{utils::download.file()}}.}
 }
 \value{
 Path to saved file.

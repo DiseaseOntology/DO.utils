@@ -13,7 +13,7 @@
 #'     `Value`)
 #' - "warn-list_failed" - combination of "warn" and "list_failed"
 #' - "skip" - do nothing
-#' @param ... Additional arguments passed on to [download.file()].
+#' @param ... Additional arguments passed on to [utils::download.file()].
 #'
 #' @return
 #' Unless `on_failure` includes "list_failed", the successfully downloaded
@@ -33,7 +33,7 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
         .x = url,
         .y = dest_file,
         .f = function(.url, .file) {
-            download.file(url = .url, destfile = .file, ...) %>%
+            utils::download.file(url = .url, destfile = .file, ...) %>%
                 dl_status$check(.url, .file, abort = on_failure == "abort")
         }
     )
@@ -81,8 +81,10 @@ download_obo_ontology <- function(ontology_id, dest_dir, on_failure = "warn",
 
     # subset to non-obsolete ontologies and set dest_file
     obofoundry_records <- obofoundry_metadata %>%
-        dplyr::filter(id %in% oid & !is_obsolete) %>%
-        dplyr::mutate(dest_file = file.path(dest_dir, basename(ontology_purl)))
+        dplyr::filter(.data$id %in% oid & !.data$is_obsolete) %>%
+        dplyr::mutate(
+            dest_file = file.path(dest_dir, basename(.data$ontology_purl))
+        )
 
     # warn about obsolete ontologies, which are not available for download
     obsolete <- oid[!oid %in% obofoundry_records$id]
@@ -169,15 +171,18 @@ download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
     download_file(url, dest_file, on_failure = "abort", ...)
 }
 
+# Import 'new()' method for Ref Classes
+#' @importFrom methods new
+NULL
 
 #' A Reference Class to represent file download status.
 #'
 #' @field successful A character vector for paths of successfully downloaded
 #'      files.
 #' @field failed A character vector for paths of files that failed to download
-#' @field fail_status An integer vector with an exit code from [download.file()]
-#'     for each file in `failed`.
-download_status <- setRefClass(
+#' @field fail_status An integer vector with an exit code from
+#'     [utils::download.file()] for each file in `failed`.
+download_status <- methods::setRefClass(
     "download_status",
     fields = list(
         successful = "character",

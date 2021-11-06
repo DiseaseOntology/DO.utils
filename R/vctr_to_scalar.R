@@ -54,7 +54,7 @@ vctr_to_string <- function(x, delim = "|", na.rm = FALSE) {
     assert_scalar_logical(na.rm)
 
     if (na.rm) {
-        x <- na.omit(x)
+        x <- stats::na.omit(x)
     }
 
     paste0(x, collapse = delim)

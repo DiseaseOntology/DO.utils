@@ -1,3 +1,5 @@
+utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata"))
+
 #' Human Disease Ontology (DO) Publication Info
 #'
 #' A dataset of identifiers for official DO publications, along with their
