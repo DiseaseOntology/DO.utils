@@ -13,22 +13,22 @@
 #' than "osa" and seems to work better. Based on light experimentation, a good
 #' setting for `maxDist` value for citation titles is between 80-115.
 #'
-#'
-#' @param x A character vector to find matches for.
-#' @param ref A character vector to find matches from.
 #' @inheritParams stringdist::amatch
 #' @param ... arguments passed on to [stringdist::amatch()]
 #'
-#' @return A tibble with x, the reference most closely matching x, and the
-#' distance between x and the reference match (based on the selected method);
-#' columns = "x", "ref_match", "dist".
+#' @return
+#' A tibble with 3 columns:
+#' * `x`
+#' * `table_match`: the closest match of `x`
+#' * `dist`: the distance between x and its closest match (given the method
+#' selected
 #'
 #' @export
-match_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
+match_fz <- function(x, table, method = "lcs", maxDist = 115, ...) {
 
-    ref_match_idx <- stringdist::amatch(
+    table_match_idx <- stringdist::amatch(
         x,
-        ref,
+        table,
         method = method,
         maxDist = maxDist,
         ...
@@ -37,7 +37,7 @@ match_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
     # create df of set 1 & 2 citations
     match_df <- tibble::tibble(
         x = x,
-        ref_match = ref[ref_match_idx]
+        table_match = table[table_match_idx]
     )
 
     match_df <- dplyr::mutate(
@@ -45,7 +45,7 @@ match_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
         dist = purrr::map2_dbl(
             # $ syntax to ensure match within df
             .x = match_df$x,
-            .y = match_df$ref_match,
+            .y = match_df$table_match,
             ~ stringdist::stringdist(.x, .y, method = method)
         )
     )

@@ -4,12 +4,14 @@
 \alias{match_fz}
 \title{Fuzzy (Approximate) String Matching}
 \usage{
-match_fz(x, ref, method = "lcs", maxDist = 115, ...)
+match_fz(x, table, method = "lcs", maxDist = 115, ...)
 }
 \arguments{
-\item{x}{A character vector to find matches for.}
+\item{x}{elements to be approximately matched: will be coerced to 
+\code{character} unless it is a list consisting of \code{integer} vectors.}
 
-\item{ref}{A character vector to find matches from.}
+\item{table}{lookup table for matching. Will be coerced to \code{character}
+unless it is a list consting of \code{integer} vectors.}
 
 \item{method}{Matching algorithm to use. See \code{\link[stringdist]{stringdist-metrics}}.}
 
@@ -21,9 +23,13 @@ specified.}
 \item{...}{arguments passed on to \code{\link[stringdist:amatch]{stringdist::amatch()}}}
 }
 \value{
-A tibble with x, the reference most closely matching x, and the
-distance between x and the reference match (based on the selected method);
-columns = "x", "ref_match", "dist".
+A tibble with 3 columns:
+\itemize{
+\item \code{x}
+\item \code{table_match}: the closest match of \code{x}
+\item \code{dist}: the distance between x and its closest match (given the method
+selected
+}
 }
 \description{
 Wraps \code{\link[stringdist:amatch]{stringdist::amatch()}} to perform "fuzzy" (approximate) string
