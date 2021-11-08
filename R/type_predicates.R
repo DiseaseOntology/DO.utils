@@ -102,3 +102,13 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 is_vctr_or_df <- function(x) {
     is.vector(x) || is.data.frame(x)
 }
+
+is_file_or_dir <- function(x) {
+    fd_test <- dplyr::case_when(
+        utils::file_test("-f", x) ~ "file",
+        utils::file_test("-d", x) ~ "dir",
+        TRUE ~ NA_character_
+    )
+
+    purrr::set_names(!is.na(fd_test), nm = fd_test)
+}
