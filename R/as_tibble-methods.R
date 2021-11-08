@@ -38,3 +38,9 @@ as_tibble.scopus_search_list <- function(x, ...) {
         purrr::set_names(nm = names(x)) %>%
         dplyr::bind_rows(.id = "cites")
 }
+
+#' @export
+as_tibble.git_commit <- function(x, ...) {
+    git2r:::as.data.frame.git_commit(x, ...) %>%
+        tibble::as_tibble()
+}
