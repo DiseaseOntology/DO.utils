@@ -1,3 +1,8 @@
+# DO.utils (development version)
+
+* Rename `match_citations_fz()` to `match_fz()`
+
+
 # DO.utils 0.1.5
 
 ## General
