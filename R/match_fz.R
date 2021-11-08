@@ -1,17 +1,21 @@
-#' Identify Citations of Closest Match
+#' Fuzzy (Approximate) String Matching
 #'
-#' From two sets of citations, identifies the closes match for set 1 in set 2
-#' below a threshold (`maxDist`) using fuzzy string matching.
+#' Wraps [stringdist::amatch()] to perform "fuzzy" (approximate) string
+#' matching while providing more informative output. Instead of an integer
+#' vector of best match positions, this function returns a tibble with the
+#' input, its corresponding best match, and the approximate string distance.
 #'
 #' @section NOTES:
 #' Fuzzy string matching is _SLOW_. Expect this function to take >1 min for
-#' comparisons of more than 500 citations for all methods.
+#' comparisons of more than 500 values for all methods.
 #'
-#' "lcs" method is faster than "osa" and seems to work better.
+#' For comparison of citation titles specifically, the "lcs" method is faster
+#' than "osa" and seems to work better. Based on light experimentation, a good
+#' setting for `maxDist` value for citation titles is between 80-115.
 #'
 #'
-#' @param x citations to find matches for
-#' @param ref citations to find matches from
+#' @param x A character vector to find matches for.
+#' @param ref A character vector to find matches from.
 #' @inheritParams stringdist::amatch
 #' @param ... arguments passed on to [stringdist::amatch()]
 #'
@@ -20,7 +24,7 @@
 #' columns = "x", "ref_match", "dist".
 #'
 #' @export
-match_citations_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
+match_fz <- function(x, ref, method = "lcs", maxDist = 115, ...) {
 
     ref_match_idx <- stringdist::amatch(
         x,
