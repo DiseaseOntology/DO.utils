@@ -16,6 +16,7 @@ Roxygen: list(markdown = TRUE)
 Imports: 
     assertthat,
     dplyr,
+    fs,
     generics,
     jsonlite,
     lubridate,
