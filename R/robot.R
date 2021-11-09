@@ -63,6 +63,61 @@ robot_query <- function(input, rq, save) {
     )
 }
 
+#' Executes & Loads Robot Queries
+#'
+#' Executes and loads one or more ROBOT queries.
+#'
+#' @param input A character vector of path(s) to one or more RDF/OWL file(s) to
+#'     query.
+#' @param query_file A character vector of path(s) to one or more SPARQL query
+#'     file(s), of the same length as `input`.
+#' @param outdir
+#'
+#' @export
+robot_qread <- function(input, query_file, outdir, ...) {
+    exec_robot_mult(input, query_file, outdir, ...)
+    read_robot_mult(input, query_file, outdir)
+}
+
+exec_robot_mult <- function(input, query_file, outdir, ...) {
+
+    if (length(input) != length(query_file) || length(input) != length(outdir)) {
+        stop("length of all input must be equal")
+    }
+
+    purrr::pmap(
+        .l = list(input, query_file, outdir),
+        ~ DO.utils::robot(
+            paste(
+                "query --input", ..1,
+                "--queries", ..2,
+                "--output-dir", ..3
+            ),
+            ...
+        )
+    )
+}
+
+read_robot_mult <- function(input, query_file, outdir) {
+
+    input_sans_ext <- tools::file_path_sans_ext(basename(input))
+    query_file_sans_ext <- tools::file_path_sans_ext(basename(query_file))
+
+    outfiles <- paste0(file.path(outdir, query_file_sans_ext), ".csv")
+    outnames <- paste(input_sans_ext, query_file_sans_ext, sep = "--")
+
+    out <- purrr::map(
+        outfiles,
+        readr::read_csv,
+        show_col_types = FALSE
+    ) %>%
+        purrr::set_names(outnames) %>%
+        dplyr::bind_rows(.id = "tmp") %>%
+        tidyr::separate(tmp, into = c("file", "query"), sep = "--")
+
+    out
+}
+
 #' Install OBO Foundry ROBOT Tool (Mac/Linux ONLY)
 #'
 #' Installs latest ROBOT and robot.jar files to default system path
