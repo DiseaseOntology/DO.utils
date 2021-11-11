@@ -5,7 +5,8 @@
 \alias{DO_pubs}
 \title{Human Disease Ontology (DO) Publication Info}
 \format{
-A data frame with 8 rows and 9 variables:
+A data frame with 9 variables and 1 row for each official DO
+publication:
 \describe{
 \item{internal_id}{short-version identifier used by the DO team for DO
 publications}
@@ -21,7 +22,7 @@ Scopus ID}
 }
 }
 \source{
-Compiled by J. Allen Baron; last updated 2021-09-27
+Compiled by J. Allen Baron; last updated 2021-11-11
 }
 \usage{
 DO_pubs

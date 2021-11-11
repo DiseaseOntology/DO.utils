@@ -5,7 +5,8 @@ utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata"))
 #' A dataset of identifiers for official DO publications, along with their
 #' title and NLM-formatted citations.
 #'
-#' @format A data frame with 8 rows and 9 variables:
+#' @format A data frame with 9 variables and 1 row for each official DO
+#'     publication:
 #' \describe{
 #'   \item{internal_id}{short-version identifier used by the DO team for DO
 #'   publications}
@@ -20,7 +21,7 @@ utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata"))
 #'   \item{citation_nlm}{full NLM-formatted citation}
 #' }
 #'
-#' @source Compiled by J. Allen Baron; last updated 2021-09-27
+#' @source Compiled by J. Allen Baron; last updated 2021-11-11
 "DO_pubs"
 
 #' OBO Foundry Metadata
