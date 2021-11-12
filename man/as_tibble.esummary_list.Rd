@@ -2,20 +2,29 @@
 % Please edit documentation in R/as_tibble-methods.R
 \name{as_tibble.esummary_list}
 \alias{as_tibble.esummary_list}
-\title{Convert an \code{esummary_list} to a Tibble}
+\alias{as_tibble.esummary_list_nested}
+\title{Convert \code{esummary} Object into Tibble}
 \usage{
 \method{as_tibble}{esummary_list}(x, ...)
+
+\method{as_tibble}{esummary_list_nested}(x, ...)
 }
 \arguments{
-\item{x}{An \code{esummary_list} object created by \link[rentrez:entrez_summary]{rentrez::entrez_summary}
-(for single inputs \code{always_return_list} must be TRUE) and it's derivatives
-(\link{pubmed_summary}).}
+\item{x}{An \code{esummary} object (\code{esummary_list} or \code{esummary_list_nested})}
 
 \item{...}{Additional arguments. Not used.}
 }
 \value{
-A tibble, where \code{uid} is the esummary input identifier
+A tibble, where \code{esummary_id} is the input identifier. \code{esummary_list_nested}
+objects will additionally have a \code{cites} column.
 }
 \description{
-Converts an \code{esummary_list} into a \link[tibble:tibble]{tibble}.
+Converts an \code{esummary} object created by \code{\link[=pubmed_summary]{pubmed_summary()}} or
+\code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} into a \link[tibble:tibble]{tibble}.
 }
+\section{Note}{
+
+For single inputs to \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}}, \code{always_return_list} must
+be \code{TRUE}).
+}
+
