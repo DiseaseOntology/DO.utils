@@ -99,6 +99,37 @@ truncate_authors <- function(pubmed_df) {
 }
 
 
+#' Hoists IDs from Pubmed Data (Internal)
+#'
+#' Hoists IDs from Pubmed Data. _Does not use [tidyr::hoist()] because `IdType`_
+#' _identifier is not a parent and ID positions in list can be variable._
+#'
+#' @param pubmed_df A data frame, as produced by [as_tibble()] on a PubMed
+#'     `esummary_list`.
+#' @param id One or more IDs to hoist, as a character vector. If `NULL`
+#'     (default), all IDs will be hoisted. Available IDs may include "doi",
+#'     "eid", "mid", "pii", "pmcid", "pmcid_long", "pmid", or "rid".
+#'
+#' @noRd
+hoist_ArticleIds <- function(pubmed_df, id = NULL) {
+
+    id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) %>%
+        dplyr::bind_rows() %>%
+        # rename to match pkg internal representation
+        dplyr::rename(pmcid_long = pmcid, pmcid = pmc, pmid = pubmed)
+
+    if (is.null(id)) {
+        out_df <- dplyr::bind_cols(pubmed_df, id_df)
+    } else {
+        out_df <- dplyr::bind_cols(
+            pubmed_df,
+            dplyr::select(id_df, {{ id }})
+        )
+    }
+    out_df
+}
+
+
 #' Convert ArticleId list to Data Frame (Internal)
 #'
 #' Converts a single set of ArticleId objects into a data frame. These are
