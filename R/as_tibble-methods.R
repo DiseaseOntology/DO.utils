@@ -16,6 +16,12 @@ as_tibble.esummary_list <- function(x, ...) {
 }
 
 #' @export
+as_tibble.esummary_list_nested <- function(x, ...) {
+    purrr::map(x, as_tibble.esummary_list) %>%
+        dplyr::bind_rows(.id = "cites")
+}
+
+#' @export
 as_tibble.scopus_search <- function(x, ...) {
     tbl_out <- x$entries %>%
         tibble::enframe(name = "tmp", value = "tmp2") %>%
