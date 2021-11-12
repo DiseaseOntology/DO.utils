@@ -97,3 +97,26 @@ truncate_authors <- function(pubmed_df) {
         )
     )
 }
+
+
+#' Convert ArticleId list to Data Frame (Internal)
+#'
+#' Converts a single set of ArticleId objects into a data frame. These are
+#' confined to individual rows in PubMed ArticleIds list columns produced by
+#' [as_tibble.esummary_list()].
+#'
+#' @param x A single set of PubMed ArticleId objects from `esummary_list`
+#'     as contained in rows after after conversion with [as_tibble()].
+#'
+#' @noRd
+tidy_ArticleId_set <- function(x) {
+    purrr::map_dfr(
+        x,
+        ~ tibble::tibble(
+            type = .x$IdType,
+            #type_N = .x$IdTypeN, # not needed
+            value = .x$Value
+        )
+    ) %>%
+        tidyr::pivot_wider(names_from = type, values_from = value)
+}
