@@ -54,7 +54,7 @@ pubmed_summary <- function(input, config = NULL, version = "2.0",
             input,
             ~ pm_summary_res[.x]
         )
-        class(summary_list) <- "esummary_list-nested"
+        class(summary_list) <- "esummary_list_nested"
     } else {
         summary_list <- pm_summary_res
     }
