@@ -182,12 +182,19 @@ truncate_authors <- function(pubmed_df) {
 }
 
 
-#' Hoists IDs from Pubmed Data (Internal)
+#' Hoists IDs from Pubmed/PMC Data (Internal)
 #'
-#' Hoists IDs from Pubmed Data. _Does not use [tidyr::hoist()] because `IdType`_
-#' _identifier is not a parent and ID positions in list can be variable._
+#' Hoists IDs from Pubmed/PMC Data. _Does not use [tidyr::hoist()] because_
+#' _`IdType` identifier is not a parent and ID positions in list can be_
+#' _variable._
 #'
-#' @param pubmed_df A data frame, as produced by [as_tibble()] on a PubMed
+#' @section Note:
+#' In direct results from PubMed/PMC the `ArticleIds` results are not
+#' equivalent. The ID type names from PMC correspond with those in this package
+#' but the PubMed ID type names do not. For PubMed `pmcid` is named `pmc` and
+#' `pmid` is named `pubmed`.
+#'
+#' @param pubmed_df A data frame, as produced by [as_tibble()] on a PubMed/PMC
 #'     `esummary_list`.
 #' @param id One or more IDs to hoist, as a character vector. If `NULL`
 #'     (default), all IDs will be hoisted. Available IDs may include "doi",
@@ -197,9 +204,13 @@ truncate_authors <- function(pubmed_df) {
 hoist_ArticleIds <- function(pubmed_df, id = NULL) {
 
     id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) %>%
-        dplyr::bind_rows() %>%
-        # rename to match pkg internal representation
-        dplyr::rename(pmcid_long = pmcid, pmcid = pmc, pmid = pubmed)
+        dplyr::bind_rows()
+
+    # rename to match pkg internal representation; only needed for PubMed
+    if (all(c("pmcid", "pmc") %in% names(id_df))) {
+        id_df <- id_df %>%
+            dplyr::rename(pmcid_long = pmcid, pmcid = pmc, pmid = pubmed)
+    }
 
     if (is.null(id)) {
         out_df <- dplyr::bind_cols(pubmed_df, id_df)
