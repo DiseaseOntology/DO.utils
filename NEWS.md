@@ -1,5 +1,15 @@
 # DO.utils (development version)
 
+* Rename:
+    * `match_citations_fz()` to `match_fz()`
+    * `concat_pm_citation()` to `read_pubmed_txt()`
+* Bug fixes
+* Created:
+    * `pmc_summary()`
+    * `hoist_ArticleIds()` (internal) - tidies PubMed/PMC identifiers
+        * `tidy_ArticleId_set()` (internal)
+    * `as_tibble()`, method `esummary_list_nested`
+* Add newest DO publication data
 * Add execution of SPARQL queries, powered by python rdflib wrapper `py_rdf`.
     * `py_rdf$read()` to read in an RDF file.
     * `py_rdf$sparql_query()` to execute a SPARQL query.
