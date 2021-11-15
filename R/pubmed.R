@@ -63,16 +63,16 @@ pubmed_summary <- function(input, config = NULL, version = "2.0",
 }
 
 
-#' Concatenate PubMed Citations (from txt file)
+#' Read in PubMed Citations (from txt file)
 #'
-#' Concatenates citations spanning multiple lines, usually obtained
-#' by downloading a text file from PubMed
+#' Reads in and concatenates PubMed text-format citations (span multiple
+#' lines, usually obtained by downloading a text file from PubMed as
+#' 'Summary (text)).
 #'
-#' @param file path to .txt file; or another possible input to `readLines()`
+#' @param file Path to .txt file; or another possible input to `readLines()`.
 #'
-#' @md
 #' @export
-concat_pm_citation <- function(file) {
+read_pubmed_txt <- function(file) {
     txt_citations <- readLines(file) %>%
         stringr::str_trim()
 
