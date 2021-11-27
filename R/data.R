@@ -1,4 +1,4 @@
-utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata"))
+utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata", "DO_colors"))
 
 #' Human Disease Ontology (DO) Publication Info
 #'
@@ -56,3 +56,15 @@ utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata"))
 #'
 #' @source \url{http://www.obofoundry.org/registry/ontologies.jsonld}, last accessed 2021-11-05.
 "obofoundry_metadata"
+
+
+#' Human Disease Ontology Official Colors
+#'
+#' Named, hexadecimal colors for official DO use.
+#'
+#' @format A named, vector of colors in hexadecimal format, including most
+#' recognizable teal-ish colors (default, mid, light, website, & websafe) and
+#' less used oranges (orange, orange_mid, orange_light).
+#'
+#' @source Updated by J. Allen Baron on 2021-11-23.
+"DO_colors"
