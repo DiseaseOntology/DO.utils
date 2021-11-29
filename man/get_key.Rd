@@ -23,7 +23,7 @@ keyring is used. See also \code{\link[keyring:has_keyring_support]{has_keyring_s
   }}
 }
 \value{
-The value of the key/secret.
+The value of the key/secret, invisibly.
 }
 \description{
 If available, retrieves a key/secret from \href{keyring::keyring}{keyring}

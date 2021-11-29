@@ -28,7 +28,7 @@
 #'     cases, which includes use of `citedby_scopus()`.
 #'
 #' @return
-#' The value of the key/secret.
+#' The value of the key/secret, invisibly.
 get_key <- function(key_name, ...) {
     key_loc <- NULL
     # check for key from keyring, then environment
@@ -53,7 +53,7 @@ get_key <- function(key_name, ...) {
     }
 
     inform_of_loc(key_name, key_loc)
-    key_val
+    invisible(key_val)
 }
 
 
