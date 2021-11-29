@@ -31,7 +31,8 @@
 #' The value of the key/secret, invisibly.
 get_key <- function(key_name, ...) {
     key_loc <- NULL
-    # check for key from keyring, then environment
+
+    # check keyring
     from_keyring <- try(keyring::key_get(key_name), silent = TRUE)
     use_keyring <- class(from_keyring) != "try-error"
     if (use_keyring) {
@@ -39,6 +40,7 @@ get_key <- function(key_name, ...) {
         key_val <- from_keyring
     }
 
+    # check for environment variable
     from_renv <- Sys.getenv(key_name)
     if (!is_blank(from_renv) & !use_keyring) {
         key_loc <- "env_var"
@@ -47,7 +49,10 @@ get_key <- function(key_name, ...) {
 
     if (is.null(key_loc)) {
         key_val <- askpass::askpass(
-            prompt = paste0(key_name, " is unset. Please provide its value.")
+            prompt = paste0(
+                '"', key_name, '" is unset;',
+                ' please provide its value.'
+            )
         )
         keyring::key_set_with_value(key_name, password = key_val)
         return(key_val)
@@ -75,7 +80,7 @@ inform_of_loc <- function(key, loc) {
     loc_msg <- switch(
         loc,
         env_var = "an environment variable.",
-        keyring = "your OS credential store, via keyring."
+        keyring = "your OS credential store via keyring."
     )
 
     if (isTRUE(opt)) {
