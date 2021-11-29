@@ -33,13 +33,14 @@ get_key <- function(key_name, ...) {
     key_loc <- NULL
     # check for key from keyring, then environment
     from_keyring <- try(keyring::key_get(key_name), silent = TRUE)
-    if (class(from_keyring) != "try-error") {
+    use_keyring <- class(from_keyring) != "try-error"
+    if (use_keyring) {
         key_loc <- "keyring"
         key_val <- from_keyring
     }
 
     from_renv <- Sys.getenv(key_name)
-    if (!is_blank(from_renv)) {
+    if (!is_blank(from_renv) & !use_keyring) {
         key_loc <- "env_var"
         key_val <- from_renv
     }
