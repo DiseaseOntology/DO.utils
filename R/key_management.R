@@ -61,15 +61,21 @@ get_key <- function(key_name, ...) {
 inform_of_loc <- function(option, key, loc) {
     # if pkg-wide key_msg = TRUE, always emit message (always ignore if FALSE)
     opt <- getOption(option)
+    loc_msg <- switch(
+        loc,
+        env_var = "an environment variable.",
+        keyring = "your OS credential store, via keyring."
+    )
+
     if (isTRUE(opt)) {
-        message(key, " was obtained from ", loc)
+        message(key, " was obtained from ", loc_msg)
     }
 
     # if pkg-wide key_msg is unset, message once
     if (is.null(opt)) {
         key_option <- paste(option, key, sep = ".")
         if (getOption(key_option, TRUE)) {
-            message(key, " was obtained from ", loc)
+            message(key, " was obtained from ", loc_msg)
 
             options(
                 purrr::set_names(list(FALSE), nm = key_option)
