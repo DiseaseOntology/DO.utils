@@ -11,13 +11,24 @@
 #' 2. A key specific option, defined as "DO.utils.key_msg.{key_name}", is set
 #' to `FALSE`.
 #'
-#' @param key_name The name of a key, as a string (case-sensitive).
+#' @param key_name The name of a key, as a string (case-sensitive). See
+#'     `Common Keys` for a description tasks performed by DO.utils and the
+#'     the keys they require/use.
 #' @inheritDotParams keyring::key_get
+#'
+#' @section Common Keys:
+#' Currently only "cited by" access (via `citedby_*()`) and related article
+#' summary searches (via `search_*()`) require keys based on the service they
+#' use:
+#' - PubMed/PMC require a key named "ENTREZ_KEY" (see NCBI's
+#'     [Entrez API documentation](https://www.ncbi.nlm.nih.gov/books/NBK25497/)).
+#' - Scopus requires two keys named "Elsevier_API" and "Elsevier_insttoken".
+#'     This second key is a special "institutional token" provided by
+#'     Elsevier/Scopus that allows API access for non-standard use
+#'     cases, which includes use of `citedby_scopus()`.
 #'
 #' @return
 #' The value of the key/secret.
-#'
-#' @noRd
 get_key <- function(key_name, ...) {
     key_loc <- NULL
     # check for key from keyring, then environment
