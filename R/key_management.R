@@ -1,14 +1,21 @@
-#' UPDATE DOCUMENTATION!!!
+#' Get a Key/Secret
 #'
-#' Checks whether a key/secret is available as an environment variable or from
-#' [keyring](keyring::keyring) (preferred).
+#' If available, retrieves a key/secret from [keyring](keyring::keyring)
+#' (preferred) or an environment variable. When not available requests the
+#' key's value from the user and stores it for future use (using `keyring`).
+#'
+#' Once per session this function will specify where the key was found, unless
+#' one of two options is set:
+#' 1. The global (and overriding) "DO.utils.key_msg" option will mute all
+#' messages when `FALSE` or _always_ produce messages when `TRUE`.
+#' 2. A key specific option, defined as "DO.utils.key_msg.{key_name}", is set
+#' to `FALSE`.
 #'
 #' @param key_name The name of a key, as a string (case-sensitive).
 #' @inheritDotParams keyring::key_get
 #'
 #' @return
-#' The location of the key/secret: "keyring", "env_var", or both as a character
-#' vector; or `NULL` if a key/secret is not found in either location.
+#' The value of the key/secret.
 #'
 #' @noRd
 get_key <- function(key_name, ...) {
@@ -39,7 +46,18 @@ get_key <- function(key_name, ...) {
 }
 
 
-#' NEED TO DOCUMENT
+#' Inform of Key/Secret Location
+#'
+#' Prints a message informing the user of where a key/secret was located.
+#' Currently, the only possibilities are from the environment as an
+#' environment variable or from the OS-specific credential store via keyring.
+#'
+#' @param option The name of the global option controlling all key/secret
+#'     messages, as a string.
+#' @param key The name of the key/secret, as a string.
+#' @param loc The location of the key, as determined by [get_key()].
+#'
+#' @noRd
 inform_of_loc <- function(option, key, loc) {
     # if pkg-wide key_msg = TRUE, always emit message (always ignore if FALSE)
     opt <- getOption(option)
