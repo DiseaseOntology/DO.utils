@@ -41,7 +41,7 @@ get_key <- function(key_name, ...) {
         return(key_val)
     }
 
-    inform_of_loc("DO.utils.key_msg", key_name, key_loc)
+    inform_of_loc(key_name, key_loc)
     key_val
 }
 
@@ -52,15 +52,14 @@ get_key <- function(key_name, ...) {
 #' Currently, the only possibilities are from the environment as an
 #' environment variable or from the OS-specific credential store via keyring.
 #'
-#' @param option The name of the global option controlling all key/secret
-#'     messages, as a string.
 #' @param key The name of the key/secret, as a string.
 #' @param loc The location of the key, as determined by [get_key()].
 #'
 #' @noRd
-inform_of_loc <- function(option, key, loc) {
+inform_of_loc <- function(key, loc) {
     # if pkg-wide key_msg = TRUE, always emit message (always ignore if FALSE)
-    opt <- getOption(option)
+    pkg_msg_opt <- "DO.utils.key_msg"
+    opt <- getOption(pkg_msg_opt)
     loc_msg <- switch(
         loc,
         env_var = "an environment variable.",
@@ -73,7 +72,7 @@ inform_of_loc <- function(option, key, loc) {
 
     # if pkg-wide key_msg is unset, message once
     if (is.null(opt)) {
-        key_option <- paste(option, key, sep = ".")
+        key_option <- paste(pkg_msg_opt, key, sep = ".")
         if (getOption(key_option, TRUE)) {
             message(key, " was obtained from ", loc_msg)
 
