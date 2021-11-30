@@ -34,7 +34,7 @@ make_user_list_html <- function(file) {
 
 # helpers
 build_html_row <- function(cell_html, per_row = 3) {
-    cell_html_grouped <- split_n(cell_html, n = per_row)
+    cell_html_grouped <- partition(cell_html, n = per_row)
     # set html elements
     r_start <- '\t\t<tr>'
     r_end <- '\t\t</tr>'
@@ -46,10 +46,4 @@ build_html_row <- function(cell_html, per_row = 3) {
         unlist()
 
     cells_in_rows
-}
-
-split_n <- function(x, n = 3) {
-    pos <- seq_along(x)
-    groups <- (pos - 1) %/% n
-    split(x, groups)
 }
