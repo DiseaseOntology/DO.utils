@@ -17,7 +17,7 @@ df <- data.frame(
 d <- df[, c("dbl", "chr")]
 m <- matrix(c(as.character(df$dbl), df$chr), nrow = 2)
 l <- as.list(d)
-nl <- list(l, df$int)
+nl <- list(l, df$lgl)
 
 test_that("single vectors are concatenated", {
     expect_identical(cast_to_string(df$dbl), "1|2.5")
