@@ -38,3 +38,30 @@ cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
     string
 }
 
+
+# helpers -----------------------------------------------------------------
+
+#' Convert to Character
+#'
+#' Wrapper for [base::as.character()] designed to provide extra methods for converting
+#' lists and data.frames to character vectors. `to_character()` is intended to
+#' function as an _internal_ helper of [cast_to_string()].
+#'
+#' @inheritParams base::as.character
+to_character <- function(x, ...) {
+    UseMethod("to_character")
+}
+
+#' @export
+to_character.list <- function(x, ...) {
+    purrr::map(x, to_character) %>%
+        unlist()
+}
+
+#' @export
+to_character.data.frame <- to_character.list
+
+#' @export
+to_character.default <- function(x, ...) {
+    base::as.character(x, ...)
+}
