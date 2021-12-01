@@ -22,7 +22,7 @@ test_that("single vectors are concatenated", {
     expect_identical(cast_to_string(df$dat), "2021-12-02|2021-12-03")
     expect_identical(
         cast_to_string(df$tim),
-        "2021-12-01 12:31:59 EST|2021-12-01 12:32:00 EST"
+        "2021-12-01 12:31:59|2021-12-01 12:32:00"
     )
 })
 
