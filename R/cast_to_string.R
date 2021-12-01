@@ -27,8 +27,7 @@
 cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
     assert_scalar_logical(na.rm)
 
-    chr_list <- purrr::map(list(...), as.character)
-    x <- unlist(chr_list)
+    x <- to_character(list(...))
     if (unique) {
         string <- unique_to_string(x, delim = delim, na.rm = na.rm)
     } else {
