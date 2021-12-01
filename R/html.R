@@ -16,7 +16,10 @@
 #' @section NOTE:
 #' As currently coded, it is not possible to specify attributes separately for
 #' each row/cell. All attributes are applied to each row/cell.
-
+#'
+#' @examples
+#' html_in_rows(c("<b>Hi!</b>", "", "", "What's", "your", "name"))
+#'
 #' @noRd
 html_in_rows <- function(cell_html, row_attr = NULL,
                          cell_attr = NULL, per_row = 3, tab_indent = 2) {
