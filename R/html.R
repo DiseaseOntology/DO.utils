@@ -47,7 +47,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
         cell_grouped,
         ~ c(r_start, .x, r_end)
     ) %>%
-        unlist()
+        unlist(use.names = FALSE)
 
     row_cell_html
 }
