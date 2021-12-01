@@ -10,22 +10,22 @@
 #'
 #' @examples
 #' # collapses individual vectors
-#' mold_string(1:10)
+#' cast_to_string(1:10)
 #'
 #' # input order is preserved
-#' mold_string(1:2, letters[1:2])
-#' mold_string(data.frame(x = 1:2, y = letters[1:2]))
+#' cast_to_string(1:2, letters[1:2])
+#' cast_to_string(data.frame(x = 1:2, y = letters[1:2]))
 #'
 #' # factor values are preserved ONLY if all inputs are factors
-#' mold_string(factor(letters[1:2]), factor("c")) # values preserved
-#' mold_string(factor(letters[1:2]), "c") # values lost
+#' cast_to_string(factor(letters[1:2]), factor("c")) # values preserved
+#' cast_to_string(factor(letters[1:2]), "c") # values lost
 #'
 #' # unique applies across all inputs, order is determined by first appearance
-#' mold_string(c(3, 1, 2), 1:4, unique = FALSE)
-#' mold_string(c(3, 1, 2), 1:4, unique = TRUE)
+#' cast_to_string(c(3, 1, 2), 1:4, unique = FALSE)
+#' cast_to_string(c(3, 1, 2), 1:4, unique = TRUE)
 #'
 #' @export
-mold_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
+cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
     assert_scalar_logical(na.rm)
 
     x <- unlist(list(...))
