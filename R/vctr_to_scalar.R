@@ -16,9 +16,8 @@
 #' cast_to_string(1:2, letters[1:2])
 #' cast_to_string(data.frame(x = 1:2, y = letters[1:2]))
 #'
-#' # factor values are preserved ONLY if all inputs are factors
-#' cast_to_string(factor(letters[1:2]), factor("c")) # values preserved
-#' cast_to_string(factor(letters[1:2]), "c") # values lost
+#' # factor levels are captured (instead of numeric placeholders)
+#' cast_to_string(factor(letters[1:2]), "c")
 #'
 #' # unique applies across all inputs, order is determined by first appearance
 #' cast_to_string(c(3, 1, 2), 1:4, unique = FALSE)
