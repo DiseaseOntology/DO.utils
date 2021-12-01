@@ -15,7 +15,7 @@ df <- data.frame(
 
 # other complex data types (no plan for array)
 d <- df[, c("dbl", "chr")]
-m <- as.matrix(d)
+m <- matrix(c(as.character(df$dbl), df$chr), nrow = 2)
 l <- as.list(d)
 nl <- list(l, df$int)
 
