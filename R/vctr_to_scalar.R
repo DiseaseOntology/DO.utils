@@ -1,3 +1,44 @@
+#' Create a String from Inputs
+#'
+#' Creates a single string from one or more inputs with each value separated by
+#' `delim`.
+#'
+#' @param ... One or more R objects (vector, list, data.frame, etc).
+#' @inheritParams vctr_to_string
+#' @param unique Whether to include only unique values (across all inputs), as
+#'     a logical.
+#'
+#' @examples
+#' # collapses individual vectors
+#' mold_string(1:10)
+#'
+#' # input order is preserved
+#' mold_string(1:2, letters[1:2])
+#' mold_string(data.frame(x = 1:2, y = letters[1:2]))
+#'
+#' # factor values are preserved ONLY if all inputs are factors
+#' mold_string(factor(letters[1:2]), factor("c")) # values preserved
+#' mold_string(factor(letters[1:2]), "c") # values lost
+#'
+#' # unique applies across all inputs, order is determined by first appearance
+#' mold_string(c(3, 1, 2), 1:4, unique = FALSE)
+#' mold_string(c(3, 1, 2), 1:4, unique = TRUE)
+#'
+#' @export
+mold_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
+    assert_scalar_logical(na.rm)
+
+    x <- unlist(list(...))
+    if (unique) {
+        string <- unique_to_string(x, delim = delim, na.rm = na.rm)
+    } else {
+        string <- vctr_to_string(x, delim = delim, na.rm = na.rm)
+    }
+
+    string
+}
+
+
 #' Return Unique Value for Invariant Vectors
 #'
 #' Returns the unique value from a vector of any length, if and only if, only 1
