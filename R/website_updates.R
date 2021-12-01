@@ -24,26 +24,9 @@ make_user_list_html <- function(file) {
     # build html
     user_html <- glue::glue_data(
         .x = ws_user_list,
-        '\t\t<td class="default"><a href="{url}" target="_blank">{name}</a></td>'
+        '<td class="default"><a href="{url}" target="_blank">{name}</a></td>'
     )
-    html_rows <- build_html_row(user_html, 3)
+    html_rows <- html_in_rows(user_html, per_row = 3, tab_indent = 2)
 
     readr::write_lines(html_rows, file = file)
-}
-
-
-# helpers
-build_html_row <- function(cell_html, per_row = 3) {
-    cell_html_grouped <- partition(cell_html, n = per_row)
-    # set html elements
-    r_start <- '\t\t<tr>'
-    r_end <- '\t\t</tr>'
-    # fill in last row with blank cells
-    cells_in_rows <- purrr::map(
-        cell_html_grouped,
-        ~ c('\t\t<tr>', .x, '\t\t</tr>')
-    ) %>%
-        unlist()
-
-    cells_in_rows
 }
