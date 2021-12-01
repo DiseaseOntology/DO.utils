@@ -25,18 +25,20 @@ html_in_rows <- function(cell_html, row_attr = NULL,
                          cell_attr = NULL, per_row = 3, tab_indent = 2) {
 
     # format elements as rows & cells
-    r_start <- paste0(
+    r_start <- cast_to_string(
         rep('\t', tab_indent),
-        paste0('<tr', row_attr, collapse = " "),
-        '>'
+        cast_to_string('<tr', row_attr, delim = " "),
+        '>',
+        delim = ""
     )
-    r_end <- paste0(rep('\t', tab_indent), '</tr>')
+    r_end <- cast_to_string(rep('\t', tab_indent), '</tr>', delim = "")
     cell_indent <- paste0(
-        rep('\t', tab_indent + 1),
-        paste0('<td', cell_attr, collapse = " "),
+        cast_to_string(rep('\t', tab_indent + 1), delim = ""),
+        cast_to_string('<td', cell_attr, delim = " "),
         '>',
         cell_html,
-        '</td>'
+        '</td>',
+        delim = ""
     )
 
     # format rows
