@@ -13,6 +13,12 @@ df <- data.frame(
     stringsAsFactors = FALSE
 )
 
+# other complex data types (no plan for array)
+d <- df[, c("dbl", "chr")]
+m <- as.matrix(d)
+l <- as.list(d)
+nl <- list(l, df$int)
+
 test_that("single vectors are concatenated", {
     expect_identical(cast_to_string(df$dbl), "1|2.5")
     expect_identical(cast_to_string(df$int), "1|2")
@@ -29,4 +35,11 @@ test_that("single vectors are concatenated", {
 test_that("delim is used", {
     expect_identical(cast_to_string(df$int, delim = ""), "12")
     expect_identical(cast_to_string(df$int, delim = "."), "1.2")
+})
+
+test_that("complex data types are concatenated", {
+    expect_identical(cast_to_string(d), "1|2.5|a|b")
+    expect_identical(cast_to_string(m), "1|2.5|a|b")
+    expect_identical(cast_to_string(l), "1|2.5|a|b")
+    expect_identical(cast_to_string(nl), "1|2.5|a|b|TRUE|FALSE")
 })
