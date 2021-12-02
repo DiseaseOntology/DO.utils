@@ -5,18 +5,18 @@
 \title{Plot Publications Citing DO by Year}
 \usage{
 plot_citedby(
-  file_in = "data/citedby/DO_citedby.csv",
-  dir_out = "graphics/website",
+  data_file = "data/citedby/DO_citedby.csv",
+  out_dir = "graphics/website",
   w = 8,
   h = 5.6
 )
 }
 \arguments{
-\item{file_in}{The path to the file containing the list of publications
+\item{data_file}{The path to the file containing the list of publications
 citing the DO, as a string.}
 
-\item{dir_out}{The directory where the plot .png should be saved to, as a
-string. The file name will be "{date}-DO_cited_by_count.png".}
+\item{out_dir}{The directory where the plot \code{"{date}-DO_cited_by_count.png"}
+should be saved, as a string.}
 
 \item{w}{The width of the plot in inches, as an integer.}
 
@@ -28,6 +28,6 @@ year.
 }
 \section{Data Preparation}{
 
-To prepare cited by data EXECUTE scripts/citedby_full_procedure.R.
+To prepare data, execute \code{scripts/citedby_full_procedure.R}.
 }
 

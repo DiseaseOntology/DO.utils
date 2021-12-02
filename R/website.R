@@ -40,22 +40,22 @@ make_user_list_html <- function(file) {
 #' Plots the count of publications that cite the Human Disease Ontology by
 #' year.
 #'
-#' @param file_in The path to the file containing the list of publications
+#' @param data_file The path to the file containing the list of publications
 #'     citing the DO, as a string.
-#' @param dir_out The directory where the plot .png should be saved to, as a
-#'     string. The file name will be "{date}-DO_cited_by_count.png".
+#' @param out_dir The directory where the plot `"{date}-DO_cited_by_count.png"`
+#'     should be saved, as a string.
 #' @param w The width of the plot in inches, as an integer.
 #' @param h The height of the plot in inches, as an integer.
 #'
 #' @section Data Preparation:
-#' To prepare cited by data EXECUTE scripts/citedby_full_procedure.R.
+#' To prepare data, execute `scripts/citedby_full_procedure.R`.
 #'
 #' @export
-plot_citedby <- function(file_in = "data/citedby/DO_citedby.csv",
-                         dir_out = "graphics/website", w = 8, h = 5.6) {
+plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
+                         out_dir = "graphics/website", w = 8, h = 5.6) {
 
     file_out <- file.path(
-        dir_out,
+        out_dir,
         paste0(
             stringr::str_remove_all(Sys.Date(), "-"),
             "-",
@@ -63,11 +63,11 @@ plot_citedby <- function(file_in = "data/citedby/DO_citedby.csv",
         )
     )
 
-    cited_by <- readr::read_csv(file_in) %>%
+    df <- readr::read_csv(data_file) %>%
         dplyr::mutate(Year = lubridate::year(pub_date)) %>%
         dplyr::count(Year, name = "Publications")
 
-    g <- ggplot(data = cited_by) +
+    g <- ggplot(data = df) +
         geom_col(
             aes(x = Year, y = Publications),
             width = 0.6,
