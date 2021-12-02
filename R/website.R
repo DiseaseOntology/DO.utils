@@ -257,3 +257,71 @@ plot_branch_counts <- function(
 
     g
 }
+
+
+#' Plot Xref Counts
+#'
+#' Plots the count of cross-references by source in the Human Disease Ontology.
+#'
+#' @param data_file The path to the file containing the latest DO xref counts,
+#'     as a string.
+#' @param out_dir The directory where the plot `"{date}-DO_xref_count.png"`
+#'     should be saved, as a string.
+#' @inheritParams plot_citedby
+#'
+#' @section Data Preparation:
+#' To prepare data, manually copy and paste stats from the Google Sheet
+#' [DO_github_release_log](https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614)
+#' OR manually copy & paste stats from xref.tsv produced by executing:
+#'
+#' ```
+#' robot query --input {DO_repo}/src/ontology/doid.owl \
+#'             --query {DO_repo}/src/sparql/build/all-xref-report.rq xref.tsv
+#'```
+#'
+#' @export
+plot_xref_counts <- function(
+    data_file = "data/DO_release/cross_references.csv",
+    out_dir = "graphics/website", w = 8, h = 5.6) {
+
+    file_out <- file.path(
+        out_dir,
+        paste0(
+            stringr::str_remove_all(Sys.Date(), "-"),
+            "-",
+            "DO_xref_count.png"
+        )
+    )
+
+    df <- readr::read_csv(data_file) %>%
+        dplyr::filter(!is.na(Curation)) %>%
+        dplyr::mutate(
+            Curation = factor(
+                Curation,
+                levels = c("Manual", "Mixed", "Automated")
+            )
+        )
+
+    g <- ggplot(data = df) +
+        geom_col(
+            aes(x = Cross_References, y = Count, fill = Curation),
+            width = 0.6
+        ) +
+        scale_y_continuous(
+            breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
+        ) +
+        coord_flip() +
+        scale_fill_manual(
+            values = unname(DO_colors[c("light", "mid", "default")])
+        ) +
+        labs(title = "DO Cross-References", x ="Cross References") +
+        theme_dark(base_size = 13)
+
+    ggsave(
+        filename = file_out, plot = g,
+        width = w, height = h, units = "in",
+        dpi = 600
+    )
+
+    g
+}
