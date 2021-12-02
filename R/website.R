@@ -84,3 +84,105 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
 
     g
 }
+
+
+#' Plot DO Term & Definition Counts
+#'
+#' Plots the count of _non-obsolete_ terms and definitions in the Human Disease
+#' Ontology over time (using data from each release).
+#'
+#' @param release_file The path to the file containing DO release details, as a
+#'     string.
+#' @param counts_file The path to the file containing the count of DO terms
+#'     and definitions by release, as a string.
+#' @param out_dir The directory where the plot `"{date}-DO_term_def_count.png"`
+#'     should be saved, as a string.
+#' @inheritParams plot_citedby
+#'
+#' @section Data Preparation:
+#' To prepare data, execute:
+#'
+#' 1. `scripts/DO_term_def_counts.R` - requires installation of a python virtual
+#'  environment using `scripts/install_reticulate_python.R`.
+#'
+#' 2. `scripts/DO_release_details.R`
+#'
+#' @export
+plot_term_def_counts <- function(
+    release_file = "data/DO_release/DO_release_details.csv",
+    counts_file = "data/DO_release/DO_term_def_counts.csv",
+    out_dir = "graphics/website", w = 8, h = 5.6) {
+
+    file_out <- file.path(
+        out_dir,
+        paste0(
+            stringr::str_remove_all(Sys.Date(), "-"),
+            "-",
+            "DO_term_def_count.png"
+        )
+    )
+
+    release_df <- readr::read_csv(release_file)
+    counts_df <- readr::read_csv(counts_file) %>%
+        dplyr::rename(release = `...1`)
+    df <- dplyr::left_join(
+        release_df,
+        counts_df,
+        by = c("tag_name" = "release")
+    ) %>%
+        # add year
+        dplyr::mutate(date = lubridate::date(created_at)) %>%
+        # drop bug fix releases that happen on same day (for plotting by date)
+        dplyr::group_by(date) %>%
+        dplyr::arrange(desc(created_at)) %>%
+        dplyr::filter(!duplicated(date)) %>%
+        dplyr::ungroup() %>%
+        # drop extra columns
+        dplyr::select(date, terms, defs) %>%
+        dplyr::mutate(
+            n_terms = terms - defs,
+            n_defs = defs
+        ) %>%
+        dplyr::select(-terms, -defs) %>%
+        tidyr::pivot_longer(
+            cols = c(n_terms, n_defs),
+            names_to = "variable",
+            values_to = "value"
+        ) %>%
+        dplyr::mutate(
+            variable = factor(
+                variable,
+                levels = c("n_terms", "n_defs")
+            )
+        )
+
+    ## Create Area Plot - NEW version, 2021-08-11
+    g <- ggplot(df) +
+        geom_area(
+            aes(x = date, y = value, fill = variable), size = 1
+        ) +
+        scale_fill_manual(
+            name = "Total",
+            values = unname(DO_colors[c("light", "default")]),
+            labels = c("Terms", "Terms Defined")
+        ) +
+        scale_y_continuous(
+            name = "Count",
+            breaks = seq(0, 12000, by = 2000)
+        ) +
+        scale_x_date(
+            name = "Release Date",
+            date_breaks = "1 year",
+            date_labels = "%Y"
+        ) +
+        ggtitle("Trend of DO Terms") +
+        theme_dark(base_size = 13)
+
+    ggsave(
+        filename = file_out, plot = g,
+        width = w, height = h, units = "in",
+        dpi = 600
+    )
+
+    g
+}
