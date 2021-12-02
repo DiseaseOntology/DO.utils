@@ -1,10 +1,32 @@
 # DO.utils (development version)
 
-* Rename `match_citations_fz()` to `match_fz()`
+## General
+* Added **DEPENDENCIES** on `ggplot2`, `googlesheets4`, and `glue`.
+* Renamed `match_citations_fz()` to `match_fz()`.
+* Added `cast_to_string()`, a more generalized version of `vctr_to_string()`
+    that accepts multiple inputs (similar to `paste()`).
+* Added function to `partition()` vectors into groups with `n` elements per
+    group.
 
 ## Data
 * Added latest official DO publication to `DO_pubs`.
 * Added official `DO_colors`.
+
+## Feature: Website Updates
+* Added functions to create statistics graphs: `plot_citedby()`,
+    `plot_terms_def_counts()`, `plot_branch_counts()`, `plot_xref_counts()`.
+* Added `make_user_list_html()` to create rows of table in Community >
+    Collaborators > Users of the Disease Ontology from the DO team's curated
+    "Uses" Google sheet.
+
+## Internal Use Only
+* Added `to_character()`, helper for `cast_to_string()`, to reduce lists and
+    data frames to character vectors while limiting data loss.
+* Added `html_in_rows()`, helper for `make_user_list_html()`, to format html
+    elements in rows (with optional row & cell attributes).
+* Added Google sheets identifiers for programmatic access.
+
+
 
 # DO.utils 0.1.5
 
