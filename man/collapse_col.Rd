@@ -4,14 +4,14 @@
 \alias{collapse_col}
 \title{Collapse Column(s)}
 \usage{
-collapse_col(df, .cols, delim = "; ")
+collapse_col(df, .cols, delim = "|")
 }
 \arguments{
 \item{df}{a data.frame}
 
 \item{.cols}{the name of the column in the data.frame to collapse}
 
-\item{delim}{delimiter to place between vector elements}
+\item{delim}{A delimiter to place between vector elements (default: "|").}
 }
 \description{
 Collapses values in the column(s) specified, concatenating unique values in

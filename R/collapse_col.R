@@ -24,7 +24,7 @@
 #' collapse_col(cc_df, c(x, z))
 #'
 #' @export
-collapse_col <- function(df, .cols, delim = "; ") {
+collapse_col <- function(df, .cols, delim = "|") {
     df %>%
         dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
         dplyr::summarize(
