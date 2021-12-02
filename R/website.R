@@ -17,9 +17,9 @@ make_user_list_html <- function(file) {
         col_types = "lcccc"
     )
     ws_user_list <- user_list %>%
-        dplyr::filter(!is.na(added)) %>%
+        dplyr::filter(!is.na(.data$added)) %>%
         # ensure list is alphabetical
-        dplyr::arrange(name)
+        dplyr::arrange(.data$name)
 
     # build html
     user_html <- glue::glue_data(
@@ -64,19 +64,19 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
     )
 
     df <- readr::read_csv(data_file) %>%
-        dplyr::mutate(Year = lubridate::year(pub_date)) %>%
-        dplyr::count(Year, name = "Publications")
+        dplyr::mutate(Year = lubridate::year(.data$pub_date)) %>%
+        dplyr::count(.data$Year, name = "Publications")
 
-    g <- ggplot(data = df) +
-        geom_col(
-            aes(x = Year, y = Publications),
+    g <- ggplot2::ggplot(data = df) +
+        ggplot2::geom_col(
+            ggplot2::aes(x = .data$Year, y = .data$Publications),
             width = 0.6,
             fill = DO_colors["light"]
         ) +
-        labs(title = "Publications Citing DO", x = "Year", y = "Count") +
-        theme_dark(base_size = 13)
+        ggplot2::labs(title = "Publications Citing DO", x = "Year", y = "Count") +
+        ggplot2::theme_dark(base_size = 13)
 
-    ggsave(
+    ggplot2::ggsave(
         filename = file_out, plot = g,
         width = w, height = h, units = "in",
         dpi = 600
@@ -124,61 +124,62 @@ plot_term_def_counts <- function(
 
     release_df <- readr::read_csv(release_file)
     counts_df <- readr::read_csv(counts_file) %>%
-        dplyr::rename(release = `...1`)
+        dplyr::rename(release = .data$...1)
     df <- dplyr::left_join(
         release_df,
         counts_df,
         by = c("tag_name" = "release")
     ) %>%
         # add year
-        dplyr::mutate(date = lubridate::date(created_at)) %>%
+        dplyr::mutate(date = lubridate::date(.data$created_at)) %>%
         # drop bug fix releases that happen on same day (for plotting by date)
-        dplyr::group_by(date) %>%
-        dplyr::arrange(desc(created_at)) %>%
-        dplyr::filter(!duplicated(date)) %>%
+        dplyr::group_by(.data$date) %>%
+        dplyr::arrange(dplyr::desc(.data$created_at)) %>%
+        dplyr::filter(!duplicated(.data$date)) %>%
         dplyr::ungroup() %>%
         # drop extra columns
-        dplyr::select(date, terms, defs) %>%
+        dplyr::select(.data$date, .data$terms, .data$defs) %>%
         dplyr::mutate(
-            n_terms = terms - defs,
-            n_defs = defs
+            n_terms = .data$terms - .data$defs,
+            n_defs = .data$defs
         ) %>%
-        dplyr::select(-terms, -defs) %>%
+        dplyr::select(-.data$terms, -.data$defs) %>%
         tidyr::pivot_longer(
-            cols = c(n_terms, n_defs),
+            cols = c(.data$n_terms, .data$n_defs),
             names_to = "variable",
             values_to = "value"
         ) %>%
         dplyr::mutate(
             variable = factor(
-                variable,
+                .data$variable,
                 levels = c("n_terms", "n_defs")
             )
         )
 
     ## Create Area Plot - NEW version, 2021-08-11
-    g <- ggplot(df) +
-        geom_area(
-            aes(x = date, y = value, fill = variable), size = 1
+    g <- ggplot2::ggplot(df) +
+        ggplot2::geom_area(
+            ggplot2::aes(x = .data$date, y = .data$value, fill = .data$variable),
+            size = 1
         ) +
-        scale_fill_manual(
+        ggplot2::scale_fill_manual(
             name = "Total",
             values = unname(DO_colors[c("light", "default")]),
             labels = c("Terms", "Terms Defined")
         ) +
-        scale_y_continuous(
+        ggplot2::scale_y_continuous(
             name = "Count",
             breaks = seq(0, 12000, by = 2000)
         ) +
-        scale_x_date(
+        ggplot2::scale_x_date(
             name = "Release Date",
             date_breaks = "1 year",
             date_labels = "%Y"
         ) +
-        ggtitle("Trend of DO Terms") +
-        theme_dark(base_size = 13)
+        ggplot2::ggtitle("Trend of DO Terms") +
+        ggplot2::theme_dark(base_size = 13)
 
-    ggsave(
+    ggplot2::ggsave(
         filename = file_out, plot = g,
         width = w, height = h, units = "in",
         dpi = 600
@@ -231,25 +232,25 @@ plot_branch_counts <- function(
     df <- readr::read_csv(data_file) %>%
         dplyr::mutate(
             DO_branches = factor(
-                recode(DO_branches, !!!branch_order),
+                dplyr::recode(.data$DO_branches, !!!branch_order),
                 levels = branch_order
             )
         )
 
-    g <- ggplot(data = df) +
-        geom_col(
-            aes(x = DO_branches, y = Count),
+    g <- ggplot2::ggplot(data = df) +
+        ggplot2::geom_col(
+            ggplot2::aes(x = .data$DO_branches, y = .data$Count),
             width = 0.6, fill = DO_colors["light"]
         ) +
-        scale_y_continuous(
+        ggplot2::scale_y_continuous(
             breaks = seq(0, round_up(max(df$Count), -3), by = 1000)
         ) +
-        coord_flip() +
-        ggtitle("DO Branch Counts") +
-        theme_dark(base_size = 13) +
-        theme(axis.title.y = element_blank())
+        ggplot2::coord_flip() +
+        ggplot2::ggtitle("DO Branch Counts") +
+        ggplot2::theme_dark(base_size = 13) +
+        ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
-    ggsave(
+    ggplot2::ggsave(
         filename = file_out, plot = g,
         width = w, height = h, units = "in",
         dpi = 600
@@ -294,30 +295,31 @@ plot_xref_counts <- function(
     )
 
     df <- readr::read_csv(data_file) %>%
-        dplyr::filter(!is.na(Curation)) %>%
+        dplyr::filter(!is.na(.data$Curation)) %>%
         dplyr::mutate(
             Curation = factor(
-                Curation,
+                .data$Curation,
                 levels = c("Manual", "Mixed", "Automated")
             )
         )
 
-    g <- ggplot(data = df) +
-        geom_col(
-            aes(x = Cross_References, y = Count, fill = Curation),
+    g <- ggplot2::ggplot(data = df) +
+        ggplot2::geom_col(
+            ggplot2::aes(x = .data$Cross_References, y = .data$Count,
+                         fill = .data$Curation),
             width = 0.6
         ) +
-        scale_y_continuous(
+        ggplot2::scale_y_continuous(
             breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
         ) +
-        coord_flip() +
-        scale_fill_manual(
+        ggplot2::coord_flip() +
+        ggplot2::scale_fill_manual(
             values = unname(DO_colors[c("light", "mid", "default")])
         ) +
-        labs(title = "DO Cross-References", x ="Cross References") +
-        theme_dark(base_size = 13)
+        ggplot2::labs(title = "DO Cross-References", x ="Cross References") +
+        ggplot2::theme_dark(base_size = 13)
 
-    ggsave(
+    ggplot2::ggsave(
         filename = file_out, plot = g,
         width = w, height = h, units = "in",
         dpi = 600
