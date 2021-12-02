@@ -186,3 +186,74 @@ plot_term_def_counts <- function(
 
     g
 }
+
+
+#' Plot Branch Counts
+#'
+#' Plots the count of _non-obsolete_ terms in each major branch of the Human
+#' Disease Ontology.
+#'
+#' @param data_file The path to the file containing the latest DO branch counts,
+#'     as a string.
+#' @param out_dir The directory where the plot `"{date}-DO_branch_count.png"`
+#'     should be saved, as a string.
+#' @inheritParams plot_citedby
+#'
+#' @section Data Preparation:
+#' To prepare data, manually copy and paste stats from the Google Sheet
+#' [DO_github_release_log](https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614)
+#' or from `build/reports/branch-count.tsv` in the local repo where the release
+#' was generated.
+#'
+#' @export
+plot_branch_counts <- function(
+    data_file = "data/DO_release/branch_counts.csv",
+    out_dir = "graphics/website", w = 8, h = 5.6) {
+
+    file_out <- file.path(
+        out_dir,
+        paste0(
+            stringr::str_remove_all(Sys.Date(), "-"),
+            "-",
+            "DO_branch_count.png"
+        )
+    )
+
+    branch_order <- c(syndrome = "Syndrome",
+                      physicalDisorder = "Physical Disorder",
+                      genetic = "Genetic Disease",
+                      metabolism = "Metabolism",
+                      mentalHealth = "Mental Health",
+                      cellularProliferation = "Cellular Proliferation",
+                      anatomicalEntity = "Anatomical Location",
+                      infectiousAgent = "Infectious Disease")
+
+    df <- readr::read_csv(data_file) %>%
+        dplyr::mutate(
+            DO_branches = factor(
+                recode(DO_branches, !!!branch_order),
+                levels = branch_order
+            )
+        )
+
+    g <- ggplot(data = df) +
+        geom_col(
+            aes(x = DO_branches, y = Count),
+            width = 0.6, fill = DO_colors["light"]
+        ) +
+        scale_y_continuous(
+            breaks = seq(0, round_up(max(df$Count), -3), by = 1000)
+        ) +
+        coord_flip() +
+        ggtitle("DO Branch Counts") +
+        theme_dark(base_size = 13) +
+        theme(axis.title.y = element_blank())
+
+    ggsave(
+        filename = file_out, plot = g,
+        width = w, height = h, units = "in",
+        dpi = 600
+    )
+
+    g
+}
