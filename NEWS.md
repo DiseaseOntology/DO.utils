@@ -2,6 +2,9 @@
 
 * Rename `match_citations_fz()` to `match_fz()`
 
+## Data
+* Added latest official DO publication to `DO_pubs`.
+* Added official `DO_colors`.
 
 # DO.utils 0.1.5
 
