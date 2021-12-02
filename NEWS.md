@@ -1,4 +1,4 @@
-# DO.utils (development version)
+# DO.utils 0.1.6
 
 ## General
 * Added **DEPENDENCIES** on `ggplot2`, `googlesheets4`, and `glue`.
