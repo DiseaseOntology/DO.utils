@@ -10,6 +10,7 @@ Most text should be written in sentence case, use proper punctuation, and end in
 1. Should use words, preferably unabbreviated, separated by "_".
 2. Should be as succinct as possible, while conveying clearly what the function does.
 3. Should start with a verb, such that they imply taking action.
+4. Should end with "(INTERNAL)" for documented functions that are not exported.
 
 #### Examples
 Good: `cast_to_string()`
