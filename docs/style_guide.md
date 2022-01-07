@@ -12,7 +12,17 @@ Most text should be written in sentence case, use proper punctuation, and end in
 3. Should start with a verb, such that they imply taking action.
 
 #### Examples
-Good: `cast_to_character()`
+Good: `cast_to_string()`
+
+
+### Title
+1. Should _VERY_ succinctly describe what a function does.
+2. Should start with an infinitive verb (without "to").
+3. Should be capitalized (as is standard for titles).
+4. Should end without punctuation.
+
+#### Examples
+Good: "Create a String from Inputs"
 
 
 ### Description
