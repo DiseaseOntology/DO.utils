@@ -25,3 +25,29 @@ pyobo_map <- function(terms, namespace) {
 
     res
 }
+
+#' Extract ScoredMatch Objects (INTERNAL)
+#'
+#' Extracts mapping results from specialized `ScoredMatch` python objects
+#' (as defined by GILDA) AT THE LEVEL of individual mappings.
+#'
+#' @param py_ScoredMatch A GILDA ScoredMatch (python) object.
+#' @param prefix _Optional_ prefix to add to namespace local unique identifiers
+#'     (LUI; e.g. 4, the LUI for "disease" in DO), as a string; preferably to
+#'     create a complete namespace ID (e.g. "DOID:4").
+#' @param prefix_sep _Optional_ separator placed between `prefix` and
+#'     namespace LUIs, as a string. Ignored if `prefix = NULL`.
+extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
+                                prefix_sep = ":") {
+    if (is.null(prefix)) {
+        prefix_sep <- NULL
+    }
+
+    df <- tibble::tibble(
+        id = paste0(prefix, prefix_sep, py_ScoredMatch$term$id),
+        term = py_ScoredMatch$term$entry_name,
+        score = round(py_ScoredMatch$score, 2)
+    )
+
+    df
+}
