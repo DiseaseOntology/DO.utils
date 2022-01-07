@@ -1,0 +1,36 @@
+---
+title: "Using DO.utils with reticulate and Python"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{use-reticulate-python}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(DO.utils)
+```
+
+
+# What does Python add?
+
+DO.utils is designed to balance functionality and ease of use, with a goal for reproducibility. Some functionality is just not available in R, or it's less reproducible or harder to manage. Python fills in these gaps. Specifically using Python provides:
+
+- A SPARQL engine (`rdflib`) that works with files, unlike R's `rdflib` which does not like `NOT` statements, and does not require managing a database (unlike the R `virtuoso` package).
+- Access to Python-specific modules:
+    - biopragmatics stack: pyobo, bioregistry, biomappings, etc.
+    - INDRA labs' GILDA
+    - _etc._
+- Flexibility
+
+
+# Why use Python via reticulate?
+
+To keep everything in one place, minimize frustration, and maximize productivity.
