@@ -50,6 +50,7 @@ Config/reticulate:
             list(package = "rdflib", pip = TRUE),
             list(package = "GitPython", pip = TRUE),
             list(package = "pyobo", pip = TRUE),
+            list(package = "indra", pip = TRUE),
             list(package = "gilda", pip = TRUE)
         )
     )
