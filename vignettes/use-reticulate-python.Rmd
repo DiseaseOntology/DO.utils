@@ -14,23 +14,62 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include = FALSE}
 library(DO.utils)
 ```
 
 
 # What does Python add?
 
-DO.utils is designed to balance functionality and ease of use, with a goal for reproducibility. Some functionality is just not available in R, or it's less reproducible or harder to manage. Python fills in these gaps. Specifically using Python provides:
+DO.utils is designed to balance functionality and ease of use, with a goal for reproducibility. Some functionality is just not available in R, or it's less reproducible or harder to manage. Python fills in these gaps. Specifically using Python powers functions that:
 
-- A SPARQL engine (`rdflib`) that works with files, unlike R's `rdflib` which does not like `NOT` statements, and does not require managing a database (unlike the R `virtuoso` package).
-- Access to Python-specific modules:
-    - biopragmatics stack: pyobo, bioregistry, biomappings, etc.
-    - INDRA labs' GILDA
-    - _etc._
-- Flexibility
+1. Execute SPARQL queries on local files.
+    - The R SPARQL engines require database management (`virtuoso`) or do not work with SPARQL 1.1 (`rdflib`).
+2. Extract information from git repos.
+    - To update data from releases and analyze unexpected changes to files.
+3. Predict term mappings.
+    - Utilizing the biopragmatics stack: bioregistry, biomappings, etc.; pyobo; and INDRA labs' GILDA
 
 
 # Why use Python via reticulate?
 
-To keep everything in one place, minimize frustration, and maximize productivity.
+Generally, the R-python connection allows data integration with R where data frames can be more easily managed, explored, and analyzed. More specifically, `reticulate` _should_ help manage Python and python module dependencies and simplify user setup/use.
+
+
+# How to use python-dependent DO.utils functions?
+
+These functions should work as standard R functions. In some cases internal data extractor functions have been written to eliminate the need for non-standard user data munging.
+
+
+## Python Setup
+
+Although it has not been tested yet, use of `reticulate` _should_ handle installation of python and/or python modules automatically and require little to no user input. The default is to attempt to identify and use python that is already installed. Should that not work, `reticulate` _should_ install python and needed modules via miniconda.
+
+
+### Customization
+
+More user control can be achieved over this installation (like using pip and venv instead of miniconda) by using reticulate to install python and create a virtual environment before calling `library(DO.utils)` for the first time. The basic procedure would be to execute the following:
+
+```{r eval = FALSE}
+library(reticulate) # installs with DO.utils
+py_version <- "3.9" # or whatever version you prefer
+venv_name <- "r-reticulate"
+
+py_path <- install_python(py_version)
+virtualenv_create(venv_name, py_path, version = py_version)
+```
+
+
+**A Note on Virtual Environments**
+
+`reticulate` can create conda environments or venv/virtualenv virtual environments. Non-conda virtual environment options are described briefly below but similar options approaches are available for conda environments via `reticulate`.
+
+`r-reticulate` is the default virtual environment name promoted by the developers of reticulate for _ALL_ packages that depend on `reticulate`, with the goals of 1) promoting interoperability between packages that depend on `reticulate` and python and 2) to better manage python module dependencies, through the use of a single virtual environment. Alternatives to this default environment can be specified by modifying the first argument `envname` to `virtualenv_create()`. A name (without slashes) will create a virtual environment of that name in the default location (see `virtualenv_root()`); a relative or absolute path (with slashes) will create a virtual environment in the specified directory, which can be nice if you want a python virtual environment associated with a specific project.
+
+
+**A Note on Python Module Installation**
+
+It is possible to specify python modules to install at the time a virtual environment is created or later by activating the virtual environment and executing `virtualenv_install()`. If only DO.utils dependencies are desired, this should not be necessary as the first execution of `library(DO.utils)` in an active virtual environment should install the python module dependencies of `DO.utils` automatically. Should any python module need to be installed by a user, the modules used by `DO.utils` can be found in the "Config/reticulate" section of it's `DESCRIPTION` file.
+
+
+
