@@ -43,6 +43,16 @@ Suggests:
     knitr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/reticulate:
+    list(
+        packages = list(
+            list(package = "pandas", pip = TRUE),
+            list(package = "rdflib", pip = TRUE),
+            list(package = "git", pip = TRUE),
+            list(package = "pyobo", pip = TRUE),
+            list(package = "gilda", pip = TRUE)
+        )
+    )
 Depends: 
     R (>= 3.5.0)
 Remotes: allenbaron/rentrez
