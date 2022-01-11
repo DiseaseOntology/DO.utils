@@ -18,7 +18,6 @@
 #'
 #' @export
 pyobo_map <- function(terms, namespace) {
-    pyobo_gutils <- reticulate::import("pyobo.gilda_utils")
     grounder <- pyobo_gutils$get_grounder(namespace)
     res <- purrr::map(terms, grounder$ground) %>%
         purrr::set_names(terms)
