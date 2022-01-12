@@ -6,3 +6,4 @@ renv/
 
 # temporary working dir
 /TMP/
+inst/doc
