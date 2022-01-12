@@ -61,7 +61,7 @@ unnest_mapping <- function(df, col, prefix = NULL, prefix_sep = ":",
                 warn_best_gt1 = warn_best_gt1
             )
         ) %>%
-        tidyr::unnest(parsed_mapping, ...) %>%
+        tidyr::unnest(.data$parsed_mapping, ...) %>%
         dplyr::select(- {{ col }} )
 
     df_unnested
@@ -130,7 +130,7 @@ parse_term_mapping <- function(py_gilda_term_mappings, best_only = TRUE,
 
     if (best_only) {
         best_mapping <- mapping %>%
-            dplyr::filter(score == max(score, na.rm = TRUE))
+            dplyr::filter(.data$score == max(.data$score, na.rm = TRUE))
         if (warn_best_gt1) {
             warning(names(py_gilda_term_mappings), " has >1 best mapping.")
         }
