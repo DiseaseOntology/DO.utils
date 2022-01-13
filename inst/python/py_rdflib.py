@@ -30,7 +30,7 @@ def sparql_query(rdf_graph, query):
 
     if exists(query):
         with open(query) as f:
-        q = f.read()
+            q = f.read()
     else:
         q = query
 
