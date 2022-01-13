@@ -7,3 +7,6 @@ renv/
 # temporary working dir
 /TMP/
 inst/doc
+
+# python
+__pycache__
