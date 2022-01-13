@@ -39,6 +39,6 @@ Should be formatted in an active voice and immediately describe the primary goal
 4. Should be consistent and ordered consistently across functions, where possible.
 
 #### Descriptions
-1. Should be formatted as sentences, with the first word capitalized first word and with a period at the end, except when ending in bulleted lists.
+1. Should be formatted as sentences, with the first word capitalized and with a period at the end, except when ending in bulleted lists.
 2. Should, **in the first sentence**, describe clearly what the argument represents at the beginning (in the abstract, for human understanding) and list the acceptable input types at the end.
 3. Should _not_ include lengthy descriptions or descriptions relating to multiple arguments. These should be written in a title `@section` and, where necessary, have pointers from applicable arguments (e.g. "(see {section_name})").
