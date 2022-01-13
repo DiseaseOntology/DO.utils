@@ -5,7 +5,7 @@ import pandas as pd
 from os.path import exists
 
 
-def read_rdf(path):
+def read(path):
     """
     Read RDF/OWL files into Python for querying/manipulation.
 
