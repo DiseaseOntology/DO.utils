@@ -35,6 +35,13 @@ def sparql_query(rdf_graph, query):
         q = query
 
     res = rdf_graph.query(q)
-    df = pd.DataFrame(res, columns = res.vars)
-    # df = df_raw.convert_dtypes()
+
+    # SPARQLResult to DataFrame solution from Daniel Himmelstein:
+    #   https://github.com/RDFLib/sparqlwrapper/issues/125#issuecomment-704291308
+    # see also https://github.com/RDFLib/rdflib/issues/1179
+    df = pd.DataFrame(
+        data=([None if x is None else x.toPython() for x in row] for row in res),
+        columns=[str(x) for x in res.vars],
+    )
+
     return df
