@@ -6,3 +6,12 @@
 - Refer to `reticulate_python_pseudocode.R` to understand how reticulate installs and manages python. INCLUDES:
     1. How to identify where reticulate installs python and its install procedure; see `install_python()`.
     2. How reticulate identifies available python installs on a system, including those _not_ installed by reticulate; see `py_discover_config()`.
+
+
+## How to load python functions in R package
+
+See the following URLs  for a good outline of what is necessary:
+
+- https://community.rstudio.com/t/build-package-namespace-dynamically-during-onload/4101
+- https://github.com/rstudio/reticulate/issues/337
+- https://github.com/rstudio/reticulate/issues/780
