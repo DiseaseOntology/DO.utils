@@ -3,7 +3,8 @@
 * Add execution of SPARQL queries, powered by python rdflib wrapper `py_rdf`.
     * `py_rdf$read()` to read in an RDF file.
     * `py_rdf$sparql_query()` to execute a SPARQL query.
-
+* Update R package dependencies:
+    * reticulate --> minimum version = 1.23
 
 # DO.utils 0.1.7
 
