@@ -8,8 +8,9 @@ renv/
 /TMP/
 inst/doc
 
-# python
+# python/PyCharm
 __pycache__
+/.idea
 
 # files to understand non-DO.utils fxns
 docs/*pseudocode*
