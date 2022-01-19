@@ -812,6 +812,13 @@
       "Repository": "CRAN",
       "Hash": "911d101becedc0fde495bd910984bdc8"
     },
+    "reticulate": {
+      "Package": "reticulate",
+      "Version": "1.23",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "202e109e25af9aa414df925264c17e48"
+    },
     "rlang": {
       "Package": "rlang",
       "Version": "0.4.12",
