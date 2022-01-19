@@ -10,3 +10,6 @@ inst/doc
 
 # python
 __pycache__
+
+# files to understand non-DO.utils fxns
+docs/*pseudocode*
