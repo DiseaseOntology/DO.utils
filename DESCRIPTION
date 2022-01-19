@@ -28,7 +28,7 @@ Imports:
     rcrossref,
     readr,
     rentrez,
-    reticulate,
+    reticulate (>= 1.23),
     rlang,
     rscopus,
     stats,
