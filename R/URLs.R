@@ -1,3 +1,13 @@
+read_doid_edit <- function(DO_repo) {
+    doid_edit_path <- file.path(source, "src", "ontology", "doid-edit.owl")
+    doid_edit <- readr::read_lines(doid_edit_path)
+
+    doid_edit
+}
+
+}
+
+
 #' Get URL (internal)
 #'
 #' Get a URL used within this package. Available URLs: "doi", "pubmed", "pmc",
