@@ -1,5 +1,5 @@
 read_doid_edit <- function(DO_repo) {
-    doid_edit_path <- file.path(source, "src", "ontology", "doid-edit.owl")
+    doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
     doid_edit <- readr::read_lines(doid_edit_path)
 
     doid_edit
@@ -7,7 +7,7 @@ read_doid_edit <- function(DO_repo) {
 
 extract_doid_url <- function(doid_edit, w_raw_match = FALSE, quiet = FALSE,
                              show_url_string = FALSE) {
-    doid_w_url <- doid_edit[is_doid_url(doid_edit)]
+    doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
     if (isTRUE(w_raw_match)) {
         df <- tibble::tibble(raw_match = doid_w_url)
