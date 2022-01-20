@@ -9,20 +9,15 @@ extract_doid_url <- function(doid_edit, w_raw_match = FALSE, quiet = FALSE,
                              show_url_string = FALSE) {
     doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
-    if (isTRUE(w_raw_match)) {
-        df <- tibble::tibble(raw_match = doid_w_url)
-    } else {
-        df <- tibble::tibble()
-    }
-
-    df <- dplyr::mutate(
+    df <- tibble::tibble(
+        raw_match = doid_w_url,
         doid = stringr::str_extract_all(doid_w_url, "DOID[:_][0-9]+"),
-        url_str = stingr::str_extract_all(doid_w_url, 'url:[^"]+"')
+        url_str = stringr::str_extract_all(doid_w_url, 'url:[^"]+"')
     )
 
     # warn if multiple DOIDs associated with record (should only be 1)
     doid_mult <- purrr::map_int(df$doid, length) > 1L
-    if (any(doid_mult) || !quiet) {
+    if (any(doid_mult) && !quiet) {
         rlang::warn(
             message = c(
                 "Entries are associated with multiple DOIDs:",
@@ -43,6 +38,10 @@ extract_doid_url <- function(doid_edit, w_raw_match = FALSE, quiet = FALSE,
 
     if (!isTRUE(show_url_string)) {
         df <- dplyr::select(df, -.data$url_str)
+    }
+
+    if (!isTRUE(w_raw_match)) {
+        df <- dplyr::select(df, -.data$raw_match)
     }
 
     df
