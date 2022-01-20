@@ -5,6 +5,51 @@ read_doid_edit <- function(DO_repo) {
     doid_edit
 }
 
+extract_doid_url <- function(doid_edit, w_raw_match = FALSE, quiet = FALSE,
+                             show_url_string = FALSE) {
+    doid_w_url <- doid_edit[is_doid_url(doid_edit)]
+
+    if (isTRUE(w_raw_match)) {
+        df <- tibble::tibble(raw_match = doid_w_url)
+    } else {
+        df <- tibble::tibble()
+    }
+
+    df <- dplyr::mutate(
+        doid = stringr::str_extract_all(doid_w_url, "DOID[:_][0-9]+"),
+        url_str = stingr::str_extract_all(doid_w_url, 'url:[^"]+"')
+    )
+
+    # warn if multiple DOIDs associated with record (should only be 1)
+    doid_mult <- purrr::map_int(df$doid, length) > 1L
+    if (any(doid_mult) || !quiet) {
+        rlang::warn(
+            message = c(
+                "Entries are associated with multiple DOIDs:",
+                i = doid_w_url[doid_mult]
+            ),
+            class = "unexpected_value"
+        )
+    }
+
+    # tidy
+    df <- df %>%
+        tidyr::unnest_longer(.data$doid) %>%
+        tidyr::unnest_longer(.data$url_str) %>%
+        dplyr::mutate(
+            doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
+            url = stringr::str_remove_all(.data$url_str, '^url:|"')
+        )
+
+    if (!isTRUE(show_url_string)) {
+        df <- dplyr::select(df, -.data$url_str)
+    }
+
+    df
+}
+
+has_doid_url <- function(doid_edit) {
+    grepl("DOID", doid_edit) & grepl("url:", doid_edit)
 }
 
 
