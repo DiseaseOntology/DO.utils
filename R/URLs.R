@@ -51,6 +51,28 @@ has_doid_url <- function(doid_edit) {
     grepl("DOID", doid_edit) & grepl("url:", doid_edit)
 }
 
+get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
+                      default = NA_integer_) {
+
+    cd_df <- robotstxt$crawl_delay
+    if (nrow(cd_df) == 0) {
+        return(default)
+    }
+
+    # delay for user agent
+    delay <- dplyr::filter(cd_df, .data$useragent == .user_agent)$value
+    if (is_empty(delay)) {
+        delay <- dplyr::filter(cd_df, .data$useragent == "*")$value
+    }
+
+    # general delay
+    if (is_empty(delay)) {
+        delay <- default
+    }
+
+    as.integer(delay)
+}
+
 trim_url <- function(url_no_domain) {
     url_sep_count <- stringr::str_count(url_no_domain, "[&#]")
     replace_regex <- paste0("([^&#]*([&#].*){", url_sep_count - 1, "})[#&].*")
