@@ -73,10 +73,11 @@ get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
     as.integer(delay)
 }
 
-validate_url <- function(url, ...) {
-    resp <- httr::HEAD(url, config = user_agent(pkg_user_agent))
+validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
+    resp <- httr::HEAD(url, config = config, ...)
     get_resp_details(resp)
 }
+
 
 get_resp_details <- function(resp) {
     tibble::tibble(
