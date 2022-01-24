@@ -73,6 +73,18 @@ get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
     as.integer(delay)
 }
 
+get_resp_details <- function(resp) {
+    tibble::tibble(
+        valid = !httr::http_error(resp),
+        status_code = httr::status_code(resp),
+        final_url = resp %>%
+            .$all_headers %>%
+            purrr::map(~ .x$headers$location) %>%
+            unlist() %>%
+            tail(1)
+    )
+}
+
 trim_url <- function(url_no_domain) {
     url_sep_count <- stringr::str_count(url_no_domain, "[&#]")
     replace_regex <- paste0("([^&#]*([&#].*){", url_sep_count - 1, "})[#&].*")
