@@ -51,6 +51,24 @@ has_doid_url <- function(doid_edit) {
     grepl("DOID", doid_edit) & grepl("url:", doid_edit)
 }
 
+trim_url <- function(url_no_domain) {
+    url_sep_count <- stringr::str_count(url_no_domain, "[&#]")
+    replace_regex <- paste0("([^&#]*([&#].*){", url_sep_count - 1, "})[#&].*")
+    trimmed <- purrr::pmap_chr(
+        .l = list(u = url_no_domain, c = url_sep_count, r = replace_regex),
+        function(u, c, r) {
+            ifelse(
+                c > 0,
+                stringr::str_replace(u, r, "\\1"),
+                dirname(u)
+            )
+        }
+    )
+
+    # if trimmed to nothing, return url_no_domain
+    out <- ifelse(trimmed %in% c(".", "/"), url_no_domain, trimmed)
+    out
+}
 
 #' Get URL (internal)
 #'
