@@ -65,9 +65,7 @@ trim_url <- function(url_no_domain) {
         }
     )
 
-    # if trimmed to nothing, return url_no_domain
-    out <- ifelse(trimmed %in% c(".", "/"), url_no_domain, trimmed)
-    out
+    trimmed
 }
 
 #' Get URL (internal)
