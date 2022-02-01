@@ -74,8 +74,29 @@ get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
 }
 
 validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
-    resp <- httr::HEAD(url, config = config, ...)
-    get_resp_details(resp)
+    resp <- tryCatch(
+        httr::HEAD(url, config = config, ...),
+        error = function(e) {
+            tibble::tibble(
+                request_url = url,
+                valid = NA,
+                status_code = NA_integer_,
+                final_url = NA_character_,
+                error = paste(e)
+            )
+        }
+    )
+    res_df <- if ("error" %in% names(resp)) {
+        resp
+    } else {
+        get_resp_details(resp) %>%
+            dplyr::mutate(
+                request_url = url,
+                resp = list(resp)
+            ) %>%
+            dplyr::select(request_url, dplyr::everything())
+    }
+    res_df
 }
 
 
