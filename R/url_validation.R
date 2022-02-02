@@ -66,6 +66,15 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
                 request_url = url,
                 resp = list(resp)
             ) %>%
+            # listing URLs that aren't actual redirects is confusing and adds
+            #   extra time during review
+            dplyr::mutate(
+                final_url = dplyr::if_else(
+                    final_url == request_url,
+                    NA_character_,
+                    final_url
+                )
+            ) %>%
             dplyr::select(request_url, dplyr::everything())
     }
     res_df
