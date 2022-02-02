@@ -53,7 +53,7 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
                 request_url = url,
                 valid = NA,
                 status_code = NA_integer_,
-                final_url = NA_character_,
+                redirect_url = NA_character_,
                 error = paste(e)
             )
         }
@@ -69,10 +69,10 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
             # listing URLs that aren't actual redirects is confusing and adds
             #   extra time during review
             dplyr::mutate(
-                final_url = dplyr::if_else(
-                    final_url == request_url,
+                redirect_url = dplyr::if_else(
+                    redirect_url == request_url,
                     NA_character_,
-                    final_url
+                    redirect_url
                 )
             ) %>%
             dplyr::select(request_url, dplyr::everything())
@@ -85,7 +85,7 @@ get_resp_details <- function(resp) {
     tibble::tibble(
         valid = !httr::http_error(resp),
         status_code = httr::status_code(resp),
-        final_url = resp %>%
+        redirect_url = resp %>%
             .$all_headers %>%
             purrr::map(~ .x$headers$location) %>%
             unlist() %>%
