@@ -19,7 +19,7 @@ This codebook details the variables and their expected values from sources used 
 - `Lang`
 - `NlmUniqueID`
 - `ESSN`
-- `PubType`
+- `PubType`: the type of publication; for a list, see https://pubmed.ncbi.nlm.nih.gov/help/#publication-types; for detailed descriptions see [MeSH Publication Types with Scope Notes](https://www.nlm.nih.gov/mesh/pubtypes.html)
 - `RecordStatus`
 - `PubStatus`
 - `ArticleIds`: a list of `ArticleId` list items with 3 vectors named `IdType`, `IdTypeN`, and `Value`
