@@ -9,13 +9,14 @@ collapse_col_flex(df, ..., method = "unique", delim = "|")
 \arguments{
 \item{df}{A data.frame}
 
+\item{...}{Column-method pairs specifying the \code{method} to use for each column
+to be collapsed; column names can be bare variables or strings, methods
+must be strings, e.g. column_name = method.}
+
 \item{method}{A string identifying a function to use; one of "unique",
 "first", or "last"}
 
 \item{delim}{A delimiter to place between vector elements (default: "|").}
-
-\item{collapse}{A list of columns to collapse using \code{method} or a named
-list specifying the method for each column, e.g. column_name = method.}
 }
 \value{
 A data.frame with the specified columns collapsed. Also \strong{NOTE} the
