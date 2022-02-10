@@ -2,10 +2,10 @@
 #'
 #' Collapses values in the column(s) specified, concatenating unique values in
 #' those columns for each record (where a record is defined as a unique
-#' row including all columns _NOT_ specified in `.cols`).
+#' row including all columns _NOT_ specified in `collapse`).
 #'
 #' @param df a data.frame
-#' @param .cols the name of the column in the data.frame to collapse
+#' @param collapse the name of the column in the data.frame to collapse
 #' @inheritParams vctr_to_string
 #'
 #' @examples
@@ -16,7 +16,7 @@
 #' )
 #' cc_df
 #'
-#' # completely duplicated rows (3-4) are collapsed with any .cols specified
+#' # completely duplicated rows (3-4) are collapsed with any column(s) specified
 #' collapse_col_flex(cc_df, y)
 #'
 #' collapse_col_flex(cc_df, x)
@@ -24,12 +24,12 @@
 #' collapse_col_flex(cc_df, c(x, z))
 #'
 #' @export
-collapse_col_flex <- function(df, .cols, delim = "|") {
+collapse_col_flex <- function(df, collapse, delim = "|") {
     df %>%
-        dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
+        dplyr::group_by(dplyr::across(-{{ collapse }})) %>%
         dplyr::summarize(
             dplyr::across(
-                .cols = {{ .cols }},
+                .cols = {{ collapse }},
                 .fns = ~ vctr_to_string(
                     unique(.x),
                     delim = delim

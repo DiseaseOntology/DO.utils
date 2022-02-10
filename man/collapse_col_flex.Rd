@@ -4,19 +4,19 @@
 \alias{collapse_col_flex}
 \title{Collapse Column(s) Flexibly}
 \usage{
-collapse_col_flex(df, .cols, delim = "|")
+collapse_col_flex(df, collapse, delim = "|")
 }
 \arguments{
 \item{df}{a data.frame}
 
-\item{.cols}{the name of the column in the data.frame to collapse}
+\item{collapse}{the name of the column in the data.frame to collapse}
 
 \item{delim}{A delimiter to place between vector elements (default: "|").}
 }
 \description{
 Collapses values in the column(s) specified, concatenating unique values in
 those columns for each record (where a record is defined as a unique
-row including all columns \emph{NOT} specified in \code{.cols}).
+row including all columns \emph{NOT} specified in \code{collapse}).
 }
 \examples{
 cc_df <- tibble::tibble(
@@ -26,7 +26,7 @@ cc_df <- tibble::tibble(
 )
 cc_df
 
-# completely duplicated rows (3-4) are collapsed with any .cols specified
+# completely duplicated rows (3-4) are collapsed with any column(s) specified
 collapse_col_flex(cc_df, y)
 
 collapse_col_flex(cc_df, x)
