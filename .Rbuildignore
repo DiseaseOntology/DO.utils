@@ -10,3 +10,6 @@
 ^data-raw$
 ^exploration$
 ^docs$
+
+# PyCharm
+^.idea$
