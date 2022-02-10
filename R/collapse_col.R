@@ -36,7 +36,8 @@ collapse_col <- function(df, .cols, delim = "|") {
                 )
             )
         ) %>%
-        dplyr::ungroup()
+        dplyr::ungroup() %>%
+        dplyr::select(dplyr::one_of(names(df)))
 }
 
 
