@@ -5,6 +5,9 @@
     * `py_rdf$sparql_query()` to execute a SPARQL query.
 * Update R package dependencies:
     * reticulate --> minimum version = 1.23
+* Add `collapse_col_flex()` to collapse data frame columns more flexibly.
+    * Adds two new methods beyond "unique": "first" & "last".
+    * Adds the ability to collapse columns using different methods.
 
 # DO.utils 0.1.7
 
