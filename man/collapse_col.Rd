@@ -13,6 +13,15 @@ collapse_col(df, .cols, delim = "|")
 
 \item{delim}{A delimiter to place between vector elements (default: "|").}
 }
+\value{
+A data.frame with the specified columns collapsed. Also \strong{NOTE} the
+following:
+\enumerate{
+\item Collapsed columns \strong{will} be converted to \code{character}.
+\item Rows will be reordered by the unique combination of columns \emph{not}
+collapsed (due to \code{\link[dplyr:group_by]{dplyr::group_by()}} use).
+}
+}
 \description{
 Collapses values in the column(s) specified, concatenating unique values in
 those columns for each record (where a record is defined as a unique
