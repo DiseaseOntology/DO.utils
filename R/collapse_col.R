@@ -8,6 +8,14 @@
 #' @param .cols the name of the column in the data.frame to collapse
 #' @inheritParams vctr_to_string
 #'
+#' @return
+#' A data.frame with the specified columns collapsed. Also **NOTE** the
+#' following:
+#'
+#' 1. Collapsed columns **will** be converted to `character`.
+#' 2. Rows will be reordered by the unique combination of columns _not_
+#' collapsed (due to [dplyr::group_by()] use).
+#'
 #' @examples
 #' cc_df <- tibble::tibble(
 #'      x = c(1, 2, 3, 3, 4, 4, 4),
