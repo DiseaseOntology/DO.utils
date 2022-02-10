@@ -56,8 +56,9 @@ collapse_col <- function(df, .cols, delim = "|") {
 #' columns _NOT_ specified in `collapse`).
 #'
 #' @param df A data.frame
-#' @param collapse A list of columns to collapse using `method` or a named
-#'     list specifying the method for each column, e.g. column_name = method.
+#' @param ... Column-method pairs specifying the `method` to use for each column
+#'     to be collapsed; column names can be bare variables or strings, methods
+#'     must be strings, e.g. column_name = method.
 #' @param method A string identifying a function to use; one of "unique",
 #'     "first", or "last"
 #' @inheritParams vctr_to_string
