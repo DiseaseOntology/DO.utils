@@ -124,11 +124,14 @@ collapse_col_flex <- function(df, ..., method = "unique",
 
 # collapse_col_flex() helper (internal)
 collapse_method <- function(.col, method = "unique", delim = "|") {
+
+    if (method == "unique") {
+        return(unique_to_string(.col, delim = delim))
+    }
+
     method_fxn <- list(
-        unique = unique,
         first = dplyr::first,
         last = dplyr::last
     )
-
-    vctr_to_string(method_fxn[[method]](.col), delim = delim)
+    method_fxn[[method]](.col)
 }
