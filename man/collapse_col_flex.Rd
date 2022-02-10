@@ -33,8 +33,19 @@ cc_df
 # completely duplicated rows (3-4) are collapsed with any column(s) specified
 collapse_col_flex(cc_df, y)
 
-collapse_col_flex(cc_df, x)
-collapse_col_flex(cc_df, z)
-collapse_col_flex(cc_df, c(x, z))
+# individual columns
+collapse_col_flex(cc_df, z, method = "unique")
+collapse_col_flex(cc_df, z, method = "first")
+collapse_col_flex(cc_df, z, method = "last")
+
+# multiple columns can be collapsed using the same method
+collapse_col_flex(cc_df, x, z, method = "unique")
+collapse_col_flex(cc_df, x, z, method = "first")
+collapse_col_flex(cc_df, x, z, method = "last")
+
+# ...or using different methods
+collapse_col_flex(cc_df, x = "unique", z = "unique")
+collapse_col_flex(cc_df, x = "first", z = "unique")
+collapse_col_flex(cc_df, x = "first", z = "last")
 
 }
