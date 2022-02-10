@@ -17,6 +17,16 @@ collapse_col_flex(df, ..., method = "unique", delim = "|")
 \item{collapse}{A list of columns to collapse using \code{method} or a named
 list specifying the method for each column, e.g. column_name = method.}
 }
+\value{
+A data.frame with the specified columns collapsed. Also \strong{NOTE} the
+following:
+\enumerate{
+\item \emph{For all methods}, rows will be reordered by the unique combination of
+columns \emph{not} collapsed (due to \code{\link[dplyr:group_by]{dplyr::group_by()}} use).
+\item _For "unique" method, collapsed columns \strong{will} be converted to
+\code{character}.
+}
+}
 \description{
 Collapses values in the column(s) specified using a defined method for each
 record, where a record is defined as a unique observation comprised of all

@@ -62,6 +62,15 @@ collapse_col <- function(df, .cols, delim = "|") {
 #'     "first", or "last"
 #' @inheritParams vctr_to_string
 #'
+#' @return
+#' A data.frame with the specified columns collapsed. Also **NOTE** the
+#' following:
+#'
+#' 1. _For all methods_, rows will be reordered by the unique combination of
+#' columns _not_ collapsed (due to [dplyr::group_by()] use).
+#' 2. _For "unique" method, collapsed columns **will** be converted to
+#' `character`.
+#'
 #' @examples
 #' cc_df <- tibble::tibble(
 #'      x = c(1, 2, 3, 3, 4, 4, 4),
