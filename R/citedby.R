@@ -93,22 +93,22 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
         )
         names(cited_by) <- id
         class(cited_by) <- ss_list_class
-        } else {
-            q <- scopus_title_query(title)
-            cited_by <- rscopus::scopus_search(
-                query = q,
-                api_key = api_key,
-                view = view,
-                start = start,
-                count = count,
-                max_count = max_count,
-                headers = headers,
-                wait_time = wait_time,
-                verbose = verbose,
-                ...
-            )
-            class(cited_by) <- ss_class
-        }
+    } else {
+        q <- scopus_title_query(title)
+        cited_by <- rscopus::scopus_search(
+            query = q,
+            api_key = api_key,
+            view = view,
+            start = start,
+            count = count,
+            max_count = max_count,
+            headers = headers,
+            wait_time = wait_time,
+            verbose = verbose,
+            ...
+        )
+        class(cited_by) <- ss_class
+    }
 
     cited_by
 }
