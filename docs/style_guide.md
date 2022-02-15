@@ -1,5 +1,10 @@
 # Documentation Style Guide
 
+## File Organization
+Functions should be grouped in files should based on the action they perform (verb, e.g. `extract`,
+`read`, etc.). Exceptions are allowed when a compelling reason can be identified which makes code easier to read, find, and/or debug.
+
+
 ## General
 Most text should be written in sentence case, use proper punctuation, and end in a period.
 
