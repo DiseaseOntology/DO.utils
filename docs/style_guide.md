@@ -4,6 +4,8 @@
 Functions should be grouped in files should based on the action they perform (verb, e.g. `extract`,
 `read`, etc.). Exceptions are allowed when a compelling reason can be identified which makes code easier to read, find, and/or debug.
 
+Functions used internally only as "helpers" for a given function (and of little to no significance otherwise) should be in a `{verb}_helpers.R` file (e.g. `extract_doid_url()` is in "extract.R", it's internal function `has_doid_url()` is in "extract_helpers.R").
+
 
 ## General
 Most text should be written in sentence case, use proper punctuation, and end in a period.
