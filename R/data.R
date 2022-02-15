@@ -21,7 +21,7 @@ utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata", "DO_colors"))
 #'   \item{citation_nlm}{full NLM-formatted citation}
 #' }
 #'
-#' @source Compiled by J. Allen Baron; last updated 2021-11-11
+#' @source Compiled by J. Allen Baron; last updated 2022-12-15.
 "DO_pubs"
 
 #' OBO Foundry Metadata
