@@ -6,9 +6,9 @@
 \usage{
 extract_doid_url(
   doid_edit,
-  w_raw_match = FALSE,
-  quiet = FALSE,
   include_obsolete = FALSE,
+  quiet = FALSE,
+  w_raw_match = FALSE,
   show_url_string = FALSE
 )
 }
@@ -16,14 +16,14 @@ extract_doid_url(
 \item{doid_edit}{The contents of the doid-edit.owl file, as a character
 vector (as provided by \code{\link[=read_doid_edit]{read_doid_edit()}}).}
 
-\item{w_raw_match}{Whether to include the full line of doid-edit.owl where
-each URL was extracted from, as a boolean (default: \code{FALSE}).}
+\item{include_obsolete}{Whether URLs associated with obsolete terms should
+be included, as a boolean (default: \code{FALSE}).}
 
 \item{quiet}{Whether warnings for multiple DOIDs associated with a single
 URL should be silenced, as a boolean (default: \code{FALSE}).}
 
-\item{include_obsolete}{Whether URLs associated with obsolete terms should
-be included, as a boolean (default: \code{FALSE}).}
+\item{w_raw_match}{Whether to include the full line of doid-edit.owl where
+each URL was extracted from, as a boolean (default: \code{FALSE}).}
 
 \item{show_url_string}{Whether the complete URL string, including prefix
 should be returned, as a boolean (default: \code{FALSE}).}
