@@ -1,4 +1,4 @@
-# Ensure respectful testing -----------------------------------------------
+# Ensure respectful URL testing -----------------------------------------------
 
 get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
                       default = NA_integer_) {
@@ -40,6 +40,8 @@ trim_url <- function(url_no_domain) {
     trimmed
 }
 
+
+# Build URLs for common domains -------------------------------------------
 
 #' Get URL (internal)
 #'
