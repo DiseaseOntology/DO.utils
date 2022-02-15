@@ -141,13 +141,15 @@ extract_pmid.elink_list <- function(x, ...) {
 #'     each URL was extracted from, as a boolean (default: `FALSE`).
 #' @param quiet Whether warnings for multiple DOIDs associated with a single
 #'     URL should be silenced, as a boolean (default: `FALSE`).
+#' @param include_obsolete Whether URLs associated with obsolete terms should
+#'     be included, as a boolean (default: `FALSE`).
 #' @param show_url_string Whether the complete URL string, including prefix
 #'     should be returned, as a boolean (default: `FALSE`).
 #'
 #' @return
 #' A tibble of DOIDs and their associated URLs.
 extract_doid_url <- function(doid_edit, w_raw_match = FALSE, quiet = FALSE,
-                             show_url_string = FALSE) {
+                             include_obsolete = FALSE, show_url_string = FALSE) {
     doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
     df <- tibble::tibble(
@@ -176,6 +178,11 @@ extract_doid_url <- function(doid_edit, w_raw_match = FALSE, quiet = FALSE,
             doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
             url = stringr::str_remove_all(.data$url_str, '^url:|"')
         )
+
+    if (!isTRUE(include_obsolete)) {
+        obs <- identify_obsolete(doid_edit)
+        df <- dplyr::filter(df, !doid %in% obs)
+    }
 
     if (!isTRUE(show_url_string)) {
         df <- dplyr::select(df, -.data$url_str)
