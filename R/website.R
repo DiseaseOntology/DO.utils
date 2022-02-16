@@ -327,3 +327,125 @@ plot_xref_counts <- function(
 
     g
 }
+
+
+#' Plot Definition Sources
+#'
+#' Plots the count of definition sources for _non-obsolete_ terms the Human
+#' Disease Ontology.
+#'
+#' @inheritParams read_doid_edit
+#' @param out_dir The directory where the plot `"{date}-DO_def_src.png"`
+#'     should be saved, as a string.
+#' @inheritParams plot_citedby
+#'
+#' @section Data Preparation:
+#' If this plot will be added to disease-ontology.org, the latest release of the
+#' `HumanDiseaseOntology` Github repo should be checked out prior to running
+#' this function.
+#'
+#' @export
+plot_def_src <- function(DO_repo, out_dir = "graphics/website",
+                               w = 8, h = 5.6) {
+
+    file_out <- file.path(
+        out_dir,
+        paste0(
+            stringr::str_remove_all(Sys.Date(), "-"),
+            "-",
+            "DO_def_src.png"
+        )
+    )
+
+    df <- read_doid_edit(DO_repo) %>%
+        extract_doid_url() %>%
+        dplyr::mutate(tmp = robotstxt:::parse_url(.data$url)) %>%
+        tidyr::unnest(.data$tmp, keep_empty = TRUE) %>%
+        # tidy source names
+        dplyr::mutate(
+            # strip start www and all variants & make lowercase
+            Source = stringr::str_remove(.data$domain, "^www[^.]*\\."),
+            Source = stringr::str_to_lower(.data$Source),
+            # temporary fix for some malformed/old web domains
+            Source = dplyr::recode(
+                .data$Source,
+                # malformed/not working
+                "pubmed-ncbi-nlm-nih-gov" = "PubMed",
+                "ncithesaurus-stage.nci.nih.gov" = "NCI thesaurus",
+                "bt.cdc.gov" = "CDC",
+                # redirects
+                "mayoclinic.com" = "Mayo Clinic",
+                "nci.nih.gov" = "cancer.gov",
+                "cancergenome.nih.gov" = "cancer.gov",
+                "dpd.cdc.gov" = "CDC",
+                "springerlink.com" = "link.springer.com",
+                "ghr.nlm.nih.gov" = "MedlinePlus",
+                # general tidying
+                "apps.who.int" = "who.int",
+                "whqlibdoc.who.int" = "who.int",
+                "ncithesaurus.nci.nih.gov" = "NCI Thesaurus",
+                "pubmed.ncbi.nlm.nih.gov" = "PubMed",
+                "pubmedcentral.nih.gov" = "PubMed Central",
+                "cdc.gov" = "CDC",
+                "en.wikipedia.org" = "Wikipedia",
+                "medlineplus.gov" = "MedlinePlus",
+                "ncit.nci.nih.gov" = "NCI Thesaurus",
+                "omim.org" = "OMIM",
+                "mayoclinic.org" = "Mayo Clinic"
+            )
+        ) %>%
+        # separate mutate needed for is_nlm_subdomain() to get improved df data
+        dplyr::mutate(
+            Source = dplyr::case_when(
+                stringr::str_detect(.data$url, "mesh") ~ "MeSH",
+                is_nlm_subdomain("medlineplus") ~ "MedlinePlus",
+                is_nlm_subdomain("pmc") ~ "PubMed Central",
+                is_nlm_subdomain("pubmed") ~ "PubMed",
+                is_nlm_subdomain("entrez") ~ "PubMed",
+                is_nlm_subdomain("omim") ~ "OMIM",
+                is_nlm_subdomain("book") ~ "NCBI Bookshelf",
+                TRUE ~ Source
+            )
+        )
+
+    count_df <- dplyr::count(df, .data$Source, name = "Count", sort = TRUE) %>%
+        dplyr::mutate(rank = dplyr::row_number(dplyr::desc(Count)))
+
+    total_url <- sum(count_df$Count)
+    top_10 <- count_df %>%
+        dplyr::filter(rank <= 10)
+    other <- count_df %>%
+        dplyr::filter(rank > 10) %>%
+        dplyr::summarize(
+            Source = paste0(dplyr::n_distinct(.data$Source), " other sources"),
+            Count = sum(.data$Count),
+            rank = 11
+        )
+    plot_df <- dplyr::bind_rows(top_10, other)
+
+    y_axis_max <- round_up(max(plot_df$Count), -3)
+    g <- ggplot2::ggplot(data = plot_df) +
+    # ggplot2::ggplot(data = plot_df) +
+        ggplot2::theme_dark(base_size = 13) +
+        ggplot2::geom_col(
+            ggplot2::aes(
+                x = reorder(.data$Source, -.data$rank),
+                y = .data$Count
+            ),
+            width = 0.6, fill = DO_colors["light"]
+        ) +
+        ggplot2::scale_y_continuous(
+            breaks = seq(0, y_axis_max, by = 1000),
+        ) +
+        ggplot2::coord_flip() +
+        ggplot2::ggtitle("DO Definition Source Counts") +
+        ggplot2::theme(axis.title.y = ggplot2::element_blank())
+
+    ggplot2::ggsave(
+        filename = file_out, plot = g,
+        width = w, height = h, units = "in",
+        dpi = 600
+    )
+
+    g
+}
