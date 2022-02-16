@@ -8,6 +8,15 @@
 * Add `collapse_col_flex()` to collapse data frame columns more flexibly.
     * Adds two new methods beyond "unique": "first" & "last".
     * Adds the ability to collapse columns using different methods.
+* Add functions to read the doid-edit.owl file and extract URLs (+ helpers).
+    * `read_doid_edit()`
+    * `extract_doid_url()`
+* Add functions designed for URL validation
+    * `validate_url()` + helpers
+    * helpers for robots.txt respectful validation _[INCOMPLETE]_
+
+* Style guide updates to make code organization more consistent.
+
 
 # DO.utils 0.1.7
 
