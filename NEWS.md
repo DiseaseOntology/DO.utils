@@ -24,6 +24,8 @@
 * Add functions designed for URL validation
     * `validate_url()` + helpers
     * helpers for robots.txt respectful validation _[INCOMPLETE]_
+* Add `plot_def_src()` to create a new plot for the website showing the number
+of times a Source is used to support disease definitions.
 
 * Style guide updates to make code organization more consistent.
 
