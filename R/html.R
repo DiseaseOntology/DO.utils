@@ -40,7 +40,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
     r_end <- cast_to_string(indent_html(indent_n), '</tr>', delim = "")
 
     # format cell elements (include attributes & html)
-    cell_indent <- paste0(
+    cell <- paste0(
         cast_to_string(
             indent_html(indent_n + 1),
             '<td',
@@ -53,7 +53,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
     )
 
     # arrange cells in rows
-    cell_grouped <- partition(cell_indent, n = per_row)
+    cell_grouped <- partition(cell, n = per_row)
     row_cell_html <- purrr::map(
         cell_grouped,
         ~ c(r_start, .x, r_end)
