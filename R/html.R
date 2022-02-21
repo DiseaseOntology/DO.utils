@@ -51,3 +51,22 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 
     row_cell_html
 }
+
+
+# helpers -----------------------------------------------------------------
+
+indent_html <- function(n) {
+    cast_to_string(rep('  ', n), delim = "")
+}
+
+
+set_html_attr <- function(attr) {
+    if (is.null(attr)) return(NULL)
+
+    cast_to_string(
+        # to add space between html element and attributes
+        "",
+        paste0(names(attr), '="', attr, '"'),
+        delim = " "
+    )
+}
