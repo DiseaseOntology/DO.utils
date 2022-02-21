@@ -24,9 +24,10 @@ make_user_list_html <- function(file) {
     # build html
     user_html <- glue::glue_data(
         .x = ws_user_list,
-        '<td class="default"><a href="{url}" target="_blank">{name}</a></td>'
+        '<a href="{url}" target="_blank">{name}</a>'
     )
-    html_rows <- html_in_rows(user_html, per_row = 3, tab_indent = 2)
+    html_rows <- html_in_rows(user_html, per_row = 3, indent_n = 2,
+                              cell_attr = c(class="default"))
 
     readr::write_lines(html_rows, file = file)
 }
