@@ -117,7 +117,6 @@ truncate_authors <- function(pubmed_df) {
 #'     (default), all IDs will be hoisted. Available IDs may include "doi",
 #'     "eid", "mid", "pii", "pmcid", "pmcid_long", "pmid", or "rid".
 #'
-#' @noRd
 hoist_ArticleIds <- function(pubmed_df, id = NULL) {
 
     id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) %>%
