@@ -54,7 +54,7 @@ pubmed_summary <- function(input, config = NULL, version = "2.0",
             input,
             ~ pm_summary_res[.x]
         )
-        class(summary_list) <- "esummary_list-nested"
+        class(summary_list) <- "esummary_list_nested"
     } else {
         summary_list <- pm_summary_res
     }
@@ -96,4 +96,69 @@ truncate_authors <- function(pubmed_df) {
             }
         )
     )
+}
+
+
+#' Hoists IDs from Pubmed/PMC Data (Internal)
+#'
+#' Hoists IDs from Pubmed/PMC Data. _Does not use [tidyr::hoist()] because_
+#' _`IdType` identifier is not a parent and ID positions in list can be_
+#' _variable._
+#'
+#' @section Note:
+#' In direct results from PubMed/PMC the `ArticleIds` results are not
+#' equivalent. The ID type names from PMC correspond with those in this package
+#' but the PubMed ID type names do not. For PubMed `pmcid` is named `pmc` and
+#' `pmid` is named `pubmed`.
+#'
+#' @param pubmed_df A data frame, as produced by [as_tibble()] on a PubMed/PMC
+#'     `esummary_list`.
+#' @param id One or more IDs to hoist, as a character vector. If `NULL`
+#'     (default), all IDs will be hoisted. Available IDs may include "doi",
+#'     "eid", "mid", "pii", "pmcid", "pmcid_long", "pmid", or "rid".
+#'
+#' @noRd
+hoist_ArticleIds <- function(pubmed_df, id = NULL) {
+
+    id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) %>%
+        dplyr::bind_rows()
+
+    # rename to match pkg internal representation; only needed for PubMed
+    if (all(c("pmcid", "pmc") %in% names(id_df))) {
+        id_df <- id_df %>%
+            dplyr::rename(pmcid_long = pmcid, pmcid = pmc, pmid = pubmed)
+    }
+
+    if (is.null(id)) {
+        out_df <- dplyr::bind_cols(pubmed_df, id_df)
+    } else {
+        out_df <- dplyr::bind_cols(
+            pubmed_df,
+            dplyr::select(id_df, {{ id }})
+        )
+    }
+    out_df
+}
+
+
+#' Convert ArticleId list to Data Frame (Internal)
+#'
+#' Converts a single set of ArticleId objects into a data frame. These are
+#' confined to individual rows in PubMed ArticleIds list columns produced by
+#' [as_tibble.esummary_list()].
+#'
+#' @param x A single set of PubMed ArticleId objects from `esummary_list`
+#'     as contained in rows after after conversion with [as_tibble()].
+#'
+#' @noRd
+tidy_ArticleId_set <- function(x) {
+    purrr::map_dfr(
+        x,
+        ~ tibble::tibble(
+            type = .x$IdType,
+            #type_N = .x$IdTypeN, # not needed
+            value = .x$Value
+        )
+    ) %>%
+        tidyr::pivot_wider(names_from = type, values_from = value)
 }

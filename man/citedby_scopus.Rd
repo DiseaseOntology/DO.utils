@@ -20,16 +20,17 @@ citedby_scopus(
 )
 }
 \arguments{
-\item{title}{a character vector of publication titles to be used in a
-Scopus Search API REFTITLE() query; see
+\item{title}{Publication title(s) to be used in a Scopus Search API
+REFTITLE() query, as a character vector; see
 https://dev.elsevier.com/sc_search_tips.html.}
 
-\item{by_id}{a logical scalar where TRUE (default) splits cited by
-publications by the input title they cite, and FALSE returns the unified
-list of unique cited by publications.}
+\item{by_id}{Whether to split cited by publications by the input title they
+cite, as a boolean (default: \code{TRUE}); \code{FALSE} returns a unified list of
+\emph{unique} cited by publications.}
 
-\item{id}{a vector of unique IDs with length equal to title; \emph{REQUIRED} if
-\code{by_id = TRUE}, otherwise ignored.}
+\item{id}{Unique IDs used to identify \code{title} input, as a character vector of
+the same length as \code{title}; \emph{REQUIRED} if \code{by_id = TRUE}, otherwise
+ignored.}
 
 \item{api_key}{API Key for Elsevier}
 
@@ -44,14 +45,16 @@ below 25 for COMPLETE views, see
 
 \item{max_count}{Maximum count of records to be returned.}
 
-\item{headers}{additional headers to be added to \code{\link[httr:add_headers]{httr::add_headers()}}}
+\item{headers}{Additional headers to be added by \code{\link[httr:add_headers]{httr::add_headers()}}.}
 
 \item{wait_time}{The time in seconds to wait across consecutive
 requests of a single search (when records > 25)}
 
 \item{verbose}{Print diagnostic messages}
 
-\item{...}{Arguments to be passed to the query list for \code{\link[httr:GET]{httr::GET()}}}
+\item{...}{Named arguments to be passed to \code{\link[httr:GET]{httr::GET()}}. Available arguments
+are listed in the
+\href{https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl}{Scopus Search Documentation: API Specification}.}
 }
 \value{
 If \code{by_id = FALSE}, the list result from the Scopus Search API (as
@@ -59,6 +62,6 @@ produced by \link[rscopus:scopus_search]{rscopus::scopus_search}). If \code{by_i
 list of \code{scopus_search} result lists.
 }
 \description{
-List Scopus publications citing those specified by \code{title} or \code{eid},
-potentially split \code{by_id}.
+List Scopus publications citing those specified by \code{title}, optionally split
+\code{by_id}.
 }

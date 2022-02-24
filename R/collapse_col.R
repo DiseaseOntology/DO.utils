@@ -38,10 +38,7 @@ collapse_col <- function(df, .cols, delim = "|") {
         dplyr::summarize(
             dplyr::across(
                 .cols = {{ .cols }},
-                .fns = ~ vctr_to_string(
-                    unique(.x),
-                    delim = delim
-                )
+                .fns = ~ unique_to_string(.x, delim = delim, na.rm = TRUE)
             )
         ) %>%
         dplyr::ungroup() %>%

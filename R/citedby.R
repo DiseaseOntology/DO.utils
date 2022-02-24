@@ -32,20 +32,23 @@ citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
 
 #' Get Cited By List from Scopus
 #'
-#' List Scopus publications citing those specified by `title` or `eid`,
-#' potentially split `by_id`.
+#' List Scopus publications citing those specified by `title`, optionally split
+#' `by_id`.
 #'
-#' @param title a character vector of publication titles to be used in a
-#'     Scopus Search API REFTITLE() query; see
+#' @param title Publication title(s) to be used in a Scopus Search API
+#'     REFTITLE() query, as a character vector; see
 #'     https://dev.elsevier.com/sc_search_tips.html.
-#' @param by_id a logical scalar where TRUE (default) splits cited by
-#'     publications by the input title they cite, and FALSE returns the unified
-#'     list of unique cited by publications.
-#' @param id a vector of unique IDs with length equal to title; _REQUIRED_ if
-#'      `by_id = TRUE`, otherwise ignored.
+#' @param by_id Whether to split cited by publications by the input title they
+#'     cite, as a boolean (default: `TRUE`); `FALSE` returns a unified list of
+#'      _unique_ cited by publications.
+#' @param id Unique IDs used to identify `title` input, as a character vector of
+#'       the same length as `title`; _REQUIRED_ if `by_id = TRUE`, otherwise
+#'       ignored.
 #' @inheritParams rscopus::scopus_search
-#' @param headers additional headers to be added to [httr::add_headers()]
-#' @param ... Arguments to be passed to the query list for [httr::GET()]
+#' @param headers Additional headers to be added by [httr::add_headers()].
+#' @param ... Named arguments to be passed to [httr::GET()]. Available arguments
+#'     are listed in the
+#'     [Scopus Search Documentation: API Specification](https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl).
 #'
 #' @return If `by_id = FALSE`, the list result from the Scopus Search API (as
 #'     produced by [rscopus::scopus_search]). If `by_id = TRUE`, an `id` named
@@ -93,22 +96,22 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
         )
         names(cited_by) <- id
         class(cited_by) <- ss_list_class
-        } else {
-            q <- scopus_title_query(title)
-            cited_by <- rscopus::scopus_search(
-                query = q,
-                api_key = api_key,
-                view = view,
-                start = start,
-                count = count,
-                max_count = max_count,
-                headers = headers,
-                wait_time = wait_time,
-                verbose = verbose,
-                ...
-            )
-            class(cited_by) <- ss_class
-        }
+    } else {
+        q <- scopus_title_query(title)
+        cited_by <- rscopus::scopus_search(
+            query = q,
+            api_key = api_key,
+            view = view,
+            start = start,
+            count = count,
+            max_count = max_count,
+            headers = headers,
+            wait_time = wait_time,
+            verbose = verbose,
+            ...
+        )
+        class(cited_by) <- ss_class
+    }
 
     cited_by
 }

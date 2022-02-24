@@ -1,0 +1,1115 @@
+{
+    "swagger": "2.0",
+    "basePath": "/graph/v1",
+    "paths": {
+        "/author/{author_id}": {
+            "parameters": [
+                {
+                    "in": "query",
+                    "description": "A comma-separated list of the fields to be returned.<br><br>\nThe following case-sensitive author fields are recognized:\n<ul>\n    <li><code>authorId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>name</code> - Included if no fields are specified</li>\n    <li><code>aliases</code></li>\n    <li><code>affiliations</code></li>\n    <li><code>homepage</code></li>\n    <li><code>papers</code></li>\n        <ul>\n            <li><code>paperId</code> - Always included</li>\n            <li><code>externalIds</code></li>\n            <li><code>url</code></li>\n            <li><code>title</code> - Included if no fields are specified</li>\n            <li><code>abstract</code></li>\n            <li><code>venue</code></li>\n            <li><code>year</code></li>\n            <li><code>referenceCount</code></li>\n            <li><code>citationCount</code></li>\n            <li><code>influentialCitationCount</code></li>\n            <li><code>isOpenAccess</code></li>\n            <li><code>fieldsOfStudy</code></li>\n            <li><code>authors</code>- Will include: <code>authorId</code> & <code>name</code></li>\n            <li>To get more detailed information about an author's papers, use the <code>/author/{author_id}/papers</code> endpoint</li>\n        </ul>\n</ul>\n<br><br>\nExamples:\n<ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/author/1741101</code></li>\n    <ul>\n        <li>Returns the author's always included field of authorId plus the name.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/author/1741101?fields=aliases,papers</code></li>\n    <ul>\n        <li>Returns the author's authorId, aliases, and list of papers.  </li>\n        <li>Each paper has its paperId plus its title.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/author/1741101?fields=url,papers.abstract,papers.authors</code></li>\n    <ul>\n        <li>Returns the author's authorId, url, and list of papers.  </li>\n        <li>Each paper has its paperId, abstract, and list of authors.</li>\n        <li>In that list of authors, each author has their authorId and name.</li>\n    </ul>\n</ul>",
+                    "name": "fields",
+                    "type": "string"
+                },
+                {
+                    "name": "author_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Author with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/AuthorWithPapers"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad paper id",
+                        "schema": {
+                            "$ref": "#/definitions/Error404"
+                        }
+                    }
+                },
+                "summary": "Details about an author",
+                "operationId": "get_graph_get_author",
+                "tags": [
+                    "/author"
+                ]
+            }
+        },
+        "/author/{author_id}/papers": {
+            "parameters": [
+                {
+                    "default": 0,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "When returning a list of results, start with the element at this position in the list.",
+                    "name": "offset"
+                },
+                {
+                    "default": 100,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "The maximum number of results to return.",
+                    "name": "limit"
+                },
+                {
+                    "in": "query",
+                    "description": "A comma-separated list of the fields to be returned.<br><br>\n\nThe following case-sensitive paper fields are recognized:\n<ul>\n    <li><code>paperId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>title</code> - Included if no fields are specified</li>\n    <li><code>abstract</code></li>\n    <li><code>venue</code></li>\n    <li><code>year</code></li>\n    <li><code>referenceCount</code></li>\n    <li><code>citationCount</code></li>\n    <li><code>influentialCitationCount</code></li>\n    <li><code>isOpenAccess</code></li>\n    <li><code>fieldsOfStudy</code></li>\n    <li><code>authors</code>- Up to 500 will be returned.  Will include: <code>authorId</code> & <code>name</code></li>\n    <li><code>citations</code> - May be truncated</li>\n    <ul>\n        <li><code>paperId</code> - Always included</li>\n        <li><code>url</code>\n        <li><code>title</code></li>\n        <li><code>venue</code></li>\n        <li><code>year</code></li>\n        <li><code>authors</code>- Will include: <code>authorId</code> & <code>name</code></li>\n        <li>Total number of citations will be truncated at 10,000 for the entire batch.</li>\n        <li>To fetch more, reduce the size of the batch with <code>limit=</code> or use the <code>/paper/{paper_id}/citations</code> endpoint.</li>\n    </ul>\n    <li><code>references</code> - May be truncated</li>\n    <ul>\n        <li><code>paperId</code> - Always included</li>\n        <li><code>url</code></li>\n        <li><code>title</code></li>\n        <li><code>venue</code></li>\n        <li><code>year</code></li>\n        <li><code>authors</code>- Will include: <code>authorId</code> & <code>name</code></li>\n        <li>Total number of references will be truncated at 10,000 for the entire batch.</li>\n        <li>To fetch more, reduce the size of the batch with <code>limit=</code> or use the <code>/paper/{paper_id}/references</code> endpoint.</li>\n    </ul>\n</ul>\n<br><br>\nExamples:\n<ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/author/1741101/papers</code></li>\n    <ul>\n        <li>Return with offset=0, and data is a list of the first 100 papers.</li>\n        <li>Each paper has its paperId and title.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/author/1741101/papers?fields=url,year,authors&limit=2</code></li>\n    <ul>\n        <li>Returns with offset=0, next=2, and data is a list of 2 papers.</li>\n        <li>Each paper has its paperId, url, year, and list of authors.</li>\n        <li>Each author has their authorId and name.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/author/1741101/papers?fields=citations.authors&offset=260</code></li>\n    <ul>\n        <li>Returns with offset=260, and data is a list of the last 4 papers.</li>\n        <li>Each paper has its paperId and a list of citations.</li>\n        <li>Each citation has its paperId and a list of authors.</li>\n        <li>Each author has their authorId and name.</li>\n    </ul>\n</ul>\n\n",
+                    "name": "fields",
+                    "type": "string"
+                },
+                {
+                    "name": "author_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "List of papers with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/PaperBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad paper id",
+                        "schema": {
+                            "$ref": "#/definitions/Error404"
+                        }
+                    }
+                },
+                "summary": "Details about an author's papers",
+                "description": "Fetch the papers of an author in batches.<br><br>\nOnly retrieves the most recent 10,000 citations/references for papers belonging to the batch\nTo retrieve the full set of citations for a paper,\nuse the /paper/{paper_id}/citations endpoint",
+                "operationId": "get_graph_get_author_papers",
+                "tags": [
+                    "/author"
+                ]
+            }
+        },
+        "/paper/search": {
+            "parameters": [
+                {
+                    "default": 0,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "When returning a list of results, start with the element at this position in the list.",
+                    "name": "offset"
+                },
+                {
+                    "default": 100,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "The maximum number of results to return.",
+                    "name": "limit"
+                },
+                {
+                    "in": "query",
+                    "description": "A comma-separated list of the fields to be returned.<br><br>\n\nThe following case-sensitive paper fields are recognized:\n<ul>\n    <li><code>paperId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>title</code> - Included if no fields are specified</li>\n    <li><code>abstract</code></li>\n    <li><code>venue</code></li>\n    <li><code>year</code></li>\n    <li><code>referenceCount</code></li>\n    <li><code>citationCount</code></li>\n    <li><code>influentialCitationCount</code></li>\n    <li><code>isOpenAccess</code></li>\n    <li><code>fieldsOfStudy</code></li>\n    <li><code>authors</code> - Up to 500 will be returned</li>\n    <ul>\n        <li><code>authorId</code> - Always included</li>\n        <li><code>name</code> - Always included</li>\n    </ul>\n</ul>\n<br><br>\nExamples:\n<ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/search?query=covid+vaccination&offset=100&limit=3</code></li>\n    <ul>\n        <li>Returns with total=576278, offset=100, next=103, and data is a list of 3 papers.</li>\n        <li>Each paper has the always included field of paperId plus its title.  </li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/search?query=covid&fields=url,abstract,authors</code></li>\n    <ul>\n        <li>Returns with total=639637, offset=0, next=100, and data is a list of 100 papers.</li>\n        <li>Each paper has paperId, url, abstract, and a list of authors.</li>\n        <li>Each author under that list has authorId and name.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/search?query=totalGarbageNonsense</code></li>\n    <ul>\n        <li>Returns with total = 0, offset=0, and data is a list of 0 papers.</li>\n    </ul>\n</ul>",
+                    "name": "fields",
+                    "type": "string"
+                },
+                {
+                    "required": true,
+                    "in": "query",
+                    "description": "Search query string.\n\nWe support boolean operators OR and AND. \n\nIf you would like to ensure the inclusion of particular search terms using a MUST operator, \nsimply include a plus sign before the term that must be included.\n\nFor example, searching +Epidemic +Modeling +Canada will ensure each term is included in the results.\n\nSimilarly, if you'd like to ensure the exclusion of a particular search term using a MUST NOT operator, simply include a minus sign before the term that must be excluded.\n\nFor example, searching +Epidemic +Modeling +Canada -COVID will ensure each term is included in the search results but will exclude content with the negated term.\n\nSemantic Scholar search API does not currently support wildcards. If this is a feature you would like, please let us know.",
+                    "name": "query",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Batch of papers with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/PaperSearchBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    }
+                },
+                "summary": "Search for papers by keyword",
+                "operationId": "get_graph_get_paper_search",
+                "tags": [
+                    "/paper"
+                ]
+            }
+        },
+        "/paper/{paper_id}": {
+            "parameters": [
+                {
+                    "description": "The following types of IDs are supported:\n<ul>\n    <li><code>&lt;sha&gt;</code> - a Semantic Scholar ID, e.g. <code>649def34f8be52c8b66281af98ae884c09aef38b</code></li>\n    <li><code>CorpusId:&lt;id&gt;</code> - Semantic Scholar numerical ID, e.g. <code>215416146</code></li>\n    <li><code>DOI:&lt;doi&gt;</code> - a <a href=\"http://doi.org\">Digital Object Identifier</a>,\n        e.g. <code>DOI:10.18653/v1/N18-3011</code></li>\n    <li><code>ARXIV:&lt;id&gt;</code> - <a href=\"https://arxiv.org/\">arXiv.rg</a>, e.g. <code>ARXIV:2106.15928</code></li>\n    <li><code>MAG:&lt;id&gt;</code> - Microsoft Academic Graph, e.g. <code>MAG:112218234</code></li>\n    <li><code>ACL:&lt;id&gt;</code> - Association for Computational Linguistics, e.g. <code>ACL:W12-3903</code></li>\n    <li><code>PMID:&lt;id&gt;</code> - PubMed/Medline, e.g. <code>PMID:19872477</code></li>\n    <li><code>PMCID:&lt;id&gt;</code> - PubMed Central, e.g. <code>PMCID:2323736</code></li>\n    <li><code>URL:&lt;url&gt;</code> - URL from one of the sites listed below, e.g. <code>URL:https://arxiv.org/abs/2106.15928v1</code></li>\n</ul>\n\nURLs are recognized from the following sites:\n<ul>\n    <li><a href=\"https://www.semanticscholar.org/\">semanticscholar.org</a></li>\n    <li><a href=\"https://arxiv.org/\">arxiv.org</a></li>\n    <li><a href=\"https://www.aclweb.org\">aclweb.org</a></li>\n    <li><a href=\"https://www.acm.org/\">acm.org</a></li>\n    <li><a href=\"https://www.biorxiv.org/\">biorxiv.org</a></li>\n</ul>",
+                    "name": "paper_id",
+                    "in": "path",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "description": "A comma-separated list of the fields to be returned.<br><br>\n\nThe following case-sensitive paper fields are recognized:\n<ul>\n    <li><code>paperId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>title</code> - Included if no fields are specified</li>\n    <li><code>abstract</code></li>\n    <li><code>venue</code></li>\n    <li><code>year</code></li>\n    <li><code>referenceCount</code></li>\n    <li><code>citationCount</code></li>\n    <li><code>influentialCitationCount</code></li>\n    <li><code>isOpenAccess</code></li>\n    <li><code>fieldsOfStudy</code></li>\n    <li><code>authors</code> - Up to 500 will be returned</li>\n        <ul>\n            <li><code>authorId</code> - Always included</li>\n            <li><code>externalIds</code></li>\n            <li><code>url</code></li>\n            <li><code>name</code> - Included if no fields are specified</li>\n            <li><code>aliases</code></li>\n            <li><code>affiliations</code></li>\n            <li><code>homepage</code></li>\n            <li>To get more detailed information about a paper's authors, use the <code>/paper/{paper_id}/authors</code> endpoint</li>\n        </ul>\n    <li><code>citations</code> - Up to 1000 will be returned</li>\n        <ul>\n            <li><code>paperId</code> - Always included</li>\n            <li><code>url</code></li>\n            <li><code>title</code> - Included if no fields are specified</li>\n            <li><code>venue</code></li>\n            <li><code>year</code></li>\n            <li><code>authors</code> - Will include: <code>authorId</code> & <code>name</code></li>\n            <li>To get more detailed information about a paper's citations, use the <code>/paper/{paper_id}/citations</code> endpoint</li>\n        </ul>\n    <li><code>references</code> - Up to 1000 will be returned</li>\n        <ul>\n            <li><code>paperId</code> - Always included</li>\n            <li><code>url</code></li>\n            <li><code>title</code> - Included if no fields are specified</li>\n            <li><code>venue</code></li>\n            <li><code>year</code></li>\n            <li><code>authors</code> - Will include: <code>authorId</code> & <code>name</code></li>\n            <li>To get more detailed information about a paper's references, use the <code>/paper/{paper_id}/references</code> endpoint</li>\n        </ul>\n    <li><code>embedding</code></li>\n</ul>\n<br><br>\nExamples:\n<ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b</code></li>\n    <ul>\n        <li>Returns the paper's always included field of paperId plus its title.  </li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b?fields=url,year,authors</code></li>\n    <ul>\n        <li>Returns the paper's paperId, url, year, and list of authors.  </li>\n        <li>Each author has authorId and name.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b?fields=citations.authors</code></li>\n    <ul>\n        <li>Returns the paper's paperId and list of citations.  </li>\n        <li>Each citation has its paperId plus its list of authors.</li>\n        <li>Each author has their 2 always included fields of authorId and name.</li>\n    </ul>\n</ul>",
+                    "name": "fields",
+                    "type": "string",
+                    "in": "query"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Paper with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/FullPaper"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad paper id",
+                        "schema": {
+                            "$ref": "#/definitions/Error404"
+                        }
+                    }
+                },
+                "summary": "Details about a paper",
+                "operationId": "get_graph_get_paper",
+                "tags": [
+                    "/paper"
+                ]
+            }
+        },
+        "/paper/{paper_id}/authors": {
+            "parameters": [
+                {
+                    "default": 0,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "When returning a list of results, start with the element at this position in the list.",
+                    "name": "offset"
+                },
+                {
+                    "default": 100,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "The maximum number of results to return.",
+                    "name": "limit"
+                },
+                {
+                    "in": "query",
+                    "description": "A comma-separated list of the fields to be returned.<br><br>\nThe following case-sensitive author fields are recognized:\n<ul>\n    <li><code>authorId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>name</code> - Included if no fields are specified</li>\n    <li><code>aliases</code></li>\n    <li><code>affiliations</code></li>\n    <li><code>homepage</code></li>\n    <li><code>papers</code></li>\n    <ul>\n        <li><code>paperId</code> - Always included</li>\n        <li><code>externalIds</code></li>\n        <li><code>url</code></li>\n        <li><code>title</code> - Included if no fields are specified</li>\n        <li><code>abstract</code></li>\n        <li><code>venue</code></li>\n        <li><code>year</code></li>\n        <li><code>referenceCount</code></li>\n        <li><code>citationCount</code></li>\n        <li><code>influentialCitationCount</code></li>\n        <li><code>isOpenAccess</code></li>\n        <li><code>fieldsOfStudy</code></li>\n        <li><code>authors</code> - Will include: <code>authorId</code> & <code>name</code></li>\n    </ul>\n</ul>\n<br><br>\nExamples:\n<ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/authors</code></li>\n    <ul>\n        <li>Returns with offset=0, and data is a list of all 3 authors.</li>\n        <li>Each author has their authorId and name</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/authors?fields=affiliations,papers&limit=2</code></li>\n    <ul>\n        <li>Returns with offset=0, next=2, and data is a list of 2 authors.</li>\n        <li>Each author has their authorId, affiliations, and list of papers.</li>\n        <li>Each paper has its paperId and title.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/authors?fields=url,papers.year,papers.authors&offset=2</code></li>\n    <ul>\n        <li>Returns with offset=2, and data is a list containing the last author.</li>\n        <li>This author has their authorId, url, and list of papers.</li>\n        <li>Each paper has its paperId, year, and list of authors.</li>\n        <li>In that list of authors, each author has their authorId and name.</li>\n    </ul>\n</ul>",
+                    "name": "fields",
+                    "type": "string"
+                },
+                {
+                    "in": "path",
+                    "description": "The following types of IDs are supported:\n<ul>\n    <li><code>&lt;sha&gt;</code> - a Semantic Scholar ID, e.g. <code>649def34f8be52c8b66281af98ae884c09aef38b</code></li>\n    <li><code>CorpusId:&lt;id&gt;</code> - Semantic Scholar numerical ID, e.g. <code>215416146</code></li>\n    <li><code>DOI:&lt;doi&gt;</code> - a <a href=\"http://doi.org\">Digital Object Identifier</a>,\n        e.g. <code>DOI:10.18653/v1/N18-3011</code></li>\n    <li><code>ARXIV:&lt;id&gt;</code> - <a href=\"https://arxiv.org/\">arXiv.rg</a>, e.g. <code>ARXIV:2106.15928</code></li>\n    <li><code>MAG:&lt;id&gt;</code> - Microsoft Academic Graph, e.g. <code>MAG:112218234</code></li>\n    <li><code>ACL:&lt;id&gt;</code> - Association for Computational Linguistics, e.g. <code>ACL:W12-3903</code></li>\n    <li><code>PMID:&lt;id&gt;</code> - PubMed/Medline, e.g. <code>PMID:19872477</code></li>\n    <li><code>PMCID:&lt;id&gt;</code> - PubMed Central, e.g. <code>PMCID:2323736</code></li>\n    <li><code>URL:&lt;url&gt;</code> - URL from one of the sites listed below, e.g. <code>URL:https://arxiv.org/abs/2106.15928v1</code></li>\n</ul>\n\nURLs are recognized from the following sites:\n<ul>\n    <li><a href=\"https://www.semanticscholar.org/\">semanticscholar.org</a></li>\n    <li><a href=\"https://arxiv.org/\">arxiv.org</a></li>\n    <li><a href=\"https://www.aclweb.org\">aclweb.org</a></li>\n    <li><a href=\"https://www.acm.org/\">acm.org</a></li>\n    <li><a href=\"https://www.biorxiv.org/\">biorxiv.org</a></li>\n</ul>",
+                    "name": "paper_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "List of Authors with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/AuthorBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad paper id",
+                        "schema": {
+                            "$ref": "#/definitions/Error404"
+                        }
+                    }
+                },
+                "summary": "Details about a paper's authors",
+                "operationId": "get_graph_get_paper_authors",
+                "tags": [
+                    "/paper"
+                ]
+            }
+        },
+        "/paper/{paper_id}/citations": {
+            "parameters": [
+                {
+                    "default": 0,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "When returning a list of results, start with the element at this position in the list.",
+                    "name": "offset"
+                },
+                {
+                    "default": 100,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "The maximum number of results to return.",
+                    "name": "limit"
+                },
+                {
+                    "in": "query",
+                    "description": "A comma-separated list of the fields to be returned.\n<br><br>\nThe following case-sensitive citation fields are recognized:\n<ul>\n    <li><code>contexts</code></li>\n    <li><code>intents</code></li>\n    <li><code>isInfluential</code></li>\n    <li><code>paperId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>title</code> - Included if no fields are specified</li>\n    <li><code>abstract</code></li>\n    <li><code>venue</code></li>\n    <li><code>year</code></li>\n    <li><code>referenceCount</code></li>\n    <li><code>citationCount</code></li>\n    <li><code>influentialCitationCount</code></li>\n    <li><code>isOpenAccess</code></li>\n    <li><code>fieldsOfStudy</code></li>\n    <li><code>authors</code> - Up to 500 will be returned.  Will include: <code>authorId</code> & <code>name</code></li>\n</ul>\n<br>\n<br>\nExamples:\n<ul>\n    <li>Let's suppose that the paper in the examples below has 1600 citations...</li>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/citations</code></li>\n    <ul>\n        <li>Returns with offset=0, next=100, and data is a list of 100 citations.</li>\n        <li>Each citation has a citingPaper which contains its paperId and title.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/citations?fields=contexts,intents,isInfluential,abstract&offset=200&limit=10</code></li>\n    <ul>\n        <li>Returns with offset=200, next=210, and data is a list of 10 citations.</li>\n        <li>Each citation has contexts, intents, isInfluential, and a citingPaper which contains its paperId and abstract.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/citations?fields=authors&offset=1500&limit=500</code></li>\n    <ul>\n        <li>Returns with offset=1500, and data is a list of the last 100 citations.</li>\n        <li>Each citation has a citingPaper which contains its paperId plus a list of authors</li>\n        <li>The authors under each citingPaper has their authorId and name.</li>\n    </ul>\n</ul>",
+                    "name": "fields",
+                    "type": "string"
+                },
+                {
+                    "in": "path",
+                    "description": "The following types of IDs are supported:\n<ul>\n    <li><code>&lt;sha&gt;</code> - a Semantic Scholar ID, e.g. <code>649def34f8be52c8b66281af98ae884c09aef38b</code></li>\n    <li><code>CorpusId:&lt;id&gt;</code> - Semantic Scholar numerical ID, e.g. <code>215416146</code></li>\n    <li><code>DOI:&lt;doi&gt;</code> - a <a href=\"http://doi.org\">Digital Object Identifier</a>,\n        e.g. <code>DOI:10.18653/v1/N18-3011</code></li>\n    <li><code>ARXIV:&lt;id&gt;</code> - <a href=\"https://arxiv.org/\">arXiv.rg</a>, e.g. <code>ARXIV:2106.15928</code></li>\n    <li><code>MAG:&lt;id&gt;</code> - Microsoft Academic Graph, e.g. <code>MAG:112218234</code></li>\n    <li><code>ACL:&lt;id&gt;</code> - Association for Computational Linguistics, e.g. <code>ACL:W12-3903</code></li>\n    <li><code>PMID:&lt;id&gt;</code> - PubMed/Medline, e.g. <code>PMID:19872477</code></li>\n    <li><code>PMCID:&lt;id&gt;</code> - PubMed Central, e.g. <code>PMCID:2323736</code></li>\n    <li><code>URL:&lt;url&gt;</code> - URL from one of the sites listed below, e.g. <code>URL:https://arxiv.org/abs/2106.15928v1</code></li>\n</ul>\n\nURLs are recognized from the following sites:\n<ul>\n    <li><a href=\"https://www.semanticscholar.org/\">semanticscholar.org</a></li>\n    <li><a href=\"https://arxiv.org/\">arxiv.org</a></li>\n    <li><a href=\"https://www.aclweb.org\">aclweb.org</a></li>\n    <li><a href=\"https://www.acm.org/\">acm.org</a></li>\n    <li><a href=\"https://www.biorxiv.org/\">biorxiv.org</a></li>\n</ul>",
+                    "name": "paper_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Batch of citations with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/CitationBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad paper id",
+                        "schema": {
+                            "$ref": "#/definitions/Error404"
+                        }
+                    }
+                },
+                "summary": "Details about a paper's citations",
+                "description": "Fetch details about the papers the cite this paper (i.e. papers in whose bibliography this paper appears)",
+                "operationId": "get_graph_get_paper_citations",
+                "tags": [
+                    "/paper"
+                ]
+            }
+        },
+        "/paper/{paper_id}/references": {
+            "parameters": [
+                {
+                    "default": 0,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "When returning a list of results, start with the element at this position in the list.",
+                    "name": "offset"
+                },
+                {
+                    "default": 100,
+                    "type": "integer",
+                    "in": "query",
+                    "description": "The maximum number of results to return.",
+                    "name": "limit"
+                },
+                {
+                    "in": "query",
+                    "description": "A comma-separated list of the fields to be returned.\n<br><br>\nThe following case-sensitive reference fields are recognized:\n<ul>\n    <li><code>contexts</code></li>\n    <li><code>intents</code></li>\n    <li><code>isInfluential</code></li>\n    <li><code>paperId</code> - Always included</li>\n    <li><code>externalIds</code></li>\n    <li><code>url</code></li>\n    <li><code>title</code> - Included if no fields are specified</li>\n    <li><code>abstract</code></li>\n    <li><code>venue</code></li>\n    <li><code>year</code></li>\n    <li><code>referenceCount</code></li>\n    <li><code>citationCount</code></li>\n    <li><code>influentialCitationCount</code></li>\n    <li><code>isOpenAccess</code></li>\n    <li><code>fieldsOfStudy</code></li>\n    <li><code>authors</code> - Up to 500 will be returned.  Will include: <code>authorId</code> & <code>name</code></li>\n</ul>\n<br>\n<br>\nExamples:\n<ul>\n    <li>Let's suppose that the paper in the examples below has 1600 references...</li>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/references</code></li>\n    <ul>\n        <li>Returns with offset=0, next=100, and data is a list of 100 references.</li>\n        <li>Each reference has a citedPaper which contains its paperId and title.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/references?fields=contexts,intents,isInfluential,abstract&offset=200&limit=10</code></li>\n    <ul>\n        <li>Returns with offset=200, next=210, and data is a list of 10 references.</li>\n        <li>Each reference has contexts, intents, isInfluential, and a citedPaper which contains its paperId and abstract.</li>\n    </ul>\n    <li><code>https://api.semanticscholar.org/graph/v1/paper/649def34f8be52c8b66281af98ae884c09aef38b/references?fields=authors&offset=1500&limit=500</code></li>\n    <ul>\n        <li>Returns with offset=1500, and data is a list of the last 100 references.</li>\n        <li>Each reference has a citedPaper which contains its paperId plus a list of authors</li>\n        <li>The authors under each citedPaper has their authorId and name.</li>\n    </ul>\n</ul>",
+                    "name": "fields",
+                    "type": "string"
+                },
+                {
+                    "in": "path",
+                    "description": "The following types of IDs are supported:\n<ul>\n    <li><code>&lt;sha&gt;</code> - a Semantic Scholar ID, e.g. <code>649def34f8be52c8b66281af98ae884c09aef38b</code></li>\n    <li><code>CorpusId:&lt;id&gt;</code> - Semantic Scholar numerical ID, e.g. <code>215416146</code></li>\n    <li><code>DOI:&lt;doi&gt;</code> - a <a href=\"http://doi.org\">Digital Object Identifier</a>,\n        e.g. <code>DOI:10.18653/v1/N18-3011</code></li>\n    <li><code>ARXIV:&lt;id&gt;</code> - <a href=\"https://arxiv.org/\">arXiv.rg</a>, e.g. <code>ARXIV:2106.15928</code></li>\n    <li><code>MAG:&lt;id&gt;</code> - Microsoft Academic Graph, e.g. <code>MAG:112218234</code></li>\n    <li><code>ACL:&lt;id&gt;</code> - Association for Computational Linguistics, e.g. <code>ACL:W12-3903</code></li>\n    <li><code>PMID:&lt;id&gt;</code> - PubMed/Medline, e.g. <code>PMID:19872477</code></li>\n    <li><code>PMCID:&lt;id&gt;</code> - PubMed Central, e.g. <code>PMCID:2323736</code></li>\n    <li><code>URL:&lt;url&gt;</code> - URL from one of the sites listed below, e.g. <code>URL:https://arxiv.org/abs/2106.15928v1</code></li>\n</ul>\n\nURLs are recognized from the following sites:\n<ul>\n    <li><a href=\"https://www.semanticscholar.org/\">semanticscholar.org</a></li>\n    <li><a href=\"https://arxiv.org/\">arxiv.org</a></li>\n    <li><a href=\"https://www.aclweb.org\">aclweb.org</a></li>\n    <li><a href=\"https://www.acm.org/\">acm.org</a></li>\n    <li><a href=\"https://www.biorxiv.org/\">biorxiv.org</a></li>\n</ul>",
+                    "name": "paper_id",
+                    "required": true,
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Batch of references with default or requested fields",
+                        "schema": {
+                            "$ref": "#/definitions/ReferenceBatch"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/Error400"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad paper id",
+                        "schema": {
+                            "$ref": "#/definitions/Error404"
+                        }
+                    }
+                },
+                "summary": "Details about a paper's references",
+                "description": "Fetch details about the papers cited by this paper (i.e. appearing in this paper's bibliography)",
+                "operationId": "get_graph_get_paper_references",
+                "tags": [
+                    "/paper"
+                ]
+            }
+        }
+    },
+    "info": {
+        "title": "Literature Graph Service",
+        "version": "1.0",
+        "description": "Fetch paper and author data from the Semantic Scholar corpus"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "tags": [
+        {
+            "name": "/paper"
+        },
+        {
+            "name": "/author"
+        }
+    ],
+    "definitions": {
+        "Error404": {
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "description": "Depending on the case, error message may be any of these:\n<ul>\n    <li><code>\"Paper/Author/Object not found\"</code></li>\n    <li><code>\"Paper/Author/Object with id ### not found\"</code></li>\n</ul>",
+                    "example": "Paper with id 0 not found"
+                }
+            },
+            "type": "object"
+        },
+        "Error400": {
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "description": "Depending on the case, error message may be any of these:\n<ul>\n    <li><code>\"Unrecognized or unsupported fields: [bad1, bad2, etc...]\"</code></li>\n    <li><code>\"Unacceptable query params: [badK1=badV1, badK2=badV2, etc...}]\"</code></li>\n    <li>A custom message string</li></ul>",
+                    "example": "Unrecognized or unsupported fields: [author.creditCardNumber, garbage]"
+                }
+            },
+            "type": "object"
+        },
+        "FullPaper": {
+            "required": [
+                "paperId"
+            ],
+            "properties": {
+                "paperId": {
+                    "type": "string",
+                    "example": "649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "externalIds": {
+                    "type": "object",
+                    "description": "Other catalog IDs for this paper, if known. Supports ArXiv, MAG, ACL, PubMed, Medline, PubMedCentral, DBLP, DOI.",
+                    "example": {
+                        "ArXiv": "...",
+                        "DBLP": "...",
+                        "PubMedCentral": "..."
+                    }
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL on the Semantic Scholar website",
+                    "example": "https://www.semanticscholar.org/paper/649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "This field will be provided if no fields are specified",
+                    "example": "Construction of the Literature Graph in Semantic Scholar"
+                },
+                "abstract": {
+                    "type": "string",
+                    "example": "We describe a deployed scalable system for organizing published scientific literature into a heterogeneous graph to facilitate algorithmic manipulation and discovery."
+                },
+                "venue": {
+                    "type": "string",
+                    "example": "NAACL"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2018
+                },
+                "referenceCount": {
+                    "type": "integer",
+                    "example": 321
+                },
+                "citationCount": {
+                    "type": "integer",
+                    "example": 987
+                },
+                "influentialCitationCount": {
+                    "type": "integer",
+                    "description": "https://www.semanticscholar.org/faq#influential-citations",
+                    "example": 654
+                },
+                "isOpenAccess": {
+                    "type": "boolean",
+                    "description": "https://www.openaccess.nl/en/what-is-open-access"
+                },
+                "fieldsOfStudy": {
+                    "type": "object",
+                    "description": "A list of high-level academic categories",
+                    "example": [
+                        "Computer Science"
+                    ]
+                },
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "title": "Author Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/Author"
+                            }
+                        ]
+                    }
+                },
+                "citations": {
+                    "type": "array",
+                    "title": "Paper Info",
+                    "items": {
+                        "$ref": "#/definitions/PaperInfo"
+                    }
+                },
+                "references": {
+                    "type": "array",
+                    "items": {
+                        "title": "Paper Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/PaperInfo"
+                            }
+                        ]
+                    }
+                },
+                "embedding": {
+                    "$ref": "#/definitions/Embedding"
+                }
+            },
+            "type": "object"
+        },
+        "Author": {
+            "required": [
+                "authorId"
+            ],
+            "properties": {
+                "authorId": {
+                    "type": "string",
+                    "example": "1741101"
+                },
+                "externalIds": {
+                    "type": "object",
+                    "description": "ORCID/DBLP IDs for this author, if known",
+                    "example": {
+                        "DBLP": 123,
+                        "ORCID": 456
+                    }
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL on the Semantic Scholar website",
+                    "example": "https://www.semanticscholar.org/author/1741101"
+                },
+                "name": {
+                    "type": "string",
+                    "title": "This field will be provided if no fields are specified",
+                    "example": "Oren Etzioni"
+                },
+                "aliases": {
+                    "type": "object",
+                    "description": "List of aliases",
+                    "example": [
+                        "O Et-zioni",
+                        "Oren Etzioni"
+                    ]
+                },
+                "affiliations": {
+                    "type": "object",
+                    "description": "List of affiliations",
+                    "example": [
+                        "Allen Institute for AI"
+                    ]
+                },
+                "homepage": {
+                    "type": "string",
+                    "description": "Author's own homepage",
+                    "example": "https://allenai.org/"
+                }
+            },
+            "type": "object"
+        },
+        "PaperInfo": {
+            "required": [
+                "paperId"
+            ],
+            "properties": {
+                "paperId": {
+                    "type": "string",
+                    "example": "649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL on the Semantic Scholar website",
+                    "example": "https://www.semanticscholar.org/paper/649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "This field will be provided if no fields are specified",
+                    "example": "Construction of the Literature Graph in Semantic Scholar"
+                },
+                "venue": {
+                    "type": "string",
+                    "example": "NAACL"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2018
+                },
+                "authors": {
+                    "type": "array",
+                    "items": {
+                        "title": "Author Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/AuthorInfo"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "AuthorInfo": {
+            "required": [
+                "authorId",
+                "name"
+            ],
+            "properties": {
+                "authorId": {
+                    "type": "string",
+                    "example": "1741101"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Oren Etzioni"
+                }
+            },
+            "type": "object"
+        },
+        "Embedding": {
+            "required": [
+                "model",
+                "vector"
+            ],
+            "properties": {
+                "model": {
+                    "type": "string",
+                    "description": "The underlying model+version that produced the embedding",
+                    "example": "specter@v0.1.1"
+                },
+                "vector": {
+                    "type": "object",
+                    "description": "Numerical embedding vector",
+                    "example": [
+                        -8.82082748413086,
+                        -2.6610865592956543
+                    ]
+                }
+            },
+            "type": "object"
+        },
+        "CitationBatch": {
+            "required": [
+                "next",
+                "offset"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer",
+                    "description": "starting position for this batch",
+                    "default": 0
+                },
+                "next": {
+                    "type": "integer",
+                    "title": "absent if no more data exists",
+                    "description": "starting position of the next batch",
+                    "default": 1
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "title": "contents of this batch",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/Citation"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "Citation": {
+            "required": [
+                "citingPaper"
+            ],
+            "properties": {
+                "contexts": {
+                    "type": "object",
+                    "description": "List of contexts",
+                    "example": [
+                        "SciBERT (Beltagy et al., 2019) follows the BERT’s masking strategy to pre-train the model from scratch using a scientific corpus composed of papers from Semantic Scholar (Ammar et al., 2018).",
+                        "27M articles from the Semantic Scholar dataset (Ammar et al., 2018)."
+                    ]
+                },
+                "intents": {
+                    "type": "object",
+                    "description": "List of intents",
+                    "example": [
+                        "methodology"
+                    ]
+                },
+                "isInfluential": {
+                    "type": "boolean",
+                    "description": "https://www.semanticscholar.org/faq#influential-citations"
+                },
+                "citingPaper": {
+                    "description": "Details about the citing paper",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BasePaper"
+                        }
+                    ]
+                }
+            },
+            "type": "object"
+        },
+        "BasePaper": {
+            "required": [
+                "paperId"
+            ],
+            "properties": {
+                "paperId": {
+                    "type": "string",
+                    "example": "649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "externalIds": {
+                    "type": "object",
+                    "description": "Other catalog IDs for this paper, if known. Supports ArXiv, MAG, ACL, PubMed, Medline, PubMedCentral, DBLP, DOI.",
+                    "example": {
+                        "ArXiv": "...",
+                        "DBLP": "...",
+                        "PubMedCentral": "..."
+                    }
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL on the Semantic Scholar website",
+                    "example": "https://www.semanticscholar.org/paper/649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "This field will be provided if no fields are specified",
+                    "example": "Construction of the Literature Graph in Semantic Scholar"
+                },
+                "abstract": {
+                    "type": "string",
+                    "example": "We describe a deployed scalable system for organizing published scientific literature into a heterogeneous graph to facilitate algorithmic manipulation and discovery."
+                },
+                "venue": {
+                    "type": "string",
+                    "example": "NAACL"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2018
+                },
+                "referenceCount": {
+                    "type": "integer",
+                    "example": 321
+                },
+                "citationCount": {
+                    "type": "integer",
+                    "example": 987
+                },
+                "influentialCitationCount": {
+                    "type": "integer",
+                    "description": "https://www.semanticscholar.org/faq#influential-citations",
+                    "example": 654
+                },
+                "isOpenAccess": {
+                    "type": "boolean",
+                    "description": "https://www.openaccess.nl/en/what-is-open-access"
+                },
+                "fieldsOfStudy": {
+                    "type": "object",
+                    "description": "A list of high-level academic categories",
+                    "example": [
+                        "Computer Science"
+                    ]
+                },
+                "authors": {
+                    "type": "array",
+                    "title": "Author Info",
+                    "items": {
+                        "$ref": "#/definitions/AuthorInfo"
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "ReferenceBatch": {
+            "required": [
+                "next",
+                "offset"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer",
+                    "description": "starting position for this batch",
+                    "default": 0
+                },
+                "next": {
+                    "type": "integer",
+                    "title": "absent if no more data exists",
+                    "description": "starting position of the next batch",
+                    "default": 1
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "title": "contents of this batch",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/Reference"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "Reference": {
+            "required": [
+                "citedPaper"
+            ],
+            "properties": {
+                "contexts": {
+                    "type": "object",
+                    "description": "List of contexts",
+                    "example": [
+                        "SciBERT (Beltagy et al., 2019) follows the BERT’s masking strategy to pre-train the model from scratch using a scientific corpus composed of papers from Semantic Scholar (Ammar et al., 2018).",
+                        "27M articles from the Semantic Scholar dataset (Ammar et al., 2018)."
+                    ]
+                },
+                "intents": {
+                    "type": "object",
+                    "description": "List of intents",
+                    "example": [
+                        "methodology"
+                    ]
+                },
+                "isInfluential": {
+                    "type": "boolean",
+                    "description": "https://www.semanticscholar.org/faq#influential-citations"
+                },
+                "citedPaper": {
+                    "description": "Details about the cited paper",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/BasePaper"
+                        }
+                    ]
+                }
+            },
+            "type": "object"
+        },
+        "AuthorBatch": {
+            "required": [
+                "next",
+                "offset"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer",
+                    "description": "starting position for this batch",
+                    "default": 0
+                },
+                "next": {
+                    "type": "integer",
+                    "title": "absent if no more data exists",
+                    "description": "starting position of the next batch",
+                    "default": 1
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "title": "contents of this batch",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/AuthorWithPapers"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "AuthorWithPapers": {
+            "required": [
+                "authorId"
+            ],
+            "properties": {
+                "authorId": {
+                    "type": "string",
+                    "example": "1741101"
+                },
+                "externalIds": {
+                    "type": "object",
+                    "description": "ORCID/DBLP IDs for this author, if known",
+                    "example": {
+                        "DBLP": 123,
+                        "ORCID": 456
+                    }
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL on the Semantic Scholar website",
+                    "example": "https://www.semanticscholar.org/author/1741101"
+                },
+                "name": {
+                    "type": "string",
+                    "title": "This field will be provided if no fields are specified",
+                    "example": "Oren Etzioni"
+                },
+                "aliases": {
+                    "type": "object",
+                    "description": "List of aliases",
+                    "example": [
+                        "O Et-zioni",
+                        "Oren Etzioni"
+                    ]
+                },
+                "affiliations": {
+                    "type": "object",
+                    "description": "List of affiliations",
+                    "example": [
+                        "Allen Institute for AI"
+                    ]
+                },
+                "homepage": {
+                    "type": "string",
+                    "description": "Author's own homepage",
+                    "example": "https://allenai.org/"
+                },
+                "papers": {
+                    "type": "array",
+                    "items": {
+                        "title": "Paper Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/BasePaper"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "PaperSearchBatch": {
+            "required": [
+                "next",
+                "offset",
+                "total"
+            ],
+            "properties": {
+                "total": {
+                    "type": "string",
+                    "description": "Number of matching search results",
+                    "example": 15117
+                },
+                "offset": {
+                    "type": "integer",
+                    "description": "starting position for this batch",
+                    "default": 0
+                },
+                "next": {
+                    "type": "integer",
+                    "title": "absent if no more data exists",
+                    "description": "starting position of the next batch",
+                    "default": 1
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "title": "contents of this batch",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/BasePaper"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "PaperBatch": {
+            "required": [
+                "next",
+                "offset"
+            ],
+            "properties": {
+                "offset": {
+                    "type": "integer",
+                    "description": "starting position for this batch",
+                    "default": 0
+                },
+                "next": {
+                    "type": "integer",
+                    "title": "absent if no more data exists",
+                    "description": "starting position of the next batch",
+                    "default": 1
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "title": "contents of this batch",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/PaperWithLinks"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "PaperWithLinks": {
+            "required": [
+                "paperId"
+            ],
+            "properties": {
+                "paperId": {
+                    "type": "string",
+                    "example": "649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "externalIds": {
+                    "type": "object",
+                    "description": "Other catalog IDs for this paper, if known. Supports ArXiv, MAG, ACL, PubMed, Medline, PubMedCentral, DBLP, DOI.",
+                    "example": {
+                        "ArXiv": "...",
+                        "DBLP": "...",
+                        "PubMedCentral": "..."
+                    }
+                },
+                "url": {
+                    "type": "string",
+                    "description": "URL on the Semantic Scholar website",
+                    "example": "https://www.semanticscholar.org/paper/649def34f8be52c8b66281af98ae884c09aef38b"
+                },
+                "title": {
+                    "type": "string",
+                    "title": "This field will be provided if no fields are specified",
+                    "example": "Construction of the Literature Graph in Semantic Scholar"
+                },
+                "abstract": {
+                    "type": "string",
+                    "example": "We describe a deployed scalable system for organizing published scientific literature into a heterogeneous graph to facilitate algorithmic manipulation and discovery."
+                },
+                "venue": {
+                    "type": "string",
+                    "example": "NAACL"
+                },
+                "year": {
+                    "type": "integer",
+                    "example": 2018
+                },
+                "referenceCount": {
+                    "type": "integer",
+                    "example": 321
+                },
+                "citationCount": {
+                    "type": "integer",
+                    "example": 987
+                },
+                "influentialCitationCount": {
+                    "type": "integer",
+                    "description": "https://www.semanticscholar.org/faq#influential-citations",
+                    "example": 654
+                },
+                "isOpenAccess": {
+                    "type": "boolean",
+                    "description": "https://www.openaccess.nl/en/what-is-open-access"
+                },
+                "fieldsOfStudy": {
+                    "type": "object",
+                    "description": "A list of high-level academic categories",
+                    "example": [
+                        "Computer Science"
+                    ]
+                },
+                "authors": {
+                    "type": "array",
+                    "title": "Author Info",
+                    "items": {
+                        "$ref": "#/definitions/AuthorInfo"
+                    }
+                },
+                "citations": {
+                    "type": "array",
+                    "title": "Paper Info",
+                    "items": {
+                        "$ref": "#/definitions/PaperInfo"
+                    }
+                },
+                "references": {
+                    "type": "array",
+                    "items": {
+                        "title": "Paper Info",
+                        "allOf": [
+                            {
+                                "$ref": "#/definitions/PaperInfo"
+                            }
+                        ]
+                    }
+                }
+            },
+            "type": "object"
+        }
+    },
+    "responses": {
+        "ParseError": {
+            "description": "When a mask can't be parsed"
+        },
+        "MaskError": {
+            "description": "When any error occurs on mask"
+        }
+    }
+}

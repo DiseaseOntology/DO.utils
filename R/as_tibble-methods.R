@@ -1,18 +1,31 @@
-#' Convert an `esummary_list` to a Tibble
+#' Convert `esummary` Object into Tibble
 #'
-#' Converts an `esummary_list` into a [tibble][tibble::tibble].
+#' Converts an `esummary` object created by [pubmed_summary()] or
+#' [rentrez::entrez_summary()] into a [tibble][tibble::tibble].
 #'
-#' @param x An `esummary_list` object created by [rentrez::entrez_summary]
-#' (for single inputs `always_return_list` must be TRUE) and it's derivatives
-#' ([pubmed_summary]).
+#' @section Note:
+#' For single inputs to [rentrez::entrez_summary()], `always_return_list` must
+#' be `TRUE`).
+#'
+#' @param x An `esummary` object (`esummary_list` or `esummary_list_nested`)
 #' @param ... Additional arguments. Not used.
 #'
-#' @return A tibble, where `uid` is the esummary input identifier
+#' @return
+#' A tibble, where `esummary_id` is the input identifier. `esummary_list_nested`
+#' objects will additionally have a `cites` column.
+#'
 #' @export
 as_tibble.esummary_list <- function(x, ...) {
     x %>%
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
+}
+
+#' @rdname as_tibble.esummary_list
+#' @export
+as_tibble.esummary_list_nested <- function(x, ...) {
+    purrr::map(x, as_tibble.esummary_list) %>%
+        dplyr::bind_rows(.id = "cites")
 }
 
 #' @export

@@ -22,7 +22,7 @@ Scopus ID}
 }
 }
 \source{
-Compiled by J. Allen Baron; last updated 2021-11-11
+Compiled by J. Allen Baron; last updated 2022-12-15.
 }
 \usage{
 DO_pubs
