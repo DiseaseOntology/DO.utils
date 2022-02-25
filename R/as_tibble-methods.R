@@ -17,6 +17,7 @@
 #' @export
 as_tibble.esummary_list <- function(x, ...) {
     x %>%
+        purrr::map(~ `class<-`(.x, "list")) %>% # strip esummary class, req'd t::uw
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
 }
