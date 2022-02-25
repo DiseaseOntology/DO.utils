@@ -78,7 +78,7 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
     }
 
     # for both data.frame (guaranteed if length(type_both) > 1)
-    types <- priority_sort(type_both, levels = pub_id_types())
+    types <- priority_sort(type_both, levels = pub_id_types)
 
     message("Matching by types: ", vctr_to_string(types, delim = " > "))
 
@@ -224,7 +224,7 @@ get_pub_id_col <- function(df, type) {
 find_pub_id_cols <- function(df) {
     df_lc <- dplyr::rename_with(df, tolower)
 
-    id_cols <- pub_id_types()[pub_id_types() %in% names(df_lc)]
+    id_cols <- pub_id_types[pub_id_types %in% names(df_lc)]
 
     assertthat::assert_that(
         length(id_cols) > 0,
@@ -280,16 +280,12 @@ type_pub_id <- function(x) {
     )
 
     assertthat::assert_that(
-        id_type %in% pub_id_types()
+        id_type %in% pub_id_types
     )
 
     id_type
 }
 
 
-#' Returns List of Publication IDs
-#'
-#' @noRd
-pub_id_types <- function() {
-    c("pmid", "pmcid", "doi", "scopus_eid")
-}
+#' Prioritized List of Publication IDs
+pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
