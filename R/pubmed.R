@@ -52,7 +52,11 @@ pubmed_summary <- function(input, config = NULL, version = "2.0",
     if (purrr::is_list(input)) {
         summary_list <- purrr::map(
             input,
-            ~ pm_summary_res[.x]
+            function(i) {
+                res <- pm_summary_res[i]
+                class(res) <- class(pm_summary_res)
+                res
+            }
         )
         class(summary_list) <- "esummary_list_nested"
     } else {
