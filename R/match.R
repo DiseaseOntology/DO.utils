@@ -247,7 +247,8 @@ type_pub_id <- function(x) {
     id_type <- dplyr::case_when(
         stringr::str_detect(x, "^10.+/.+$") ~ "doi",
         stringr::str_detect(x, "^PMC[0-9]+$") ~ "pmcid",
-        stringr::str_detect(x, "^[0-9]+$") ~ "pmid",
+        stringr::str_detect(x, "^[0-9]{8}$") ~ "pmid",
+        stringr::str_detect(x, "^2-s2.0-[0-9]{11}$") ~ "scopus_eid",
         !is.na(x) ~ "not identifiable"
     )
 
