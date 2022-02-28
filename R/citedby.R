@@ -25,6 +25,7 @@ citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
         linkname = "pubmed_pubmed_citedin",
         ...
     )
+    names(cited_by) <- id
 
     cited_by
 }

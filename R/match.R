@@ -12,12 +12,12 @@
 #'
 #' When both inputs are data.frames, `match_citations()` will match on all
 #' ID types present in both inputs, returning matches from the highest priority
-#' ID type (priority: PMID > PMCID > DOI). It also tells the user what ID
-#' columns are identified and the order used in a message.
+#' ID type (priority: PMID > PMCID > DOI > Scopus EID). It also tells the user
+#' what ID columns are identified and the order used in a message.
 #'
 #' When no matching citation from `ref` can be found, `NA` is returned.
 #'
-#' @param x,ref a vector of PMID, PMCID, or DOI IDs; or a "citation"
+#' @param x,ref a vector of PMID, PMCID, DOI, or Scopus IDs; or a "citation"
 #' dataframe with 1 or more of these as columns (column names should correspond
 #' to ID type; case-insensitive)
 #' @param add_col logical; if FALSE (default), returns a vector; if TRUE,
@@ -78,7 +78,7 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
     }
 
     # for both data.frame (guaranteed if length(type_both) > 1)
-    types <- priority_sort(type_both, levels = pub_id_types())
+    types <- priority_sort(type_both, levels = pub_id_types)
 
     message("Matching by types: ", vctr_to_string(types, delim = " > "))
 
@@ -224,7 +224,7 @@ get_pub_id_col <- function(df, type) {
 find_pub_id_cols <- function(df) {
     df_lc <- dplyr::rename_with(df, tolower)
 
-    id_cols <- pub_id_types()[pub_id_types() %in% names(df_lc)]
+    id_cols <- pub_id_types[pub_id_types %in% names(df_lc)]
 
     assertthat::assert_that(
         length(id_cols) > 0,
@@ -247,7 +247,8 @@ type_pub_id <- function(x) {
     id_type <- dplyr::case_when(
         stringr::str_detect(x, "^10.+/.+$") ~ "doi",
         stringr::str_detect(x, "^PMC[0-9]+$") ~ "pmcid",
-        stringr::str_detect(x, "^[0-9]+$") ~ "pmid",
+        stringr::str_detect(x, "^[0-9]{8}$") ~ "pmid",
+        stringr::str_detect(x, "^2-s2.0-[0-9]{11}$") ~ "scopus_eid",
         !is.na(x) ~ "not identifiable"
     )
 
@@ -280,16 +281,12 @@ type_pub_id <- function(x) {
     )
 
     assertthat::assert_that(
-        id_type %in% pub_id_types()
+        id_type %in% pub_id_types
     )
 
     id_type
 }
 
 
-#' Returns List of Publication IDs
-#'
-#' @noRd
-pub_id_types <- function() {
-    c("pmid", "pmcid", "doi")
-}
+#' Prioritized List of Publication IDs
+pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")

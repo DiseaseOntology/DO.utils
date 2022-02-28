@@ -119,15 +119,10 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE, ...) {
 #'
 #' @export
 extract_pmid.elink_list <- function(x, ...) {
-    # extract original publication PMIDs for naming
-    nm <- XML::xpathApply(x[[1]]$file, "//IdList//Id") %>%
-        XML::toString.XMLNode() %>%
-        stringr::str_match_all(
-            pattern = "<Id>([0-9]+)</Id>"
-        )
+    res <- purrr::map(x, extract_pmid, ...)
+    names(res) <- names(x)
 
-    purrr::map(x, extract_pmid, ...) %>%
-        purrr::set_names(nm = nm[[1]][,2])
+    res
 }
 
 
