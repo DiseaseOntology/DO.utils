@@ -156,7 +156,7 @@ plot_term_def_counts <- function(
 
     release_df <- readr::read_csv(release_file)
     counts_df <- readr::read_csv(counts_file) %>%
-        dplyr::rename(release = .data$...1)
+        dplyr::rename(release = .data$tag_name)
     df <- dplyr::left_join(
         release_df,
         counts_df,
