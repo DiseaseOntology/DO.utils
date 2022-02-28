@@ -105,7 +105,7 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
             name = "Publication Type",
             guide = ggplot2::guide_legend(reverse = TRUE)
         ) +
-        ggplot2::labs(title = "Publications Citing DO", x = "Year", y = "Count") +
+        ggplot2::labs(x = "Year", y = NULL) +
         theme_DO(base_size = 13)
 
     ggplot2::ggsave(
@@ -200,7 +200,7 @@ plot_term_def_counts <- function(
             labels = c("Terms", "Terms Defined")
         ) +
         ggplot2::scale_y_continuous(
-            name = "Count",
+            name = NULL,
             breaks = seq(0, 12000, by = 2000)
         ) +
         ggplot2::scale_x_date(
@@ -208,7 +208,6 @@ plot_term_def_counts <- function(
             date_breaks = "1 year",
             date_labels = "%Y"
         ) +
-        ggplot2::ggtitle("Trend of DO Terms") +
         theme_DO(base_size = 13)
 
     ggplot2::ggsave(
@@ -275,10 +274,10 @@ plot_branch_counts <- function(
             width = 0.6, fill = DO_colors["sat_light"]
         ) +
         ggplot2::scale_y_continuous(
+            name = NULL,
             breaks = seq(0, round_up(max(df$Count), -3), by = 1000)
         ) +
         ggplot2::coord_flip() +
-        ggplot2::ggtitle("DO Branch Counts") +
         theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
@@ -342,13 +341,14 @@ plot_xref_counts <- function(
             width = 0.6
         ) +
         ggplot2::scale_y_continuous(
+            name = NULL,
             breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
         ) +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
             values = unname(DO_colors[c("sat_light", "sat_mid", "sat")])
         ) +
-        ggplot2::labs(title = "DO Cross-References", x ="Cross References") +
+        ggplot2::labs(x ="Cross References") +
         theme_DO(base_size = 13)
 
     ggplot2::ggsave(
@@ -472,10 +472,10 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
             width = 0.6, fill = DO_colors["sat_light"]
         ) +
         ggplot2::scale_y_continuous(
+            name = NULL,
             breaks = seq(0, y_axis_max, by = 1000),
         ) +
         ggplot2::coord_flip() +
-        ggplot2::ggtitle("DO Definition Source Counts") +
         theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
