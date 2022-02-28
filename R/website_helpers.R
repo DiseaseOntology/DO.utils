@@ -37,23 +37,36 @@ theme_DO <- function(base_size = 11, base_family = "",
                      base_line_size = base_size/22,
                      base_rect_size = base_size/22) {
     half_line <- base_size/2
-    theme_grey(
-        base_size = base_size, base_family = base_family,
-        base_line_size = base_line_size, base_rect_size = base_rect_size
-    ) %+replace%
-        theme(
-            panel.background = element_rect(fill = "grey60", colour = NA),
-            panel.grid = element_line(colour = "grey50"),
-            panel.grid.major = element_line(size = rel(0.3)),
-            panel.grid.minor = element_line(size = rel(0.15)),
-            axis.ticks = element_line(colour = "grey40", size = rel(0.3)),
-            legend.key = element_blank(),
-            strip.background = element_rect(fill = "grey20", colour = NA),
-            strip.text = element_text(
+    ggplot2::`%+replace%`(
+        ggplot2::theme_grey(
+            base_size = base_size, base_family = base_family,
+            base_line_size = base_line_size, base_rect_size = base_rect_size
+        ),
+        ggplot2::theme(
+            panel.background = ggplot2::element_rect(fill = "grey60", colour = NA),
+            panel.grid = ggplot2::element_line(colour = "grey50"),
+            panel.grid.major = ggplot2::element_line(size = ggplot2::rel(0.3)),
+            panel.grid.minor = ggplot2::element_line(size = ggplot2::rel(0.15)),
+            axis.ticks = ggplot2::element_line(
+                colour = "grey40",
+                size = ggplot2::rel(0.3)
+            ),
+            legend.key = ggplot2::element_blank(),
+            strip.background = ggplot2::element_rect(
+                fill = "grey20",
+                colour = NA
+            ),
+            strip.text = ggplot2::element_text(
                 colour = "grey90",
-                size = rel(0.8),
-                margin = margin(0.8 * half_line, 0.8 * half_line, 0.8 * half_line, 0.8 * half_line)
+                size = ggplot2::rel(0.8),
+                margin = ggplot2::margin(
+                    0.8 * half_line,
+                    0.8 * half_line,
+                    0.8 * half_line,
+                    0.8 * half_line
+                )
             ),
             complete = TRUE
         )
+    )
 }
