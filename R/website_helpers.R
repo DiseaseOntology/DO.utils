@@ -7,22 +7,22 @@ is_nlm_subdomain <- function(subdomain) {
 
 
 # plot_citedby() helper
-clean_pub_type <- function(x, as_fctr = TRUE) {
-    x_lc <- stringr::str_to_lower(x)
+clean_pub_type <- function(pub_type, as_fctr = TRUE) {
+    pt_lc <- stringr::str_to_lower(pub_type)
     tidy <- dplyr::case_when(
-        stringr::str_detect(x, "retract") ~ "Retracted",
-        stringr::str_detect(x, "clinical trial") ~ "Clinical Trial",
-        stringr::str_detect(x, "review") ~ "Review",
-        stringr::str_detect(x, "conference") &
-            x != "Journal|Conference Paper" ~ "Conference",
-        stringr::str_detect(x, "book") ~ "Book",
-        stringr::str_detect(x, "journal.*article") ~ "Article",
+        stringr::str_detect(pt_lc, "retract") ~ "Retracted",
+        stringr::str_detect(pt_lc, "clinical trial") ~ "Clinical Trial",
+        stringr::str_detect(pt_lc, "review") ~ "Review",
+        stringr::str_detect(pt_lc, "conference") &
+            pt_lc != "Journal|Conference Paper" ~ "Conference",
+        stringr::str_detect(pt_lc, "book") ~ "Book",
+        stringr::str_detect(pt_lc, "journal.*article") ~ "Article",
         TRUE ~ "Commentary"
     )
 
     if (as_fctr) {
         tidy <- factor(
-            x,
+            tidy,
             # order by least to most important (most important at bottom of graph)
             levels = c("Retracted", "Commentary", "Review", "Conference", "Book",
                        "Clinical Trial", "Article")
