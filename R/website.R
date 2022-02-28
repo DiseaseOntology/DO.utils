@@ -410,7 +410,10 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
                 "medlineplus.gov" = "MedlinePlus",
                 "ncit.nci.nih.gov" = "NCI Thesaurus",
                 "omim.org" = "OMIM",
-                "mayoclinic.org" = "Mayo Clinic"
+                "mayoclinic.org" = "Mayo Clinic",
+                "rarediseases.org" = "NORD",
+                "rarediseases.info.nih.gov" = "GARD",
+                "cancer.gov" = "NCI"
             )
         ) %>%
         # separate mutate needed for is_nlm_subdomain() to get improved df data
@@ -436,7 +439,11 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
     other <- count_df %>%
         dplyr::filter(rank > 10) %>%
         dplyr::summarize(
-            Source = paste0(dplyr::n_distinct(.data$Source), " other sources"),
+            Source = paste0(
+                "Other Sources (",
+                dplyr::n_distinct(.data$Source),
+                ")"
+            ),
             Count = sum(.data$Count),
             rank = 11
         )
@@ -444,8 +451,6 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
 
     y_axis_max <- round_up(max(plot_df$Count), -3)
     g <- ggplot2::ggplot(data = plot_df) +
-    # ggplot2::ggplot(data = plot_df) +
-        theme_DO(base_size = 13) +
         ggplot2::geom_col(
             ggplot2::aes(
                 x = reorder(.data$Source, -.data$rank),
@@ -458,6 +463,7 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
         ) +
         ggplot2::coord_flip() +
         ggplot2::ggtitle("DO Definition Source Counts") +
+        theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
     ggplot2::ggsave(
