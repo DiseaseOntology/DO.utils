@@ -8,7 +8,11 @@ DO_colors <- c(
     websafe = "#339999",
     orange = "#e06e3d", # use for disdriv?
     orange_mid = "#de9373",
-    orange_light = "#ddb8ab"
+    orange_light = "#ddb8ab",
+    # standard DO colors +30 saturation
+    sat = "#189dac",
+    sat_mid = "#4fbfcc",
+    sat_light = "#95e3ed"
 )
 
 usethis::use_data(DO_colors, overwrite = TRUE)
