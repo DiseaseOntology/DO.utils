@@ -83,14 +83,27 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
     )
 
     df <- readr::read_csv(data_file) %>%
-        dplyr::mutate(Year = lubridate::year(.data$pub_date)) %>%
-        dplyr::count(.data$Year, name = "Publications")
+        dplyr::mutate(
+            Year = lubridate::year(.data$pub_date),
+            pub_type = clean_pub_type(pub_type)
+        )
+
+    # set color ramp
+    cb_colors <- grDevices::colorRampPalette(
+        DO_colors[c("sat", "sat_light")]
+    )(dplyr::n_distinct(df$pub_type))
+
 
     g <- ggplot2::ggplot(data = df) +
-        ggplot2::geom_col(
-            ggplot2::aes(x = .data$Year, y = .data$Publications),
-            width = 0.6,
-            fill = DO_colors["light"]
+        ggplot2::geom_bar(
+            ggplot2::aes(x = .data$Year, fill = .data$pub_type),
+            width = 0.8,
+            position = "stack"
+        ) +
+        ggplot2::scale_fill_manual(
+            values = cb_colors,
+            name = "Publication Type",
+            guide = ggplot2::guide_legend(reverse = TRUE)
         ) +
         ggplot2::labs(title = "Publications Citing DO", x = "Year", y = "Count") +
         theme_DO(base_size = 13)
