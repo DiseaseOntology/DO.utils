@@ -196,7 +196,7 @@ plot_term_def_counts <- function(
         ) +
         ggplot2::scale_fill_manual(
             name = "Total",
-            values = unname(DO_colors[c("light", "default")]),
+            values = unname(DO_colors[c("sat_light", "sat")]),
             labels = c("Terms", "Terms Defined")
         ) +
         ggplot2::scale_y_continuous(
@@ -272,7 +272,7 @@ plot_branch_counts <- function(
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_col(
             ggplot2::aes(x = .data$DO_branches, y = .data$Count),
-            width = 0.6, fill = DO_colors["light"]
+            width = 0.6, fill = DO_colors["sat_light"]
         ) +
         ggplot2::scale_y_continuous(
             breaks = seq(0, round_up(max(df$Count), -3), by = 1000)
@@ -346,7 +346,7 @@ plot_xref_counts <- function(
         ) +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
-            values = unname(DO_colors[c("light", "mid", "default")])
+            values = unname(DO_colors[c("sat_light", "sat_mid", "sat")])
         ) +
         ggplot2::labs(title = "DO Cross-References", x ="Cross References") +
         theme_DO(base_size = 13)
@@ -469,7 +469,7 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
                 x = reorder(.data$Source, -.data$rank),
                 y = .data$Count
             ),
-            width = 0.6, fill = DO_colors["light"]
+            width = 0.6, fill = DO_colors["sat_light"]
         ) +
         ggplot2::scale_y_continuous(
             breaks = seq(0, y_axis_max, by = 1000),
