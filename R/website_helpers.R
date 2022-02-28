@@ -31,3 +31,29 @@ clean_pub_type <- function(x, as_fctr = TRUE) {
 
     tidy
 }
+
+# establish DO theme
+theme_DO <- function(base_size = 11, base_family = "",
+                     base_line_size = base_size/22,
+                     base_rect_size = base_size/22) {
+    half_line <- base_size/2
+    theme_grey(
+        base_size = base_size, base_family = base_family,
+        base_line_size = base_line_size, base_rect_size = base_rect_size
+    ) %+replace%
+        theme(
+            panel.background = element_rect(fill = "grey60", colour = NA),
+            panel.grid = element_line(colour = "grey50"),
+            panel.grid.major = element_line(size = rel(0.3)),
+            panel.grid.minor = element_line(size = rel(0.15)),
+            axis.ticks = element_line(colour = "grey40", size = rel(0.3)),
+            legend.key = element_blank(),
+            strip.background = element_rect(fill = "grey20", colour = NA),
+            strip.text = element_text(
+                colour = "grey90",
+                size = rel(0.8),
+                margin = margin(0.8 * half_line, 0.8 * half_line, 0.8 * half_line, 0.8 * half_line)
+            ),
+            complete = TRUE
+        )
+}
