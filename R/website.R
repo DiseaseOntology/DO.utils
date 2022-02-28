@@ -93,7 +93,7 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
             fill = DO_colors["light"]
         ) +
         ggplot2::labs(title = "Publications Citing DO", x = "Year", y = "Count") +
-        ggplot2::theme_dark(base_size = 13)
+        ggplot2::theme_DO(base_size = 13)
 
     ggplot2::ggsave(
         filename = file_out, plot = g,
@@ -196,7 +196,7 @@ plot_term_def_counts <- function(
             date_labels = "%Y"
         ) +
         ggplot2::ggtitle("Trend of DO Terms") +
-        ggplot2::theme_dark(base_size = 13)
+        ggplot2::theme_DO(base_size = 13)
 
     ggplot2::ggsave(
         filename = file_out, plot = g,
@@ -266,7 +266,7 @@ plot_branch_counts <- function(
         ) +
         ggplot2::coord_flip() +
         ggplot2::ggtitle("DO Branch Counts") +
-        ggplot2::theme_dark(base_size = 13) +
+        ggplot2::theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
     ggplot2::ggsave(
@@ -336,7 +336,7 @@ plot_xref_counts <- function(
             values = unname(DO_colors[c("light", "mid", "default")])
         ) +
         ggplot2::labs(title = "DO Cross-References", x ="Cross References") +
-        ggplot2::theme_dark(base_size = 13)
+        ggplot2::theme_DO(base_size = 13)
 
     ggplot2::ggsave(
         filename = file_out, plot = g,
@@ -445,7 +445,7 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
     y_axis_max <- round_up(max(plot_df$Count), -3)
     g <- ggplot2::ggplot(data = plot_df) +
     # ggplot2::ggplot(data = plot_df) +
-        ggplot2::theme_dark(base_size = 13) +
+        ggplot2::theme_DO(base_size = 13) +
         ggplot2::geom_col(
             ggplot2::aes(
                 x = reorder(.data$Source, -.data$rank),
