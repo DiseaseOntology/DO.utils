@@ -24,9 +24,28 @@ make_user_list_html <- function(file) {
     # build html
     user_html <- glue::glue_data(
         .x = ws_user_list,
-        '<td class="default"><a href="{url}" target="_blank">{name}</a></td>'
+        '<a href="{url}" target="_blank">{name}</a>'
     )
-    html_rows <- html_in_rows(user_html, per_row = 3, tab_indent = 2)
+    html_rows <- html_in_rows(user_html, per_row = 3, indent_n = 2,
+                              cell_attr = c(class="default"))
+
+    # update source to note Users added
+    replace_added <- user_list %>%
+        dplyr::mutate(
+            added = dplyr::if_else(
+                .data$added == FALSE & .data$name %in% ws_user_list$name,
+                TRUE,
+                .data$added
+            )
+        ) %>%
+        dplyr::select(added)
+    googlesheets4::range_write(
+        data = replace_added,
+        ss = .DO_gs$users,
+        sheet = "DO_website_user_list",
+        range = "A1",
+        reformat = FALSE
+    )
 
     readr::write_lines(html_rows, file = file)
 }
@@ -64,17 +83,30 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
     )
 
     df <- readr::read_csv(data_file) %>%
-        dplyr::mutate(Year = lubridate::year(.data$pub_date)) %>%
-        dplyr::count(.data$Year, name = "Publications")
+        dplyr::mutate(
+            Year = lubridate::year(.data$pub_date),
+            pub_type = clean_pub_type(pub_type)
+        )
+
+    # set color ramp
+    cb_colors <- grDevices::colorRampPalette(
+        DO_colors[c("sat", "sat_light")]
+    )(dplyr::n_distinct(df$pub_type))
+
 
     g <- ggplot2::ggplot(data = df) +
-        ggplot2::geom_col(
-            ggplot2::aes(x = .data$Year, y = .data$Publications),
-            width = 0.6,
-            fill = DO_colors["light"]
+        ggplot2::geom_bar(
+            ggplot2::aes(x = .data$Year, fill = .data$pub_type),
+            width = 0.8,
+            position = "stack"
         ) +
-        ggplot2::labs(title = "Publications Citing DO", x = "Year", y = "Count") +
-        ggplot2::theme_dark(base_size = 13)
+        ggplot2::scale_fill_manual(
+            values = cb_colors,
+            name = "Publication Type",
+            guide = ggplot2::guide_legend(reverse = TRUE)
+        ) +
+        ggplot2::labs(x = "Year", y = NULL) +
+        theme_DO(base_size = 13)
 
     ggplot2::ggsave(
         filename = file_out, plot = g,
@@ -124,7 +156,7 @@ plot_term_def_counts <- function(
 
     release_df <- readr::read_csv(release_file)
     counts_df <- readr::read_csv(counts_file) %>%
-        dplyr::rename(release = .data$...1)
+        dplyr::rename(release = .data$tag_name)
     df <- dplyr::left_join(
         release_df,
         counts_df,
@@ -164,11 +196,11 @@ plot_term_def_counts <- function(
         ) +
         ggplot2::scale_fill_manual(
             name = "Total",
-            values = unname(DO_colors[c("light", "default")]),
+            values = unname(DO_colors[c("sat_light", "sat")]),
             labels = c("Terms", "Terms Defined")
         ) +
         ggplot2::scale_y_continuous(
-            name = "Count",
+            name = NULL,
             breaks = seq(0, 12000, by = 2000)
         ) +
         ggplot2::scale_x_date(
@@ -176,8 +208,7 @@ plot_term_def_counts <- function(
             date_breaks = "1 year",
             date_labels = "%Y"
         ) +
-        ggplot2::ggtitle("Trend of DO Terms") +
-        ggplot2::theme_dark(base_size = 13)
+        theme_DO(base_size = 13)
 
     ggplot2::ggsave(
         filename = file_out, plot = g,
@@ -240,14 +271,14 @@ plot_branch_counts <- function(
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_col(
             ggplot2::aes(x = .data$DO_branches, y = .data$Count),
-            width = 0.6, fill = DO_colors["light"]
+            width = 0.6, fill = DO_colors["sat_light"]
         ) +
         ggplot2::scale_y_continuous(
+            name = NULL,
             breaks = seq(0, round_up(max(df$Count), -3), by = 1000)
         ) +
         ggplot2::coord_flip() +
-        ggplot2::ggtitle("DO Branch Counts") +
-        ggplot2::theme_dark(base_size = 13) +
+        theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
     ggplot2::ggsave(
@@ -310,14 +341,143 @@ plot_xref_counts <- function(
             width = 0.6
         ) +
         ggplot2::scale_y_continuous(
+            name = NULL,
             breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
         ) +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
-            values = unname(DO_colors[c("light", "mid", "default")])
+            values = unname(DO_colors[c("sat_light", "sat_mid", "sat")])
         ) +
-        ggplot2::labs(title = "DO Cross-References", x ="Cross References") +
-        ggplot2::theme_dark(base_size = 13)
+        ggplot2::labs(x ="Cross References") +
+        theme_DO(base_size = 13)
+
+    ggplot2::ggsave(
+        filename = file_out, plot = g,
+        width = w, height = h, units = "in",
+        dpi = 600
+    )
+
+    g
+}
+
+
+#' Plot Definition Sources
+#'
+#' Plots the count of definition sources for _non-obsolete_ terms the Human
+#' Disease Ontology.
+#'
+#' @inheritParams read_doid_edit
+#' @param out_dir The directory where the plot `"{date}-DO_def_src.png"`
+#'     should be saved, as a string.
+#' @inheritParams plot_citedby
+#'
+#' @section Data Preparation:
+#' If this plot will be added to disease-ontology.org, the latest release of the
+#' `HumanDiseaseOntology` Github repo should be checked out prior to running
+#' this function.
+#'
+#' @export
+plot_def_src <- function(DO_repo, out_dir = "graphics/website",
+                               w = 8, h = 5.6) {
+
+    file_out <- file.path(
+        out_dir,
+        paste0(
+            stringr::str_remove_all(Sys.Date(), "-"),
+            "-",
+            "DO_def_src.png"
+        )
+    )
+
+    df <- read_doid_edit(DO_repo) %>%
+        extract_doid_url() %>%
+        dplyr::mutate(tmp = robotstxt:::parse_url(.data$url)) %>%
+        tidyr::unnest(.data$tmp, keep_empty = TRUE) %>%
+        # tidy source names
+        dplyr::mutate(
+            # strip start www and all variants & make lowercase
+            Source = stringr::str_remove(.data$domain, "^www[^.]*\\."),
+            Source = stringr::str_to_lower(.data$Source),
+            # temporary fix for some malformed/old web domains
+            Source = dplyr::recode(
+                .data$Source,
+                # malformed/not working
+                "pubmed-ncbi-nlm-nih-gov" = "PubMed",
+                "ncithesaurus-stage.nci.nih.gov" = "NCI thesaurus",
+                "bt.cdc.gov" = "CDC",
+                # redirects
+                "mayoclinic.com" = "Mayo Clinic",
+                "nci.nih.gov" = "cancer.gov",
+                "cancergenome.nih.gov" = "cancer.gov",
+                "dpd.cdc.gov" = "CDC",
+                "springerlink.com" = "link.springer.com",
+                "ghr.nlm.nih.gov" = "MedlinePlus",
+                # general tidying
+                "apps.who.int" = "who.int",
+                "whqlibdoc.who.int" = "who.int",
+                "ncithesaurus.nci.nih.gov" = "NCI Thesaurus",
+                "pubmed.ncbi.nlm.nih.gov" = "PubMed",
+                "pubmedcentral.nih.gov" = "PubMed Central",
+                "cdc.gov" = "CDC",
+                "en.wikipedia.org" = "Wikipedia",
+                "medlineplus.gov" = "MedlinePlus",
+                "ncit.nci.nih.gov" = "NCI Thesaurus",
+                "omim.org" = "OMIM",
+                "mayoclinic.org" = "Mayo Clinic",
+                "rarediseases.org" = "NORD",
+                "rarediseases.info.nih.gov" = "GARD",
+                "cancer.gov" = "NCI"
+            )
+        ) %>%
+        # separate mutate needed for is_nlm_subdomain() to get improved df data
+        dplyr::mutate(
+            Source = dplyr::case_when(
+                stringr::str_detect(.data$url, "mesh") ~ "MeSH",
+                is_nlm_subdomain("medlineplus") ~ "MedlinePlus",
+                is_nlm_subdomain("pmc") ~ "PubMed Central",
+                is_nlm_subdomain("pubmed") ~ "PubMed",
+                is_nlm_subdomain("entrez") ~ "PubMed",
+                is_nlm_subdomain("omim") ~ "OMIM",
+                is_nlm_subdomain("book") ~ "NCBI Bookshelf",
+                TRUE ~ Source
+            )
+        )
+
+    count_df <- dplyr::count(df, .data$Source, name = "Count", sort = TRUE) %>%
+        dplyr::mutate(rank = dplyr::row_number(dplyr::desc(Count)))
+
+    total_url <- sum(count_df$Count)
+    top_10 <- count_df %>%
+        dplyr::filter(rank <= 10)
+    other <- count_df %>%
+        dplyr::filter(rank > 10) %>%
+        dplyr::summarize(
+            Source = paste0(
+                "Other Sources (",
+                dplyr::n_distinct(.data$Source),
+                ")"
+            ),
+            Count = sum(.data$Count),
+            rank = 11
+        )
+    plot_df <- dplyr::bind_rows(top_10, other)
+
+    y_axis_max <- round_up(max(plot_df$Count), -3)
+    g <- ggplot2::ggplot(data = plot_df) +
+        ggplot2::geom_col(
+            ggplot2::aes(
+                x = reorder(.data$Source, -.data$rank),
+                y = .data$Count
+            ),
+            width = 0.6, fill = DO_colors["sat_light"]
+        ) +
+        ggplot2::scale_y_continuous(
+            name = NULL,
+            breaks = seq(0, y_axis_max, by = 1000),
+        ) +
+        ggplot2::coord_flip() +
+        theme_DO(base_size = 13) +
+        ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
     ggplot2::ggsave(
         filename = file_out, plot = g,

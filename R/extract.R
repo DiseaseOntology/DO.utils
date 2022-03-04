@@ -180,53 +180,33 @@ extract_pm_date <- function(citation) {
 #'     vector (as provided by [read_doid_edit()]).
 #' @param include_obsolete Whether URLs associated with obsolete terms should
 #'     be included, as a boolean (default: `FALSE`).
-#' @param quiet Whether warnings for multiple DOIDs associated with a single
-#'     URL should be silenced, as a boolean (default: `FALSE`).
 #' @param w_raw_match Whether to include the full line of doid-edit.owl where
 #'     each URL was extracted from, as a boolean (default: `FALSE`).
-#' @param show_url_string Whether the complete URL string, including prefix
-#'     should be returned, as a boolean (default: `FALSE`).
 #'
 #' @return
 #' A tibble of DOIDs and their associated URLs.
-extract_doid_url <- function(doid_edit, include_obsolete = FALSE, quiet = FALSE,
-                             w_raw_match = FALSE, show_url_string = FALSE) {
+extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
+                             w_raw_match = FALSE) {
     doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
     df <- tibble::tibble(
         raw_match = doid_w_url,
-        doid = stringr::str_extract_all(doid_w_url, "DOID[:_][0-9]+"),
+        doid = stringr::str_extract(doid_w_url, "DOID[:_][0-9]+"),
         url_str = stringr::str_extract_all(doid_w_url, 'url:[^"]+"')
     )
 
-    # warn if multiple DOIDs associated with record (should only be 1)
-    doid_mult <- purrr::map_int(df$doid, length) > 1L
-    if (any(doid_mult) && !quiet) {
-        rlang::warn(
-            message = c(
-                "Entries are associated with multiple DOIDs:",
-                i = doid_w_url[doid_mult]
-            ),
-            class = "unexpected_value"
-        )
-    }
-
     # tidy
     df <- df %>%
-        tidyr::unnest_longer(.data$doid) %>%
         tidyr::unnest_longer(.data$url_str) %>%
         dplyr::mutate(
             doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
-            url = stringr::str_remove_all(.data$url_str, '^url:|"')
+            url = stringr::str_remove_all(.data$url_str, '^url:|"'),
+            url_str = NULL
         )
 
     if (!isTRUE(include_obsolete)) {
         obs <- identify_obsolete(doid_edit)
         df <- dplyr::filter(df, !doid %in% obs)
-    }
-
-    if (!isTRUE(show_url_string)) {
-        df <- dplyr::select(df, -.data$url_str)
     }
 
     if (!isTRUE(w_raw_match)) {
