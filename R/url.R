@@ -1,5 +1,45 @@
 # Ensure respectful URL testing -----------------------------------------------
 
+#' Store URL Audit Results
+#'
+#' Creates a store for URL audits that persists, should [url_audit()] fail
+#' due to errors.
+store_url_audit <- function() {
+    url <- NULL
+    domain <- NULL
+    progress <- NULL
+}
+
+
+check_robotstxt <- function(url_df, if_pages = 10,
+                           .user_agent = pkg_user_agent, ...) {
+    # df <- tibble::tibble(
+    #     url = url,
+    #     domain = robotstxt:::guess_domain(url)
+    # )
+
+    domain_n <- dplyr::count(url_df, domain, name = "pages") %>%
+        dplyr::filter(pages > if_pages) %>%
+        dplyr::arrange(desc(pages))
+
+    dom_uniq <- unique(domain_df[[domain]])
+    dom_robots <- purrr::map(
+        dom_uniq,
+        ~ robotstxt::robotstxt(.x, user_agent = .user_agent)
+    )
+
+    url_check <- url_df %>%
+        dplyr::group_by(.data$domain) %>%
+        dplyr::mutate(
+
+
+
+    delay = purrr::map_int(robots, get_delay)
+    domain_df
+}
+
+
+
 get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
                       default = NA_integer_) {
 
@@ -21,6 +61,39 @@ get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
 
     as.integer(delay)
 }
+
+
+# make_url_allowed <- function(url, robotstxt, .user_agent = pkg_user_agent, ...) {
+#     .df <- tibble::tibble(
+#         url = url,
+#         allowed = robotstxt$check(url, bot = .user_agent, ...),
+#         dup = all_duplicated(url),
+#         trimmable = dplyr::if_else(allowed, NA, TRUE)
+#     )
+#
+#     while (
+#         any(isFALSE(.df$allowed) & !.df$dup & .df$trimmable, na.rm = TRUE)
+#     )  {
+#         .df <- .df %>%
+#             dplyr::mutate(
+#                 mod_url = dplyr::if_else(.data$allowed, trim_url(.data$url), NA),
+#                 allowed = dplyr::if_else(
+#                     allowed,
+#                     allowed,
+#                     robotstxt$check(.data$mod_url, bot = .user_agent, ...)
+#                 ),
+#                 dup = dplyr::if_else(
+#                     dup,
+#                     dup,
+#                     all_duplicated(c(.data$mod_url
+#             )
+#             dplyr::filter(!allowed)
+#         recheck <- .data[recheck, ] %>%
+#              %>%
+#
+#
+#
+# }
 
 
 trim_url <- function(url_no_domain) {
