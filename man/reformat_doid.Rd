@@ -16,8 +16,8 @@ are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".}
 or \code{FALSE} (default).}
 }
 \description{
-Convert a mix of valid DOIDs and/or bare numbers to a specified DOID format.
-No attempt is made to validate bare numbers as true DOIDs.
+Convert valid DOIDs and/or bare numbers to a specified DOID format. No
+attempt is made to confirm bare numbers or DOIDs match existing DOIDs.
 }
 \examples{
 x <- c(
