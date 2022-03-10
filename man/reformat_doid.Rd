@@ -4,16 +4,20 @@
 \alias{reformat_doid}
 \title{Reformat DOIDs}
 \usage{
-reformat_doid(x, to = "CURIE")
+reformat_doid(x, to = "CURIE", allow_bare = FALSE)
 }
 \arguments{
 \item{x}{A set of DOIDs, as a character vector.}
 
 \item{to}{The format to convert the DOIDs to, as a string. All valid formats
 are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".}
+
+\item{allow_bare}{Whether bare numbers should be allowed as input, \code{TRUE}
+or \code{FALSE} (default).}
 }
 \description{
-Convert valid DOIDs to a different format.
+Convert a mix of valid DOIDs and/or bare numbers to a specified DOID format.
+No attempt is made to validate bare numbers as true DOIDs.
 }
 \examples{
 x <- c(
@@ -27,5 +31,8 @@ reformat_doid(x, to = "URI")
 reformat_doid(x, to = "CURIE")
 reformat_doid(x, to = "obo_CURIE")
 reformat_doid(x, to = "basename")
+
+w_bare <- c(x, "0001816")
+reformat_doid(w_bare, allow_bare = TRUE)
 
 }
