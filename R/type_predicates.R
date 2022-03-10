@@ -110,7 +110,7 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 #' is_valid_doid("http://purl.obolibrary.org/obo/DOID_0001816") # URI
 #' is_valid_doid("DOID:4") # CURIE, standard version
 #' is_valid_doid("obo:DOID_14566") # obo CURIE, less common
-#' is_valid_doid("DOID_0040001") # trimmed URI
+#' is_valid_doid("DOID_0040001") # basename (prefix removed)
 #'
 #' # invalid formats
 #' is_valid_doid(c("0001816", "4")) # bare numbers
