@@ -47,6 +47,7 @@ Config/reticulate:
     list(
         packages = list(
             list(package = "pandas", pip = TRUE),
+            list(package = "pyDOID", pip = TRUE),
             list(package = "rdflib", pip = TRUE),
             list(package = "GitPython", pip = TRUE),
             list(package = "pyobo", pip = TRUE),
