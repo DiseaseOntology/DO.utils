@@ -1,10 +1,11 @@
-#' Reformat DOIDs
+#' Format DOIDs
 #'
 #' Convert valid DOIDs and/or bare numbers to a specified DOID format. No
-#' attempt is made to confirm bare numbers or DOIDs match existing DOIDs.
+#' attempt is made to confirm bare numbers or DOIDs match existing diseases in
+#' the ontology.
 #'
 #' @inheritParams is_valid_doid
-#' @param to The format to convert the DOIDs to, as a string. All valid formats
+#' @param as The format to convert the DOIDs to, as a string. All valid formats
 #'     are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".
 #' @param allow_bare Whether bare numbers should be allowed as input, `TRUE`
 #'     or `FALSE` (default).
@@ -17,19 +18,19 @@
 #'     "DOID_0040001"
 #' )
 #'
-#' reformat_doid(x, to = "URI")
-#' reformat_doid(x, to = "CURIE")
-#' reformat_doid(x, to = "obo_CURIE")
-#' reformat_doid(x, to = "basename")
+#' format_doid(x, as = "URI")
+#' format_doid(x, as = "CURIE")
+#' format_doid(x, as = "obo_CURIE")
+#' format_doid(x, as = "basename")
 #'
 #' w_bare <- c(x, "0001816")
-#' reformat_doid(w_bare, allow_bare = TRUE)
+#' format_doid(w_bare, allow_bare = TRUE)
 #'
 #' @export
-reformat_doid <- function(x, to = "CURIE", allow_bare = FALSE) {
-    to <- match.arg(to, choices = c("URI", "CURIE", "obo_CURIE", "basename"))
+format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
+    as <- match.arg(as, choices = c("URI", "CURIE", "obo_CURIE", "basename"))
     prefix <- switch(
-        to,
+        as,
         URI = "http://purl.obolibrary.org/obo/DOID_",
         CURIE = "DOID:",
         obo_CURIE = "obo:DOID_",
@@ -40,15 +41,15 @@ reformat_doid <- function(x, to = "CURIE", allow_bare = FALSE) {
         bare_number <- stringr::str_detect(x, "^[0-9]{1,7}$")
         assertthat::assert_that(all(is_valid_doid(x) | bare_number))
 
-        reformatted <- dplyr::if_else(
+        formatted <- dplyr::if_else(
             bare_number,
             paste0(prefix, x),
             stringr::str_replace(x, "^.*DOID[:_]", prefix)
         )
     } else {
         assertthat::assert_that(all(is_valid_doid(x)))
-        reformatted <- stringr::str_replace(x, "^.*DOID[:_]", prefix)
+        formatted <- stringr::str_replace(x, "^.*DOID[:_]", prefix)
     }
 
-    reformatted
+    formatted
 }
