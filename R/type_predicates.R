@@ -117,10 +117,10 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 #' is_valid_doid("obo:DOID:14566") # some specificity for separators is enforced
 #'
 #' @export
-is_valid_doid <- function(doid) {
-    assert_character(doid)
+is_valid_doid <- function(x) {
+    assert_character(x)
     doid_regex <- "^(http://purl.obolibrary.org/obo/|obo:)?DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$"
-    stringr::str_detect(doid, doid_regex)
+    stringr::str_detect(x, doid_regex)
 }
 
 # Type tests for internal use only

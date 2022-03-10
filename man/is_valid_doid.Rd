@@ -4,7 +4,7 @@
 \alias{is_valid_doid}
 \title{DO-specific predicate}
 \usage{
-is_valid_doid(doid)
+is_valid_doid(x)
 }
 \arguments{
 \item{x}{A set of DOIDs, as a character vector.}
