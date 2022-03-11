@@ -2,37 +2,28 @@
 % Please edit documentation in R/pyDOID.R
 \name{pyDOID}
 \alias{pyDOID}
-\alias{DOrepo}
-\title{Instantiate a DO Repository}
-\usage{
-DOrepo(path)
-}
-\arguments{
-\item{path}{The local path to the
-\href{https://github.com/DiseaseOntology/HumanDiseaseOntology}{HumanDiseaseOntology}
-repository, as a string.}
-}
+\title{pyDOID}
 \description{
-Instantiates a \code{DOrepo} python object from the
-\href{https://github.com/allenbaron/pyDOID}{pyDOID} package (powered by
-\href{https://github.com/rstudio/reticulate}{reticulate}).
+\href{https://github.com/allenbaron/pyDOID}{pyDOID} is a python package
+developed with the same intent as \code{DO.utils}, to provide methods for
+updating, maintaining, organizing, and analyzing the Human Disease Ontology.
+\code{DO.utils}, powered by \href{https://github.com/rstudio/reticulate}{reticulate},
+wraps \code{pyDOID} for functionality that is currently unavailable in R.
+\code{pyDOID} provides two primary classes: the \code{DOrepo} class and the \code{owl.xml}
+class. Classes and their methods are accessible via \code{$} notation.
 }
-\details{
-The \code{DOrepo} class inherits the methods & subclasses (accessible via \code{$}
-notation) of the
-\href{https://gitpython.readthedocs.io/en/stable/tutorial.html#meet-the-repo-type}{GitPython.Repo}
-class, and adds the following:
-\itemize{
-\item \verb{DOrepo$tag_iterate(function, start, end)}: Iterates through DO releases
-(tags) from \code{start} to \code{end} executing a \code{function} at each. If \code{start} or
-\code{end} are not specified the first or last release/tag of the repo will be
-assumed.
-\item \verb{DOrepo$\{doid|doid_merged\}$query(query, reload)}: Executes a SPARQL
-\code{query}, input as a string or file path, against the specified DO file. Will
-optionally \code{reload} the file into memory, useful in conjunction with
-\code{tag_iterate()}.
-\item \code{DOrepo$capture_head()}: Captures the current \code{head} of the repo, useful
-for restoring state after git checkout(s). Use: If assigned to variable
-\code{x}, restore state with \code{x$checkout()}.
+\section{DOrepo class}{
+
+The \code{DOrepo} class inherits the methods & subclasses of the
+\href{https://gitpython.readthedocs.io/en/stable/tutorial.html#meet-the-repo-type}{GitPython.repo.Repo}
+class and adds a few additional classes & methods, see \code{\link[=DOrepo]{DOrepo()}} for
+details.
 }
+
+\section{owl.xml class}{
+
+The \code{owl.xml} class thinly wraps a small set of python
+\href{https://rdflib.readthedocs.io/en/stable/}{rdflib} methods to enable SPARQL
+1.1 queries, see \code{\link[=owl_xml]{owl_xml()}} for details.
 }
+

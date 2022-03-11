@@ -18,14 +18,9 @@
 * Add `collapse_col_flex()` to collapse data frame columns more flexibly.
     * Adds two new methods beyond "unique": "first" & "last".
     * Adds the ability to collapse columns using different methods.
-* Added functionality of `pyDOID` via `DOrepo()`, including:
-    * Classes and methods of
-        [GitPython.Repo](https://gitpython.readthedocs.io/en/stable/tutorial.html#meet-the-repo-type)
-        and [rdflib](https://rdflib.readthedocs.io/en/stable/).
-    * Iterative function execution across repo tags with `tag_iterate()`.
-    * Executing SPARQL queries with `doid|doid_merged$query()`.
-    * Class axiom extraction with `doid_edit$extract_class_axioms()`.
-* Style guide updates to make code organization more consistent.
+* Added wrapper functions for `pyDOID` classes
+    * `DOrepo()` wraps the `pyDOID.repo.DOrepo` class
+    * `owl_xml()` wraps the `pyDOID.owl.xml` class
 
 ## Graphics / Website
 * Added saturated color versions to `DO_colors` (names prefixed with `sat_`).
