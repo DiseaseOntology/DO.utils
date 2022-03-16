@@ -8,6 +8,9 @@
 #' `pyDOID` provides two primary classes: the `DOrepo` class and the `owl.xml`
 #' class. Classes and their methods are accessible via `$` notation.
 #'
+#' @section Version:
+#' Documentation assumes pyDOID >= v0.1.2
+#'
 #' @section DOrepo class:
 #' The `DOrepo` class inherits the methods & subclasses of the
 #' [GitPython.repo.Repo](https://gitpython.readthedocs.io/en/stable/tutorial.html#meet-the-repo-type)

@@ -12,6 +12,11 @@ wraps \code{pyDOID} for functionality that is currently unavailable in R.
 \code{pyDOID} provides two primary classes: the \code{DOrepo} class and the \code{owl.xml}
 class. Classes and their methods are accessible via \code{$} notation.
 }
+\section{Version}{
+
+Documentation assumes pyDOID >= v0.1.2
+}
+
 \section{DOrepo class}{
 
 The \code{DOrepo} class inherits the methods & subclasses of the
