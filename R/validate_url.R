@@ -23,9 +23,9 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
             #   extra time during review
             dplyr::mutate(
                 redirect_url = dplyr::if_else(
-                    redirect_url == url,
+                    .data$redirect_url == .data$url,
                     NA_character_,
-                    redirect_url
+                    .data$redirect_url
                 )
             ) %>%
             dplyr::select(url, dplyr::everything())

@@ -129,7 +129,11 @@ hoist_ArticleIds <- function(pubmed_df, id = NULL) {
     # rename to match pkg internal representation; only needed for PubMed
     if (all(c("pmcid", "pmc") %in% names(id_df))) {
         id_df <- id_df %>%
-            dplyr::rename(pmcid_long = pmcid, pmcid = pmc, pmid = pubmed)
+            dplyr::rename(
+                pmcid_long = .data$pmcid,
+                pmcid = .data$pmc,
+                pmid = .data$pubmed
+            )
     }
 
     if (is.null(id)) {
@@ -163,5 +167,5 @@ tidy_ArticleId_set <- function(x) {
             value = .x$Value
         )
     ) %>%
-        tidyr::pivot_wider(names_from = type, values_from = value)
+        tidyr::pivot_wider(names_from = .data$type, values_from = .data$value)
 }

@@ -38,7 +38,7 @@ make_user_list_html <- function(file) {
                 .data$added
             )
         ) %>%
-        dplyr::select(added)
+        dplyr::select(.data$added)
     googlesheets4::range_write(
         data = replace_added,
         ss = .DO_gs$users,
@@ -85,7 +85,7 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
     df <- readr::read_csv(data_file) %>%
         dplyr::mutate(
             Year = lubridate::year(.data$pub_date),
-            pub_type = clean_pub_type(pub_type)
+            pub_type = clean_pub_type(.data$pub_type)
         )
 
     # set color ramp
@@ -444,7 +444,7 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
         )
 
     count_df <- dplyr::count(df, .data$Source, name = "Count", sort = TRUE) %>%
-        dplyr::mutate(rank = dplyr::row_number(dplyr::desc(Count)))
+        dplyr::mutate(rank = dplyr::row_number(dplyr::desc(.data$Count)))
 
     total_url <- sum(count_df$Count)
     top_10 <- count_df %>%

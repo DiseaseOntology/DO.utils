@@ -206,7 +206,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 
     if (!isTRUE(include_obsolete)) {
         obs <- identify_obsolete(doid_edit)
-        df <- dplyr::filter(df, !doid %in% obs)
+        df <- dplyr::filter(df, !.data$doid %in% obs)
     }
 
     if (!isTRUE(w_raw_match)) {
