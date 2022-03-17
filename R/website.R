@@ -29,24 +29,6 @@ make_user_list_html <- function(file) {
     html_rows <- html_in_rows(user_html, per_row = 3, indent_n = 2,
                               cell_attr = c(class="default"))
 
-    # update source to note Users added
-    replace_added <- user_list %>%
-        dplyr::mutate(
-            added = dplyr::if_else(
-                .data$added == FALSE & .data$name %in% ws_user_list$name,
-                TRUE,
-                .data$added
-            )
-        ) %>%
-        dplyr::select(.data$added)
-    googlesheets4::range_write(
-        data = replace_added,
-        ss = .DO_gs$users,
-        sheet = "DO_website_user_list",
-        range = "A1",
-        reformat = FALSE
-    )
-
     readr::write_lines(html_rows, file = file)
 }
 
