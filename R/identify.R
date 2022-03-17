@@ -4,6 +4,9 @@
 #'
 #' @param x An object with information about obsolete terms (use [methods()] for
 #'     available classes).
+#' @param ... Not used; included for extensibility.
+#'
+#' @keywords internal
 identify_obsolete <- function(x, ...) {
     UseMethod("identify_obsolete")
 }

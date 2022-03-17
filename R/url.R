@@ -10,12 +10,12 @@ get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
 
     # delay for user agent
     delay <- dplyr::filter(cd_df, .data$useragent == .user_agent)$value
-    if (is_empty(delay)) {
+    if (rlang::is_empty(delay)) {
         delay <- dplyr::filter(cd_df, .data$useragent == "*")$value
     }
 
     # general delay
-    if (is_empty(delay)) {
+    if (rlang::is_empty(delay)) {
         delay <- default
     }
 

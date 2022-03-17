@@ -466,7 +466,7 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
     g <- ggplot2::ggplot(data = plot_df) +
         ggplot2::geom_col(
             ggplot2::aes(
-                x = reorder(.data$Source, -.data$rank),
+                x = stats::reorder(.data$Source, -.data$rank),
                 y = .data$Count
             ),
             width = 0.6, fill = DO_colors["sat_light"]

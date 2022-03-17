@@ -9,7 +9,10 @@ identify_obsolete(x, ...)
 \arguments{
 \item{x}{An object with information about obsolete terms (use \code{\link[=methods]{methods()}} for
 available classes).}
+
+\item{...}{Not used; included for extensibility.}
 }
 \description{
 Identify obsolete terms of the Human Disease Ontology.
 }
+\keyword{internal}
