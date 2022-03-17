@@ -13,3 +13,4 @@
 
 # PyCharm
 ^.idea$
+^\.github$
