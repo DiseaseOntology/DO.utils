@@ -2,7 +2,7 @@
 % Please edit documentation in R/replace-methods.R
 \name{replace_na.list}
 \alias{replace_na.list}
-\title{Replace NAs with specified value}
+\title{[DEPRECATED] Replace NAs with specified value}
 \usage{
 \method{replace_na}{list}(data, replace, ...)
 }
@@ -21,8 +21,17 @@ replaces all of the \code{NA} values in the vector.}
 Replace all NAs in lists with specified value. This method of \code{replace_na}
 will recurse into nested lists but will skip internal components that are
 not lists or simple vectors themselves (e.g. data.frames, matrices, etc).
-NOTE that coercion will occur where vectors in the list are of different
-types than \code{replace}, with either the vector or \code{replace} being coerced
-according to type order:
+\strong{NOTE [REQUIRES \verb{tidyr <= 1.1.4}]:} Coercion will occur where vectors in
+the list are of different types than \code{replace}, with either the vector or
+\code{replace} being coercedaccording to type order:
 logical < integer < numeric < complex < character < list.
 }
+\section{DEPRECATION NOTE}{
+
+The "unsafe" type conversion allowed by \code{replace_na.list()} will not work
+with \verb{tidyr v1.2.0}, which uses "safe" type conversion via
+\code{vctrs::vec_cast()}. \code{replace_na.list()} will work with \verb{tidyr <= 1.1.4}.
+If \code{replace_na.list()} is not frequently needed, it will be removed in
+future updates.
+}
+

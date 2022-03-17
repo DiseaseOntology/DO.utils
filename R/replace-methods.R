@@ -1,12 +1,19 @@
-#' Replace NAs with specified value
+#' \[DEPRECATED\] Replace NAs with specified value
 #'
 #' Replace all NAs in lists with specified value. This method of `replace_na`
 #' will recurse into nested lists but will skip internal components that are
 #' not lists or simple vectors themselves (e.g. data.frames, matrices, etc).
-#' NOTE that coercion will occur where vectors in the list are of different
-#' types than `replace`, with either the vector or `replace` being coerced
-#' according to type order:
+#' **NOTE \[REQUIRES `tidyr <= 1.1.4`\]:** Coercion will occur where vectors in
+#' the list are of different types than `replace`, with either the vector or
+#' `replace` being coercedaccording to type order:
 #' logical < integer < numeric < complex < character < list.
+#'
+#' @section DEPRECATION NOTE:
+#' The "unsafe" type conversion allowed by `replace_na.list()` will not work
+#' with `tidyr v1.2.0`, which uses "safe" type conversion via
+#' `vctrs::vec_cast()`. `replace_na.list()` will work with `tidyr <= 1.1.4`.
+#' If `replace_na.list()` is not frequently needed, it will be removed in
+#' future updates.
 #'
 #' @inheritParams tidyr::replace_na
 #'
