@@ -68,3 +68,7 @@ utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata", "DO_colors"))
 #'
 #' @source Updated by J. Allen Baron on 2021-11-23.
 "DO_colors"
+
+
+#' @keywords internal
+pkg_user_agent <- "DO.utils (github.com/allenbaron/DO.utils)"
