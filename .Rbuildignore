@@ -3,6 +3,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^.Rprofile$
 
 # extra working dirs
 ^TMP$
