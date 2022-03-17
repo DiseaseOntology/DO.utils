@@ -391,7 +391,7 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
 
     df <- read_doid_edit(DO_repo) %>%
         extract_doid_url() %>%
-        dplyr::mutate(tmp = robotstxt:::parse_url(.data$url)) %>%
+        dplyr::mutate(tmp = parse_url(.data$url)) %>%
         tidyr::unnest(.data$tmp, keep_empty = TRUE) %>%
         # tidy source names
         dplyr::mutate(
