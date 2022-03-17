@@ -38,10 +38,8 @@ get_resp_details <- function(resp) {
     tibble::tibble(
         valid = !httr::http_error(resp),
         status_code = httr::status_code(resp),
-        redirect_url = resp %>%
-            .$all_headers %>%
-            purrr::map(~ .x$headers$location) %>%
+        redirect_url = purrr::map(resp$all_headers, ~ .x$headers$location) %>%
             unlist() %>%
-            tail(1)
+            utils::tail(1)
     )
 }

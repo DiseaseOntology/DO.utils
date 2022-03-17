@@ -10,7 +10,8 @@ identify_obsolete <- function(x, ...) {
 
 #' @export
 identify_obsolete.doid_edit <- function(x, ...) {
-    stringr::str_match(x, "Class.*DOID_([0-9]+).*obsolete")[, 2] %>%
-        na.omit() %>%
-        paste0("DOID:", .)
+    match_res <- stringr::str_match(x, "Class.*DOID_([0-9]+).*obsolete")[, 2]
+    obs_lui <- stats::na.omit(match_res)
+    obs <- paste0("DOID:", obs_lui)
+    obs
 }
