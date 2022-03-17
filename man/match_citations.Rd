@@ -7,7 +7,7 @@
 match_citations(x, ref, add_col = FALSE, nomatch = NA_integer_)
 }
 \arguments{
-\item{x, ref}{a vector of PMID, PMCID, or DOI IDs; or a "citation"
+\item{x, ref}{a vector of PMID, PMCID, DOI, or Scopus IDs; or a "citation"
 dataframe with 1 or more of these as columns (column names should correspond
 to ID type; case-insensitive)}
 
@@ -38,8 +38,8 @@ data.frames are identified by name (case-insensitive, e.g. 'PMID' or 'pmid').
 
 When both inputs are data.frames, \code{match_citations()} will match on all
 ID types present in both inputs, returning matches from the highest priority
-ID type (priority: PMID > PMCID > DOI). It also tells the user what ID
-columns are identified and the order used in a message.
+ID type (priority: PMID > PMCID > DOI > Scopus EID). It also tells the user
+what ID columns are identified and the order used in a message.
 
 When no matching citation from \code{ref} can be found, \code{NA} is returned.
 }
