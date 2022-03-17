@@ -1,37 +1,54 @@
 # DO.utils (development version)
 
-* Rename:
+## REMOVE????
+* Added execution of SPARQL queries, powered by python rdflib wrapper `py_rdf`.
+    * `py_rdf$read()` to read in an RDF file.
+    * `py_rdf$sparql_query()` to execute a SPARQL query.
+
+## Data
+* Added DO Nucleic Acids Research 2022 publication data to `DO_pubs`.
+
+## Dependencies
+* R packages:
+    * `reticulate` >= v1.23 required.
+    * Bug fixes needed due to changes in latest `tidyr` release (v1.2.0).
+* Python dependency: `pyDOID`
+
+## General Purpose
+* Add `collapse_col_flex()` to collapse data frame columns more flexibly.
+    * Adds two new methods beyond "unique": "first" & "last".
+    * Adds the ability to collapse columns using different methods.
+* Added wrapper functions for `pyDOID` classes
+    * `DOrepo()` wraps the `pyDOID.repo.DOrepo` class
+    * `owl_xml()` wraps the `pyDOID.owl.xml` class
+
+## Graphics / Website
+* Added saturated color versions to `DO_colors` (names prefixed with `sat_`).
+* Created `ggplot2` plotting theme for DO, `theme_DO()`.
+* Updated `plot_citedby()` to a stacked bar chart showing publication types.
+* Created `plot_def_src()` to display the number of times a source is used to
+    support disease definitions in the ontology (designed for
+    disease-ontology.org/about/statistics).
+* Functions generating html have been updated to match html style guide standards.
+
+## Cited by
+* Renamed:
     * `match_citations_fz()` to `match_fz()`
     * `concat_pm_citation()` to `read_pubmed_txt()`
-* Bug fixes
 * Created:
     * `pmc_summary()`
     * `hoist_ArticleIds()` (internal) - tidies PubMed/PMC identifiers
         * `tidy_ArticleId_set()` (internal)
     * `as_tibble()`, method `esummary_list_nested`
-* Add newest DO publication data
-* Add execution of SPARQL queries, powered by python rdflib wrapper `py_rdf`.
-    * `py_rdf$read()` to read in an RDF file.
-    * `py_rdf$sparql_query()` to execute a SPARQL query.
-* Update R package dependencies:
-    * reticulate --> minimum version = 1.23
-* Add `collapse_col_flex()` to collapse data frame columns more flexibly.
-    * Adds two new methods beyond "unique": "first" & "last".
-    * Adds the ability to collapse columns using different methods.
-* Add functions to read the doid-edit.owl file and extract URLs (+ helpers).
+* Updated `match_citations()` to utilize Scopus EIDs.
+
+## URLs
+* Added functions to read the doid-edit.owl file and extract URLs (+ helpers).
     * `read_doid_edit()`
     * `extract_doid_url()`
-* Add functions designed for URL validation
+* Added functions designed for URL validation.
     * `validate_url()` + helpers
     * helpers for robots.txt respectful validation _[INCOMPLETE]_
-* Add `plot_def_src()` to create a new plot for the website showing the number
-of times a Source is used to support disease definitions.
-* More saturated colors added to `DO_colors`.
-* `plot_citedby()` no creates a stacked bar chart showing publication types.
-* Plotting theme for DO created (`theme_DO()`).
-* Functions generating html have been updated to match html style guide standards.
-
-* Style guide updates to make code organization more consistent.
 
 
 # DO.utils 0.1.7

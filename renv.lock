@@ -1155,5 +1155,10 @@
       "Repository": "CRAN",
       "Hash": "c7eef2996ac270a18c2715c997a727c5"
     }
+  },
+  "Python": {
+    "Version": "3.9.6",
+    "Type": "virtualenv",
+    "Name": "r-reticulate"
   }
 }
