@@ -1,8 +1,10 @@
 # DO.utils
 
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/allenbaron/DO.utils/workflows/R-CMD-check/badge.svg)](https://github.com/allenbaron/DO.utils/actions)
+[![Codecov test coverage](https://codecov.io/gh/allenbaron/DO.utils/branch/main/graph/badge.svg)](https://codecov.io/github/allenbaron/DO.utils?branch=main)
+[![R-CMD-check](https://github.com/allenbaron/DO.utils/workflows/R-CMD-check/badge.svg)](https://github.com/allenbaron/DO.utils/actions)
 <!-- badges: end -->
+
 
 This R package provides a variety of functions used to support the operations of the Human Disease Ontology (DO; disease-ontology.org).
 
