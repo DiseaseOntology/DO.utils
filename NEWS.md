@@ -1,54 +1,58 @@
 # DO.utils (development version)
 
-## REMOVE????
-* Added execution of SPARQL queries, powered by python rdflib wrapper `py_rdf`.
-    * `py_rdf$read()` to read in an RDF file.
-    * `py_rdf$sparql_query()` to execute a SPARQL query.
-
 ## Data
 * Added DO Nucleic Acids Research 2022 publication data to `DO_pubs`.
 
 ## Dependencies
 * R packages:
     * `reticulate` >= v1.23 required.
-    * Bug fixes needed due to changes in latest `tidyr` release (v1.2.0).
+    * `tidyr` v1.2.0 introduced breaking changes by requiring "safe" type
+        casting (implemented via `vctrs`).
+        * `replace_na.list()` is now deprecated (requires `tidyr` <= 1.1.4).
 * Python dependency: `pyDOID`
 
 ## General Purpose
-* Add `collapse_col_flex()` to collapse data frame columns more flexibly.
+* Created `collapse_col_flex()` to collapse data frame columns more flexibly.
     * Adds two new methods beyond "unique": "first" & "last".
     * Adds the ability to collapse columns using different methods.
-* Added wrapper functions for `pyDOID` classes
+* Created wrapper functions for `pyDOID` classes.
     * `DOrepo()` wraps the `pyDOID.repo.DOrepo` class
     * `owl_xml()` wraps the `pyDOID.owl.xml` class
 
 ## Graphics / Website
-* Added saturated color versions to `DO_colors` (names prefixed with `sat_`).
-* Created `ggplot2` plotting theme for DO, `theme_DO()`.
-* Updated `plot_citedby()` to a stacked bar chart showing publication types.
-* Created `plot_def_src()` to display the number of times a source is used to
-    support disease definitions in the ontology (designed for
-    disease-ontology.org/about/statistics).
-* Functions generating html have been updated to match html style guide standards.
+* Updated:
+    * `plot_citedby()` to a stacked bar chart showing publication types.
+    * `DO_colors` to include saturated versions (names prefixed with `sat_`).
+    * Functions generating html have been updated to match html style guide
+        standards.
+* Created:
+    * `theme_DO()` a `ggplot2` plotting theme for DO.
+    * `plot_def_src()` to display the number of times a source is used to
+        support disease definitions in the ontology (designed for
+        disease-ontology.org/about/statistics).
 
 ## Cited by
 * Renamed:
     * `match_citations_fz()` to `match_fz()`
     * `concat_pm_citation()` to `read_pubmed_txt()`
+* Updated `match_citations()` to utilize Scopus EIDs.
 * Created:
-    * `pmc_summary()`
+    * `pmc_summary()`, a parallel to `pubmed_summary()` that works for PubMed
+        Central.
     * `hoist_ArticleIds()` (internal) - tidies PubMed/PMC identifiers
         * `tidy_ArticleId_set()` (internal)
     * `as_tibble()`, method `esummary_list_nested`
-* Updated `match_citations()` to utilize Scopus EIDs.
 
 ## URLs
-* Added functions to read the doid-edit.owl file and extract URLs (+ helpers).
-    * `read_doid_edit()`
-    * `extract_doid_url()`
-* Added functions designed for URL validation.
-    * `validate_url()` + helpers
-    * helpers for robots.txt respectful validation _[INCOMPLETE]_
+* Created:
+    * Functions to read the doid-edit.owl file and extract URLs (+ helpers).
+        * `read_doid_edit()`
+        * `extract_doid_url()`
+    * Functions designed for URL validation.
+        * `validate_url()` + helpers
+        * **NOTE:** Helpers for robots.txt respectful validation remain
+            _INCOMPLETE_ and care should be taken not to overwhelm web servers
+            with requests.
 
 
 # DO.utils 0.1.7
