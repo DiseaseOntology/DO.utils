@@ -1,4 +1,4 @@
-# DO.utils (development version)
+# DO.utils 0.2.0
 
 ## Data
 * Added DO Nucleic Acids Research 2022 publication data to `DO_pubs`.

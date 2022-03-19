@@ -1,7 +1,7 @@
 Package: DO.utils
 Type: Package
 Title: Support Management of the Disease Ontology (DO)
-Version: 0.1.7.9000
+Version: 0.2.0
 Author: J. Allen Baron
 Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
 Description: This package is used to automate management of the Human Disease
@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
-Imports: 
+Imports:
     assertthat,
     dplyr,
     generics,
@@ -39,7 +39,7 @@ Imports:
     tidyr,
     utils,
     XML
-Suggests: 
+Suggests:
     rmarkdown,
     knitr,
     testthat (>= 3.0.0),
@@ -57,7 +57,7 @@ Config/reticulate:
             list(package = "gilda", pip = TRUE)
         )
     )
-Depends: 
+Depends:
     R (>= 3.5.0)
 Remotes: allenbaron/rentrez
 VignetteBuilder: knitr
