@@ -3,7 +3,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-^.Rprofile$
+^\.Rprofile$
 
 # extra working dirs
 ^TMP$
@@ -15,3 +15,4 @@
 # PyCharm
 ^.idea$
 ^\.github$
+^codecov\.yml$
