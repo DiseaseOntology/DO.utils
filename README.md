@@ -6,15 +6,13 @@
 <!-- badges: end -->
 
 
-This R package provides a variety of functions used to support the operations of the Human Disease Ontology (DO; disease-ontology.org).
+`DO.utils` is an R package designed to support the operations of the Human Disease Ontology (DO; [disease-ontology.org](https://disease-ontology.org/)). Currently, the package supports 3 major areas of work:
 
-Currently, the package provides for:
-
-1. DO Managements/Analysis
+1. DO Management/Analysis
 2. DO Scientometrics
-3. Simplifying common R tasks (basic utilities)
+3. Simplifying common R tasks (general utilities)
 
-_It is very much a work in progress._ If you are interested in contributing, feel free to reach out.
+_It is very much a work in progress._ If you are interested in contributing, feel free to reach out. Please note that our goal is to make functions as broadly useful as possible.
 
 
 ## Installation
@@ -28,36 +26,37 @@ devtools::install_github("allenbaron/DO.utils")
 
 ## DO Management/Analysis
 
-Currently includes functions to install and use the system OBO tool [ROBOT](http://robot.obolibrary.org/).
+`DO.utils` provides the following management/analysis capabilities:
+
+1. Git repo management, iterative execution across git repository tags, and SPARQL queries implemented with wrappers (`DOrepo()`, `owl_xml()`) around `pyDOID` python package.
+2. Automation of [disease-ontology.org](https://disease-ontology.org/) updates, including:
+    - Statistics plots (see https://disease-ontology.org/about/statistics)
+    - Automated html to build the [Users of the Disease Ontology](https://disease-ontology.org/community/collaborators) list
+3. Definition source URL validation.
+4. Prediction of mappings/cross-references between resources & DO, via [PyOBO/GILDA](https://github.com/pyobo/pyobo) or approximate string matching.
+5. Simplified system installation of the OBO tool [ROBOT](http://robot.obolibrary.org/).
 
 
 ## DO Scientometrics
 
-Here scientometrics focuses on measuring the impact of DO on science. This includes measures that are citation-based (bibliometrics) and those that are not.
+Scientometrics are a measure of the impact of the Disease Ontology on science and `DO.utils` includes measures that are citation-based (bibliometrics) and others which are not.
 
-The scientometric capabilities included in this package are:
-
-- Bibliometrics
-    - NCBI Entrez Utilities: `tidy_pubmed_summary()`
-    - Citation matching: `match_citations()`
-    - Helpers
-        - `batch_id_converter()`
-- Quantifying DO annotations in the Alliance of Genome Resources model organism databases (MODs)
-    - `download_alliance_tsv()`, `read_alliance()`, `count_alliance_records()`, `save_alliance_counts()`
-- Quantifying metrics for DO-dependent Bioconductor packages (DOSE, DO.db) _[INCOMPLETE]_
-    - `get_bioc_pkg_stats()`
+1. Bibliometrics
+    - Collection of publication "cited by" lists from PubMed (via NCBI Entrez Utilities) and Scopus.
+    - Citation merging.
+2. Direct quantification of DO use by databases/tools, including:
+    - DO annotations in the Alliance of Genome Resources model organism databases (MODs).
+    - Use metrics for DO-dependent Bioconductor packages (DOSE, DO.db)
 
 
-## Basic Utilities
+## General Utilities
 
-The basic utilities included in this package simplify the following in R:
+`DO.utils` also includes general utilities to make programming in R easier. The utilities assist with:
 
-- Sorting: `priority_sort()`
-- Type Predicates
-    - character: `is_blank()`, `is_missing()`
-    - numeric: `is_positive()`, `is_negative()`
-    - mix: `is_vctr_or_df()`
-- Vector to scalar conversion: `vctr_to_string()`, `unique_if_invariant()`
-- Unintuitive results: `match_carefully()`
-- Dates: `cur_yr()`, `today_datestamp()`
-- Temporary workarounds: `restore_names()`
+- Type/content testing -- `is_blank()`, `is_positive()`, `is_vctr_or_df()`, `all_duplicated()`)
+- Vector-to-scalar conversion -- `cast_to_string()`, `unique_if_invariant()`)
+- Data reduction -- `collapse_col()`, `drop_blank()`)
+- Value replacement -- `replace_null()`, `replace_blank()`)
+- Sorting (by a specified priority)
+- Dates -- `cur_yr()`, `today_datestamp()`)
+- Temporary workarounds -- `restore_names()`
