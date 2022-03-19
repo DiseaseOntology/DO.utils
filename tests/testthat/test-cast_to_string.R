@@ -8,7 +8,8 @@ df <- data.frame(
     dat = structure(c(18963, 18964), class = "Date"),
     tim = structure(
         c(1638379919.66874, 1638379920.66874),
-        class = c("POSIXct", "POSIXt")
+        class = c("POSIXct", "POSIXt"),
+        tzone = "UTC"
     ),
     stringsAsFactors = FALSE
 )
@@ -28,7 +29,7 @@ test_that("single vectors are concatenated", {
     expect_identical(cast_to_string(df$dat), "2021-12-02|2021-12-03")
     expect_identical(
         cast_to_string(df$tim),
-        "2021-12-01 12:31:59|2021-12-01 12:32:00"
+        "2021-12-01 17:31:59|2021-12-01 17:32:00"
     )
 })
 
