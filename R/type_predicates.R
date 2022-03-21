@@ -127,3 +127,7 @@ is_valid_doid <- function(x) {
 is_vctr_or_df <- function(x) {
     is.vector(x) || is.data.frame(x)
 }
+
+is_owl_xml <- function(x) {
+    class(x)[1] == "pyDOID.owl.xml"
+}
