@@ -92,3 +92,20 @@ DOrepo <- function(path) {
 owl_xml <- function(path) {
     pyDOID$owl$xml(path)$load()
 }
+
+#' Establish OWL/RDF XML
+#'
+#' Establish that `x` is a pyDOID.owl.xml by confirming it's class, if already
+#' instantiated, or instantiating the object from a given path.
+#'
+#' @param x A pyDOID.owl.xml object or the path to an OWL/RDF XML file that
+#'     can be instantiated as such an object.
+#'
+#' @keywords internal
+establish_owl_xml <- function(x) {
+    if (is_owl_xml(x)) {
+        return(x)
+    }
+
+    owl_xml(x)
+}
