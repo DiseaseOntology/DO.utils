@@ -215,3 +215,32 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 
     df
 }
+
+#' Extract Subtree
+#'
+#' Extracts the classes and parents of a DO subtree from a `pyDOID.owl.xml`
+#' object.
+#'
+#' @inheritParams establish_owl_xml
+#' @param top_node The top node of the tree, as a valid DOID (see
+#'     [is_valid_doid()] for valid input formats).
+#' @param reload Force reload the file into memory, as `TRUE` or `FALSE`
+#'     (default).
+#'
+#' @returns
+#' A [tibble](tibble::tibble) with the columns: `id`, `label`, `parent_id`,
+#' and `parent_label`, with one row for each unique combination for each
+#' subclass below and including `top_node`.
+#'
+#' @export
+extract_subtree <- function(x, top_node, reload = FALSE) {
+    owl <- establish_owl_xml(x)
+    assert_string(top_node)
+
+    top_class <- format_doid(top_node, as = "obo_CURIE")
+    q <- glue::glue(subtree_query_glue)
+    subtree <- owl$query(q, reload = reload) %>%
+        tibble::as_tibble()
+
+    subtree
+}
