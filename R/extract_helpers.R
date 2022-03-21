@@ -11,13 +11,13 @@ subtree_query_glue <- '
     PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
 
     SELECT ?id ?label ?parent_id ?parent_label
-    WHERE {
+    WHERE {{
         ?class a owl:Class ;
-            rdfs:subClassOf* {{ top_class }} ;
+            rdfs:subClassOf* { top_class } ;
             rdfs:subClassOf ?parent ;
             oboInOwl:id ?id ;
             rdfs:label ?label .
         ?parent oboInOwl:id ?parent_id ;
             rdfs:label ?parent_label .
         FILTER(!isblank(?parent))
-    }'
+    }}'
