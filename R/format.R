@@ -124,7 +124,7 @@ pivot_subtree <- function(tg, top_node) {
         )
 }
 
-fill_subclass <- function(df) {
+fill_subclass <- function(df, debug = FALSE) {
 
     not_dup <- dplyr::filter(df, !duplicated(id))
 
@@ -155,6 +155,10 @@ fill_subclass <- function(df) {
             id = dplyr::if_else(is.na(new_id), id, new_id),
             parent_id = dplyr::if_else(is.na(new_pid), parent_id, new_pid)
         )
+
+    if (!debug) {
+        filled_df <- dplyr::select(filled_df, -new_id, -new_pid)
+    }
 
     filled_df
 }
