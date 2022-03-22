@@ -79,3 +79,41 @@ as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE) {
 
     tg
 }
+
+
+pivot_subtree <- function(tg, top_node) {
+    tg <- tidygraph::arrange(tg, label)
+    r <- tg %>%
+        tidygraph::activate("nodes") %>%
+        tidygraph::as_tibble() %>%
+        { .$name == top_node } %>%
+        which()
+
+    tg %>%
+        tidygraph::activate("nodes") %>%
+        dplyr::mutate(
+            order = tidygraph::dfs_rank(
+                root = r,
+                mode = "in"
+            ),
+            parent = tidygraph::dfs_parent(
+                root = r,
+                mode = "in"
+            ),
+            dist = tidygraph::dfs_dist(
+                root = r,
+                mode = "in"
+            ),
+            insert = paste0("V", dist)
+        ) %>%
+        tidygraph::arrange(order) %>%
+        tidygraph::as_tibble() %>%
+        dplyr::select(
+            parent_id, parent_label, name,
+            tidyselect::everything()
+        ) %>%
+        tidyr::pivot_wider(
+            names_from = insert,
+            values_from = label
+        )
+}
