@@ -55,7 +55,9 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 }
 
 
-as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE) {
+
+as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE,
+                                 fill_subclasses = TRUE) {
     # keep all parent info in labels
     label_df <- DO.utils::collapse_col_flex(x, parent_id, parent_label)
 
@@ -65,6 +67,10 @@ as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE) {
         df <- dplyr::filter(x, parent_id %in% id)
     } else {
         df <- x
+    }
+
+    if (fill_subclasses) {
+        df <- fill_subclass(df)
     }
 
     # create tidygraph
