@@ -104,39 +104,36 @@ as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE,
 
 pivot_subtree <- function(tg, top_node) {
     tg <- tidygraph::arrange(tg, label)
-    r <- tg %>%
+    root_pos <- tg %>%
         tidygraph::activate("nodes") %>%
         tidygraph::as_tibble() %>%
         { .$name == top_node } %>%
         which()
 
-    tg %>%
+    pivoted <- tg %>%
         tidygraph::activate("nodes") %>%
         dplyr::mutate(
             order = tidygraph::dfs_rank(
-                root = r,
-                mode = "in"
-            ),
-            parent = tidygraph::dfs_parent(
-                root = r,
-                mode = "in"
-            ),
-            dist = tidygraph::dfs_dist(
-                root = r,
+                root = root_pos,
                 mode = "in"
             ),
             insert = paste0("V", dist)
         ) %>%
         tidygraph::arrange(order) %>%
         tidygraph::as_tibble() %>%
+        # identify duplicates; useful when trying to identify changes over time
+        dplyr::mutate(duplicated = all_duplicated(id)) %>%
+        # reorder supporting info to the left & tree to right (drop order)
         dplyr::select(
-            parent_id, parent_label, name,
-            tidyselect::everything()
+            parent_id, parent_label, name, duplicated,
+            tidyselect::starts_with("V")
         ) %>%
         tidyr::pivot_wider(
             names_from = insert,
             values_from = label
         )
+
+    pivoted
 }
 
 fill_subclass <- function(df, debug = FALSE) {
