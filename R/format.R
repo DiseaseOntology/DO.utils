@@ -117,3 +117,38 @@ pivot_subtree <- function(tg, top_node) {
             values_from = label
         )
 }
+
+fill_subclass <- function(df) {
+
+    not_dup <- dplyr::filter(df, !duplicated(id))
+
+    lvl <- 1
+    res_n <- 1L
+    new_rows <- list()
+
+    while (res_n > 0) {
+        if (lvl == 1) {
+            new_rows[[lvl]] <- df %>%
+                dplyr::filter(duplicated(id)) %>%
+                dplyr::mutate(new_id = paste(id, lvl, sep = "-"))
+        } else {
+            new_rows[[lvl]] <- df %>%
+                dplyr::filter(parent_id %in% new_rows[[lvl - 1]]$id) %>%
+                dplyr::mutate(
+                    new_id = paste(id, lvl, sep = "-"),
+                    new_pid = paste(id, lvl - 1, sep = "-")
+                )
+        }
+        res_n <- nrow(new_rows[[lvl]])
+        message("Round ", lvl, ": ", res_n, " IDs need to have children filled.")
+        lvl <- lvl + 1
+    }
+
+    filled_df <- dplyr::bind_rows(no_dup, new_rows) %>%
+        mutate(
+            id = dplyr::if_else(is.na(new_id), id, new_id),
+            parent_id = dplyr::if_else(is.na(new_pid), parent_id, new_pid)
+        )
+
+    filled_df
+}
