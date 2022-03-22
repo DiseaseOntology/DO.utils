@@ -150,7 +150,7 @@ fill_subclass <- function(df, debug = FALSE) {
         lvl <- lvl + 1
     }
 
-    filled_df <- dplyr::bind_rows(no_dup, new_rows) %>%
+    filled_df <- dplyr::bind_rows(not_dup, new_rows) %>%
         mutate(
             id = dplyr::if_else(is.na(new_id), id, new_id),
             parent_id = dplyr::if_else(is.na(new_pid), parent_id, new_pid)
