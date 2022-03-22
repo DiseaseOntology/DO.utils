@@ -76,8 +76,23 @@ as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE,
     # create tidygraph
     tg <- df %>%
         dplyr::select(id, parent_id) %>%
-        tidygraph::as_tbl_graph() %>%
-        # add labels
+        tidygraph::as_tbl_graph()
+
+    if (fill_subclasses) {
+        # fix needed for labels to match correctly
+        tg <- tg %>%
+            activate("nodes") %>%
+            dplyr::mutate(
+                name = dplyr::if_else(
+                    name %in% label_df$id,
+                    name,
+                    stringr::str_remove(name, "-[0-9]+$")
+                )
+            )
+    }
+
+    # add labels
+    tg <- tg %>%
         tidygraph::left_join(
             label_df,
             by = c("name" = "id")
