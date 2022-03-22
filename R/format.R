@@ -142,7 +142,7 @@ fill_subclass <- function(df, debug = FALSE) {
                 dplyr::filter(parent_id %in% new_rows[[lvl - 1]]$id) %>%
                 dplyr::mutate(
                     new_id = paste(id, lvl, sep = "-"),
-                    new_pid = paste(id, lvl - 1, sep = "-")
+                    new_pid = paste(parent_id, lvl - 1, sep = "-")
                 )
         }
         res_n <- nrow(new_rows[[lvl]])
