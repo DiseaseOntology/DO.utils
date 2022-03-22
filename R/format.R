@@ -53,3 +53,29 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 
     formatted
 }
+
+
+as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE) {
+    # keep all parent info in labels
+    label_df <- DO.utils::collapse_col_flex(x, parent_id, parent_label)
+
+    # exclude parents which are not subclasses of top_node (usually due to
+    #   multi-parentage
+    if (limit_to_tree) {
+        df <- dplyr::filter(x, parent_id %in% id)
+    } else {
+        df <- x
+    }
+
+    # create tidygraph
+    tg <- df %>%
+        dplyr::select(id, parent_id) %>%
+        tidygraph::as_tbl_graph() %>%
+        # add labels
+        tidygraph::left_join(
+            label_df,
+            by = c("name" = "id")
+        )
+
+    tg
+}
