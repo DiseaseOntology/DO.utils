@@ -54,6 +54,35 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
     formatted
 }
 
+#' Format a Subtree
+#'
+#' Format a subtree, produced by [extract_subtree()], ...
+#'
+#' @param subtree_df A dataframe from [extract_subtree()].
+#' @inheritParams extract_subtree
+#' @param limit_to_tree Whether parents outside of the tree should be removed
+#'     when classes have multiple parents, `TRUE` (default) or `FALSE`.
+#' @param fill_subclasses Whether subclasses should be filled in every time
+#'     their superclass appears in the subtree, `TRUE` (default) or `FALSE`. If
+#'     set to `FALSE`, the tree will _NOT_ be the same as it appears on
+#'     disease-ontology.org.
+#'
+#' @export
+format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
+                           fill_subclasses = TRUE) {
+    assert_string(top_node)
+    top_class <- format_doid(top_node, as = "obo_CURIE")
+
+    tg <- as_subtree_tidygraph(
+        subtree_df,
+        top_class,
+        limit_to_tree = limit_to_tree,
+        fill_subclasses = fill_subclasses
+    )
+    formatted <- pivot_subtree(tg, top_class)
+
+    formatted
+}
 
 
 as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE,
