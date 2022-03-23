@@ -54,9 +54,11 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
     formatted
 }
 
+
 #' Format a Subtree
 #'
-#' Format a subtree, produced by [extract_subtree()], ...
+#' Format a subtree, produced by [extract_subtree()], as a text-based tree
+#' mirroring [disease-ontology.org](https://disease-ontology.org/).
 #'
 #' @param subtree_df A dataframe from [extract_subtree()].
 #' @inheritParams extract_subtree
@@ -65,7 +67,15 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #' @param fill_subclasses Whether subclasses should be filled in every time
 #'     their superclass appears in the subtree, `TRUE` (default) or `FALSE`. If
 #'     set to `FALSE`, the tree will _NOT_ be the same as it appears on
-#'     disease-ontology.org.
+#'     [disease-ontology.org](https://disease-ontology.org/).
+#'
+#' @examples
+#' /dontrun{
+#'     do_owl <- {path_to_doid.owl_here}
+#'     subtree <- extract_subtree(do_owl, "DOID:3070")
+#'     st_formatted <- format_subtree(subtree, "DOID:3070")
+#'     st_formatted
+#' }
 #'
 #' @export
 format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
@@ -85,17 +95,27 @@ format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
 }
 
 
-as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE,
+#' Convert Subtree DF to tidygraph
+#'
+#' Converts a subtree dataframe, from [extract_subtree()], to a tidygraph. This
+#' is the first step in formatting a subtree as a text-based ontology tree
+#' similar to the presentation on
+#' [disease-ontology.org](https://disease-ontology.org/).
+#'
+#' @inheritParams format_subtree
+#'
+#' @keywords internal
+as_subtree_tidygraph <- function(subtree_df, top_node, limit_to_tree = TRUE,
                                  fill_subclasses = TRUE) {
     # keep all parent info in labels
-    label_df <- DO.utils::collapse_col_flex(x, parent_id, parent_label)
+    label_df <- DO.utils::collapse_col_flex(subtree_df, parent_id, parent_label)
 
     # exclude parents which are not subclasses of top_node (usually due to
     #   multi-parentage
     if (limit_to_tree) {
-        df <- dplyr::filter(x, parent_id %in% id)
+        df <- dplyr::filter(subtree_df, parent_id %in% id)
     } else {
-        df <- x
+        df <- subtree_df
     }
 
     if (fill_subclasses) {
@@ -130,9 +150,23 @@ as_subtree_tidygraph <- function(x, top_node, limit_to_tree = TRUE,
     tg
 }
 
+#' Convert Subtree DF to tidygraph
+#'
+#' Converts a subtree tidygraph, from [as_subtree_tidygraph()], to a
+#' dataframe with the tree hierarchically organized. This is the second step
+#' in formatting a subtree as a text-based ontology tree similar to the
+#' presentation on [disease-ontology.org](https://disease-ontology.org/).
+#'
+#' @param subtree_tg A subtree tidygraph from [as_subtree_tidygraph()].
+#' @inheritParams format_subtree
+#'
+#' @keywords internal
+pivot_subtree <- function(subtree_tg, top_node) {
 
-pivot_subtree <- function(tg, top_node) {
+    # ensure alphabetical order of classes to match disease-ontology.org
     tg <- tidygraph::arrange(tg, label)
+
+    # get top_node position in tidygraph; required for depth-first search fxns
     root_pos <- tg %>%
         tidygraph::activate("nodes") %>%
         tidygraph::as_tibble() %>%
@@ -165,9 +199,21 @@ pivot_subtree <- function(tg, top_node) {
     pivoted
 }
 
-fill_subclass <- function(df, debug = FALSE) {
 
-    not_dup <- dplyr::filter(df, !duplicated(id))
+#' Fill in Subclasses
+#'
+#' Fill in subclasses when a parent appears multiple times in a subtree. This
+#' ensures that the subclasses appear each time their parent/superclass does.
+#'
+#' @inheritParams as_subtree_tidygraph
+#' @param debug Whether original and new identifiers should both be returned in
+#'     the output dataframe for debugging purposes, `TRUE` or `FALSE`
+#'     (default).
+#'
+#' @keywords internal
+fill_subclass <- function(subtree_df, debug = FALSE) {
+
+    not_dup <- dplyr::filter(subtree_df, !duplicated(id))
 
     lvl <- 1
     res_n <- 1L
@@ -175,11 +221,11 @@ fill_subclass <- function(df, debug = FALSE) {
 
     while (res_n > 0) {
         if (lvl == 1) {
-            new_rows[[lvl]] <- df %>%
+            new_rows[[lvl]] <- subtree_df %>%
                 dplyr::filter(duplicated(id)) %>%
                 dplyr::mutate(new_id = paste(id, lvl, sep = "-"))
         } else {
-            new_rows[[lvl]] <- df %>%
+            new_rows[[lvl]] <- subtree_df %>%
                 dplyr::filter(parent_id %in% new_rows[[lvl - 1]]$id) %>%
                 dplyr::mutate(
                     new_id = paste(id, lvl, sep = "-"),
