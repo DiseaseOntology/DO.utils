@@ -1,0 +1,10 @@
+id,label,parent_id,parent_label
+DOID:3070,high grade glioma,DOID:0050687,cell type cancer
+DOID:3070,high grade glioma,DOID:0060564,spinal disease
+DOID:3070,high grade glioma,DOID:1319,brain cancer
+DOID:3070,high grade glioma,DOID:184,bone cancer
+DOID:5503,spinal cord ependymoma,DOID:3185,spinal cord glioma
+DOID:5503,spinal cord ependymoma,DOID:5074,high grade ependymoma
+DOID:7788,adult spinal cord ependymoma,DOID:5503,spinal cord ependymoma
+DOID:5074,high grade ependymoma,DOID:3070,high grade glioma
+DOID:5074,high grade ependymoma,DOID:3541,cerebral ventricle cancer

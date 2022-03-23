@@ -1,0 +1,86 @@
+id,label,parent_id,parent_label
+DOID:3070,high grade glioma,DOID:0050687,cell type cancer
+DOID:3070,high grade glioma,DOID:0060564,spinal disease
+DOID:3070,high grade glioma,DOID:1319,brain cancer
+DOID:3070,high grade glioma,DOID:184,bone cancer
+DOID:0080879,histone mutated tumor,DOID:3070,high grade glioma
+DOID:0080684,"diffuse midline glioma, H3 K27M-mutant",DOID:0080879,histone mutated tumor
+DOID:0080880,"diffuse glioma, H3 G34 mutant",DOID:0080879,histone mutated tumor
+DOID:3069,malignant astrocytoma,DOID:3070,high grade glioma
+DOID:0080854,anaplastic pleomorphic xanthoastrocytoma,DOID:3069,malignant astrocytoma
+DOID:0080881,pleomorphic xanthoastrocytoma BRAF mutant,DOID:0080854,anaplastic pleomorphic xanthoastrocytoma
+DOID:3068,glioblastoma,DOID:3069,malignant astrocytoma
+DOID:0050803,glioblastoma classical subtype,DOID:3068,glioblastoma
+DOID:0050804,glioblastoma proneural subtype,DOID:3068,glioblastoma
+DOID:0050805,glioblastoma mesenchymal subtype,DOID:3068,glioblastoma
+DOID:0050806,glioblastoma neural subtype,DOID:3068,glioblastoma
+DOID:0080877,IDH-mutant glioblastoma,DOID:3068,glioblastoma
+DOID:0080878,IDH-wildtype glioblastoma,DOID:3068,glioblastoma
+DOID:3071,gliosarcoma,DOID:3068,glioblastoma
+DOID:3074,giant cell glioblastoma,DOID:3068,glioblastoma
+DOID:3076,adult astrocytic tumour,DOID:3069,malignant astrocytoma
+DOID:7656,adult infiltrating astrocytic neoplasm,DOID:3076,adult astrocytic tumour
+DOID:3078,anaplastic astrocytoma,DOID:3069,malignant astrocytoma
+DOID:0080875,IDH-mutant anaplastic astrocytoma,DOID:3078,anaplastic astrocytoma
+DOID:0080876,IDH-wildtype anaplastic astrocytoma,DOID:3078,anaplastic astrocytoma
+DOID:3079,childhood astrocytic tumor,DOID:3069,malignant astrocytoma
+DOID:4856,gliofibroma,DOID:3069,malignant astrocytoma
+DOID:6726,fibrillary astrocytoma,DOID:3069,malignant astrocytoma
+DOID:7005,gemistocytic astrocytoma,DOID:3069,malignant astrocytoma
+DOID:7008,protoplasmic astrocytoma,DOID:3069,malignant astrocytoma
+DOID:7305,astroblastoma,DOID:3069,malignant astrocytoma
+DOID:0080904,"astroblastoma, MN1-altered",DOID:7305,astroblastoma
+DOID:3181,oligodendroglioma,DOID:3070,high grade glioma
+DOID:0050901,corpus callosum oligodendroglioma,DOID:3181,oligodendroglioma
+DOID:0050901,corpus callosum oligodendroglioma,DOID:3187,brain oligodendroglioma
+DOID:3183,childhood oligodendroglioma,DOID:3181,oligodendroglioma
+DOID:3184,spinal cord oligodendroglioma,DOID:3181,oligodendroglioma
+DOID:3184,spinal cord oligodendroglioma,DOID:3185,spinal cord glioma
+DOID:3186,adult oligodendroglioma,DOID:3181,oligodendroglioma
+DOID:7154,anaplastic oligodendroglioma,DOID:3181,oligodendroglioma
+DOID:0080882,"anaplastic oligodendroglioma, IDH-mutant and 1p/19q-codeleted",DOID:7154,anaplastic oligodendroglioma
+DOID:3185,spinal cord glioma,DOID:3070,high grade glioma
+DOID:3185,spinal cord glioma,DOID:5612,spinal cancer
+DOID:4863,spinal cord astrocytoma,DOID:3185,spinal cord glioma
+DOID:5503,spinal cord ependymoma,DOID:3185,spinal cord glioma
+DOID:5503,spinal cord ependymoma,DOID:5074,high grade ependymoma
+DOID:0080888,"spinal ependymoma, MYCN",DOID:5503,spinal cord ependymoma
+DOID:7788,adult spinal cord ependymoma,DOID:5503,spinal cord ependymoma
+DOID:5508,brain stem ependymoma,DOID:3185,spinal cord glioma
+DOID:5508,brain stem ependymoma,DOID:5074,high grade ependymoma
+DOID:7806,adult spinal cord glioblastoma multiforme,DOID:3185,spinal cord glioma
+DOID:3773,third ventricle chordoid glioma,DOID:3070,high grade glioma
+DOID:3773,third ventricle chordoid glioma,DOID:3541,cerebral ventricle cancer
+DOID:3774,chordoid glioma,DOID:3070,high grade glioma
+DOID:4202,brain stem glioma,DOID:3070,high grade glioma
+DOID:4202,brain stem glioma,DOID:4203,brain stem cancer
+DOID:4813,adult brain stem glioma,DOID:4202,brain stem glioma
+DOID:4812,adult brainstem gliosarcoma,DOID:4813,adult brain stem glioma
+DOID:5921,adult brainstem mixed glioma,DOID:4813,adult brain stem glioma
+DOID:5922,adult brainstem astrocytoma,DOID:4813,adult brain stem glioma
+DOID:4860,brain stem astrocytic neoplasm,DOID:4202,brain stem glioma
+DOID:4848,cerebellar astrocytoma,DOID:3070,high grade glioma
+DOID:4848,cerebellar astrocytoma,DOID:4205,cerebellum cancer
+DOID:4853,pilocytic astrocytoma of cerebellum,DOID:4848,cerebellar astrocytoma
+DOID:6286,childhood cerebellar astrocytic neoplasm,DOID:4848,cerebellar astrocytoma
+DOID:4855,diencephalic astrocytoma,DOID:3070,high grade glioma
+DOID:4855,diencephalic astrocytoma,DOID:3843,diencephalic neoplasm
+DOID:4858,pineal gland astrocytoma,DOID:3070,high grade glioma
+DOID:4858,pineal gland astrocytoma,DOID:5032,pineal gland cancer
+DOID:4991,optic nerve astrocytoma,DOID:3070,high grade glioma
+DOID:4991,optic nerve astrocytoma,DOID:440,neuromuscular disease
+DOID:4991,optic nerve astrocytoma,DOID:4992,optic nerve glioma
+DOID:6575,childhood optic tract astrocytoma,DOID:4991,optic nerve astrocytoma
+DOID:5074,high grade ependymoma,DOID:3070,high grade glioma
+DOID:5074,high grade ependymoma,DOID:3541,cerebral ventricle cancer
+DOID:0080889,posterior fossa ependymoma,DOID:5074,high grade ependymoma
+DOID:0080890,supratentorial ependymoma,DOID:5074,high grade ependymoma
+DOID:0080891,YAP1-MAMLD1 fusion-positive supratentorial ependymoma,DOID:0080890,supratentorial ependymoma
+DOID:0080892,RELA fusion-positive ependymoma,DOID:0080890,supratentorial ependymoma
+DOID:5509,childhood ependymoma,DOID:5074,high grade ependymoma
+DOID:5889,anaplastic ependymoma,DOID:5074,high grade ependymoma
+DOID:5890,malignant adult ependymoma,DOID:5074,high grade ependymoma
+DOID:5076,mixed glioma,DOID:3070,high grade glioma
+DOID:7817,mixed astrocytoma-ependymoma-oligodendroglioma,DOID:5076,mixed glioma
+DOID:7907,mixed astrocytoma-ependymoma,DOID:5076,mixed glioma
+DOID:7912,mixed oligodendroglioma-astrocytoma,DOID:5076,mixed glioma
