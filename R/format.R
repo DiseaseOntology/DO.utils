@@ -62,10 +62,6 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #'
 #' @param subtree_df A dataframe from [extract_subtree()].
 #' @inheritParams extract_subtree
-#' @param fill_subclasses Whether subclasses should be filled in every time
-#'     their superclass appears in the subtree, `TRUE` (default) or `FALSE`. If
-#'     set to `FALSE`, the tree will _NOT_ be the same as it appears on
-#'     [disease-ontology.org](https://disease-ontology.org/).
 #'
 #' @examples
 #' /dontrun{
@@ -76,15 +72,11 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #' }
 #'
 #' @export
-format_subtree <- function(subtree_df, top_node, fill_subclasses = TRUE) {
+format_subtree <- function(subtree_df, top_node) {
     assert_string(top_node)
     top_class <- format_doid(top_node, as = "CURIE")
 
-    tg <- as_subtree_tidygraph(
-        subtree_df,
-        top_class,
-        fill_subclasses = fill_subclasses
-    )
+    tg <- as_subtree_tidygraph(subtree_df, top_class)
     formatted <- pivot_subtree(tg, top_class)
 
     formatted
@@ -101,38 +93,31 @@ format_subtree <- function(subtree_df, top_node, fill_subclasses = TRUE) {
 #' @inheritParams format_subtree
 #'
 #' @keywords internal
-as_subtree_tidygraph <- function(subtree_df, top_node, fill_subclasses = TRUE) {
+as_subtree_tidygraph <- function(subtree_df, top_node) {
     # keep all parent info in labels
     label_df <- collapse_col_flex(subtree_df, parent_id, parent_label)
 
     # exclude parents which are not subclasses of top_node (usually due to
-    #   multi-parentage
+    #   multi-parentage)
     df <- dplyr::filter(subtree_df, parent_id %in% id)
 
-    if (fill_subclasses) {
-        df <- fill_subclass(df)
-    }
+    # fill in subclasses where multi-parentage is within tree
+    df <- fill_subclass(df)
 
     # create tidygraph
     tg <- df %>%
         dplyr::select(id, parent_id) %>%
-        tidygraph::as_tbl_graph()
-
-    if (fill_subclasses) {
+        tidygraph::as_tbl_graph() %>%
         # fix needed for labels to match correctly
-        tg <- tg %>%
-            tidygraph::activate("nodes") %>%
-            dplyr::mutate(
-                name = dplyr::if_else(
-                    name %in% label_df$id,
-                    name,
-                    stringr::str_remove(name, "-[0-9]+$")
-                )
+        tidygraph::activate("nodes") %>%
+        dplyr::mutate(
+            name = dplyr::if_else(
+                name %in% label_df$id,
+                name,
+                stringr::str_remove(name, "-[0-9]+$")
             )
-    }
-
-    # add labels
-    tg <- tg %>%
+        ) %>%
+        # add labels
         tidygraph::left_join(
             label_df,
             by = c("name" = "id")
@@ -229,7 +214,11 @@ fill_subclass <- function(subtree_df, debug = FALSE) {
                 )
         }
         res_n <- nrow(new_rows[[lvl]])
-        message("Round ", lvl, ": ", res_n, " IDs need to have children filled.")
+        if (res_n > 0) {
+            message(
+                "Round ", lvl, ": ", res_n, " IDs need to have children filled."
+            )
+        }
         lvl <- lvl + 1
     }
 

@@ -4,26 +4,13 @@
 \alias{as_subtree_tidygraph}
 \title{Convert Subtree DF to tidygraph}
 \usage{
-as_subtree_tidygraph(
-  subtree_df,
-  top_node,
-  limit_to_tree = TRUE,
-  fill_subclasses = TRUE
-)
+as_subtree_tidygraph(subtree_df, top_node)
 }
 \arguments{
 \item{subtree_df}{A dataframe from \code{\link[=extract_subtree]{extract_subtree()}}.}
 
 \item{top_node}{The top node of the tree, as a valid DOID (see
 \code{\link[=is_valid_doid]{is_valid_doid()}} for valid input formats).}
-
-\item{limit_to_tree}{Whether parents outside of the tree should be removed
-when classes have multiple parents, \code{TRUE} (default) or \code{FALSE}.}
-
-\item{fill_subclasses}{Whether subclasses should be filled in every time
-their superclass appears in the subtree, \code{TRUE} (default) or \code{FALSE}. If
-set to \code{FALSE}, the tree will \emph{NOT} be the same as it appears on
-\href{https://disease-ontology.org/}{disease-ontology.org}.}
 }
 \description{
 Converts a subtree dataframe, from \code{\link[=extract_subtree]{extract_subtree()}}, to a tidygraph. This

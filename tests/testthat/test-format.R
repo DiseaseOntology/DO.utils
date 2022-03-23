@@ -34,20 +34,13 @@ test_that("format_doid() allow_bare switch works", {
 
 # data
 subtree <- readr::read_csv("data/format_subtree.csv", col_types = "cccc")
-default_res <- readr::read_csv(
-    "data/format_subtree-default_res.csv",
-    col_types = "ccclcccc"
-)
-no_fill_res <- readr::read_csv(
-    "data/format_subtree-no_fill_res.csv",
+res <- readr::read_csv(
+    "data/format_subtree-res.csv",
     col_types = "ccclcccc"
 )
 
 # test helpers
 test_that("format_subtree() works", {
-    expect_identical(format_subtree(subtree, "DOID:3070"), default_res)
-    expect_identical(
-        format_subtree(subtree, "DOID:3070", fill_subclasses = FALSE),
-        no_fill_res
-    )
+    expect_identical(format_subtree(subtree, "DOID:3070"), res)
+
 })
