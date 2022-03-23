@@ -81,7 +81,7 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
                            fill_subclasses = TRUE) {
     assert_string(top_node)
-    top_class <- format_doid(top_node, as = "obo_CURIE")
+    top_class <- format_doid(top_node, as = "CURIE")
 
     tg <- as_subtree_tidygraph(
         subtree_df,
@@ -108,7 +108,7 @@ format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
 as_subtree_tidygraph <- function(subtree_df, top_node, limit_to_tree = TRUE,
                                  fill_subclasses = TRUE) {
     # keep all parent info in labels
-    label_df <- DO.utils::collapse_col_flex(subtree_df, parent_id, parent_label)
+    label_df <- collapse_col_flex(subtree_df, parent_id, parent_label)
 
     # exclude parents which are not subclasses of top_node (usually due to
     #   multi-parentage
@@ -130,7 +130,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node, limit_to_tree = TRUE,
     if (fill_subclasses) {
         # fix needed for labels to match correctly
         tg <- tg %>%
-            activate("nodes") %>%
+            tidygraph::activate("nodes") %>%
             dplyr::mutate(
                 name = dplyr::if_else(
                     name %in% label_df$id,
@@ -164,7 +164,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node, limit_to_tree = TRUE,
 pivot_subtree <- function(subtree_tg, top_node) {
 
     # ensure alphabetical order of classes to match disease-ontology.org
-    tg <- tidygraph::arrange(tg, label)
+    tg <- tidygraph::arrange(subtree_tg, label)
 
     # get top_node position in tidygraph; required for depth-first search fxns
     root_pos <- tg %>%
@@ -175,8 +175,12 @@ pivot_subtree <- function(subtree_tg, top_node) {
 
     pivoted <- tg %>%
         tidygraph::activate("nodes") %>%
-        dplyr::mutate(
+        tidygraph::mutate(
             order = tidygraph::dfs_rank(
+                root = root_pos,
+                mode = "in"
+            ),
+            dist = tidygraph::dfs_dist(
                 root = root_pos,
                 mode = "in"
             ),
@@ -185,16 +189,17 @@ pivot_subtree <- function(subtree_tg, top_node) {
         tidygraph::arrange(order) %>%
         tidygraph::as_tibble() %>%
         # identify duplicates; useful when trying to identify changes over time
-        dplyr::mutate(duplicated = all_duplicated(id)) %>%
-        # reorder supporting info to the left & tree to right (drop order)
+        dplyr::mutate(duplicated = all_duplicated(name)) %>%
+        # mv supporting info to left & tree to right
         dplyr::select(
-            parent_id, parent_label, name, duplicated,
-            tidyselect::starts_with("V")
+            parent_id, parent_label, id = name, tidyselect::everything()
         ) %>%
         tidyr::pivot_wider(
             names_from = insert,
             values_from = label
-        )
+        ) %>%
+        # drop unnecessary info
+        dplyr::select(-order, -dist)
 
     pivoted
 }
