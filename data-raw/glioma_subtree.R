@@ -16,3 +16,10 @@ include <- c("DOID:3070", "DOID:5074", "DOID:5503", "DOID:7788", "DOID:3185")
 test_df <- dplyr::filter(df, id %in% include)
 
 readr::write_csv(test_df, "tests/testthat/data/format_subtree.csv")
+
+# save expected results, as well
+default_res <- format_subtree(test_df, "DOID:3070")
+no_fill_res <- format_subtree(test_df, "DOID:3070", fill_subclasses = FALSE)
+
+readr::write_csv(default_res, "tests/testthat/data/format_subtree-default_res.csv")
+readr::write_csv(no_fill_res, "tests/testthat/data/format_subtree-no_fill_res.csv")

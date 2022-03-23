@@ -1,0 +1,8 @@
+parent_id,parent_label,id,duplicated,V0,V1,V2,V3
+DOID:0050687|DOID:0060564|DOID:1319|DOID:184,cell type cancer|spinal disease|brain cancer|bone cancer,DOID:3070,FALSE,high grade glioma,NA,NA,NA
+DOID:3070|DOID:3541,high grade glioma|cerebral ventricle cancer,DOID:5074,FALSE,NA,high grade ependymoma,NA,NA
+DOID:3185|DOID:5074,spinal cord glioma|high grade ependymoma,DOID:5503,TRUE,NA,NA,spinal cord ependymoma,NA
+DOID:5503,spinal cord ependymoma,DOID:7788,TRUE,NA,NA,NA,adult spinal cord ependymoma
+DOID:3070|DOID:5612,high grade glioma|spinal cancer,DOID:3185,FALSE,NA,spinal cord glioma,NA,NA
+DOID:3185|DOID:5074,spinal cord glioma|high grade ependymoma,DOID:5503,TRUE,NA,NA,spinal cord ependymoma,NA
+DOID:5503,spinal cord ependymoma,DOID:7788,TRUE,NA,NA,NA,adult spinal cord ependymoma
