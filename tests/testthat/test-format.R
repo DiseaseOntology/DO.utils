@@ -1,3 +1,5 @@
+# format_doid() -----------------------------------------------------------
+
 # input & expected output
 x <- c("http://purl.obolibrary.org/obo/DOID_0001816", "DOID:4",
        "obo:DOID_14566", "DOID_0040001")
@@ -25,4 +27,27 @@ test_that("format_doid() allow_bare switch works", {
 
     expect_error(format_doid(w_bare))
     expect_identical(format_doid(w_bare, allow_bare = TRUE), bare_expected)
+})
+
+
+# format_subtree() --------------------------------------------------------
+
+# data
+subtree <- readr::read_csv("data/format_subtree.csv", col_types = "cccc")
+default_res <- readr::read_csv(
+    "data/format_subtree-default_res.csv",
+    col_types = "ccclcccc"
+)
+no_fill_res <- readr::read_csv(
+    "data/format_subtree-no_fill_res.csv",
+    col_types = "ccclcccc"
+)
+
+# test helpers
+test_that("format_subtree() works", {
+    expect_identical(format_subtree(subtree, "DOID:3070"), default_res)
+    expect_identical(
+        format_subtree(subtree, "DOID:3070", fill_subclasses = FALSE),
+        no_fill_res
+    )
 })
