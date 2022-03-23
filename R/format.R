@@ -62,8 +62,6 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #'
 #' @param subtree_df A dataframe from [extract_subtree()].
 #' @inheritParams extract_subtree
-#' @param limit_to_tree Whether parents outside of the tree should be removed
-#'     when classes have multiple parents, `TRUE` (default) or `FALSE`.
 #' @param fill_subclasses Whether subclasses should be filled in every time
 #'     their superclass appears in the subtree, `TRUE` (default) or `FALSE`. If
 #'     set to `FALSE`, the tree will _NOT_ be the same as it appears on
@@ -78,15 +76,13 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #' }
 #'
 #' @export
-format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
-                           fill_subclasses = TRUE) {
+format_subtree <- function(subtree_df, top_node, fill_subclasses = TRUE) {
     assert_string(top_node)
     top_class <- format_doid(top_node, as = "CURIE")
 
     tg <- as_subtree_tidygraph(
         subtree_df,
         top_class,
-        limit_to_tree = limit_to_tree,
         fill_subclasses = fill_subclasses
     )
     formatted <- pivot_subtree(tg, top_class)
@@ -105,18 +101,13 @@ format_subtree <- function(subtree_df, top_node, limit_to_tree = TRUE,
 #' @inheritParams format_subtree
 #'
 #' @keywords internal
-as_subtree_tidygraph <- function(subtree_df, top_node, limit_to_tree = TRUE,
-                                 fill_subclasses = TRUE) {
+as_subtree_tidygraph <- function(subtree_df, top_node, fill_subclasses = TRUE) {
     # keep all parent info in labels
     label_df <- collapse_col_flex(subtree_df, parent_id, parent_label)
 
     # exclude parents which are not subclasses of top_node (usually due to
     #   multi-parentage
-    if (limit_to_tree) {
-        df <- dplyr::filter(subtree_df, parent_id %in% id)
-    } else {
-        df <- subtree_df
-    }
+    df <- dplyr::filter(subtree_df, parent_id %in% id)
 
     if (fill_subclasses) {
         df <- fill_subclass(df)
