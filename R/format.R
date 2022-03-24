@@ -73,9 +73,8 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #'
 #' @export
 format_subtree <- function(subtree_df, top_node) {
-    assert_string(top_node)
+    rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")
     top_class <- format_doid(top_node, as = "CURIE")
-
     tg <- as_subtree_tidygraph(subtree_df, top_class)
     formatted <- pivot_subtree(tg, top_class)
 
