@@ -11,6 +11,22 @@ Functions used internally only as "helpers" for a given function (and of little 
 Most text should be written in sentence case, use proper punctuation, and end in a period.
 
 
+## NEWS
+1. Should include a "Dependendencies" section whenever dependencies change.
+    - Added dependencies should be prefaced with the dependency type (italicized), package name, and the reason it was added. _Example:_ "_Suggests_ tidygraph, which is required for `format_subtree()`.")
+    - Removed dependendencies should be written in the same style but prefaced with "No longer". _Example:_ "No longer _Suggests_ tidygraph because ...")
+2. Should identify new functionality in a "New" section header _any_ time a brand new general functionality is introduced.
+3. Should include an "Updates" section header if there is a "New" section header under which all updates to existing functionality should be described.
+4. Should list all new **exported** functions, and only exported functions unless there is a compelling reason to list an internal function.
+5. Should include section (sub)headers for each general functionality area if more than one is new or updated.
+6. Should _NOT_ be written in the style of a git commit, or from the developer's perspective.
+    - For general functionality:
+        1. Use active voice to describe what a user can do with the changes, preferably in a single, introductory sentence. _Example:_ "Create a text-based subtree/hierarchy."
+        2. Include additional text that provides context after describing the functions that provide said functionality.
+    - For functions, begin with the function name and then describe what it does, following the style in Functions > Description.
+7. Can use a bulleted list to improve quick scanning and brevity.
+
+
 ## Functions
 
 ### Names
