@@ -16,3 +16,7 @@ assert_logical <- function(x) {
 assert_scalar_logical <- function(x) {
     assertthat::assert_that(rlang::is_scalar_logical(x))
 }
+
+assert_string <- function(x) {
+    assertthat::assert_that(rlang::is_string(x))
+}

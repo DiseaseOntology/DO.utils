@@ -44,7 +44,8 @@ Suggests:
     knitr,
     testthat (>= 3.0.0),
     covr,
-    devtools
+    devtools,
+    tidygraph
 Config/testthat/edition: 3
 Config/reticulate:
     list(

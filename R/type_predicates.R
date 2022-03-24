@@ -97,8 +97,37 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
     rlang::is_scalar_atomic(x) && is_whole_number(x, tol = tol)
 }
 
+#' DO-specific predicate
+#'
+#' This predicate is designed to identify and validate common formats for DOIDs
+#' derived from the Human Disease Ontology (DO). Note that bare numbers are NOT
+#' recognized as valid DOIDs, a prefix is _always_ required.
+#'
+#' @param x A set of DOIDs, as a character vector.
+#'
+#' @examples
+#' # formats considered valid
+#' is_valid_doid("http://purl.obolibrary.org/obo/DOID_0001816") # URI
+#' is_valid_doid("DOID:4") # CURIE, standard version
+#' is_valid_doid("obo:DOID_14566") # obo CURIE, less common
+#' is_valid_doid("DOID_0040001") # basename (prefix removed)
+#'
+#' # invalid formats
+#' is_valid_doid(c("0001816", "4")) # bare numbers
+#' is_valid_doid("obo:DOID:14566") # some specificity for separators is enforced
+#'
+#' @export
+is_valid_doid <- function(x) {
+    assert_character(x)
+    doid_regex <- "^(http://purl.obolibrary.org/obo/|obo:)?DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$"
+    stringr::str_detect(x, doid_regex)
+}
 
 # Type tests for internal use only
 is_vctr_or_df <- function(x) {
     is.vector(x) || is.data.frame(x)
+}
+
+is_owl_xml <- function(x) {
+    class(x)[1] == "pyDOID.owl.xml"
 }
