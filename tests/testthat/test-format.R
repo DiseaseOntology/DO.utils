@@ -39,8 +39,33 @@ res <- readr::read_csv(
     col_types = "ccclcccc"
 )
 
-# test helpers
+# tests
 test_that("format_subtree() works", {
     expect_identical(format_subtree(subtree, "DOID:3070"), res)
+})
 
+test_that("format_subtree() works when no fill is needed", {
+    # remove high grade ependymoma = no duplication --> no fill needed
+    no_hge <- dplyr::filter(
+        subtree,
+        id != "DOID:5074",
+        parent_id != "DOID:5074"
+    )
+
+    # make res look as though hge was never there
+    hge_pos <- which(res$id == "DOID:5074")
+    no_hge_res <- dplyr::filter(
+        res,
+        dplyr::row_number() < hge_pos |
+            dplyr::row_number() > hge_pos + 2
+    ) %>%
+        dplyr::mutate(
+            duplicated = FALSE,
+            parent_id = stringr::str_remove(parent_id, "\\|?DOID:5074\\|?"),
+            parent_label = stringr::str_remove(
+                parent_label, "\\|?high grade ependymoma\\|?"
+            )
+        )
+
+    expect_identical(format_subtree(no_hge, "DOID:3070"), no_hge_res)
 })
