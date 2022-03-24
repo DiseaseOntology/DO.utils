@@ -17,7 +17,7 @@ Format a subtree, produced by \code{\link[=extract_subtree]{extract_subtree()}},
 mirroring \href{https://disease-ontology.org/}{disease-ontology.org}.
 }
 \examples{
-/dontrun{
+\dontrun{
     do_owl <- {path_to_doid.owl_here}
     subtree <- extract_subtree(do_owl, "DOID:3070")
     st_formatted <- format_subtree(subtree, "DOID:3070")

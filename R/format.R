@@ -64,7 +64,7 @@ format_doid <- function(x, as = "CURIE", allow_bare = FALSE) {
 #' @inheritParams extract_subtree
 #'
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #'     do_owl <- {path_to_doid.owl_here}
 #'     subtree <- extract_subtree(do_owl, "DOID:3070")
 #'     st_formatted <- format_subtree(subtree, "DOID:3070")
@@ -94,26 +94,30 @@ format_subtree <- function(subtree_df, top_node) {
 #' @keywords internal
 as_subtree_tidygraph <- function(subtree_df, top_node) {
     # keep all parent info in labels
-    label_df <- collapse_col_flex(subtree_df, parent_id, parent_label)
+    label_df <- collapse_col_flex(
+        subtree_df,
+        "parent_id",
+        "parent_label"
+    )
 
     # exclude parents which are not subclasses of top_node (usually due to
     #   multi-parentage)
-    df <- dplyr::filter(subtree_df, parent_id %in% id)
+    df <- dplyr::filter(subtree_df, .data$parent_id %in% .data$id)
 
     # fill in subclasses where multi-parentage is within tree
     df <- fill_subclass(df)
 
     # create tidygraph
     tg <- df %>%
-        dplyr::select(id, parent_id) %>%
+        dplyr::select(.data$id, .data$parent_id) %>%
         tidygraph::as_tbl_graph() %>%
         # fix needed for labels to match correctly
         tidygraph::activate("nodes") %>%
         dplyr::mutate(
             name = dplyr::if_else(
-                name %in% label_df$id,
-                name,
-                stringr::str_remove(name, "-[0-9]+$")
+                .data$name %in% label_df$id,
+                .data$name,
+                stringr::str_remove(.data$name, "-[0-9]+$")
             )
         ) %>%
         # add labels
@@ -139,14 +143,13 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
 pivot_subtree <- function(subtree_tg, top_node) {
 
     # ensure alphabetical order of classes to match disease-ontology.org
-    tg <- tidygraph::arrange(subtree_tg, label)
+    tg <- tidygraph::arrange(subtree_tg, .data$label)
 
     # get top_node position in tidygraph; required for depth-first search fxns
-    root_pos <- tg %>%
+    node_df <- tg %>%
         tidygraph::activate("nodes") %>%
-        tidygraph::as_tibble() %>%
-        { .$name == top_node } %>%
-        which()
+        tidygraph::as_tibble()
+    root_pos <- which(node_df$name == top_node)
 
     pivoted <- tg %>%
         tidygraph::activate("nodes") %>%
@@ -159,22 +162,23 @@ pivot_subtree <- function(subtree_tg, top_node) {
                 root = root_pos,
                 mode = "in"
             ),
-            insert = paste0("V", dist)
+            insert = paste0("V", .data$dist)
         ) %>%
-        tidygraph::arrange(order) %>%
+        tidygraph::arrange(.data$order) %>%
         tidygraph::as_tibble() %>%
         # identify duplicates; useful when trying to identify changes over time
-        dplyr::mutate(duplicated = all_duplicated(name)) %>%
+        dplyr::mutate(duplicated = all_duplicated(.data$name)) %>%
         # mv supporting info to left & tree to right
         dplyr::select(
-            parent_id, parent_label, id = name, tidyselect::everything()
+            .data$parent_id, .data$parent_label, id = .data$name,
+            dplyr::everything()
         ) %>%
         tidyr::pivot_wider(
-            names_from = insert,
-            values_from = label
+            names_from = .data$insert,
+            values_from = .data$label
         ) %>%
         # drop unnecessary info
-        dplyr::select(-order, -dist)
+        dplyr::select(-.data$order, -.data$dist)
 
     pivoted
 }
@@ -193,7 +197,7 @@ pivot_subtree <- function(subtree_tg, top_node) {
 #' @keywords internal
 fill_subclass <- function(subtree_df, debug = FALSE) {
 
-    not_dup <- dplyr::filter(subtree_df, !duplicated(id))
+    not_dup <- dplyr::filter(subtree_df, !duplicated(.data$id))
 
     lvl <- 1
     res_n <- 1L
@@ -202,14 +206,14 @@ fill_subclass <- function(subtree_df, debug = FALSE) {
     while (res_n > 0) {
         if (lvl == 1) {
             new_rows[[lvl]] <- subtree_df %>%
-                dplyr::filter(duplicated(id)) %>%
-                dplyr::mutate(new_id = paste(id, lvl, sep = "-"))
+                dplyr::filter(duplicated(.data$id)) %>%
+                dplyr::mutate(new_id = paste(.data$id, lvl, sep = "-"))
         } else {
             new_rows[[lvl]] <- subtree_df %>%
-                dplyr::filter(parent_id %in% new_rows[[lvl - 1]]$id) %>%
+                dplyr::filter(.data$parent_id %in% new_rows[[lvl - 1]]$id) %>%
                 dplyr::mutate(
-                    new_id = paste(id, lvl, sep = "-"),
-                    new_pid = paste(parent_id, lvl - 1, sep = "-")
+                    new_id = paste(.data$id, lvl, sep = "-"),
+                    new_pid = paste(.data$parent_id, lvl - 1, sep = "-")
                 )
         }
         res_n <- nrow(new_rows[[lvl]])
@@ -222,13 +226,17 @@ fill_subclass <- function(subtree_df, debug = FALSE) {
     }
 
     filled_df <- dplyr::bind_rows(not_dup, new_rows) %>%
-        mutate(
-            id = dplyr::if_else(is.na(new_id), id, new_id),
-            parent_id = dplyr::if_else(is.na(new_pid), parent_id, new_pid)
+        dplyr::mutate(
+            id = dplyr::if_else(is.na(.data$new_id), .data$id, .data$new_id),
+            parent_id = dplyr::if_else(
+                is.na(.data$new_pid),
+                .data$parent_id,
+                .data$new_pid
+            )
         )
 
     if (!debug) {
-        filled_df <- dplyr::select(filled_df, -new_id, -new_pid)
+        filled_df <- dplyr::select(filled_df, -.data$new_id, -.data$new_pid)
     }
 
     filled_df
