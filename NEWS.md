@@ -1,3 +1,9 @@
+# DO.utils 0.2.2
+
+* Bug fix to correct error in `format_subtree()` when the subtree did _not_ have
+    any classes with multi-parentage. (Error label: "no fill needed")
+
+
 # DO.utils 0.2.1
 
 ## New
