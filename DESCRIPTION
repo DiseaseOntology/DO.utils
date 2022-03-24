@@ -1,7 +1,7 @@
 Package: DO.utils
 Type: Package
 Title: Support Management of the Disease Ontology (DO)
-Version: 0.2.0
+Version: 0.2.1
 Author: J. Allen Baron
 Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
 Description: This package is used to automate management of the Human Disease

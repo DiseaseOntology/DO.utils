@@ -1,3 +1,27 @@
+# DO.utils 0.2.1
+
+## New
+* Create a text-based subtree/hierarchy.
+    * `extract_subtree()` extracts the data from doid.owl including all
+        descendants and their relationships below a specified DOID.
+    * `format_subtree()` arranges them in a dataframe as a text-based hierarchy
+        mirroring [disease-ontology.org](https://disease-ontology.org/).
+    * Primarily designed for creating high quality "tree view" graphics similar
+        to EBI's [Ontology Lookup Service](https://www.ebi.ac.uk/ols/ontologies/doid/terms?iri=http%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FDOID_3070).
+* Manage DOIDs.
+    * `is_valid_doid()` tests whether inputs are valid DOIDs. Note that mutliple
+        formats are considered valid.
+    * `format_doid()` converts between valid DOID formats.
+
+## Updates
+* `DOrepo()` and `owl_xml()` no longer fail silently when a file/directory does
+not exist. pyDOID now verifies file paths on instantiation of the underlying
+objects.
+
+## Dependencies
+* Suggests tidygraph, which is required for `format_subtree()`.
+
+
 # DO.utils 0.2.0
 
 ## Data
