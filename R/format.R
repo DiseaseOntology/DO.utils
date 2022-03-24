@@ -190,12 +190,9 @@ pivot_subtree <- function(subtree_tg, top_node) {
 #' ensures that the subclasses appear each time their parent/superclass does.
 #'
 #' @inheritParams as_subtree_tidygraph
-#' @param debug Whether original and new identifiers should both be returned in
-#'     the output dataframe for debugging purposes, `TRUE` or `FALSE`
-#'     (default).
 #'
 #' @keywords internal
-fill_subclass <- function(subtree_df, debug = FALSE) {
+fill_subclass <- function(subtree_df) {
 
     not_dup <- dplyr::filter(subtree_df, !duplicated(.data$id))
 
@@ -207,13 +204,13 @@ fill_subclass <- function(subtree_df, debug = FALSE) {
         if (lvl == 1) {
             new_rows[[lvl]] <- subtree_df %>%
                 dplyr::filter(duplicated(.data$id)) %>%
-                dplyr::mutate(new_id = paste(.data$id, lvl, sep = "-"))
+                dplyr::mutate(id_new = paste(.data$id, lvl, sep = "-"))
         } else {
             new_rows[[lvl]] <- subtree_df %>%
                 dplyr::filter(.data$parent_id %in% new_rows[[lvl - 1]]$id) %>%
                 dplyr::mutate(
-                    new_id = paste(.data$id, lvl, sep = "-"),
-                    new_pid = paste(.data$parent_id, lvl - 1, sep = "-")
+                    id_new = paste(.data$id, lvl, sep = "-"),
+                    parent_id_new = paste(.data$parent_id, lvl - 1, sep = "-")
                 )
         }
         res_n <- nrow(new_rows[[lvl]])
@@ -227,17 +224,18 @@ fill_subclass <- function(subtree_df, debug = FALSE) {
 
     filled_df <- dplyr::bind_rows(not_dup, new_rows) %>%
         dplyr::mutate(
-            id = dplyr::if_else(is.na(.data$new_id), .data$id, .data$new_id),
-            parent_id = dplyr::if_else(
-                is.na(.data$new_pid),
-                .data$parent_id,
-                .data$new_pid
+            # currently using workaround for coalesce,
+            #   https://github.com/tidyverse/funs/issues/54#issuecomment-892377998
+            id = do.call(
+                dplyr::coalesce,
+                rev(dplyr::across(dplyr::starts_with("id")))
+            ),
+            parent_id = do.call(
+                dplyr::coalesce,
+                rev(dplyr::across(dplyr::starts_with("parent_id")))
             )
-        )
-
-    if (!debug) {
-        filled_df <- dplyr::select(filled_df, -.data$new_id, -.data$new_pid)
-    }
+        ) %>%
+        dplyr::select(id, label, parent_id, parent_label)
 
     filled_df
 }

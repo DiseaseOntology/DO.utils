@@ -4,14 +4,10 @@
 \alias{fill_subclass}
 \title{Fill in Subclasses}
 \usage{
-fill_subclass(subtree_df, debug = FALSE)
+fill_subclass(subtree_df)
 }
 \arguments{
 \item{subtree_df}{A dataframe from \code{\link[=extract_subtree]{extract_subtree()}}.}
-
-\item{debug}{Whether original and new identifiers should both be returned in
-the output dataframe for debugging purposes, \code{TRUE} or \code{FALSE}
-(default).}
 }
 \description{
 Fill in subclasses when a parent appears multiple times in a subtree. This
