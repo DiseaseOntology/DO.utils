@@ -518,6 +518,13 @@
       "Repository": "CRAN",
       "Hash": "99df65cfef20e525ed38c3d2577f7190"
     },
+    "igraph": {
+      "Package": "igraph",
+      "Version": "1.2.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f1e720796423d6c08bf430fc3be0bf10"
+    },
     "ini": {
       "Package": "ini",
       "Version": "0.3.1",
@@ -1005,6 +1012,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "36eb05ad4cfdfeaa56f5a9b2a1311efd"
+    },
+    "tidygraph": {
+      "Package": "tidygraph",
+      "Version": "1.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "5375980d0787633ca62c265b28bedb41"
     },
     "tidyr": {
       "Package": "tidyr",
