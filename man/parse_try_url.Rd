@@ -4,21 +4,22 @@
 \alias{parse_try_url}
 \title{Parse try_url HTTP response}
 \usage{
-parse_try_url(resp, include_raw_resp = TRUE)
+parse_try_url(resp, include_resp = TRUE)
 }
 \arguments{
-\item{resp}{The HEAD response from \code{try_url()}.}
+\item{resp}{The response from \code{try_url()}.}
 
-\item{include_raw_resp}{Whether the full raw response should be included in
+\item{include_resp}{Whether the full HTTP response should be included in
 the \code{tibble} as a list column, \code{TRUE} (default) or \code{FALSE}.}
 }
 \value{
 \code{tibble} with columns \code{url}, \code{status}, \code{status_code}, and either \code{exception}
-if an R exception occurred and the request was not executed or \code{redirect_url},
-if the request was executed; also optionally including the full \code{response}.
+if an R exception occurred and no HTTP response is available or
+\code{redirect_url} if an HTTP response was received. Also optionally including
+the full HTTP \code{response}.
 }
 \description{
-Parse the HTTP HEAD response obtained from \code{\link[=try_url]{try_url()}}, including any
-potential R errors.
+Parse the HTTP response obtained from \code{\link[=try_url]{try_url()}}, including any potential
+R errors. \emph{Currently only works for HEAD requests.}
 }
 \keyword{internal}

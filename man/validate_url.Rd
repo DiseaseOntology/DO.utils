@@ -7,7 +7,7 @@
 validate_url(
   url,
   config = httr::user_agent(pkg_user_agent),
-  include_raw_resp = TRUE,
+  include_resp = TRUE,
   ...
 )
 }
@@ -19,7 +19,7 @@ authentication (\code{\link[httr:authenticate]{authenticate()}}), additional hea
 (\code{\link[httr:add_headers]{add_headers()}}), cookies (\code{\link[httr:set_cookies]{set_cookies()}}) etc.
 See \code{\link[httr:config]{config()}} for full details and list of helpers.}
 
-\item{include_raw_resp}{Whether the full raw response should be included in
+\item{include_resp}{Whether the full HTTP response should be included in
 the \code{tibble} as a list column, \code{TRUE} (default) or \code{FALSE}.}
 
 \item{...}{Further named parameters, such as \code{query}, \code{path}, etc,

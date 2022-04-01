@@ -41,11 +41,11 @@ replace_www_duplicate <- function(url, how = "remove") {
 #'
 #' @export
 validate_url <- function(url, config = httr::user_agent(pkg_user_agent),
-                         include_raw_resp = TRUE, ...) {
+                         include_resp = TRUE, ...) {
 
     # handle URLs where server cannot be reached
     resp <- try_url(url, config = config, ...)
-    res_df <- parse_try_url(resp, include_raw_resp = include_raw_resp)
+    res_df <- parse_try_url(resp, include_resp = include_resp)
 
     res_df
 }
@@ -92,20 +92,30 @@ try_url <- function(url, type = "HEAD",
 
 #' Parse try_url HTTP response
 #'
-#' Parse the HTTP HEAD response obtained from [try_url()], including any
-#' potential R errors.
+#' Parse the HTTP response obtained from [try_url()], including any potential
+#' R errors. _Currently only works for HEAD requests._
 #'
-#' @param resp The HEAD response from `try_url()`.
-#' @param include_raw_resp Whether the full raw response should be included in
+#' @param resp The response from `try_url()`.
+#' @param include_resp Whether the full HTTP response should be included in
 #'     the `tibble` as a list column, `TRUE` (default) or `FALSE`.
 #'
 #' @returns
 #' `tibble` with columns `url`, `status`, `status_code`, and either `exception`
-#' if an R exception occurred and the request was not executed or `redirect_url`,
-#' if the request was executed; also optionally including the full `response`.
+#' if an R exception occurred and no HTTP response is available or
+#' `redirect_url` if an HTTP response was received. Also optionally including
+#' the full HTTP `response`.
 #'
 #' @keywords internal
-parse_try_url <- function(resp, include_raw_resp = TRUE) {
+parse_try_url <- function(resp, include_resp = TRUE) {
+    assertthat::assert_that(
+        resp$request$method == "HEAD",
+        msg = paste0(
+            "parse_try_url() cannot parse ",
+            resp$request$method,
+            " requests."
+        )
+    )
+
     # handle R errors (not http errors)
     if("exception" %in% names(resp)) {
 
@@ -140,8 +150,8 @@ parse_try_url <- function(resp, include_raw_resp = TRUE) {
             )
         )
 
-        if (isTRUE(include_raw_resp)) {
-            resp_tidy$response <- resp
+        if (isTRUE(include_resp)) {
+            resp_tidy$response <- list(resp)
         }
     }
     resp_tidy
