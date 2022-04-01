@@ -1,45 +1,95 @@
-validate_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
-    resp <- tryCatch(
-        httr::HEAD(url, config = config, ...),
-        error = function(e) {
-            tibble::tibble(
-                url = url,
-                valid = NA,
-                status_code = NA_integer_,
-                redirect_url = NA_character_,
-                error = paste(e)
-            )
-        }
-    )
-    res_df <- if ("error" %in% names(resp)) {
-        resp
-    } else {
-        get_resp_details(resp) %>%
-            dplyr::mutate(
-                url = url,
-                resp = list(resp)
-            ) %>%
-            # listing URLs that aren't actual redirects is confusing and adds
-            #   extra time during review
-            dplyr::mutate(
-                redirect_url = dplyr::if_else(
-                    .data$redirect_url == .data$url,
-                    NA_character_,
-                    .data$redirect_url
-                )
-            ) %>%
-            dplyr::select(url, dplyr::everything())
-    }
+#' Validate a URL
+#'
+#' Test a URL with a HEAD request to determine if it is valid.
+#'
+#' @param url The url to test, as a string.
+#' @inheritParams try_url
+#' @inheritParams parse_try_url
+#'
+#' @returns See [parse_try_url()] documentation.
+#'
+#' @export
+validate_url <- function(url, config = httr::user_agent(pkg_user_agent),
+                         include_raw_resp = TRUE, ...) {
+
+    # handle URLs where server cannot be reached
+    resp <- try_url(url, config = config, ...)
+    res_df <- parse_try_url(resp, include_raw_resp = include_raw_resp)
+
     res_df
 }
 
 
-get_resp_details <- function(resp) {
-    tibble::tibble(
-        valid = !httr::http_error(resp),
-        status_code = httr::status_code(resp),
-        redirect_url = purrr::map(resp$all_headers, ~ .x$headers$location) %>%
-            unlist() %>%
-            utils::tail(1)
+#' Try a URL
+#'
+#' Try to reach a URL with a HEAD request, capturing R errors/warnings if they
+#' occur.
+#'
+#' @param url URL to try, as a string.
+#' @inheritParams httr::HEAD
+#'
+#' @keywords internal
+try_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
+    tryCatch(
+        httr::HEAD(url, config = config, ...),
+        condition = function(c) list(url = url, exception = c)
     )
+}
+
+
+#' Parse try_url HTTP response
+#'
+#' Parse the HTTP HEAD response obtained from [try_url()], including any
+#' potential R errors.
+#'
+#' @param resp The HEAD response from `try_url()`.
+#' @param include_raw_resp Whether the full raw response should be included in
+#'     the `tibble` as a list column, `TRUE` (default) or `FALSE`.
+#'
+#' @returns
+#' `tibble` with columns `url`, `status`, `status_code`, and either `exception`
+#' if an R exception occurred and the request was not executed or `redirect_url`,
+#' if the request was executed; also optionally including the full `response`.
+#'
+#' @keywords internal
+parse_try_url <- function(resp, include_raw_resp = TRUE) {
+    # handle R errors (not http errors)
+    if("exception" %in% names(resp)) {
+
+        exc <- class(resp$exception)
+        std_type <- c("message", "warning", "error")
+
+        resp_tidy <- tibble::tibble(
+            url = resp$url,
+            # set status to common R type where possible for consistency
+            status = dplyr::if_else(
+                any(std_type %in% class(exc)),
+                paste0("R", std_type[std_type %in% class(exc)]),
+                paste0("R", exc[1])
+            ),
+            status_code = NA_integer_,
+            exception = conditionMessage(exc)
+        )
+    } else {
+        last_url <- resp %>%
+            .$all_headers %>%
+            purrr::map_chr(~ .x$headers$location) %>%
+            tail(1)
+        resp_tidy <- tibble::tibble(
+            url = resp$url,
+            status = httr::http_status(resp),
+            status_code = httr::status_code(resp),
+            # include redirect URL, where applicable
+            redirect_url = dplyr::if_else(
+                is.null(last_url) || last_url == resp$url,
+                NULL,
+                last_url
+            )
+        )
+
+        if (isTRUE(include_raw_resp)) {
+            resp_tidy$response <- resp
+        }
+    }
+    resp_tidy
 }
