@@ -125,7 +125,7 @@ parse_try_url <- function(resp, include_resp = TRUE, content = NULL) {
 
     # handle R errors (not http errors)
     if("exception" %in% names(resp)) {
-        exc <- class(resp$exception)
+        exc <- resp$exception
         std_type <- c("message", "warning", "error")
 
         resp_tidy <- tibble::tibble(
