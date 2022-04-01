@@ -103,13 +103,12 @@ try_url <- function(url, type = "HEAD",
 #'      matching [httr::content()] arguments (`as`, `type`, `encoding`, etc.).
 #'
 #' @returns
-#' `tibble` with columns `url`, `status`, `status_code`, and either `exception`
-#' if an R exception occurred and no HTTP response is available or
-#' `redirect_url` if an HTTP response was received.
-#'
-#' Optionally includes the full HTTP `response`.
+#' A `tibble` with columns `url`, `status`, `status_code`, `redirect_url` and,
+#' if an R exception occurred, `exception` providing the exception's message.
 #'
 #' **For `GET` responses**, additionally includes a `content` list-column.
+#'
+#' Optionally, includes the full HTTP `response` (default).
 #'
 #' @keywords internal
 parse_try_url <- function(resp, include_resp = TRUE, content = NULL) {
@@ -133,15 +132,16 @@ parse_try_url <- function(resp, include_resp = TRUE, content = NULL) {
             # set status to common R type where possible for consistency
             status = dplyr::if_else(
                 any(std_type %in% class(exc)),
-                paste0("R", std_type[std_type %in% class(exc)]),
-                paste0("R", exc[1])
+                paste0("R_", std_type[std_type %in% class(exc)]),
+                paste0("R_", exc[1])
             ),
             status_code = NA_integer_,
+            redirect_url = NA_character_,
             exception = conditionMessage(exc)
         )
 
         if (type == "GET") {
-            resp_tidy$content <- NA
+            resp_tidy$content <- list(NULL)
         }
 
     } else {

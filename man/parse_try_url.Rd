@@ -16,13 +16,12 @@ the \code{tibble} as a list column, \code{TRUE} (default) or \code{FALSE}.}
 matching \code{\link[httr:content]{httr::content()}} arguments (\code{as}, \code{type}, \code{encoding}, etc.).}
 }
 \value{
-\code{tibble} with columns \code{url}, \code{status}, \code{status_code}, and either \code{exception}
-if an R exception occurred and no HTTP response is available or
-\code{redirect_url} if an HTTP response was received.
-
-Optionally includes the full HTTP \code{response}.
+A \code{tibble} with columns \code{url}, \code{status}, \code{status_code}, \code{redirect_url} and,
+if an R exception occurred, \code{exception} providing the exception's message.
 
 \strong{For \code{GET} responses}, additionally includes a \code{content} list-column.
+
+Optionally, includes the full HTTP \code{response} (default).
 }
 \description{
 Parse an HTTP response from \code{\link[=try_url]{try_url()}}, including any potential R errors.
