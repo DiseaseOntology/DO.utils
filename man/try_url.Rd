@@ -11,7 +11,8 @@ try_url(url, type = "HEAD", config = httr::user_agent(pkg_user_agent), ...)
 
 \item{type}{The HTTP request type, as a string.}
 
-\item{...}{Arguments passed on to the corresponding \code{httr} request function.}
+\item{...}{Arguments passed on to the corresponding \href{httr::httr}{httr}
+request function.}
 }
 \description{
 Try to reach a URL with a request of the specified type, capturing R

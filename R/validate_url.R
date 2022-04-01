@@ -58,7 +58,8 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent),
 #'
 #' @param url URL to try, as a string.
 #' @param type The HTTP request type, as a string.
-#' @param ... Arguments passed on to the corresponding `httr` request function.
+#' @param ... Arguments passed on to the corresponding [httr](httr::httr)
+#'     request function.
 #'
 #' @keywords internal
 try_url <- function(url, type = "HEAD",
