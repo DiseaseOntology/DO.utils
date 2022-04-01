@@ -134,18 +134,17 @@ parse_try_url <- function(resp, include_resp = TRUE) {
             exception = conditionMessage(exc)
         )
     } else {
-        last_url <- resp %>%
-            .$all_headers %>%
-            purrr::map_chr(~ .x$headers$location) %>%
+        last_url <- purrr::map(resp$all_headers, ~ .x$headers$location) %>%
+            unlist() %>%
             tail(1)
         resp_tidy <- tibble::tibble(
             url = resp$url,
-            status = httr::http_status(resp),
+            status = httr::http_status(resp)$category,
             status_code = httr::status_code(resp),
             # include redirect URL, where applicable
             redirect_url = dplyr::if_else(
                 is.null(last_url) || last_url == resp$url,
-                NULL,
+                NA_character_,
                 last_url
             )
         )
