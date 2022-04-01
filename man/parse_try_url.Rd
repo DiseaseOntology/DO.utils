@@ -4,22 +4,28 @@
 \alias{parse_try_url}
 \title{Parse try_url HTTP response}
 \usage{
-parse_try_url(resp, include_resp = TRUE)
+parse_try_url(resp, include_resp = TRUE, content = NULL)
 }
 \arguments{
 \item{resp}{The response from \code{try_url()}.}
 
 \item{include_resp}{Whether the full HTTP response should be included in
 the \code{tibble} as a list column, \code{TRUE} (default) or \code{FALSE}.}
+
+\item{content}{Arguments used to extract \code{GET} content, as a named list
+matching \code{\link[httr:content]{httr::content()}} arguments (\code{as}, \code{type}, \code{encoding}, etc.).}
 }
 \value{
 \code{tibble} with columns \code{url}, \code{status}, \code{status_code}, and either \code{exception}
 if an R exception occurred and no HTTP response is available or
-\code{redirect_url} if an HTTP response was received. Also optionally including
-the full HTTP \code{response}.
+\code{redirect_url} if an HTTP response was received.
+
+Optionally includes the full HTTP \code{response}.
+
+\strong{For \code{GET} responses}, additionally includes a \code{content} list-column.
 }
 \description{
-Parse the HTTP response obtained from \code{\link[=try_url]{try_url()}}, including any potential
-R errors. \emph{Currently only works for HEAD requests.}
+Parse an HTTP response from \code{\link[=try_url]{try_url()}}, including any potential R errors.
+\emph{Currently only works for HEAD and GET requests.}
 }
 \keyword{internal}

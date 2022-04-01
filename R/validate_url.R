@@ -93,23 +93,29 @@ try_url <- function(url, type = "HEAD",
 
 #' Parse try_url HTTP response
 #'
-#' Parse the HTTP response obtained from [try_url()], including any potential
-#' R errors. _Currently only works for HEAD requests._
+#' Parse an HTTP response from [try_url()], including any potential R errors.
+#' _Currently only works for HEAD and GET requests._
 #'
 #' @param resp The response from `try_url()`.
 #' @param include_resp Whether the full HTTP response should be included in
 #'     the `tibble` as a list column, `TRUE` (default) or `FALSE`.
+#' @param content Arguments used to extract `GET` content, as a named list
+#'      matching [httr::content()] arguments (`as`, `type`, `encoding`, etc.).
 #'
 #' @returns
 #' `tibble` with columns `url`, `status`, `status_code`, and either `exception`
 #' if an R exception occurred and no HTTP response is available or
-#' `redirect_url` if an HTTP response was received. Also optionally including
-#' the full HTTP `response`.
+#' `redirect_url` if an HTTP response was received.
+#'
+#' Optionally includes the full HTTP `response`.
+#'
+#' **For `GET` responses**, additionally includes a `content` list-column.
 #'
 #' @keywords internal
-parse_try_url <- function(resp, include_resp = TRUE) {
+parse_try_url <- function(resp, include_resp = TRUE, content = NULL) {
+    type <- resp$request$method
     assertthat::assert_that(
-        resp$request$method == "HEAD",
+        type %in% c("HEAD", "GET"),
         msg = paste0(
             "parse_try_url() cannot parse ",
             resp$request$method,
@@ -119,7 +125,6 @@ parse_try_url <- function(resp, include_resp = TRUE) {
 
     # handle R errors (not http errors)
     if("exception" %in% names(resp)) {
-
         exc <- class(resp$exception)
         std_type <- c("message", "warning", "error")
 
@@ -134,6 +139,11 @@ parse_try_url <- function(resp, include_resp = TRUE) {
             status_code = NA_integer_,
             exception = conditionMessage(exc)
         )
+
+        if (type == "GET") {
+            resp_tidy$content <- NA
+        }
+
     } else {
         last_url <- purrr::map(resp$all_headers, ~ .x$headers$location) %>%
             unlist() %>%
@@ -149,6 +159,15 @@ parse_try_url <- function(resp, include_resp = TRUE) {
                 last_url
             )
         )
+
+        if (type == "GET") {
+            resp_tidy$content <- list(
+                do.call(
+                    httr::content,
+                    args = purrr::prepend(content, list(x = resp))
+                )
+            )
+        }
 
         if (isTRUE(include_resp)) {
             resp_tidy$response <- list(resp)
