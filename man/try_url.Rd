@@ -4,22 +4,17 @@
 \alias{try_url}
 \title{Try a URL}
 \usage{
-try_url(url, config = httr::user_agent(pkg_user_agent), ...)
+try_url(url, type = "HEAD", config = httr::user_agent(pkg_user_agent), ...)
 }
 \arguments{
 \item{url}{URL to try, as a string.}
 
-\item{config}{Additional configuration settings such as http
-authentication (\code{\link[httr:authenticate]{authenticate()}}), additional headers
-(\code{\link[httr:add_headers]{add_headers()}}), cookies (\code{\link[httr:set_cookies]{set_cookies()}}) etc.
-See \code{\link[httr:config]{config()}} for full details and list of helpers.}
+\item{type}{The HTTP request type, as a string.}
 
-\item{...}{Further named parameters, such as \code{query}, \code{path}, etc,
-passed on to \code{\link[httr:modify_url]{modify_url()}}. Unnamed parameters will be combined
-with \code{\link[httr:config]{config()}}.}
+\item{...}{Arguments passed on to the corresponding \code{httr} request function.}
 }
 \description{
-Try to reach a URL with a HEAD request, capturing R errors/warnings if they
-occur.
+Try to reach a URL with a request of the specified type, capturing R
+errors/warnings if they occur.
 }
 \keyword{internal}

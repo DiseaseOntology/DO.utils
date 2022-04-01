@@ -34,7 +34,7 @@ replace_www_duplicate <- function(url, how = "remove") {
 #' Test a URL with a HEAD request to determine if it is valid.
 #'
 #' @param url The url to test, as a string.
-#' @inheritParams try_url
+#' @inheritParams httr::HEAD
 #' @inheritParams parse_try_url
 #'
 #' @returns See [parse_try_url()] documentation.
@@ -53,17 +53,39 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent),
 
 #' Try a URL
 #'
-#' Try to reach a URL with a HEAD request, capturing R errors/warnings if they
-#' occur.
+#' Try to reach a URL with a request of the specified type, capturing R
+#' errors/warnings if they occur.
 #'
 #' @param url URL to try, as a string.
-#' @inheritParams httr::HEAD
+#' @param type The HTTP request type, as a string.
+#' @param ... Arguments passed on to the corresponding `httr` request function.
 #'
 #' @keywords internal
-try_url <- function(url, config = httr::user_agent(pkg_user_agent), ...) {
+try_url <- function(url, type = "HEAD",
+                    config = httr::user_agent(pkg_user_agent), ...) {
+    type <- match.arg(
+        type,
+        c("HEAD", "GET", "POST", "PATCH", "PUT", "DELETE")
+    )
+    request <- switch(
+        type,
+        GET = httr::GET,
+        PATCH = httr::PATCH,
+        POST = httr::POST,
+        HEAD = httr::HEAD,
+        PUT = httr::PUT,
+        DELETE = httr::DELETE
+    )
+
     tryCatch(
-        httr::HEAD(url, config = config, ...),
-        condition = function(c) list(url = url, exception = c)
+        request(url, config = config, ...),
+        condition = function(c) {
+            list(
+                url = url,
+                request = list(method = type),
+                exception = c
+            )
+        }
     )
 }
 
