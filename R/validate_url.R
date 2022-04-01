@@ -1,8 +1,16 @@
-replace_www_duplicate <- function(url) {
+replace_www_duplicate <- function(url, how = "remove") {
+    how <- match.arg(how, c("remove", "add"))
+    replace_domain <- switch(
+        how,
+        remove = function(x) stringr::str_remove(x, "^www\\."),
+        add = function(x) {
+            stringr::str_replace(x, "^(www\\.)?", "www\\.")
+        }
+    )
     url_df <- parse_url(url) %>%
         dplyr::mutate(
-            no_www = stringr::str_remove(domain, "^www\\."),
-            www_dup = all_duplicated(no_www)
+            new_dom = replace_domain(.data$domain),
+            www_dup = all_duplicated(.data$new_dom)
         ) %>%
         dplyr::rowwise()
 
@@ -10,7 +18,7 @@ replace_www_duplicate <- function(url) {
         url_df,
         tmp = cast_to_string(
             protocol,
-            dplyr::if_else(www_dup, no_www, domain),
+            dplyr::if_else(.data$www_dup, new_dom, domain),
             path,
             delim = "",
             na.rm = TRUE
