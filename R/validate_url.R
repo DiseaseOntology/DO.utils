@@ -1,3 +1,26 @@
+replace_www_duplicate <- function(url) {
+    url_df <- parse_url(url) %>%
+        dplyr::mutate(
+            no_www = stringr::str_remove(domain, "^www\\."),
+            www_dup = all_duplicated(no_www)
+        ) %>%
+        dplyr::rowwise()
+
+    replaced <- dplyr::mutate(
+        url_df,
+        tmp = cast_to_string(
+            protocol,
+            dplyr::if_else(www_dup, no_www, domain),
+            path,
+            delim = "",
+            na.rm = TRUE
+        )
+    )$tmp
+
+    replaced
+}
+
+
 #' Validate a URL
 #'
 #' Test a URL with a HEAD request to determine if it is valid.
