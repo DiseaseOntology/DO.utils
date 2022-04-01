@@ -4,19 +4,20 @@
 \alias{append_to_url}
 \title{Append to URL}
 \usage{
-append_to_url(x, url)
+append_to_url(url, x)
 }
 \arguments{
-\item{x}{value to append}
+\item{url}{A URL or the internal name of a URL used in this package, as a
+string. \emph{See \code{\link[=get_url]{get_url()}} for the names of available internal URLs.}}
 
-\item{url}{a URL or the internal name of a URL used in this package (see
-\link{get_url} for possible names)}
+\item{x}{Value to append, as a character vector.}
 }
 \description{
 Append a value to a URL.
 }
 \section{Note}{
 
-No URL validation is performed.
+No URL validation is performed, but \code{append_to_url} will ensure that \code{url}
+and \code{x} are concatenated with a single \code{/}.
 }
 

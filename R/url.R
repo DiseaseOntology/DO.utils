@@ -8,13 +8,15 @@ get_delay <- function(robotstxt, .user_agent = pkg_user_agent,
         return(default)
     }
 
-    # delay for user agent
+    # set delay for specified user agent, if available
     delay <- dplyr::filter(cd_df, .data$useragent == .user_agent)$value
+
+    # set delay for unspecified user agents, if available
     if (rlang::is_empty(delay)) {
         delay <- dplyr::filter(cd_df, .data$useragent == "*")$value
     }
 
-    # general delay
+    # use default delay when no delay is specified
     if (rlang::is_empty(delay)) {
         delay <- default
     }
@@ -71,23 +73,21 @@ get_url <- function(.name) {
 #' Append a value to a URL.
 #'
 #' @section Note:
-#' No URL validation is performed.
+#' No URL validation is performed, but `append_to_url` will ensure that `url`
+#' and `x` are concatenated with a single `/`.
 #'
-#' @param x value to append
-#' @param url a URL or the internal name of a URL used in this package (see
-#' [get_url] for possible names)
+#' @param url A URL or the internal name of a URL used in this package, as a
+#'     string. _See [get_url()] for the names of available internal URLs._
+#' @param x Value to append, as a character vector.
 #'
 #' @export
-append_to_url <- function(x, url) {
-
+append_to_url <- function(url, x) {
     url <- tryCatch(get_url(url), error = function(e) url)
 
-    # add '/' if no terminal '/' in URL
-    if (stringr::str_detect(url, "/$")) {
-        new_url <- paste0(url, x)
-    } else {
-        new_url <- paste0(url, "/", x)
-    }
+    # avoid multiple consecutive slashes (strip trailing from url, leading from x)
+    std_url <- stringr::str_remove(url, "/+$")
+    std_x <- stringr::str_remove(x, "^/+")
 
+    new_url <- paste0(std_url, "/", std_x)
     new_url
 }
