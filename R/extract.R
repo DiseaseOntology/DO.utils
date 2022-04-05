@@ -292,12 +292,11 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' @keywords internal
 extract_resp_url <- function(x, .which = "last") {
     .which <- match.arg(.which, c("last", "first"))
-    locations <-
 
         if (.which == "first") {
-            url <- resp$request$url
+            url <- x$request$url
         } else {
-            url <- purrr::map(resp$all_headers, ~ .x$headers$location) %>%
+            url <- purrr::map(x$all_headers, ~ .x$headers$location) %>%
                 unlist() %>%
                 tail(1)
         }
