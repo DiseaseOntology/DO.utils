@@ -36,3 +36,29 @@ try_url <- function(url, type = "HEAD",
         }
     )
 }
+
+
+#' Try robots.txt (INTERNAL)
+#'
+#' Try to request the robots.txt from a specified domain, capturing R
+#' errors/warnings if they occur and noting HTTP status.
+#'
+#' @param domain The URL of a domain to try, as a string.
+#'
+#' @section NOTE:
+#' This function performs no checks to make sure the URL is for the overall
+#' domain/subdomain where robots.txt would be found and will likely return an
+#' R/HTTP error with any non-domain URL.
+#'
+#' @examples
+#' rt <- try_robots_txt("disease-ontology.org")
+#' rt
+#'
+#' @keywords internal
+try_robots_txt <- function(domain) {
+    rt_url <- append_to_url(domain, "robots.txt")
+    resp <- try_url(rt_url, "GET")
+    rt_df <- parse_try_url(resp, content = list(as = "text"))
+
+    rt_df
+}
