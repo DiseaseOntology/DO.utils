@@ -51,7 +51,7 @@ validate_url <- function(url, config = httr::user_agent(pkg_user_agent),
 }
 
 
-#' Try a URL
+#' Try a URL (INTERNAL)
 #'
 #' Try to reach a URL with a request of the specified type, capturing R
 #' errors/warnings if they occur.
@@ -91,12 +91,12 @@ try_url <- function(url, type = "HEAD",
 }
 
 
-#' Parse try_url HTTP response
+#' Parse try_url response (INTERNAL)
 #'
 #' Parse an HTTP response from [try_url()], including any potential R errors.
 #' _Currently only works for HEAD and GET requests._
 #'
-#' @param resp The response from `try_url()`.
+#' @param resp A response from [try_url()].
 #' @param include_resp Whether the full HTTP response should be included in
 #'     the `tibble` as a list column, `TRUE` (default) or `FALSE`.
 #' @param content Arguments used to extract `GET` content, as a named list
