@@ -145,16 +145,14 @@ parse_try_url <- function(resp, include_resp = TRUE, content = NULL) {
         }
 
     } else {
-        last_url <- purrr::map(resp$all_headers, ~ .x$headers$location) %>%
-            unlist() %>%
-            tail(1)
+        last_url <- extract_resp_url(resp, "last")
         resp_tidy <- tibble::tibble(
-            url = resp$url,
+            url = extract_resp_url(resp, "first"),
             status = httr::http_status(resp)$category,
             status_code = httr::status_code(resp),
             # include redirect URL, where applicable
             redirect_url = dplyr::if_else(
-                is.null(last_url) || last_url == resp$url,
+                is.null(last_url) || last_url == url,
                 NA_character_,
                 last_url
             )
