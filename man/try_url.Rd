@@ -2,7 +2,7 @@
 % Please edit documentation in R/validate_url.R
 \name{try_url}
 \alias{try_url}
-\title{Try a URL}
+\title{Try a URL (INTERNAL)}
 \usage{
 try_url(url, type = "HEAD", config = httr::user_agent(pkg_user_agent), ...)
 }

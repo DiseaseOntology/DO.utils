@@ -2,12 +2,12 @@
 % Please edit documentation in R/validate_url.R
 \name{parse_try_url}
 \alias{parse_try_url}
-\title{Parse try_url HTTP response}
+\title{Parse try_url response (INTERNAL)}
 \usage{
 parse_try_url(resp, include_resp = TRUE, content = NULL)
 }
 \arguments{
-\item{resp}{The response from \code{try_url()}.}
+\item{resp}{A response from \code{\link[=try_url]{try_url()}}.}
 
 \item{include_resp}{Whether the full HTTP response should be included in
 the \code{tibble} as a list column, \code{TRUE} (default) or \code{FALSE}.}

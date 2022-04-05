@@ -2,13 +2,21 @@
 % Please edit documentation in R/parse.R
 \name{parse_url}
 \alias{parse_url}
-\title{Parse URLs}
+\title{Parse URL (INTERNAL)}
 \usage{
 parse_url(url)
 }
-\description{
-Parses URLs into protocol, domain, and path components. From
-\code{robotstxt:::parse_url()} (MIT license, \href{https://github.com/ropensci/robotstxt/blob/master/LICENSE}{copyright Peter Meissner}), with
-slight modification.
+\arguments{
+\item{url}{One or more URLs, as a character vector.}
 }
+\description{
+Parses one or more URL(s) into protocol, domain, and path components.
+}
+\section{Provenance}{
+
+This function is originally from \code{robotstxt:::parse_url()} (MIT license,
+\href{https://github.com/ropensci/robotstxt/blob/master/LICENSE}{copyright Peter Meissner}),
+with slight modification.
+}
+
 \keyword{internal}
