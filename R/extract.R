@@ -1,3 +1,80 @@
+#' Extract Subtree
+#'
+#' Extracts the classes and parents of a DO subtree from a `pyDOID.owl.xml`
+#' object.
+#'
+#' @inheritParams establish_owl_xml
+#' @param top_node The top node of the tree, as a valid DOID (see
+#'     [is_valid_doid()] for valid input formats).
+#' @param reload Force reload the file into memory, as `TRUE` or `FALSE`
+#'     (default).
+#'
+#' @returns
+#' A [tibble](tibble::tibble) with the columns: `id`, `label`, `parent_id`,
+#' and `parent_label`, with one row for each unique combination for each
+#' subclass below and including `top_node`.
+#'
+#' @export
+extract_subtree <- function(x, top_node, reload = FALSE) {
+    owl <- establish_owl_xml(x)
+    assert_string(top_node)
+
+    top_class <- format_doid(top_node, as = "obo_CURIE")
+    q <- glue::glue(subtree_query_glue)
+    subtree <- owl$query(q, reload = reload) %>%
+        tibble::as_tibble()
+
+    subtree
+}
+
+
+#' Extract URLs in DO (INTERNAL)
+#'
+#' Extract URLs from the doid-edit.owl file of the Human Disease Ontology.
+#'
+#' @param doid_edit The contents of the doid-edit.owl file, as a character
+#'     vector (as provided by [read_doid_edit()]).
+#' @param include_obsolete Whether URLs associated with obsolete terms should
+#'     be included, as a boolean (default: `FALSE`).
+#' @param w_raw_match Whether to include the full line of doid-edit.owl where
+#'     each URL was extracted from, as a boolean (default: `FALSE`).
+#'
+#' @return
+#' A tibble of DOIDs and their associated URLs.
+extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
+                             w_raw_match = FALSE) {
+    doid_w_url <- doid_edit[has_doid_url(doid_edit)]
+
+    df <- tibble::tibble(
+        raw_match = doid_w_url,
+        doid = stringr::str_extract(doid_w_url, "DOID[:_][0-9]+"),
+        url_str = stringr::str_extract_all(doid_w_url, 'url:[^"]+"')
+    )
+
+    # tidy
+    df <- df %>%
+        tidyr::unnest_longer(.data$url_str) %>%
+        dplyr::mutate(
+            doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
+            url = stringr::str_remove_all(.data$url_str, '^url:|"'),
+            url_str = NULL
+        )
+
+    if (!isTRUE(include_obsolete)) {
+        obs <- identify_obsolete(doid_edit)
+        df <- dplyr::filter(df, !.data$doid %in% obs)
+    }
+
+    if (!isTRUE(w_raw_match)) {
+        df <- dplyr::select(df, -.data$raw_match)
+    }
+
+    df
+}
+
+
+# Extract from PubMed-derived objects -------------------------------------
+
 #' Extract PubMed ID
 #'
 #' `extract_pmid` is a generic function that extracts PubMed IDs.
@@ -234,50 +311,13 @@ extract_pm_date <- function(citation) {
 }
 
 
-#' Extract URLs in DO (INTERNAL)
-#'
-#' Extract URLs from the doid-edit.owl file of the Human Disease Ontology.
-#'
-#' @param doid_edit The contents of the doid-edit.owl file, as a character
-#'     vector (as provided by [read_doid_edit()]).
-#' @param include_obsolete Whether URLs associated with obsolete terms should
-#'     be included, as a boolean (default: `FALSE`).
-#' @param w_raw_match Whether to include the full line of doid-edit.owl where
-#'     each URL was extracted from, as a boolean (default: `FALSE`).
-#'
-#' @return
-#' A tibble of DOIDs and their associated URLs.
-extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
-                             w_raw_match = FALSE) {
-    doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
-    df <- tibble::tibble(
-        raw_match = doid_w_url,
-        doid = stringr::str_extract(doid_w_url, "DOID[:_][0-9]+"),
-        url_str = stringr::str_extract_all(doid_w_url, 'url:[^"]+"')
-    )
 
-    # tidy
-    df <- df %>%
-        tidyr::unnest_longer(.data$url_str) %>%
-        dplyr::mutate(
-            doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
-            url = stringr::str_remove_all(.data$url_str, '^url:|"'),
-            url_str = NULL
-        )
 
-    if (!isTRUE(include_obsolete)) {
-        obs <- identify_obsolete(doid_edit)
-        df <- dplyr::filter(df, !.data$doid %in% obs)
-    }
 
-    if (!isTRUE(w_raw_match)) {
-        df <- dplyr::select(df, -.data$raw_match)
-    }
 
-    df
-}
 
+# Extract from httr::response object --------------------------------------
 
 #' Extract Response URL (INTERNAL)
 #'
@@ -307,37 +347,6 @@ extract_resp_url <- function(x, .which = "last") {
 
     url
 }
-
-
-#' Extract Subtree
-#'
-#' Extracts the classes and parents of a DO subtree from a `pyDOID.owl.xml`
-#' object.
-#'
-#' @inheritParams establish_owl_xml
-#' @param top_node The top node of the tree, as a valid DOID (see
-#'     [is_valid_doid()] for valid input formats).
-#' @param reload Force reload the file into memory, as `TRUE` or `FALSE`
-#'     (default).
-#'
-#' @returns
-#' A [tibble](tibble::tibble) with the columns: `id`, `label`, `parent_id`,
-#' and `parent_label`, with one row for each unique combination for each
-#' subclass below and including `top_node`.
-#'
-#' @export
-extract_subtree <- function(x, top_node, reload = FALSE) {
-    owl <- establish_owl_xml(x)
-    assert_string(top_node)
-
-    top_class <- format_doid(top_node, as = "obo_CURIE")
-    q <- glue::glue(subtree_query_glue)
-    subtree <- owl$query(q, reload = reload) %>%
-        tibble::as_tibble()
-
-    subtree
-}
-
 
 # modified from httr2:::resp_retry_after (MIT license, copyright httr2 authors,
 # https://github.com/r-lib/httr2/blob/main/LICENSE.md)
