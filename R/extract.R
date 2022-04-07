@@ -293,13 +293,17 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 extract_resp_url <- function(x, .which = "last") {
     .which <- match.arg(.which, c("last", "first"))
 
-        if (.which == "first") {
-            url <- x$request$url
-        } else {
-            url <- purrr::map(x$all_headers, ~ .x$headers$location) %>%
-                unlist() %>%
-                tail(1)
+    if (.which == "first") {
+        url <- x$request$url
+    } else {
+        all_url <- purrr::map(x$all_headers, ~ .x$headers$location) %>%
+            unlist()
+        url <- tail(all_url, 1)
+        # convert relative URL paths to absolute
+        if (stringr::str_detect(url, "^/")) {
+            url <- append_to_url(all_url[1], url)
         }
+    }
 
     url
 }
