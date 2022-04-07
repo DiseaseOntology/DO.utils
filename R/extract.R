@@ -337,3 +337,24 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 
     subtree
 }
+
+
+# modified from httr2:::resp_retry_after (MIT license, copyright httr2 authors,
+# https://github.com/r-lib/httr2/blob/main/LICENSE.md)
+extract_retry_after <- function(x) {
+    after <- x$headers["Retry-After"]
+    if (is.null(after)) {
+        NA
+    }
+    else if (grepl(" ", val)) {
+        diff <- difftime(
+            httr::parse_http_date(after),
+            httr::parse_http_date(x$headers["Date"]),
+            units = "secs"
+        )
+        as.numeric(diff)
+    }
+    else {
+        as.numeric(after)
+    }
+}
