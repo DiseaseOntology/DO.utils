@@ -29,4 +29,15 @@ license, \href{https://github.com/ropensci/robotstxt/blob/master/LICENSE}{copyri
 with slight modification.
 }
 
+\examples{
+url <- c(
+    "http://user:pass@www.sub.domain.com:80/path/page?query=value#fragment",
+    "https://disease-ontology.org/community/publications",
+    "http://books.google.com/books?id=Z_z1R9SO8iMC&pg=PA258#v=onepage&q=&f=false"
+)
+
+parse_url(url)
+parse_url(url, how = "complete")
+
+}
 \keyword{internal}

@@ -20,17 +20,15 @@
 #' formatted as a [tibble][tibble::tibble].
 #'
 #' @examples
-url <- c(
-    "http://user:pass@www.sub.domain.com:80/path/page?query=value#fragment",
-    "https://disease-ontology.org/community/publications",
-    "http://books.google.com/books?id=Z_z1R9SO8iMC&pg=PA258#v=onepage&q=&f=false"
-)
-
-parse_url(
-)
-parse_url(
-    "http://www.rarediseases.org/search/rdbdetail_abstract.html?disname=LADD%20Syndrome"
-)
+#' url <- c(
+#'     "http://user:pass@www.sub.domain.com:80/path/page?query=value#fragment",
+#'     "https://disease-ontology.org/community/publications",
+#'     "http://books.google.com/books?id=Z_z1R9SO8iMC&pg=PA258#v=onepage&q=&f=false"
+#' )
+#'
+#' parse_url(url)
+#' parse_url(url, how = "complete")
+#'
 #' @keywords internal
 parse_url <- function(url, how = "basic") {
     assert_character(url)
