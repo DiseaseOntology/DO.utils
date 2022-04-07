@@ -1,24 +1,55 @@
 #' Parse URL (INTERNAL)
 #'
-#' Parses one or more URL(s) into protocol, domain, and path components.
+#' Parses one or more URL(s) into its constituent components.
 #'
 #' @section Provenance:
-#' This function is originally from `robotstxt:::parse_url()` (MIT license,
-#' [copyright Peter Meissner](https://github.com/ropensci/robotstxt/blob/master/LICENSE)),
+#' This `how = "basic"` code is originally from `robotstxt:::parse_url()` (MIT
+#' license, [copyright Peter
+#' Meissner](https://github.com/ropensci/robotstxt/blob/master/LICENSE)),
 #' with slight modification.
 #'
 #' @param url One or more URLs, as a character vector.
+#' @param how The approach to use for parsing, either "basic" or "complete".
 #'
+#' @returns
+#' For "basic", a [tibble][tibble::tibble], with `scheme`, `domain`, and `path`
+#' columns.
+#'
+#' For "complete", a `parsed_url_tbl` with a column/list-column for every
+#' component of the URL; in essence, the output of [httr::parse_url()]
+#' formatted as a [tibble][tibble::tibble].
+#'
+#' @examples
+url <- c(
+    "http://user:pass@www.sub.domain.com:80/path/page?query=value#fragment",
+    "https://disease-ontology.org/community/publications",
+    "http://books.google.com/books?id=Z_z1R9SO8iMC&pg=PA258#v=onepage&q=&f=false"
+)
+
+parse_url(
+)
+parse_url(
+    "http://www.rarediseases.org/search/rdbdetail_abstract.html?disname=LADD%20Syndrome"
+)
 #' @keywords internal
-parse_url <- function(url) {
-    match <- stringr::str_match(string = url, pattern = "(^\\w+://)?([^/]+)?(/.*)?")
-    match <- match[, -1, drop = FALSE]
-    df <- tibble::as_tibble(
-        match,
-        .name_repair = ~c("protocol", "domain", "path")
-    ) %>%
-        tidyr::replace_na(replace = list(path = ""))
-    df
+parse_url <- function(url, how = "basic") {
+    assert_character(url)
+    how <- match.arg(how, c("basic", "complete"))
+
+    if (how == "complete") {
+        .tbl <- purrr::map(url, ~ as_tibble(httr::parse_url(.x))) %>%
+            dplyr::bind_rows()
+    } else {
+        match <- stringr::str_match(string = url, pattern = "(^\\w+://)?([^/]+)?(/.*)?")
+        match <- match[, -1, drop = FALSE]
+        .tbl <- tibble::as_tibble(
+            match,
+            .name_repair = ~c("scheme", "domain", "path")
+        ) %>%
+            tidyr::replace_na(replace = list(path = ""))
+    }
+
+    .tbl
 }
 
 

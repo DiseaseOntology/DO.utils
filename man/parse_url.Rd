@@ -4,18 +4,28 @@
 \alias{parse_url}
 \title{Parse URL (INTERNAL)}
 \usage{
-parse_url(url)
+parse_url(url, how = "basic")
 }
 \arguments{
 \item{url}{One or more URLs, as a character vector.}
+
+\item{how}{The approach to use for parsing, either "basic" or "complete".}
+}
+\value{
+For "basic", a \link[tibble:tibble]{tibble}, with \code{scheme}, \code{domain}, and \code{path}
+columns.
+
+For "complete", a \code{parsed_url_tbl} with a column/list-column for every
+component of the URL; in essence, the output of \code{\link[httr:parse_url]{httr::parse_url()}}
+formatted as a \link[tibble:tibble]{tibble}.
 }
 \description{
-Parses one or more URL(s) into protocol, domain, and path components.
+Parses one or more URL(s) into its constituent components.
 }
 \section{Provenance}{
 
-This function is originally from \code{robotstxt:::parse_url()} (MIT license,
-\href{https://github.com/ropensci/robotstxt/blob/master/LICENSE}{copyright Peter Meissner}),
+This \code{how = "basic"} code is originally from \code{robotstxt:::parse_url()} (MIT
+license, \href{https://github.com/ropensci/robotstxt/blob/master/LICENSE}{copyright Peter Meissner}),
 with slight modification.
 }
 
