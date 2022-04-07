@@ -70,3 +70,12 @@ as_tibble.scopus_search_list <- function(x, ...) {
         purrr::set_names(nm = names(x)) %>%
         dplyr::bind_rows(.id = "cites")
 }
+
+#' @export
+as_tibble.url <- function(x, ...) {
+    .l <- replace_null(x, NA)
+    .tbl <- tibble:::as_tibble.list(.l)
+    class(.tbl) <- append("parsed_url_tbl", class(.tbl))
+
+    .tbl
+}
