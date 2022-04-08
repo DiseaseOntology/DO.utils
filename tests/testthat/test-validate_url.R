@@ -1,7 +1,5 @@
 test_that("validate_url() works", {
-    if(!curl::has_internet()) {
-        skip("No internet connection.")
-    }
+    check_internet()
 
     res <- validate_url("disease-ontology.org")
     expect_equal(
