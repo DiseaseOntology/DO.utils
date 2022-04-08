@@ -19,4 +19,9 @@ with \code{\link[httr:config]{config()}}.}
 Try to reach a URL with a request of the specified type, capturing R
 errors/warnings if they occur.
 }
+\section{Note}{
+
+If not specified, a DO.utils-specific user agent is used for requests.
+}
+
 \keyword{internal}

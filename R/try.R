@@ -7,6 +7,9 @@
 #' @param type The HTTP request type, as a string.
 #' @inheritParams httr::HEAD
 #'
+#' @section Note:
+#' If not specified, a DO.utils-specific user agent is used for requests.
+#'
 #' @keywords internal
 try_url <- function(url, type = "HEAD", ...) {
     type <- match.arg(
