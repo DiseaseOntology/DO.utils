@@ -348,26 +348,65 @@ extract_resp_url <- function(x, .which = "last") {
     url
 }
 
-# modified from httr2:::resp_retry_after (MIT license, copyright httr2 authors,
-# https://github.com/r-lib/httr2/blob/main/LICENSE.md)
-#
-# NOTE: httr converts headers to lowercase (no idea why), but it applies the
-#   "insensitive" class and has indexing methods so standard headers can be
-#   extracted.
-extract_retry_after <- function(x) {
-    after <- x$headers["Retry-After"]
-    if (is.null(after)) {
-        NA
+
+#' Extract Retry-After (INTERNAL)
+#'
+#' Extract "Retry-After" header from an [httr::response] object.
+#'
+#' @param x An [httr::response] object.
+#' @param format The format to return the header in, as a string. Either
+#'     "sec", meaning in seconds, or "datetime", meaning the datetime after
+#'     which the request can be retried.
+#'
+#' @section Provenance:
+#' modified from httr2:::resp_retry_after (MIT license, copyright httr2 authors,
+#' https://github.com/r-lib/httr2/blob/main/LICENSE.md)
+#'
+#' @section Note:
+#' httr converts headers to lowercase (no idea why), but it applies the
+#'     "insensitive" class and has indexing methods so standard headers can be
+#'     extracted.
+#'
+#' @returns
+#' For "sec", an integer. For "datetime", a POSIXct scalar.
+#'
+#' @keywords internal
+extract_retry_after <- function(x, format = "sec") {
+    format <- match.arg(format, c("sec", "datetime"))
+
+    req_dt <- httr::parse_http_date(x$headers[["Date"]])
+    raw_ra <- x$headers[["Retry-After"]]
+
+    if (is.null(raw_ra)) {
+        after <- switch(format, sec = NA_integer_, datetime = as.POSIXct(NA))
+        return(after)
     }
-    else if (grepl(" ", val)) {
-        diff <- difftime(
-            httr::parse_http_date(after),
-            httr::parse_http_date(x$headers["Date"]),
-            units = "secs"
+
+    if (grepl(" ", raw_ra)) {
+        parsed_ra <- httr::parse_http_date(raw_ra)
+    } else {
+        parsed_ra <- as.integer(raw_ra)
+    }
+
+    if (format == "sec") {
+        after <- switch(
+            class(parsed_ra)[1],
+            integer = parsed_ra,
+            POSIXct = {
+                diff <- difftime(parsed_ra, req_dt, units = "secs")
+                as.integer(diff)
+            }
         )
-        as.numeric(diff)
+    } else {
+        after <- switch(
+            class(parsed_ra)[1],
+            integer = lubridate::with_tz(
+                req_dt + parsed_ra,
+                tzone = Sys.timezone()
+            ),
+            POSIXct = lubridate::with_tz(parsed_ra, tzone = Sys.timezone())
+        )
     }
-    else {
-        as.numeric(after)
-    }
+
+    after
 }
