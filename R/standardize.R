@@ -26,7 +26,7 @@ standardize_www_duplicate <- function(url, how = "remove") {
     replaced <- dplyr::mutate(
         url_df,
         tmp = cast_to_string(
-            protocol,
+            scheme,
             dplyr::if_else(.data$www_dup, new_dom, domain),
             path,
             delim = "",
