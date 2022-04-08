@@ -311,10 +311,31 @@ extract_pm_date <- function(citation) {
 }
 
 
+extract_robots_delay <- function(robxp, user_agent = NULL, default = 2L) {
+    # default: check for all versions of DO.utils agent
+    if (is.null(user_agent)) {
+        user_agent <- DO_agent("all")
+    }
 
+    delay <- spiderbar::crawl_delays(robxp) %>%
+        tibble::as_tibble() %>%
+        dplyr::filter(crawl_delay >= 0)
 
+    if (nrow(delay) == 0) {
+        return(default)
+    }
 
+    ua_delay <- dplyr::filter(delay, agent %in% user_agent)
+    if (nrow(ua_delay) == 0 && user_agent != "*") {
+        ua_delay <- dplyr::filter(delay, agent == "*")
+    }
 
+    if (nrow(ua_delay) > 0) {
+        max(ua_delay$crawl_delay)
+    } else {
+        default
+    }
+}
 
 
 # Extract from httr::response object --------------------------------------
