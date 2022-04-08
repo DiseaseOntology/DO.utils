@@ -325,7 +325,12 @@ extract_robots_delay <- function(robxp, user_agent = NULL, default = 2L) {
         return(default)
     }
 
-    ua_delay <- dplyr::filter(delay, agent %in% user_agent)
+    # add lowercase version of user agent (spiderbar may only return lowercase)
+    ua <- append(user_agent, stringr::str_to_lower(user_agent))
+
+    ua_delay <- dplyr::filter(delay, agent %in% ua)
+
+    # always check "*" if specified agent not found
     if (nrow(ua_delay) == 0 && user_agent != "*") {
         ua_delay <- dplyr::filter(delay, agent == "*")
     }
