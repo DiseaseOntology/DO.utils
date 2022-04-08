@@ -4,20 +4,10 @@
 \alias{validate_url}
 \title{Validate a URL}
 \usage{
-validate_url(
-  url,
-  config = httr::user_agent(pkg_user_agent),
-  include_resp = TRUE,
-  ...
-)
+validate_url(url, include_resp = TRUE, ...)
 }
 \arguments{
 \item{url}{The url to test, as a string.}
-
-\item{config}{Additional configuration settings such as http
-authentication (\code{\link[httr:authenticate]{authenticate()}}), additional headers
-(\code{\link[httr:add_headers]{add_headers()}}), cookies (\code{\link[httr:set_cookies]{set_cookies()}}) etc.
-See \code{\link[httr:config]{config()}} for full details and list of helpers.}
 
 \item{include_resp}{Whether the full HTTP response should be included in
 the \code{tibble} as a list column, \code{TRUE} (default) or \code{FALSE}.}

@@ -9,11 +9,10 @@
 #' @returns See [parse_try_url()] documentation.
 #'
 #' @export
-validate_url <- function(url, config = httr::user_agent(pkg_user_agent),
-                         include_resp = TRUE, ...) {
+validate_url <- function(url, include_resp = TRUE, ...) {
 
     # handle URLs where server cannot be reached
-    resp <- try_url(url, config = config, ...)
+    resp <- try_url(url, ...)
     res_df <- parse_try_url(resp, include_resp = include_resp)
 
     res_df

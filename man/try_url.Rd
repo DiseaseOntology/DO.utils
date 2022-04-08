@@ -4,15 +4,16 @@
 \alias{try_url}
 \title{Try a URL (INTERNAL)}
 \usage{
-try_url(url, type = "HEAD", config = httr::user_agent(pkg_user_agent), ...)
+try_url(url, type = "HEAD", ...)
 }
 \arguments{
 \item{url}{URL to try, as a string.}
 
 \item{type}{The HTTP request type, as a string.}
 
-\item{...}{Arguments passed on to the corresponding \href{httr::httr}{httr}
-request function.}
+\item{...}{Further named parameters, such as \code{query}, \code{path}, etc,
+passed on to \code{\link[httr:modify_url]{modify_url()}}. Unnamed parameters will be combined
+with \code{\link[httr:config]{config()}}.}
 }
 \description{
 Try to reach a URL with a request of the specified type, capturing R

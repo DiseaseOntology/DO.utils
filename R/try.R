@@ -5,12 +5,10 @@
 #'
 #' @param url URL to try, as a string.
 #' @param type The HTTP request type, as a string.
-#' @param ... Arguments passed on to the corresponding [httr](httr::httr)
-#'     request function.
+#' @inheritParams httr::HEAD
 #'
 #' @keywords internal
-try_url <- function(url, type = "HEAD",
-                    config = httr::user_agent(pkg_user_agent), ...) {
+try_url <- function(url, type = "HEAD", ...) {
     type <- match.arg(
         type,
         c("HEAD", "GET", "POST", "PATCH", "PUT", "DELETE")
@@ -25,8 +23,10 @@ try_url <- function(url, type = "HEAD",
         DELETE = httr::DELETE
     )
 
+    # add DO_agent (if none specified)
+    params <- purrr::prepend(list(...), httr::user_agent(DO_agent("full")))
     tryCatch(
-        request(url, config = config, ...),
+        request(url, params),
         condition = function(c) {
             list(
                 url = url,
