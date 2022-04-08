@@ -1,0 +1,10 @@
+# FAKE robots.txt for testing
+
+User-agent: *
+Crawl-delay: 10
+Disallow: /no-one-go-here
+
+User-agent: DO.utils
+Crawl-delay: 5
+Disallow: /no-one-go-here
+Disallow: /DO.utils-avoid-here-too
