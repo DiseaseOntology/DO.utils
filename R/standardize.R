@@ -1,7 +1,7 @@
 #' Standardize "www" in URLs
 #'
 #' Standardizes "www" in URLs by removing or adding it when URLs of a domain
-#' exhibit mixed usage (some with, others without).
+#' exhibit mixed usage (some with "www" AND others without).
 #'
 #' @inheritParams parse_url
 #' @param how How "www" should be handled. One of "remove" (default) or "add".
@@ -17,22 +17,22 @@ standardize_www_duplicate <- function(url, how = "remove") {
         }
     )
     url_df <- parse_url(url) %>%
+        dplyr::mutate(new_dom = replace_domain(.data$domain)) %>%
+        dplyr::group_by(new_dom) %>%
+        dplyr::mutate(www_dup = dplyr::n_distinct(domain) > 1) %>%
+        dplyr::ungroup()
+
+    replaced <- url_df %>%
+        dplyr::rowwise() %>%
         dplyr::mutate(
-            new_dom = replace_domain(.data$domain),
-            www_dup = all_duplicated(.data$new_dom)
-        ) %>%
-        dplyr::rowwise()
-
-    replaced <- dplyr::mutate(
-        url_df,
-        tmp = cast_to_string(
-            scheme,
-            dplyr::if_else(.data$www_dup, new_dom, domain),
-            path,
-            delim = "",
-            na.rm = TRUE
+            std_url = cast_to_string(
+                scheme,
+                dplyr::if_else(.data$www_dup, new_dom, domain),
+                path,
+                delim = "",
+                na.rm = TRUE
+            )
         )
-    )$tmp
 
-    replaced
+    replaced$std_url
 }
