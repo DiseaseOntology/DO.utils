@@ -9,15 +9,13 @@
 #' @export
 standardize_www_duplicate <- function(url, how = "remove") {
     how <- match.arg(how, c("remove", "add"))
-    replace_domain <- switch(
+    standardize <- switch(
         how,
-        remove = function(x) stringr::str_remove(x, "^www\\."),
-        add = function(x) {
-            stringr::str_replace(x, "^(www\\.)?", "www\\.")
-        }
+        remove = remove_www,
+        add = add_www
     )
     url_df <- parse_url(url) %>%
-        dplyr::mutate(new_dom = replace_domain(.data$domain)) %>%
+        dplyr::mutate(new_dom = standardize(.data$domain)) %>%
         dplyr::group_by(new_dom) %>%
         dplyr::mutate(www_dup = dplyr::n_distinct(domain) > 1) %>%
         dplyr::ungroup()
@@ -35,4 +33,16 @@ standardize_www_duplicate <- function(url, how = "remove") {
         )
 
     replaced$std_url
+}
+
+
+
+# helpers -----------------------------------------------------------------
+
+remove_www <- function(url) {
+    stringr::str_remove(url, "^www\\.")
+}
+
+add_www <- function(url) {
+    stringr::str_replace(url, "^(www\\.)?", "www\\.")
 }
