@@ -28,12 +28,11 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 }
 
 
-#' Extract URLs in DO (INTERNAL)
+#' Extract URLs in DO
 #'
 #' Extract URLs from the doid-edit.owl file of the Human Disease Ontology.
 #'
-#' @param doid_edit The contents of the doid-edit.owl file, as a character
-#'     vector (as provided by [read_doid_edit()]).
+#' @inheritParams read_doid_edit
 #' @param include_obsolete Whether URLs associated with obsolete terms should
 #'     be included, as a boolean (default: `FALSE`).
 #' @param w_raw_match Whether to include the full line of doid-edit.owl where
@@ -41,8 +40,11 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 #'
 #' @return
 #' A tibble of DOIDs and their associated URLs.
-extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
+#'
+#' @export
+extract_doid_url <- function(DO_repo, include_obsolete = FALSE,
                              w_raw_match = FALSE) {
+    doid_edit <- read_doid_edit(DO_repo)
     doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
     df <- tibble::tibble(

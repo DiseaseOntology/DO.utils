@@ -2,13 +2,13 @@
 % Please edit documentation in R/extract.R
 \name{extract_doid_url}
 \alias{extract_doid_url}
-\title{Extract URLs in DO (INTERNAL)}
+\title{Extract URLs in DO}
 \usage{
-extract_doid_url(doid_edit, include_obsolete = FALSE, w_raw_match = FALSE)
+extract_doid_url(DO_repo, include_obsolete = FALSE, w_raw_match = FALSE)
 }
 \arguments{
-\item{doid_edit}{The contents of the doid-edit.owl file, as a character
-vector (as provided by \code{\link[=read_doid_edit]{read_doid_edit()}}).}
+\item{DO_repo}{The local path to the \code{HumanDiseaseOntology} repo, as a
+string.}
 
 \item{include_obsolete}{Whether URLs associated with obsolete terms should
 be included, as a boolean (default: \code{FALSE}).}
