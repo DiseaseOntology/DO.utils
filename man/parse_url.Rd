@@ -2,7 +2,7 @@
 % Please edit documentation in R/parse.R
 \name{parse_url}
 \alias{parse_url}
-\title{Parse URL (INTERNAL)}
+\title{Parse URL}
 \usage{
 parse_url(url, how = "basic")
 }
@@ -40,4 +40,3 @@ parse_url(url)
 parse_url(url, how = "complete")
 
 }
-\keyword{internal}

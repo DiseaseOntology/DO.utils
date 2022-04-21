@@ -1,4 +1,4 @@
-#' Parse URL (INTERNAL)
+#' Parse URL
 #'
 #' Parses one or more URL(s) into its constituent components.
 #'
@@ -29,7 +29,7 @@
 #' parse_url(url)
 #' parse_url(url, how = "complete")
 #'
-#' @keywords internal
+#' @export
 parse_url <- function(url, how = "basic") {
     assert_character(url)
     how <- match.arg(how, c("basic", "complete"))
