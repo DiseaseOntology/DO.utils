@@ -15,4 +15,3 @@ standardize_www_duplicate(url, how = "remove")
 Standardizes "www" in URLs by removing or adding it when URLs of a domain
 exhibit mixed usage (some with "www" AND others without).
 }
-\keyword{internal}
