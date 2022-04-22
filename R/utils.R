@@ -16,7 +16,7 @@ DO_agent <- function(type = "full") {
 
     .nm <- "DO.utils"
     .vers <- paste0(.nm, "/", as.character(utils::packageVersion("DO.utils")))
-    .full <- paste0(.vers, " (+https:://github.com/allenbaron/DO.utils)")
+    .full <- paste0(.vers, " (https://github.com/allenbaron/DO.utils)")
 
     switch(
         type,
