@@ -20,6 +20,10 @@ There are two possible fixes:
 1. Fork `httr` on Github and implement pull request [#620](https://github.com/r-lib/httr/pull/620). This solution is less than ideal but one I've had to use before (e.g. `rentrez`). In that case, there was no alternative code in development.
 2. Migrate everything to `httr2`. There are some benefits to using `httr2` over `httr` but nothing that appeared to supersede the initial concern about it's stability and, like `httr`, it did not appear to support multiple requests. After further searching, `httr2` does appear to support multiple requests in a specific form via [`multi_req_perform()`](https://httr2.r-lib.org/reference/multi_req_perform.html). It's not clear if this should be implemented or not.
 
-### DECISION
+### Additional Commentary
 
-[2022-04-22] There is evidence for lack of support for `httr` and maintaining a fork could present a real challenge, while `httr2` is in active development and likely only to improve. Given the similarities between `httr` and `httr2` it seems that `httr2` can serve as a drop-in replacement. Given all these considerations, I will **replace `httr` with `httr2` throughout DO.utils.
+[2022-04-22] It would appear that `httr2` suffers from a [similar problem](https://github.com/r-lib/httr2/issues/127) to `httr` and a number of other issues that are [not likely to be fixed in the near future](https://github.com/r-lib/httr2/issues/118#issuecomment-1086115636).
+
+## DECISION
+
+At this time, `httr` remains more stable and tested, making it the better choice.
