@@ -313,7 +313,7 @@ extract_pm_date <- function(citation) {
 }
 
 
-extract_robots_delay <- function(robxp, user_agent = NULL, default = 2L) {
+extract_robots_delay <- function(robxp, user_agent = NULL) {
     # default: check for all versions of DO.utils agent
     if (is.null(user_agent)) {
         user_agent <- DO_agent("all")
@@ -324,7 +324,7 @@ extract_robots_delay <- function(robxp, user_agent = NULL, default = 2L) {
         dplyr::filter(crawl_delay >= 0)
 
     if (nrow(delay) == 0) {
-        return(default)
+        return(NA_integer_)
     }
 
     # add lowercase version of user agent (spiderbar may only return lowercase)
@@ -340,7 +340,7 @@ extract_robots_delay <- function(robxp, user_agent = NULL, default = 2L) {
     if (nrow(ua_delay) > 0) {
         max(ua_delay$crawl_delay)
     } else {
-        default
+        NA_integer_
     }
 }
 
