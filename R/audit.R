@@ -31,35 +31,66 @@ init_domain_repo <- function(domain, check_robots, delay = 5, ...) {
     repo
 }
 
-init_domain_repo_ <- function(domain, check_robots, delay = 5L, ...) {
-    # assert_string(domain)
-    # assert_scalar_logical(check_robots)
+# Singular version of `init_domain_repo`
+init_domain_repo_ <- function(domain, check_robots, delay) {
+    assert_string(domain)
+    assert_scalar_logical(check_robots)
+    assert_numeric(delay)
+
+    repo <- list(
+        domain = domain,
+        robots = NULL,
+        delay = NULL,
+        had_error = NULL,
+        wait_until = NULL,
+        n_429 = 0L,
+        url_total = NULL,
+        url_remaining = NULL,
+        last = NULL
+    )
 
     if (check_robots) {
-        repo <- list(
-            domain = domain,
-            robotstxt = robotstxt::robotstxt(domain = domain, ...)
-        )
-        repo <- append(
-            repo,
-            list(
-                last_delay = get_delay(repo$rt, default = delay),
-                last_status = NULL,
-                url_total = NULL,
-                url_remaining = NULL,
-                wait_until = NULL
+        repo$last <- try_robots_txt(domain)
+
+        if (repo$last$status == "Success") {
+            # parse robots + robxp
+            repo$robots <- list(
+                txt = repo$last$content[[1]],
+                robxp = spiderbar::robxp(repo$last$content[[1]])
             )
-        )
-    } else {
-        repo <- list(
-            domain = domain,
-            rt = NULL,
-            last_delay = delay,
-            last_status = NULL,
-            url_total = NULL,
-            url_remaining = NULL,
-            wait_until = NULL
-        )
+            repo$robots$delay = extract_robots_delay(repo$robots$robxp)
+            repo$delay <- dplyr::coalesce(repo$robots$delay, delay)
+        } else if (repo$last$status_code == 404) {
+            repo$robots <- NA
+            repo$delay <- delay
+        } else if (repo$last$status_code %in% c(429, 503)) {
+            repo$robots <- "retry"
+            repo$wait_until <- extract_retry_after(
+                repo$last$response[[1]],
+                format = "datetime"
+            )
+
+            if (is.na(repo$wait_until)) {
+                repo$wait_until <- Sys.time() + delay
+            }
+        } else {
+            repo$last <- validate_url(domain)
+
+            if (repo$last$status_code == "Success" ||
+                    repo$last$status_code %in% c(429, 503)) {
+                repo$robots <- "retry"
+                repo$wait_until <- extract_retry_after(
+                    repo$last$response[[1]],
+                    format = "datetime"
+                )
+
+                if (is.na(repo$wait_until)) {
+                    repo$wait_until <- Sys.time() + delay
+                }
+            } else {
+                repo$had_error <- TRUE
+            }
+        }
     }
 
     class(repo) <- c("domain_repo", class(repo))
