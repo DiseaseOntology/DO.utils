@@ -91,16 +91,15 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
         no_result,
         c("error", "warning", "message", "none")
     )
-    signal <- signal_fxn(no_result)
 
     nm <- names(x$links)
     pm_res <- stringr::str_detect(nm, "_pubmed")
     pm_n <- sum(pm_res)
 
     if (pm_n == 0) {
-        if (!is.null(signal)) {
-            signal(
-                class = "no_result",
+        if (no_result != "none") {
+            rlang::signal(
+                class = c("no_result", no_result),
                 message = "0 PubMed citedby results"
             )
         }
@@ -261,13 +260,4 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
         tibble::as_tibble()
 
     subtree
-}
-
-signal_fxn <- function(x) {
-    switch(
-        x,
-        error = rlang::abort,
-        warning = rlang::warn,
-        message = rlang::inform
-    )
 }
