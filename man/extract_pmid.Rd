@@ -2,17 +2,34 @@
 % Please edit documentation in R/extract.R
 \name{extract_pmid}
 \alias{extract_pmid}
+\alias{extract_pmid.pm_search}
+\alias{extract_pmid.pmc_search}
+\alias{extract_pmid.data.frame}
 \title{Extract PubMed ID}
 \usage{
 extract_pmid(x, ...)
+
+\method{extract_pmid}{pm_search}(x, ...)
+
+\method{extract_pmid}{pmc_search}(x, ...)
+
+\method{extract_pmid}{data.frame}(x, ...)
 }
 \arguments{
-\item{x}{rentrez API result}
+\item{x}{An object.}
 
 \item{...}{Arguments passed on to methods.}
 }
-\description{
-\code{extract_pmid} is a generic function that extracts a vector of PubMed IDs from
-Entrez Utilities API results obtained via the \code{\link[rentrez:rentrez]{rentrez}}
-package.
+\value{
+A character vector of PubMed IDs, except for the \code{extract_pmid.elink_list}
+method which returns a list of PubMed ID character vectors.
 }
+\description{
+\code{extract_pmid} is a generic function that extracts PubMed IDs.
+}
+\seealso{
+Other extract_pmid_methods: 
+\code{\link{extract_pmid.elink_list}()},
+\code{\link{extract_pmid.elink}()}
+}
+\concept{extract_pmid_methods}

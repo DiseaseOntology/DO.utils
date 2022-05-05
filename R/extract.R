@@ -1,22 +1,27 @@
 #' Extract PubMed ID
 #'
-#' `extract_pmid` is a generic function that extracts a vector of PubMed IDs from
-#' Entrez Utilities API results obtained via the [`rentrez`][rentrez::rentrez]
-#' package.
+#' `extract_pmid` is a generic function that extracts PubMed IDs.
 #'
-#' @param x rentrez API result
+#' @param x An object.
 #' @param ... Arguments passed on to methods.
 #'
+#' @returns
+#' A character vector of PubMed IDs, except for the `extract_pmid.elink_list`
+#' method which returns a list of PubMed ID character vectors.
+#'
+#' @family extract_pmid_methods
 #' @export
 extract_pmid <- function(x, ...) {
     UseMethod("extract_pmid")
 }
 
+#' @rdname extract_pmid
 #' @export
 extract_pmid.pm_search <- function(x, ...) {
     x$ids
 }
 
+#' @rdname extract_pmid
 #' @export
 extract_pmid.pmc_search <- function(x, ...) {
     pmids <- x$pmids
@@ -41,6 +46,7 @@ extract_pmid.pmc_search <- function(x, ...) {
     pmids
 }
 
+#' @rdname extract_pmid
 #' @export
 extract_pmid.data.frame <- function(x, ...) {
     df <- dplyr::rename_with(x, .fn = tolower)
@@ -258,6 +264,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 
     df
 }
+
 
 #' Extract Subtree
 #'
