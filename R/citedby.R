@@ -109,7 +109,7 @@ citedby_pubmed <- function(id = NULL, web_history = NULL, by_id = FALSE,
 
     pmid <- extract_pmid(
         pmid_raw,
-        no_results = no_result,
+        no_result = no_result,
         linkname = "pubmed_pubmed_citedin"
     )
 
