@@ -67,6 +67,7 @@ extract_pmid.data.frame <- function(x, ...) {
     pmids
 }
 
+
 #' Extract PubMed ID from elink object
 #'
 #' Extract PubMed ID from an `elink` object.
@@ -77,16 +78,33 @@ extract_pmid.data.frame <- function(x, ...) {
 #' only necessary if more than one `linkname` is returned from PubMed.
 #' @param quietly Suppress PubMed linkname message when `linkname` is not
 #' specified and multiple results exist in an `elink` object.
+#' @param no_result The type of condition that should be signaled when no PubMed
+#'     results exist in a response; one of "error" (default), "warning",
+#'     "message" or "none".
 #' @param ... Unused, included for generic consistency only.
 #'
+#' @family extract_pmid_methods
 #' @export
-extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE, ...) {
+extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
+                               no_result = "error", ...) {
+    no_result <- match.arg(
+        no_result,
+        c("error", "warning", "message", "none")
+    )
+    signal <- signal_fxn(no_result)
+
     nm <- names(x$links)
     pm_res <- stringr::str_detect(nm, "_pubmed")
     pm_n <- sum(pm_res)
 
     if (pm_n == 0) {
-        stop("No PubMed results identified")
+        if (!is.null(signal)) {
+            signal(
+                class = "no_result",
+                message = "0 PubMed citedby results"
+            )
+        }
+        return(NULL)
     }
 
     if (pm_n > 1 && is.null(linkname)) {
@@ -243,4 +261,13 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
         tibble::as_tibble()
 
     subtree
+}
+
+signal_fxn <- function(x) {
+    switch(
+        x,
+        error = rlang::abort,
+        warning = rlang::warn,
+        message = rlang::inform
+    )
 }
