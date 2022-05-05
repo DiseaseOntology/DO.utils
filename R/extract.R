@@ -171,7 +171,9 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
         }
     )
     names(res) <- names(x)
-    res[!purrr::map_lgl(res, is.null)]
+
+    # return only those with results
+    purrr::compact(res)
 }
 
 
