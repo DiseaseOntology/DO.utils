@@ -24,9 +24,9 @@ citedby_scopus(
 REFTITLE() query, as a character vector; see
 https://dev.elsevier.com/sc_search_tips.html.}
 
-\item{by_id}{Whether to split cited by publications by the input title they
+\item{by_id}{Whether to split "cited by" publications by the ID they
 cite, as a boolean (default: \code{TRUE}); \code{FALSE} returns a unified list of
-\emph{unique} cited by publications.}
+\emph{unique} cited by publications \emph{without} reference to the ID they cite.}
 
 \item{id}{Unique IDs used to identify \code{title} input, as a character vector of
 the same length as \code{title}; \emph{REQUIRED} if \code{by_id = TRUE}, otherwise
@@ -65,3 +65,8 @@ list of \code{scopus_search} result lists.
 List Scopus publications citing those specified by \code{title}, optionally split
 \code{by_id}.
 }
+\seealso{
+Other citedby: 
+\code{\link{citedby_pubmed}()}
+}
+\concept{citedby}
