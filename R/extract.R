@@ -145,6 +145,7 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
 #' @family extract_pmid_methods
 #' @export
 extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
+    cond_msg <- NULL
     res <- purrr::map2(
         x,
         names(x),
@@ -153,27 +154,36 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
                 extract_pmid(vals, no_result = no_result, ...),
                 # make no_result message more informative & discard when signaled
                 no_result = function(cond) {
-                    signal_type <- dplyr::nth(class(cond), -2)
-                    if (signal_type == "error") {
-                        msg <- paste0(nm, ": ", cond$message)
+                    cond_type <- dplyr::nth(class(cond), -2)
+                    if (cond_type == "error") {
+                        rlang::signal(
+                            message = paste0(nm, ": ", cond$message),
+                            class = c(class(cond)[1], cond_type)
+                        )
                     } else {
-                        msg <- paste0(nm, ": Discarded, ", cond$message)
+                        cond_msg <<- cond$message
+                        return(NULL)
                     }
-
-                    rlang::signal(
-                        message = msg,
-                        class = c(class(cond)[1], signal_type)
-                    )
-
-                    return(NULL)
                 }
             )
         }
     )
     names(res) <- names(x)
+    # keep only those with results
+    out <- purrr::compact(res)
 
-    # return only those with results
-    purrr::compact(res)
+    if (no_result != "none") {
+        discard <- names(res)[!names(res) %in% names(out)]
+        rlang::signal(
+            message = c(
+                paste0("Discarded (", cond_msg, ")"),
+                discard
+            ),
+            class = c("no_result", no_result)
+        )
+    }
+
+    out
 }
 
 
