@@ -86,14 +86,18 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
         }
 
         if (is.data.frame(x)) {
-            x <- x[[type_both]]
+            x1 <- x[[type_both]]
+        } else {
+            x1 <- x
         }
 
         if (is.data.frame(ref)) {
-            ref <- ref[[type_both]]
+            ref1 <- ref[[type_both]]
+        } else {
+            ref1 <- ref
         }
 
-        match_vctr <- match_carefully(x, ref, nomatch)
+        match_vctr <- match_carefully(x1, ref1, nomatch)
     } else {
         # for both data.frame (guaranteed if length(type_both) > 1)
         types <- priority_sort(type_both, levels = pub_id_types)
