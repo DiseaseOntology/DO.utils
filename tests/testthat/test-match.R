@@ -17,85 +17,87 @@ df_NA <- purrr::map2(
     dplyr::bind_cols()
 
 
-##### CUSTOM TESTSING FUNCTIONS #####
-expect_match_snapshot <- function(id_types, drop1 = FALSE) {
-    df1 <- dplyr::select(df_all, dplyr::all_of({{ id_types }}))
-
-    if (drop1) {
-        id_types <- id_types[-1]
-    }
-    df2 <- dplyr::select(df_NA, dplyr::all_of({{ id_types }}))
-
-    suppressMessages(expect_snapshot(match_citations(df1, df2)))
-}
-
+##### CUSTOM TESTING FUNCTION #####
+# suppresses messages when not being tested
 expect_eq_no_msg <- function(...) {
     suppressMessages(expect_equal(...))
 }
 
+expect_3msg <- function(...) {
+    expect_message(expect_message(expect_message(...)))
+}
+
 
 ##### TESTS #####
-test_that("match_citations message is correct for all possible matches in proper order", {
-    expect_match_snapshot(pub_id_types)
+# Snapshots (messages & values) or Results only
+test_that("match_citations(): works for all possible w/matches (df only)", {
+    expect_snapshot(match_citations(df_all, df_NA))
+    expect_snapshot(match_citations(df_all, rev(df_NA)))
 })
 
-test_that("match_citations message is correct for all possible matches in reverse order", {
-    expect_match_snapshot(rev(pub_id_types))
-})
-
-test_that("match_citations message is correct for the highest priority single match", {
-    expect_match_snapshot(pub_id_types[1])
-})
-
-test_that("match_citations message is correct when 1st match is dropped", {
-    expect_match_snapshot(pub_id_types[1:2], drop1 = TRUE)
-})
-
-test_that("match_citations errors when expected", {
-    # ERRORS
-    # trying to match data.frames without same types
-    expect_error(match_citations(df_all[1], df_NA[2]))
-    # trying to match vectors without same types
-    expect_error(match_citations(df_all[[1]], df_NA[[2]]))
-})
-
-
-test_that("match_citations works for data.frames", {
-    # all ID types
-    expect_eq_no_msg(match_citations(df_all, df_NA), 1:length(df_all))
-    # single ID type
+test_that("match_citations(): works for single, similar type w/matches", {
+    # both df: 1 col each
+    expect_snapshot(match_citations(df_all[2], df_NA[2]))
+    # both df: 2 cols in x but only 1 in ref
+    expect_snapshot(match_citations(df_all[1:2], df_NA[2]))
+    # both vctr
+    expect_snapshot(match_citations(df_all[[3]], df_NA[[3]]))
+    # df vs vector, exact match
     expect_eq_no_msg(
-        match_citations(df_all[-1], df_NA[-1]),
-        c(NA, 2:length(df_all))
+        match_citations(df_all[1], df_all[[1]]),
+        1:nrow(df_all)
     )
-    # same column but no matches --> says matching but no result (make warning?)
+    expect_eq_no_msg(
+        match_citations(df_all[[1]], df_all[1]),
+        1:nrow(df_all)
+    )
+})
+
+test_that("match_citations(): works for single, similar type w/NO matches", {
+    # --> says matching but no result (make warning?)
     df0 <- df_NA[1]
     df0[1] <- NA
     expect_eq_no_msg(
         match_citations(df_all[1], df0),
-        rep(NA_integer_, length(df_all))
+        rep(NA_integer_, nrow(df_all))
     )
 })
 
-
-test_that("match_citations works for vectors", {
-    # most important
-    expect_eq_no_msg(
-        match_citations(df_all[[1]], df_NA[[1]]),
-        c(1, rep(NA, length(df_all) - 1))
-    )
-    # any other at random
-    i <- sample(2:length(df_all), size = 1)
-    res <- rep(NA, length(df_all))
-    res[i] <- i
-    expect_eq_no_msg(match_citations(df_all[[i]], df_NA[[i]]), res)
-})
-
-
-test_that("match_citations add_col works", {
+test_that("match_citations(): add_col works", {
     # most important
     expect_eq_no_msg(
         match_citations(df_all, df_NA, add_col = "match"),
         dplyr::mutate(df_all, match = 1:length(pub_id_types))
     )
+})
+
+
+# Errors
+test_that("match_citations(): errors for data.frames without same types", {
+    expect_error(match_citations(df_all[1], df_all[2]))
+})
+
+test_that("match_citations(): errors for vctrs without same types", {
+    expect_error(match_citations(df_all[[1]], df_all[[2]]))
+})
+
+test_that("match_citations(): errors when df column name != computed type", {
+    expect_error(
+        match_citations(
+            df_all[[1]],
+            # wrong name
+            purrr::set_names(df_all[[2]], names(df_all)[1])
+        )
+    )
+})
+
+test_that("match_citations(): errors when types are mixed", {
+    mix <- dplyr::coalesce(!!!df_NA)
+    # both vctrs
+    expect_error(match_citations(df_all[[1]], mix))
+    expect_error(match_citations(mix, df_all[[1]]))
+    # in df
+    df_mix <- df_all
+    df_mix[2] <- mix
+    expect_3msg(expect_error(match_citations(df_all, df_mix)))
 })

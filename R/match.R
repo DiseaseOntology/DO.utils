@@ -292,7 +292,7 @@ type_pub_id <- function(x) {
     assertthat::assert_that(
         length(id_type) == 1,
         msg = paste0(
-            "All IDs must be of the same type. Types identified: ",
+            "Mixed ID types in vector. Types identified: ",
             vctr_to_string(
                 sort(id_type, na.last = TRUE),
                 delim = ", "

@@ -1,7 +1,7 @@
-# match_citations message is correct for all possible matches in proper order
+# match_citations(): works for all possible w/matches (df only)
 
     Code
-      match_citations(df1, df2)
+      match_citations(df_all, df_NA)
     Message <simpleMessage>
       Matching by types: 
       * pmid
@@ -11,10 +11,10 @@
     Output
       [1] 1 2 3 4
 
-# match_citations message is correct for all possible matches in reverse order
+---
 
     Code
-      match_citations(df1, df2)
+      match_citations(df_all, rev(df_NA))
     Message <simpleMessage>
       Matching by types: 
       * pmid
@@ -24,21 +24,28 @@
     Output
       [1] 1 2 3 4
 
-# match_citations message is correct for the highest priority single match
+# match_citations(): works for single, similar type w/matches
 
     Code
-      match_citations(df1, df2)
-    Message <simpleMessage>
-      Matching by type: pmid
-    Output
-      [1]  1 NA NA NA
-
-# match_citations message is correct when 1st match is dropped
-
-    Code
-      match_citations(df1, df2)
+      match_citations(df_all[2], df_NA[2])
     Message <simpleMessage>
       Matching by type: pmcid
     Output
       [1] NA  2 NA NA
+
+---
+
+    Code
+      match_citations(df_all[1:2], df_NA[2])
+    Message <simpleMessage>
+      Matching by type: pmcid
+    Output
+      [1] NA  2 NA NA
+
+---
+
+    Code
+      match_citations(df_all[[3]], df_NA[[3]])
+    Output
+      [1] NA NA  3 NA
 
