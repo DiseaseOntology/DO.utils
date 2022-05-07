@@ -20,9 +20,9 @@
 #' @param x,ref a vector of PMID, PMCID, DOI, or Scopus IDs; or a "citation"
 #' dataframe with 1 or more of these as columns (column names should correspond
 #' to ID type; case-insensitive)
-#' @param add_col logical; if FALSE (default), returns a vector; if TRUE,
-#' [mutates][dplyr::mutate()] the data.frame by adding a `cite_match` column;
-#' ignored when `x` is a vector
+#' @param add_col The name of the column to add to `x` with the match results,
+#'     as a string, or `NULL` (default) if results should be returned as a
+#'     vector.
 #' @inheritParams base::match
 #'
 #' @return
@@ -32,14 +32,19 @@
 #' `cite_match` integer column identifying match positions in `ref`.
 #'
 #' @export
-match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
+match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
 
     # validate inputs
     assertthat::assert_that(
         is_vctr_or_df(x),
         is_vctr_or_df(ref),
-        is.logical(add_col)
+        is.null(add_col) || rlang::is_string(add_col)
     )
+    if (!is.null(add_col) & !is.data.frame(x)) {
+        rlang::abort(
+            message = "To add results with add_col, x must be a data.frame."
+        )
+    }
 
     if (is.vector(x)) {
         x_type <- type_pub_id(x)
@@ -72,29 +77,27 @@ match_citations <- function(x, ref, add_col = FALSE, nomatch = NA_integer_) {
             ref <- ref[[type_both]]
         }
 
-        match_idx <- match_carefully(x, ref, nomatch)
+        match_vctr <- match_carefully(x, ref, nomatch)
+    } else {
+        # for both data.frame (guaranteed if length(type_both) > 1)
+        types <- priority_sort(type_both, levels = pub_id_types)
 
-        return(match_idx)
+        message("Matching by types: ", vctr_to_string(types, delim = " > "))
+
+        id_matches <- purrr::map(
+            .x = types,
+            function(type) {
+                x_col <- get_pub_id_col(x, type)
+                ref_col <- get_pub_id_col(ref, type)
+                match_res <- match_carefully(x_col, ref_col, nomatch)
+            }
+        )
+
+        match_vctr <- dplyr::coalesce(!!!id_matches)
     }
 
-    # for both data.frame (guaranteed if length(type_both) > 1)
-    types <- priority_sort(type_both, levels = pub_id_types)
-
-    message("Matching by types: ", vctr_to_string(types, delim = " > "))
-
-    id_matches <- purrr::map(
-        .x = types,
-        function(type) {
-            x_col <- get_pub_id_col(x, type)
-            ref_col <- get_pub_id_col(ref, type)
-            match_res <- match_carefully(x_col, ref_col, nomatch)
-        }
-    )
-
-    match_vctr <- dplyr::coalesce(!!!id_matches)
-
-    if (is.data.frame(x) && isTRUE(add_col)) {
-        match_df <- dplyr::mutate(x, cite_match = match_vctr)
+    if (!is.null(add_col)) {
+        match_df <- dplyr::mutate(x, {{ add_col }} := match_vctr)
         return(match_df)
     }
 
