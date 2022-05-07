@@ -113,7 +113,7 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
     }
 
     if (!is.null(add_col)) {
-        match_df <- dplyr::mutate(x, {{ add_col }} := match_vctr)
+        match_df <- dplyr::mutate(x, { add_col } := match_vctr)
         return(match_df)
     }
 

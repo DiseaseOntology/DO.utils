@@ -82,3 +82,12 @@ test_that("match_citations works for vectors", {
     res[i] <- i
     expect_equal(match_citations(df_all[[i]], df_NA[[i]]), res)
 })
+
+
+test_that("match_citations add_col works", {
+    # most important
+    expect_equal(
+        match_citations(df_all, df_NA, add_col = "match"),
+        dplyr::mutate(df_all, match = 1:length(pub_id_types))
+    )
+})
