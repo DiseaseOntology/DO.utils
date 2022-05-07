@@ -1,3 +1,6 @@
+#' Prioritized List of Publication IDs for Matching
+pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
+
 #' Citation Matching
 #'
 #' Essentially, [base::match()] but tailored to citations. Returns a vector of
@@ -60,9 +63,22 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
 
     type_both <- x_type[x_type %in% ref_type]
 
-    assertthat::assert_that(
-        length(type_both) > 0
-    )
+    # error if no matching columns
+    if(length(type_both) == 0) {
+        msg_header <- if (is.data.frame(x) & is.data.frame(ref)) {
+            "No matching ID columns in x & ref"
+        } else {
+            "No IDs of same type identified"
+        }
+        rlang::abort(
+            message = c(
+                msg_header,
+                paste0("One of ", vctr_to_string(pub_id_types, delim = ", "),
+                       " must be present in both."
+                )
+            )
+        )
+    }
 
     if (length(type_both) == 1) {
         if (is.data.frame(x) && is.data.frame(ref)) {
@@ -289,7 +305,3 @@ type_pub_id <- function(x) {
 
     id_type
 }
-
-
-#' Prioritized List of Publication IDs
-pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
