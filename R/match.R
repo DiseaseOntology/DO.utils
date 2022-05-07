@@ -98,11 +98,12 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
         # for both data.frame (guaranteed if length(type_both) > 1)
         types <- priority_sort(type_both, levels = pub_id_types)
 
-        message("Matching by types: ", vctr_to_string(types, delim = " > "))
+        message("Matching by types: ")
 
         id_matches <- purrr::map(
             .x = types,
             function(type) {
+                message("* ", type)
                 x_col <- get_pub_id_col(x, type)
                 ref_col <- get_pub_id_col(ref, type)
                 match_res <- match_carefully(x_col, ref_col, nomatch)
@@ -276,7 +277,7 @@ type_pub_id <- function(x) {
     assertthat::assert_that(
         !any(stats::na.omit(id_no_type)),
         msg = paste0(
-            "The following IDs could not be identified: ",
+            "Has ID values of unexpected type: ",
             vctr_to_string(x[id_no_type], delim = ", ")
         )
     )
