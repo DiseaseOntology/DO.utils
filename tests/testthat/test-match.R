@@ -71,6 +71,13 @@ test_that("match_citations(): add_col works", {
     )
 })
 
+test_that("match_citations(): add_col works when input df has only 1 ID type", {
+    # most important
+    expect_eq_no_msg(
+        match_citations(df_all[1], df_all, add_col = "match"),
+        dplyr::mutate(df_all[1], match = 1:length(pub_id_types))
+    )
+})
 
 # Errors
 test_that("match_citations(): errors for data.frames without same types", {
