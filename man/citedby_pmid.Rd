@@ -2,7 +2,7 @@
 % Please edit documentation in R/citedby.R
 \name{citedby_pmid}
 \alias{citedby_pmid}
-\title{Get Cited By List from PubMed}
+\title{Get Cited By PMIDs from PubMed}
 \usage{
 citedby_pmid(id = NULL, web_history = NULL, by_id = FALSE, config = NULL, ...)
 }
@@ -22,7 +22,7 @@ cite, as a boolean (default: \code{TRUE}); \code{FALSE} returns a unified list o
 
 \item{...}{Additional terms to add to the request, see NCBI documentation on
 \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#_chapter4_ESearch_}{ESearch}
-for a complete list.]}
+for a complete list.}
 }
 \description{
 List PubMed IDs of publications citing those specified by \code{web_history} or

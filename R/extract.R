@@ -177,9 +177,10 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
         rlang::signal(
             message = c(
                 paste0("Discarded (", cond_msg, ")"),
-                discard
+                purrr::set_names(discard, rep("i", length(discard)))
             ),
-            class = c("no_result", no_result)
+            class = c("no_result", no_result),
+            use_cli_format = TRUE
         )
     }
 

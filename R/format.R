@@ -235,7 +235,7 @@ fill_subclass <- function(subtree_df) {
                 rev(dplyr::across(dplyr::starts_with("parent_id")))
             )
         ) %>%
-        dplyr::select(id, label, parent_id, parent_label)
+        dplyr::select(.data$id, .data$label, .data$parent_id, .data$parent_label)
 
     filled_df
 }

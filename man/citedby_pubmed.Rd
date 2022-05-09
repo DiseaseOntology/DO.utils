@@ -43,14 +43,14 @@ higher response limit. This default is opposite the
 
 \item{...}{Additional terms to add to the request, see NCBI documentation on
 \href{https://www.ncbi.nlm.nih.gov/books/NBK25499/#_chapter4_ESearch_}{ESearch}
-for a complete list.]}
+for a complete list.}
 }
 \description{
 List PubMed publications citing those specified by \code{id}, optionally split
 \code{by_id}.
 }
 \seealso{
-Other citedby: 
+Other citedby_functions: 
 \code{\link{citedby_scopus}()}
 }
-\concept{citedby}
+\concept{citedby_functions}

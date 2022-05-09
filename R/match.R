@@ -1,6 +1,3 @@
-#' Prioritized List of Publication IDs for Matching
-pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
-
 #' Citation Matching
 #'
 #' Essentially, [base::match()] but tailored to citations. Returns a vector of

@@ -119,7 +119,7 @@ citedby_pubmed <- function(id = NULL, web_history = NULL, by_id = FALSE,
 }
 
 
-#' Get Cited By PMIDs from PubMed (INTERNAL)
+#' Get Cited By PMIDs from PubMed
 #'
 #' List PubMed IDs of publications citing those specified by `web_history` or
 #' `id`, potentially split `by_id`. `citedby_pmid()` can handle cases where the
@@ -144,7 +144,7 @@ citedby_pubmed <- function(id = NULL, web_history = NULL, by_id = FALSE,
 #' yet implemented in the CRAN rentrez and is required for
 #' rentrez::entrez_post() to function fully.
 #'
-#' @keywords internal
+#' @export
 citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
                          config = NULL, ...) {
 

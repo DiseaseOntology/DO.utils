@@ -1,5 +1,11 @@
 utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata", "DO_colors"))
 
+#' Prioritized List of Publication IDs for Matching
+#'
+#' @format A length-`r length(pub_id_types)` character vector:
+#' \describe{ `r vctr_to_string(pub_id_types, delim = " > ")` }
+pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
+
 #' Human Disease Ontology (DO) Publication Info
 #'
 #' A dataset of identifiers for official DO publications, along with their

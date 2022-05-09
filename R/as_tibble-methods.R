@@ -31,7 +31,7 @@ as_tibble.esummary_list <- function(x, ...) {
         df <- dplyr::mutate(
             df,
             dplyr::across(
-                tidyselect::one_of(not_list),
+                dplyr::one_of(not_list),
                 as.list
             )
         )

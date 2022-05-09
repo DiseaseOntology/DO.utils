@@ -4,8 +4,8 @@
       extract_pmid(elink_list)
     Warning <no_result>
       Discarded (0 PubMed citedby results)
-      * 35504280
-      * 88888888
+      i 35504280
+      i 88888888
     Output
       $`34755882`
       [1] "35380658" "33594374"
@@ -17,8 +17,8 @@
       extract_pmid(elink_list, no_result = "message")
     Message <no_result>
       Discarded (0 PubMed citedby results)
-      * 35504280
-      * 88888888
+      i 35504280
+      i 88888888
     Output
       $`34755882`
       [1] "35380658" "33594374"

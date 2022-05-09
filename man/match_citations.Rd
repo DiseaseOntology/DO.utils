@@ -4,16 +4,16 @@
 \alias{match_citations}
 \title{Citation Matching}
 \usage{
-match_citations(x, ref, add_col = FALSE, nomatch = NA_integer_)
+match_citations(x, ref, add_col = NULL, nomatch = NA_integer_)
 }
 \arguments{
 \item{x, ref}{a vector of PMID, PMCID, DOI, or Scopus IDs; or a "citation"
 dataframe with 1 or more of these as columns (column names should correspond
 to ID type; case-insensitive)}
 
-\item{add_col}{logical; if FALSE (default), returns a vector; if TRUE,
-\link[dplyr:mutate]{mutates} the data.frame by adding a \code{cite_match} column;
-ignored when \code{x} is a vector}
+\item{add_col}{The name of the column to add to \code{x} with the match results,
+as a string, or \code{NULL} (default) if results should be returned as a
+vector.}
 
 \item{nomatch}{the value to be returned in the case when no match is
     found.  Note that it is coerced to \code{integer}.}

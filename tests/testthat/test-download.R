@@ -8,7 +8,7 @@ tdir <- tempdir()
 
 test_that("download_obo_ontology() works works", {
     skip_on_cran()
-    check_website("www.obofoundry.org")
+    check_website("obofoundry.org")
     expect_true(
         file.exists(
             download_obo_ontology("bfo", dest_dir = tdir, quiet = TRUE)

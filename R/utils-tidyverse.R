@@ -14,14 +14,22 @@
 NULL
 
 
-#' rlang .data import
+#' rlang imports (INTERNAL)
 #'
-#' Import [rlang::.data] pronoun to prevent verbose CMD check due to
+#' Import from rlang:
+#'
+#' * [rlang::.data] pronoun to prevent verbose CMD check due to
 #' non-standard evaluation.
 #'
-#' @name .data
+#' * [rlang::`:=`](rlang::`glue-operators`) for programmatic creation +
+#' assignment of variables in the tidyverse (primarily [dplyr::mutate()]). May
+#' be removed see rlang issue
+#' [#1296](https://github.com/r-lib/rlang/issues/1296).
+#'
+#' @name rlang_imports
 #' @noRd
 #' @importFrom rlang .data
+#' @importFrom rlang :=
 NULL
 
 

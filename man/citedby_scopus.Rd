@@ -66,7 +66,7 @@ List Scopus publications citing those specified by \code{title}, optionally spli
 \code{by_id}.
 }
 \seealso{
-Other citedby: 
+Other citedby_functions: 
 \code{\link{citedby_pubmed}()}
 }
-\concept{citedby}
+\concept{citedby_functions}
