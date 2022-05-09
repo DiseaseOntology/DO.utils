@@ -11,8 +11,8 @@ pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
 #' A dataset of identifiers for official DO publications, along with their
 #' title and NLM-formatted citations.
 #'
-#' @format A data frame with 9 variables and 1 row for each official DO
-#'     publication:
+#' @format A data frame with `r length(DO_pubs)` variables and 1 row for each
+#'     official DO publication:
 #' \describe{
 #'   \item{internal_id}{short-version identifier used by the DO team for DO
 #'   publications}
@@ -21,10 +21,11 @@ pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
 #'   \item{doi}{DOI}
 #'   \item{scopus_eid}{Scopus Electronic Identification, not the same as a
 #'   Scopus ID}
+#'   \item{lens_id}{Len.org ID}
 #'   \item{semantic_scholar_id}{Semantic Scholar Corpus ID}
 #'   \item{first_author}{Publication First Author}
 #'   \item{title}{Publication Title}
-#'   \item{citation_nlm}{full NLM-formatted citation}
+#'   \item{citation_nlm}{Full NLM-formatted citation}
 #' }
 #'
 #' @source Compiled by J. Allen Baron; last updated 2022-12-15.

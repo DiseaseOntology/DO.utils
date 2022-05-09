@@ -5,8 +5,8 @@
 \alias{DO_pubs}
 \title{Human Disease Ontology (DO) Publication Info}
 \format{
-A data frame with 9 variables and 1 row for each official DO
-publication:
+A data frame with 10 variables and 1 row for each
+official DO publication:
 \describe{
 \item{internal_id}{short-version identifier used by the DO team for DO
 publications}
@@ -15,10 +15,11 @@ publications}
 \item{doi}{DOI}
 \item{scopus_eid}{Scopus Electronic Identification, not the same as a
 Scopus ID}
+\item{lens_id}{Len.org ID}
 \item{semantic_scholar_id}{Semantic Scholar Corpus ID}
 \item{first_author}{Publication First Author}
 \item{title}{Publication Title}
-\item{citation_nlm}{full NLM-formatted citation}
+\item{citation_nlm}{Full NLM-formatted citation}
 }
 }
 \source{

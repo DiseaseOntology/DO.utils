@@ -16,7 +16,7 @@ DO_pubs <- googlesheets4::read_sheet(
     ) %>%
     dplyr::select(
         internal_id, pmid = `PubMed ID`, pmcid, doi = DOI, scopus_eid = EID,
-        semantic_scholar_id, first_author, title = Title, citation_nlm
+        lens_id, semantic_scholar_id, first_author, title = Title, citation_nlm
     )
 
 usethis::use_data(DO_pubs, overwrite = TRUE)
