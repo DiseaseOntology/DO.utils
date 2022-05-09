@@ -16,10 +16,28 @@
 #'
 #' @export
 as_tibble.esummary_list <- function(x, ...) {
-    x %>%
-        purrr::map(~ `class<-`(.x, "list")) %>% # strip esummary class, req'd t::uw
+    df <- x %>%
+        # strip esummary class, required for tidyr::unnest_wider
+        purrr::map(~ `class<-`(.x, "list")) %>%
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
+
+    # ensure consistently formatted list-columns
+    list_cols <- c("Authors", "Lang", "PubType", "ArticleIds", "History",
+                   "References", "Attributes")
+    list_in_df <- names(df)[purrr::map_lgl(df, rlang::is_list)]
+    not_list <- list_cols[!list_cols %in% list_in_df]
+    if (length(not_list) > 0) {
+        df <- dplyr::mutate(
+            df,
+            dplyr::across(
+                tidyselect::one_of(not_list),
+                as.list
+            )
+        )
+    }
+
+    df
 }
 
 #' @rdname as_tibble.esummary_list

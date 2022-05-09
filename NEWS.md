@@ -1,3 +1,36 @@
+# DO.utils 0.2.3
+
+## Cited By -- Updates
+* `citedby_pubmed()`, equivalent to `citedby_scopus()`, now available (uses
+    `citedby_pmid()` and `pubmed_summary()` internally.
+* `match_citations()` improvments:
+    * **BREAKING CHANGE** -- `add_col` argument changed from
+    boolean to `NULL` (replaces `FALSE`) or the name of the column (replaces
+    `TRUE`).
+    * Bug fixes & message improvements.
+* `extract_pmid()` has a new argument, `no_result`, which provides control over
+    the condition signaled when no results are found (error, warning, message, or
+    none); previously a simple error was signaled. For any condition signaled,
+    there is now an additional class `no_result` to improve condition handling.
+    * For the `elink` method the default for `no_result` is still "error" while
+     for `elink_list` the default is now a warning.
+* `as_tibble.esummary_list()` bug caused when some results have no data fixed --
+    caused errors in `as_tibble.esummary_list_nested()` precipitated by the
+    tidyverse's move to more strict vector merging.
+
+**IMPORTANT NOTE:**
+The "cited by" functionality of `DO.utils` _may no longer be improved_ because
+recent review of Lens.org results suggests it may be a good replacement for this
+PubMed + Scopus search & merge strategy.
+
+If improvements are made they will likely facilitate one or more of:
+
+* Merging PubMed and Scopus "cited by" results, probably using `standardize()`
+    (or similar).
+* Reducing data requested from the APIs by implementing timeframe parameters in
+    `citedby_*()`.
+
+
 # DO.utils 0.2.2
 
 * Bug fix to correct error in `format_subtree()` when the subtree did _not_ have
