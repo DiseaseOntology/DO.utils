@@ -118,3 +118,95 @@ init_domain_repo_ <- function(domain, check_robots, delay) {
     class(repo) <- c("domain_repo", class(repo))
     repo
 }
+
+
+robots_allowed <- function(x, url, agent = DO_agent(), ...) {
+    UseMethod("robots_allowed")
+}
+
+#' @export
+robots_allowed.list <- function(x, url, agent = DO_agent(),
+                                no_domain_repo = "warning", ...) {
+    no_domain_repo <- match.arg(no_domain_repo, c("warning", "error"))
+
+    x_class <- purrr::map_chr(x, ~ class(.x)[1])
+    if (!all(x_class == "domain_repo")) {
+        rlang::abort(
+            message = "All elements of `x` must be `domain_repo` objects."
+        )
+    }
+
+    url_df <- tibble::tibble(
+        # use index to ensure output matches input in case of duplicate URLs
+        .idx = 1:length(url),
+        .url = url,
+        .domain = parse_url(.url)$domain,
+        has_dr = .domain %in% purrr::map_chr(x, get_domain_name)
+    )
+
+    if (any(!url_df$has_dr)) {
+        url_no_dr <- dplyr::filter(url_df, !has_dr)
+        dom_no_dr <- unique(url_no_dr$.domain)
+        rlang::signal(
+            class = no_domain_repo,
+            message = c(
+                paste(
+                    "`x` does not contain a domain_repo for",
+                    nrow(url_no_dr), "URLs in:"
+                ),
+                purrr::set_names(dom_no_dr, rep("*", length(dom_no_dr)))
+            )
+        )
+    }
+
+    no_dr <- dplyr::filter(url_df, !has_dr) %>%
+        dplyr::mutate(allowed = NA)
+    w_dr <- url_df %>%
+        dplyr::filter(has_dr)
+
+    if (nrow(w_dr) > 0) {
+        w_dr <- w_dr %>%
+            dplyr::group_by(.domain) %>%
+            dplyr::mutate(
+                allowed = robots_allowed(
+                    access_domain_repo(x, unique(.domain)),
+                    .url,
+                    agent
+                )
+            )  %>%
+            dplyr::ungroup()
+    }
+
+    out <- dplyr::bind_rows(no_dr, w_dr) %>%
+        dplyr::arrange(.idx)
+
+    out$allowed
+}
+
+#' @export
+robots_allowed.domain_repo <- function(x, url, agent = DO_agent(), ...) {
+    if (class(x$robots[["robxp"]]) != "robxp") {
+        rlang::warn(
+            class = "robots_unavailable",
+            message = c(
+                "No robots.txt info in `x`: cannot determine if accessing URLs is allowed",
+                "*" = x$domain
+            )
+        )
+        return(rep(NA, length(url)))
+    }
+
+    spiderbar::can_fetch(
+        obj = x$robots$robxp,
+        path = url,
+        user_agent = agent
+    )
+}
+
+get_domain_name <- function(domain_repo) {
+    domain_repo$domain
+}
+
+access_domain_repo <- function(x, domain) {
+    x[purrr::map_chr(x, get_domain_name) == domain]
+}
