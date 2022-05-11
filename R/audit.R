@@ -4,29 +4,51 @@
 
 #' Initiate a Domain Repository
 #'
-#' Create a repository to store HTTP information for each domain.
+#' Create a `domain_repo` list to store, update, and use HTTP information for
+#' specified domain(s). _Designed to be used with URL audits._
 #'
 #' @param domain The domain(s) for which to instantiate repositories, as a
 #'     character vector.
 #' @param check_robots Whether to check the robots.txt for the specified
-#'     domain(s), as a boolean vector with one value per domain. This utilizes
-#'     [robotstxt::robotstxt()].
-#' @inheritDotParams robotstxt::robotstxt
+#'     domain(s), as a boolean vector with one value (to be applied to all
+#'     domains) or one value per domain.
+#' @param delay The default delay to use, as a positive integer vector with
+#'     one value (to be applied to all domains) or one value per domain. If
+#'     `check_robots = TRUE` this delay will be overridden by a domain's
+#'     robots.txt delay (if present).
 #'
-#' @keywords internal
-init_domain_repo <- function(domain, check_robots, delay = 5, ...) {
-    assertthat::assert_that(length(check_robots) == length(domain))
+#' @returns
+#' For a single domain, a `domain_repo`; otherwise a list of `domain_repo`
+#' objects.
+#'
+#' @export
+init_domain_repo <- function(domain, check_robots, delay) {
 
-    if (length(domain) == 1) {
-        return(init_domain_repo_(domain, check_robots))
+    if (dplyr::n_distinct(domain) != length(domain)) {
+        rlang::abort(
+            message = "`domain` must not include duplicates"
+        )
+    }
+    assertthat::assert_that(
+        length(check_robots) == 1 || length(check_robots) == length(domain),
+        is.logical(check_robots),
+        length(delay) == 1 || length(delay) == length(domain),
+        is.numeric(delay) && all(delay >= 0)
+    )
+
+    if (length(delay) == 1) {
+        delay <- rep(delay, length(domain))
     }
 
-    repo <- purrr::map2(
-        .x = domain,
-        .y = check_robots,
-        ~ instantiate_domain_repo_(.x, .y, ...)
+    if (length(domain) == 1) {
+        return(init_domain_repo_(domain, check_robots, delay))
+    }
+
+    repo <- purrr::pmap(
+        list(domain, check_robots, delay),
+        function(dom, cr, d) init_domain_repo_(dom, cr, d)
     ) %>%
-        stats::setNames(domain)
+        purrr::set_names(domain)
 
     repo
 }
