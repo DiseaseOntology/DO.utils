@@ -18,9 +18,7 @@ string.}
 One "html" file for each group in \code{.which} named as
 "\{datestamp\}-\{.which\}.html".
 
-Also, the list with one set of html per
-\code{.which} corresponding to the html recorded in the file(s), returned
-invisibly.
+Also returns the "User" data from the Google Sheet invisibly.
 
 NOTE: The "html" is incomplete and cannot be loaded by browsers,
 as is.

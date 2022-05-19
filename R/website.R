@@ -17,9 +17,7 @@
 #' One "html" file for each group in `.which` named as
 #' "\{datestamp\}-\{.which\}.html".
 #'
-#' Also, the list with one set of html per
-#' `.which` corresponding to the html recorded in the file(s), returned
-#' invisibly.
+#' Also returns the "User" data from the Google Sheet invisibly.
 #'
 #' NOTE: The "html" is incomplete and cannot be loaded by browsers,
 #' as is.
@@ -39,12 +37,13 @@ make_use_case_html <- function(out_dir, .which = "all") {
     }
 
     # prep data
-    use_case_df <- googlesheets4::read_sheet(
+    use_case_gs <- googlesheets4::read_sheet(
         ss = .DO_gs$users,
         sheet = "DO_website_user_list",
         range = "A:E",
         col_types = "lcccc"
-    ) %>%
+    )
+    use_case_df <- use_case_gs %>%
         dplyr::filter(!is.na(.data$added))
 
     use_case_list <- purrr::map(
@@ -83,7 +82,7 @@ make_use_case_html <- function(out_dir, .which = "all") {
         ~ readr::write_lines(x = .x, file = .y)
     )
 
-    invisible(use_case_html_list)
+    invisible(use_case_gs)
 }
 
 
