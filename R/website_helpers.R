@@ -8,27 +8,36 @@ html_col_sort <- function(x, cols) {
 #' @export
 html_col_sort.data.frame <- function(x, cols) {
     len <- nrow(x)
-    rows <- round_up(len / cols, 0)
+    idx <- create_row_index(len, cols)
     x %>%
-        dplyr::mutate(.row_id = rep_len(1:rows, length.out = len)) %>%
+        dplyr::mutate(.row_id = idx) %>%
         dplyr::arrange(.row_id) %>%
         dplyr::select(-.row_id)
 }
 
 #' @export
 html_col_sort.default <- function(x, cols) {
-    rows <- round_up(length(x) / cols, 0)
-    row_int <- 1:rows
-    row_id <- rep_len(row_int, length.out = length(x))
+    idx <- create_row_index(length(x), cols)
     purrr::map(
-        row_int,
+        1:max(idx),
         function(i) {
-            x[row_id == i]
+            x[idx == i]
         }
     ) %>%
         unlist(recursive = FALSE)
 }
 
+# Ensures correct ordering; needed because repeating 1:rows when there
+# are < cols - 1 items in the last row causes misordering of last row.
+create_row_index <- function(len, cols) {
+    in_last_row <- len %% cols
+    rows <- round_up(len / cols, 0)
+    row_idx <- c(
+        rep(1:rows, times = in_last_row),
+        rep(1:(rows - 1), times = cols - in_last_row)
+    )
+    row_idx
+}
 
 # plot_def_src() helper
 is_nlm_subdomain <- function(subdomain) {
