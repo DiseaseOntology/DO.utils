@@ -1,3 +1,32 @@
+# make_use_case_html() helper
+#   sorts list into n cols (integer); fixes the alphabetical ordering from row
+#   first to column first.
+html_col_sort <- function(x, cols) {
+    UseMethod("html_col_sort")
+}
+
+#' @export
+html_col_sort.data.frame <- function(x, cols) {
+    x %>%
+        dplyr::mutate(.col_id = rep_len(1:cols, length.out = nrow(x))) %>%
+        dplyr::arrange(.col_id) %>%
+        dplyr::select(-.col_id)
+}
+
+#' @export
+html_col_sort.default <- function(x, cols) {
+    col_int <- 1:cols
+    col_id <- rep_len(col_int, length.out = length(x))
+    purrr::map(
+        col_int,
+        function(i) {
+            x[col_id == i]
+        }
+    ) %>%
+        unlist(recursive = FALSE)
+}
+
+
 # plot_def_src() helper
 is_nlm_subdomain <- function(subdomain) {
     df <- get(".", envir = parent.frame())

@@ -50,8 +50,9 @@ make_use_case_html <- function(out_dir, .which = "all") {
     use_case_list <- purrr::map(
         .which,
         ~ dplyr::filter(use_case_df, .data$type == .x) %>%
-            # ensure use cases are alphabetical
-            dplyr::arrange(.data$name)
+            # ensure use cases are alphabetical by column
+            dplyr::arrange(.data$name) %>%
+            html_col_sort(3)
     ) %>%
         purrr::set_names(nm = .which)
 
