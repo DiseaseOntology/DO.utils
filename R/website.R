@@ -1,3 +1,91 @@
+#' Make HTML for DO Use Case Tables
+#'
+#' Makes the row and cell html code for the various sections/tables of the
+#' disease-ontology.org "Use Cases" page from the DO team's "Uses" google sheet.
+#' This function explicitly avoids including the html code for defining the
+#' table itself to provide for flexibility. The "html" output in the files
+#' specified should be copied and pasted into the disease-ontology.org
+#' "Use Cases" file in the appropriate section/table.
+#'
+#' @param out_dir The path to the directory where output should be saved, as a
+#'     string.
+#' @param .which The list(s) to generate, as a character vector. One or more of:
+#'     "all" (default, to make all lists), "ontology", "resource", or
+#'     "methodology".
+#'
+#' @returns
+#' One "html" file for each group in `.which` named as
+#' "\{datestamp\}-\{.which\}.html".
+#'
+#' Also, the list with one set of html per
+#' `.which` corresponding to the html recorded in the file(s), returned
+#' invisibly.
+#'
+#' NOTE: The "html" is incomplete and cannot be loaded by browsers,
+#' as is.
+#'
+#' @export
+make_use_case_html <- function(out_dir, .which = "all") {
+    # validate arguments
+    if (!rlang::is_string(out_dir) || !dir.exists(out_dir)) {
+        rlang::abort(
+            message = "`out_dir` is not a single directory or does not exist."
+        )
+    }
+    possible_use_cases <- c("ontology", "resource", "methodology")
+    .which <- match.arg(.which, c("all", possible_use_cases), several.ok = TRUE)
+    if ("all" %in% .which) {
+        .which <- possible_use_cases
+    }
+
+    # prep data
+    use_case_df <- googlesheets4::read_sheet(
+        ss = .DO_gs$users,
+        sheet = "DO_website_user_list",
+        range = "A:E",
+        col_types = "lcccc"
+    ) %>%
+        dplyr::filter(!is.na(.data$added))
+
+    use_case_list <- purrr::map(
+        .which,
+        ~ dplyr::filter(use_case_df, .data$type == .x) %>%
+            # ensure use cases are alphabetical
+            dplyr::arrange(.data$name)
+    ) %>%
+        purrr::set_names(nm = .which)
+
+    # build html
+    use_case_html_list <- purrr::map(
+        use_case_list,
+        function(.df) {
+            glue::glue_data(
+                .x = .df,
+                '<a href="{url}" target="_blank">{name}</a>'
+            ) %>%
+                html_in_rows(
+                    per_row = 3,
+                    indent_n = 2,
+                    cell_attr = c(class="default")
+                )
+        }
+    )
+
+    # save files
+    out_file <- file.path(
+        out_dir,
+        paste0(today_datestamp(), "-", .which, ".html")
+    )
+    purrr::walk2(
+        .x = use_case_html_list,
+        .y = out_file,
+        ~ readr::write_lines(x = .x, file = .y)
+    )
+
+    invisible(use_case_html_list)
+}
+
+
 #' Make HTML for DO User List
 #'
 #' Makes the row and cell html code for the "Users of the Disease Ontology"
