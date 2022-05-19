@@ -7,20 +7,23 @@ html_col_sort <- function(x, cols) {
 
 #' @export
 html_col_sort.data.frame <- function(x, cols) {
+    len <- nrow(x)
+    rows <- round_up(len / cols, 0)
     x %>%
-        dplyr::mutate(.col_id = rep_len(1:cols, length.out = nrow(x))) %>%
-        dplyr::arrange(.col_id) %>%
-        dplyr::select(-.col_id)
+        dplyr::mutate(.row_id = rep_len(1:rows, length.out = len)) %>%
+        dplyr::arrange(.row_id) %>%
+        dplyr::select(-.row_id)
 }
 
 #' @export
 html_col_sort.default <- function(x, cols) {
-    col_int <- 1:cols
-    col_id <- rep_len(col_int, length.out = length(x))
+    rows <- round_up(length(x) / cols, 0)
+    row_int <- 1:rows
+    row_id <- rep_len(row_int, length.out = length(x))
     purrr::map(
-        col_int,
+        row_int,
         function(i) {
-            x[col_id == i]
+            x[row_id == i]
         }
     ) %>%
         unlist(recursive = FALSE)
