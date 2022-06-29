@@ -8,6 +8,7 @@
 #' @param tol double, tolerance to use (for numeric vectors)
 #' @param ... unused; for extensibility
 #'
+#' @family type_predicates
 #' @export
 is_invariant <- function(x, na.rm = FALSE, ...) {
     UseMethod("is_invariant")
@@ -37,6 +38,8 @@ is_invariant.numeric <- function(x, na.rm = FALSE,
 #' * `is_missing()` identifies NA's and blanks
 #'
 #' @param x vector to be tested
+#'
+#' @family type_predicates
 #' @name char_val_predicates
 NULL
 
@@ -67,6 +70,7 @@ is_missing <- function(x) {
 #' @param tol value specifiying precision desired (see [.Machine] or [double]
 #' for more info)
 #'
+#' @family type_predicates
 #' @name num_val_predicates
 NULL
 
@@ -97,6 +101,25 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
     rlang::is_scalar_atomic(x) && is_whole_number(x, tol = tol)
 }
 
+
+#' Logical predicate
+#'
+#' This predicate is designed to identify boolean vectors (i.e. length 1 logical
+#' vectors).
+#'
+#' @inheritParams char_val_predicates
+#'
+#' @family type_predicates
+#' @name lgl_predicates
+NULL
+
+#' @export
+#' @rdname lgl_predicates
+is_boolean <- function(x) {
+    is.logical(x) & length(x) == 1
+}
+
+
 #' DO-specific predicate
 #'
 #' This predicate is designed to identify and validate common formats for DOIDs
@@ -116,6 +139,7 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 #' is_valid_doid(c("0001816", "4")) # bare numbers
 #' is_valid_doid("obo:DOID:14566") # some specificity for separators is enforced
 #'
+#' @family type_predicates
 #' @export
 is_valid_doid <- function(x) {
     assert_character(x)

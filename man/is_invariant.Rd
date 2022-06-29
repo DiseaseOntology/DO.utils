@@ -25,3 +25,11 @@ is_invariant(x, na.rm = FALSE, ...)
 Test if a vector is invariant (\emph{i.e.} all values are equal, within a given
 tolerance for numeric vectors).
 }
+\seealso{
+Other type_predicates: 
+\code{\link{char_val_predicates}},
+\code{\link{is_valid_doid}()},
+\code{\link{lgl_predicates}},
+\code{\link{num_val_predicates}}
+}
+\concept{type_predicates}

@@ -26,3 +26,11 @@ is_valid_doid(c("0001816", "4")) # bare numbers
 is_valid_doid("obo:DOID:14566") # some specificity for separators is enforced
 
 }
+\seealso{
+Other type_predicates: 
+\code{\link{char_val_predicates}},
+\code{\link{is_invariant}()},
+\code{\link{lgl_predicates}},
+\code{\link{num_val_predicates}}
+}
+\concept{type_predicates}

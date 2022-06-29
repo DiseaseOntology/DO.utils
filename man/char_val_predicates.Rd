@@ -23,3 +23,11 @@ in character vectors.
 \item \code{is_missing()} identifies NA's and blanks
 }
 }
+\seealso{
+Other type_predicates: 
+\code{\link{is_invariant}()},
+\code{\link{is_valid_doid}()},
+\code{\link{lgl_predicates}},
+\code{\link{num_val_predicates}}
+}
+\concept{type_predicates}
