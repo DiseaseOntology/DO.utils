@@ -67,11 +67,11 @@ df
 unnest_cross(df, cols = tidyselect::starts_with("inter"))
 
 # Works when list column sizes differ, unlike tidyr::unnest()
-unnest_cross(df, cols = c(interjection, letter))
 tryCatch(
     tidyr::unnest(df, cols = c(interjection, letter)),
     error = function(e) message(e)
 )
+unnest_cross(df, cols = c(interjection, letter))
 
 # Always produces a cartesian product, unlike tidyr::unnest()
 df2 <- tibble::tibble(
@@ -79,7 +79,6 @@ df2 <- tibble::tibble(
     letter = list(c("a", "b"), "c"),
 )
 df2
-
 tidyr::unnest(df2, cols = tidyselect::everything())
 unnest_cross(df2, cols = tidyselect::everything())
 
