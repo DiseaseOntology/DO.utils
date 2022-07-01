@@ -38,7 +38,8 @@ cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
 }
 
 
-cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-")) {
+cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
+                          start_rm = NULL, end_rm = NULL) {
     uniq <- unique(x)
     if (!is.numeric(uniq) || any(!is_whole_number(uniq), na.rm = TRUE)) {
         if (is.null(int_fn)) {
@@ -67,12 +68,33 @@ cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-")) {
     out_vctr <- NULL
     for (.i in seq_along(in_seq)) {
         if (is.na(in_seq[.i + 1])) {
-            out_vctr <- c(out_vctr, uniq_order[.i])
+            out_vctr <- c(
+                out_vctr,
+                if (!is.null(end_rm) && tail(out_vctr, 1) == "-") {
+                    stringr::str_remove(uniq_order[.i], end_rm)
+                } else {
+                    uniq_order[.i]
+                }
+            )
         } else if (!in_seq[.i]) {
-            .sep <- if (in_seq[.i + 1] & in_seq[.i + 2]) sep[2] else sep[1]
-            out_vctr <- c(out_vctr, uniq_order[.i], .sep)
+            start_seq <- in_seq[.i + 1] & in_seq[.i + 2]
+            sep_ <- if (start_seq) sep[2] else sep[1]
+            uniq_order_ <- if (is.null(start_rm) || !start_seq) {
+                uniq_order[.i]
+            } else {
+                stringr::str_remove(uniq_order[.i], start_rm)
+            }
+            out_vctr <- c(out_vctr, uniq_order_, sep_)
         } else if (!in_seq[.i + 1]) {
-            out_vctr <- c(out_vctr, uniq_order[.i], sep[1])
+            out_vctr <- c(
+                out_vctr,
+                if (!is.null(end_rm) && tail(out_vctr, 1) == "-") {
+                    stringr::str_remove(uniq_order[.i], end_rm)
+                } else {
+                    uniq_order[.i]
+                },
+                sep[1]
+            )
         }
     }
 
