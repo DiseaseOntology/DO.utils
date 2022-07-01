@@ -38,6 +38,40 @@ cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
 }
 
 
+cast_to_range <- function(x, int_fn = NULL, ..., sep = c(", ", "-"),
+                          na.rm = FALSE) {
+    uniq <- unique(x)
+    if (any(!is_whole_number(uniq))) {
+        if (is.null(int_fun)) {
+            rlang::abort(
+                message = "`int_fn` must be specified when `x` is not limited to whole numbers.")
+        }
+        int <- int_fn(uniq, ...)
+
+        uniq_order <- uniq[order(int)]
+        int <- sort(int)
+        in_seq <- c(0, diff(int)) == 1
+    } else {
+        uniq_order <- sort(as.integer(uniq))
+        in_seq <- c(0, diff(uniq_order)) == 1
+    }
+
+    out_vctr <- NULL
+    for (.i in seq_along(in_seq)) {
+        if (is.na(in_seq[.i + 1])) {
+            out_vctr <- c(out_vctr, uniq_order[.i])
+        } else if (!in_seq[.i]) {
+            sep <- if (in_seq[.i + 1] & in_seq[.i + 2]) "-" else ","
+            out_vctr <- c(out_vctr, uniq_order[.i], sep)
+        } else if (!in_seq[.i + 1]) {
+            out_vctr <- c(out_vctr, uniq_order[.i], ",")
+        }
+    }
+
+    paste0(out_vctr, collapse = "")
+}
+
+
 # cast_to_string() helpers ------------------------------------------------
 
 #' Convert to Character
