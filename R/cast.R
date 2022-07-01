@@ -78,6 +78,9 @@ cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
             )
         } else if (!in_seq[.i]) {
             start_seq <- in_seq[.i + 1] & in_seq[.i + 2]
+            # Fix for error: 2-long range start at end
+            if (is.na(start_seq)) start_seq <- FALSE
+
             sep_ <- if (start_seq) sep[2] else sep[1]
             uniq_order_ <- if (is.null(start_rm) || !start_seq) {
                 uniq_order[.i]
