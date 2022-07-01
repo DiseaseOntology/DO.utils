@@ -38,10 +38,9 @@ cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
 }
 
 
-cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
-                          na.rm = FALSE) {
+cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-")) {
     uniq <- unique(x)
-    if (!is.numeric(uniq) || any(!is_whole_number(uniq))) {
+    if (!is.numeric(uniq) || any(!is_whole_number(uniq), na.rm = TRUE)) {
         if (is.null(int_fn)) {
             rlang::abort(
                 message = "`int_fn` must be specified when `x` is not limited to whole numbers.")

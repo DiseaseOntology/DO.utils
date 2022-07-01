@@ -35,3 +35,10 @@ test_that("cast_to_range()'s int_fn argument works", {
         "-2txt,-1txt,1txt,2txt,4txt,6txt-8txt,20txt-37txt,40txt,43txt,45txt"
     )
 })
+
+test_that("cast_to_range() NA values are removed", {
+    expect_identical(
+        cast_to_range(c(NA, x, NA)),
+        "-2,-1,1,2,4,6-8,20-37,40,43,45"
+    )
+})
