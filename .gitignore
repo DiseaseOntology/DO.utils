@@ -5,9 +5,10 @@
 .Rprofile
 renv/
 
-# temporary working dir
+# temporary working dirs/files
 /TMP/
 inst/doc
+/docs/benchmarks/*reprex*
 
 # python/PyCharm
 __pycache__
