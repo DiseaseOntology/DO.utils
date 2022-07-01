@@ -65,3 +65,18 @@ test_that("cast_to_range()'s end_rm argument works", {
         "txt-2,txt-1,txt1,txt2,txt4,txt6-8,txt20-37,txt40,txt43,txt45"
     )
 })
+
+test_that("cast_to_range() works when a 2-long range starts at end", {
+    almost_range_at_end <- c(x, 46)
+    txt_version <- paste0(almost_range_at_end, "txt")
+
+    expect_error(cast_to_range(almost_range_at_end), regexp = NA)
+    expect_error(
+        cast_to_range(
+            txt_version,
+            ~ as.integer(stringr::str_remove(.x, "txt")),
+            start_rm = "txt"
+        ),
+        regexp = NA
+    )
+})
