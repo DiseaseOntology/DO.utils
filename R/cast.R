@@ -41,12 +41,21 @@ cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
 cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
                           na.rm = FALSE) {
     uniq <- unique(x)
-    if (any(!is_whole_number(uniq))) {
-        if (is.null(int_fun)) {
+    if (!is.numeric(uniq) || any(!is_whole_number(uniq))) {
+        if (is.null(int_fn)) {
             rlang::abort(
                 message = "`int_fn` must be specified when `x` is not limited to whole numbers.")
         }
+
+        int_fn <- rlang::as_function(int_fn)
         int <- int_fn(uniq, ...)
+        if (!is.integer(int)) {
+            rlang::abort(
+                message = paste0(
+                    "`int_fn` should produce an `integer` not `", class(int), "`"
+                )
+            )
+        }
 
         uniq_order <- uniq[order(int)]
         int <- sort(int)
