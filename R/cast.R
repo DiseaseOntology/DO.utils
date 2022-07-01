@@ -38,7 +38,7 @@ cast_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
 }
 
 
-cast_to_range <- function(x, int_fn = NULL, ..., sep = c(", ", "-"),
+cast_to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
                           na.rm = FALSE) {
     uniq <- unique(x)
     if (any(!is_whole_number(uniq))) {
@@ -61,10 +61,10 @@ cast_to_range <- function(x, int_fn = NULL, ..., sep = c(", ", "-"),
         if (is.na(in_seq[.i + 1])) {
             out_vctr <- c(out_vctr, uniq_order[.i])
         } else if (!in_seq[.i]) {
-            sep <- if (in_seq[.i + 1] & in_seq[.i + 2]) "-" else ","
-            out_vctr <- c(out_vctr, uniq_order[.i], sep)
+            .sep <- if (in_seq[.i + 1] & in_seq[.i + 2]) sep[2] else sep[1]
+            out_vctr <- c(out_vctr, uniq_order[.i], .sep)
         } else if (!in_seq[.i + 1]) {
-            out_vctr <- c(out_vctr, uniq_order[.i], ",")
+            out_vctr <- c(out_vctr, uniq_order[.i], sep[1])
         }
     }
 
