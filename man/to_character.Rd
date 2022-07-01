@@ -12,8 +12,10 @@ to_character(x, ...)
 \item{...}{further arguments passed to or from other methods.}
 }
 \description{
-Wrapper for \code{\link[base:character]{base::as.character()}} designed to provide extra methods for converting
-lists and data.frames to character vectors. \code{to_character()} is intended to
-function as an \emph{internal} helper of \code{\link[=cast_to_string]{cast_to_string()}}.
+Provides all character conversion methods of \code{\link[base:character]{base::as.character()}} and
+additional methods for lists and data.frames. \code{to_character()} was created to
+enable \code{\link[=cast_to_string]{cast_to_string()}} to handle many data types while avoiding unintended
+conversions to character, which would have occurred if these methods were
+added to \code{as.character()}.
 }
 \keyword{internal}
