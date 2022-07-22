@@ -1,4 +1,10 @@
-utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata", "DO_colors"))
+utils::globalVariables(
+    names = c("DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata")
+)
+
+#' @keywords internal
+pkg_user_agent <- "DO.utils (github.com/allenbaron/DO.utils)"
+
 
 #' Prioritized List of Publication IDs for Matching
 #'
@@ -6,30 +12,55 @@ utils::globalVariables(names = c("DO_pubs", "obofoundry_metadata", "DO_colors"))
 #' \describe{ `r vctr_to_string(pub_id_types, delim = " > ")` }
 pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
 
-#' Human Disease Ontology (DO) Publication Info
+
+#' Human Disease Ontology Official Colors
 #'
-#' A dataset of identifiers for official DO publications, along with their
-#' title and NLM-formatted citations.
+#' Named, hexadecimal colors for official DO use.
 #'
-#' @format A data frame with `r length(DO_pubs)` variables and 1 row for each
-#'     official DO publication:
+#' @format A named, vector of colors in hexadecimal format, including most
+#' recognizable teal-ish colors (default, mid, light, website, & websafe) and
+#' less used oranges (orange, orange_mid, orange_light).
+#'
+#' @source Updated by J. Allen Baron on 2021-11-23.
+"DO_colors"
+
+
+#' Publication Info
+#'
+#' Datasets describing official publications of the Human Disease Ontology
+#' project, grouped by ontology. Data includes
+#' publication identifiers from various sources, along with publication titles
+#' and NLM-formatted citations.
+#' * DO_pubs: Human Disease Ontology publications only
+#' * ST_pubs: Symptom Ontology & Pathogen Transmission Ontology publications
+#'
+#' @format Each data frame consists of `r length(DO_pubs)` variables:
 #' \describe{
-#'   \item{internal_id}{short-version identifier used by the DO team for DO
-#'   publications}
+#'   \item{internal_id}{short-version identifier used by the DO team}
 #'   \item{pmid}{PubMed ID}
 #'   \item{pmcid}{PubMed Central ID}
 #'   \item{doi}{DOI}
 #'   \item{scopus_eid}{Scopus Electronic Identification, not the same as a
 #'   Scopus ID}
-#'   \item{lens_id}{Len.org ID}
+#'   \item{lens_id}{Lens.org ID}
 #'   \item{semantic_scholar_id}{Semantic Scholar Corpus ID}
 #'   \item{first_author}{Publication First Author}
 #'   \item{title}{Publication Title}
 #'   \item{citation_nlm}{Full NLM-formatted citation}
 #' }
 #'
-#' @source Compiled by J. Allen Baron; last updated 2022-12-15.
+#' @source Compiled by J. Allen Baron; last updated 2022-07-22.
+#' @name pubs
+NULL
+
+#' @format
+#' @rdname pubs
 "DO_pubs"
+
+#' @format
+#' @rdname pubs
+"ST_pubs"
+
 
 #' OBO Foundry Metadata
 #'
@@ -63,19 +94,3 @@ pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
 #'
 #' @source \url{http://www.obofoundry.org/registry/ontologies.jsonld}, last accessed 2021-11-05.
 "obofoundry_metadata"
-
-
-#' Human Disease Ontology Official Colors
-#'
-#' Named, hexadecimal colors for official DO use.
-#'
-#' @format A named, vector of colors in hexadecimal format, including most
-#' recognizable teal-ish colors (default, mid, light, website, & websafe) and
-#' less used oranges (orange, orange_mid, orange_light).
-#'
-#' @source Updated by J. Allen Baron on 2021-11-23.
-"DO_colors"
-
-
-#' @keywords internal
-pkg_user_agent <- "DO.utils (github.com/allenbaron/DO.utils)"
