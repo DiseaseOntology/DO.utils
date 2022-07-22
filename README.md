@@ -54,7 +54,7 @@ Scientometrics are a measure of the impact of the Disease Ontology on science an
 `DO.utils` also includes general utilities to make programming in R easier. The utilities assist with:
 
 - Type/content testing -- `is_blank()`, `is_positive()`, `is_vctr_or_df()`, `all_duplicated()`)
-- Vector-to-scalar conversion -- `cast_to_string()`, `unique_if_invariant()`)
+- Vector-to-scalar conversion -- `collapse_to_string()`, `unique_if_invariant()`)
 - Data reduction -- `collapse_col()`, `drop_blank()`)
 - Value replacement -- `replace_null()`, `replace_blank()`)
 - Sorting (by a specified priority)

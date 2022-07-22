@@ -36,7 +36,7 @@ Most text should be written in sentence case, use proper punctuation, and end in
 4. Should end with "(INTERNAL)" for documented functions that are not exported.
 
 #### Examples
-Good: `cast_to_string()`
+Good: `collapse_to_string()`
 
 
 ### Title

@@ -1,7 +1,56 @@
+# collapse_to_string() tests --------------------------------------------------
 
-# General test data -------------------------------------------------------
+# data.frame of all major types
+df <- data.frame(
+    dbl = c(1, 2.5),
+    int = 1:2,
+    lgl = c(T, F),
+    chr = c("a", "b"),
+    fac = factor(c("a", "b")),
+    dat = structure(c(18963, 18964), class = "Date"),
+    tim = structure(
+        c(1638379919.66874, 1638379920.66874),
+        class = c("POSIXct", "POSIXt"),
+        tzone = "UTC"
+    ),
+    stringsAsFactors = FALSE
+)
 
-# Input
+# other complex data types (no plan for array)
+d <- df[, c("dbl", "chr")]
+m <- matrix(c(as.character(df$dbl), df$chr), nrow = 2)
+l <- as.list(d)
+nl <- list(l, df$lgl)
+
+test_that("collapse_to_string(): single vectors are concatenated", {
+    expect_identical(collapse_to_string(df$dbl), "1|2.5")
+    expect_identical(collapse_to_string(df$int), "1|2")
+    expect_identical(collapse_to_string(df$lgl), "TRUE|FALSE")
+    expect_identical(collapse_to_string(df$chr), "a|b")
+    expect_identical(collapse_to_string(df$fac), "a|b")
+    expect_identical(collapse_to_string(df$dat), "2021-12-02|2021-12-03")
+    expect_identical(
+        collapse_to_string(df$tim),
+        "2021-12-01 17:31:59|2021-12-01 17:32:00"
+    )
+})
+
+test_that("collapse_to_string(): delim is used", {
+    expect_identical(collapse_to_string(df$int, delim = ""), "12")
+    expect_identical(collapse_to_string(df$int, delim = "."), "1.2")
+})
+
+test_that("collapse_to_string(): base R structured data types are concatenated", {
+    expect_identical(collapse_to_string(d), "1|2.5|a|b")
+    expect_identical(collapse_to_string(m), "1|2.5|a|b")
+    expect_identical(collapse_to_string(l), "1|2.5|a|b")
+    expect_identical(collapse_to_string(nl), "1|2.5|a|b|TRUE|FALSE")
+})
+
+
+# collapse_col*() tests ---------------------------------------------------
+
+#### Input ####
 cc_df <- tibble::tibble(
      x = c(1, 2, 3, 3, 4, 4, 4),
      y = c("a", "a", "b", "b", "c", "c", "e"),
@@ -37,7 +86,7 @@ yz_unique <- tibble::tibble(
 )
 
 
-# Custom expect function --------------------------------------------------
+#### Custom expect function ####
 
 # Expects a specified number of unique rows in df
 expect_unique_rows <- function(object, n) {
@@ -59,7 +108,7 @@ expect_unique_rows <- function(object, n) {
 }
 
 
-# collapse_col() ----------------------------------------------------------
+#### collapse_col() ####
 
 test_that("collapse_col() works", {
     # tests
@@ -74,7 +123,7 @@ test_that("collapse_col(): duplicated rows (3-4) are always collapsed", {
 })
 
 
-# collapse_col_flex() -----------------------------------------------------
+#### collapse_col_flex() ####
 
 test_that("collapse_col_flex(): duplicated rows (3-4) are always collapsed", {
     expect_unique_rows(
@@ -92,7 +141,8 @@ test_that("collapse_col_flex(): duplicated rows (3-4) are always collapsed", {
 })
 
 
-####### individual methods work as expected for 1+ columns ########
+#- individual methods work as expected for 1+ columns -#
+
 test_that("collapse_col_flex() methods work for character types", {
 
     # unique method
@@ -136,7 +186,6 @@ test_that("collapse_col_flex() methods work for character types", {
 
 
 test_that("collapse_col_flex() methods work for numeric types", {
-
     # unique method
     expect_identical(
         collapse_col_flex(cc_df, x, method = "unique"),
@@ -183,7 +232,9 @@ test_that("collapse_col_flex() methods work for character & numeric types", {
     expect_identical(collapse_col_flex(cc_df, x, z, method = "last"), xz_last)
 })
 
-####### mixed methods work as expected for 1+ columns ########
+
+#- mixed methods work as expected for 1+ columns -#
+
 test_that("collapse_col_flex() mixed methods work", {
     # style of method specification works (unique only)
     expect_identical(

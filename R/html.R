@@ -30,18 +30,18 @@ html_in_rows <- function(cell_html, row_attr = NULL,
                          cell_attr = NULL, per_row = 3, indent_n = 2) {
 
     # format row elements (include attributes)
-    r_start <- cast_to_string(
+    r_start <- collapse_to_string(
         indent_html(indent_n),
         '<tr',
         set_html_attr(row_attr),
         '>',
         delim = ""
     )
-    r_end <- cast_to_string(indent_html(indent_n), '</tr>', delim = "")
+    r_end <- collapse_to_string(indent_html(indent_n), '</tr>', delim = "")
 
     # format cell elements (include attributes & html)
     cell <- paste0(
-        cast_to_string(
+        collapse_to_string(
             indent_html(indent_n + 1),
             '<td',
             set_html_attr(cell_attr),
@@ -67,14 +67,14 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 # helpers -----------------------------------------------------------------
 
 indent_html <- function(n) {
-    cast_to_string(rep('  ', n), delim = "")
+    collapse_to_string(rep('  ', n), delim = "")
 }
 
 
 set_html_attr <- function(attr) {
     if (is.null(attr)) return(NULL)
 
-    cast_to_string(
+    collapse_to_string(
         # to add space between html element and attributes
         "",
         paste0(names(attr), '="', attr, '"'),
