@@ -39,7 +39,7 @@
 to_curie <- function(x) {
     stringr::str_replace_all(
         x,
-        setNames(paste0(names(ns_prefix), ":"), ns_prefix)
+        stats::setNames(paste0(names(ns_prefix), ":"), ns_prefix)
     )
 }
 
@@ -71,7 +71,7 @@ to_curie <- function(x) {
 to_uri <- function(x) {
     stringr::str_replace_all(
         x,
-        setNames(ns_prefix, paste0("^", names(ns_prefix), ":"))
+        stats::setNames(ns_prefix, paste0("^", names(ns_prefix), ":"))
     )
 }
 
@@ -108,7 +108,7 @@ to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
         if (is.na(in_seq[.i + 1])) {
             out_vctr <- c(
                 out_vctr,
-                if (!is.null(end_rm) && tail(out_vctr, 1) == "-") {
+                if (!is.null(end_rm) && utils::tail(out_vctr, 1) == "-") {
                     stringr::str_remove(uniq_order[.i], end_rm)
                 } else {
                     uniq_order[.i]
@@ -129,7 +129,7 @@ to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
         } else if (!in_seq[.i + 1]) {
             out_vctr <- c(
                 out_vctr,
-                if (!is.null(end_rm) && tail(out_vctr, 1) == "-") {
+                if (!is.null(end_rm) && utils::tail(out_vctr, 1) == "-") {
                     stringr::str_remove(uniq_order[.i], end_rm)
                 } else {
                     uniq_order[.i]

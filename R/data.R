@@ -105,7 +105,7 @@ NULL
 #'
 #' @format A `r class(ns_prefix)` vector of `r length(ns_prefix)` namespaces,
 #' named by their corresponding prefix (e.g.
-#' `r paste0(tail(names(ns_prefix), 1), ' = "', tail(ns_prefix, 1), '"')`).
+#'`r paste0(utils::tail(names(ns_prefix), 1), ' = "', utils::tail(ns_prefix, 1), '"')`).
 #'
 #' @source "`robot` (v1.9.0) via data-raw/ns_prefix.R; last updated 2022-07-22."
 "ns_prefix"
