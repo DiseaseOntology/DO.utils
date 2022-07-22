@@ -11,7 +11,7 @@ doid <- paste0("DOID:", x)
 doid_long <- paste0("DOID:", x_long)
 doid_xlong <- paste0("DOID:", xx_long)
 
-cast_to_range(
+to_range(
     doid,
     ~ as.integer(stringr::str_remove(.x, "DOID:")),
     end_rm = "DOID:"
@@ -82,7 +82,7 @@ microbenchmark(
     collapseConsecutive(x),
     findIntRuns(x),
     contractSeqs(x),
-    cast_to_range(x),
+    to_range(x),
     times = 500,
     check = 'equal'
 )
@@ -92,7 +92,7 @@ microbenchmark(
     collapseConsecutive(x_long),
     findIntRuns(x_long),
     contractSeqs(x_long),
-    cast_to_range(x_long),
+    to_range(x_long),
     times = 100,
     check = 'equal'
 )
@@ -102,7 +102,7 @@ microbenchmark(
     collapseConsecutive(xx_long),
     findIntRuns(xx_long),
     contractSeqs(xx_long),
-    cast_to_range(xx_long),
+    to_range(xx_long),
     times = 100,
     check = 'equal'
 )
@@ -111,22 +111,22 @@ microbenchmark(
 # Comparing arguments
 
 microbenchmark(
-    cast_to_range(x),
-    cast_to_range(doid, ~ as.integer(stringr::str_remove(.x, "DOID:"))),
-    cast_to_range(doid, ~ as.integer(stringr::str_remove(.x, "DOID:")), end_rm = "DOID:"),
+    to_range(x),
+    to_range(doid, ~ as.integer(stringr::str_remove(.x, "DOID:"))),
+    to_range(doid, ~ as.integer(stringr::str_remove(.x, "DOID:")), end_rm = "DOID:"),
     times = 100
 )
 
 microbenchmark(
-    cast_to_range(x_long),
-    cast_to_range(doid_long, ~ as.integer(stringr::str_remove(.x, "DOID:"))),
-    cast_to_range(doid_long, ~ as.integer(stringr::str_remove(.x, "DOID:")), end_rm = "DOID:"),
+    to_range(x_long),
+    to_range(doid_long, ~ as.integer(stringr::str_remove(.x, "DOID:"))),
+    to_range(doid_long, ~ as.integer(stringr::str_remove(.x, "DOID:")), end_rm = "DOID:"),
     times = 100
 )
 
 microbenchmark(
-    cast_to_range(xx_long),
-    cast_to_range(doid_xlong, ~ as.integer(stringr::str_remove(.x, "DOID:"))),
-    cast_to_range(doid_xlong, ~ as.integer(stringr::str_remove(.x, "DOID:")), end_rm = "DOID:"),
+    to_range(xx_long),
+    to_range(doid_xlong, ~ as.integer(stringr::str_remove(.x, "DOID:"))),
+    to_range(doid_xlong, ~ as.integer(stringr::str_remove(.x, "DOID:")), end_rm = "DOID:"),
     times = 20
 )
