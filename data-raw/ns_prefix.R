@@ -19,5 +19,8 @@ names(ns_prefix) <- dplyr::recode(
     "dc11" = "dc"
 )
 
+# prioritize with more specific first (assumes length ~ specificity)
+ns_prefix <- ns_prefix[order(-str_length(ns_prefix))]
+
 usethis::use_data(ns_prefix, overwrite = TRUE)
 usethis::use_r("data", open = TRUE)
