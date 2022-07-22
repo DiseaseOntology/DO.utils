@@ -1,3 +1,53 @@
+# cast_to_string() tests --------------------------------------------------
+
+# data.frame of all major types
+df <- data.frame(
+    dbl = c(1, 2.5),
+    int = 1:2,
+    lgl = c(T, F),
+    chr = c("a", "b"),
+    fac = factor(c("a", "b")),
+    dat = structure(c(18963, 18964), class = "Date"),
+    tim = structure(
+        c(1638379919.66874, 1638379920.66874),
+        class = c("POSIXct", "POSIXt"),
+        tzone = "UTC"
+    ),
+    stringsAsFactors = FALSE
+)
+
+# other complex data types (no plan for array)
+d <- df[, c("dbl", "chr")]
+m <- matrix(c(as.character(df$dbl), df$chr), nrow = 2)
+l <- as.list(d)
+nl <- list(l, df$lgl)
+
+test_that("single vectors are concatenated", {
+    expect_identical(cast_to_string(df$dbl), "1|2.5")
+    expect_identical(cast_to_string(df$int), "1|2")
+    expect_identical(cast_to_string(df$lgl), "TRUE|FALSE")
+    expect_identical(cast_to_string(df$chr), "a|b")
+    expect_identical(cast_to_string(df$fac), "a|b")
+    expect_identical(cast_to_string(df$dat), "2021-12-02|2021-12-03")
+    expect_identical(
+        cast_to_string(df$tim),
+        "2021-12-01 17:31:59|2021-12-01 17:32:00"
+    )
+})
+
+test_that("delim is used", {
+    expect_identical(cast_to_string(df$int, delim = ""), "12")
+    expect_identical(cast_to_string(df$int, delim = "."), "1.2")
+})
+
+test_that("complex data types are concatenated", {
+    expect_identical(cast_to_string(d), "1|2.5|a|b")
+    expect_identical(cast_to_string(m), "1|2.5|a|b")
+    expect_identical(cast_to_string(l), "1|2.5|a|b")
+    expect_identical(cast_to_string(nl), "1|2.5|a|b|TRUE|FALSE")
+})
+
+
 # cast_to_range() tests ---------------------------------------------------
 
 x <- c(1:2, 8:6, 4, -1:-2, 20:37, 4, 40, 43, 45)
