@@ -45,4 +45,8 @@ to_curie(
 )
 
 }
+\seealso{
+Other identifier converters: 
+\code{\link{to_uri}()}
+}
 \concept{identifier converters}
