@@ -1,5 +1,6 @@
 utils::globalVariables(
-    names = c("DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata")
+    names = c("DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
+              "ns_prefix")
 )
 
 #' @keywords internal
@@ -94,3 +95,17 @@ NULL
 #'
 #' @source \url{http://www.obofoundry.org/registry/ontologies.jsonld}, last accessed 2021-11-05.
 "obofoundry_metadata"
+
+
+#' Namespace Prefixes
+#'
+#' Prefixes for namespaces sourced from `robot` that cover most uses in
+#' OBO Foundry ontologies, with a few additional prefixes and slight
+#' modifications to match the prefixes as used in the Human Disease Ontology.
+#'
+#' @format A `r class(ns_prefix)` vector of `r length(ns_prefix)` namespaces,
+#' named by their corresponding prefix (e.g.
+#' `r paste0(head(names(ns_prefix), 1), ' = "', head(ns_prefix, 1), '"')`).
+#'
+#' @source "`robot` (v1.9.0) via data-raw/ns_prefix.R; last updated 2022-07-22."
+"ns_prefix"
