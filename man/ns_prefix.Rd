@@ -6,8 +6,8 @@
 \title{Namespace Prefixes}
 \format{
 A character vector of 268 namespaces,
-named by their corresponding prefix (e.g.
-schema = "http://schema.org/").
+named by their corresponding prefix
+(e.g. schema = "http://schema.org/").
 }
 \source{
 "\code{robot} (v1.9.0) via data-raw/ns_prefix.R; last updated 2022-07-22."
