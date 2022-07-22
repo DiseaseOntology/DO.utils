@@ -12,7 +12,7 @@ unnest_cross(data, cols, ...)
 \item{cols}{<\code{\link[=tidyr_tidy_select]{tidy-select}}> Columns to unnest.}
 
 \item{...}{
-  Arguments passed on to \code{\link[tidyr:nest]{tidyr::unnest}}
+  Arguments passed on to \code{\link[tidyr:chop]{tidyr::unchop}}, \code{\link[tidyr:pack]{tidyr::unpack}}
   \describe{
     \item{\code{keep_empty}}{By default, you get one row of output for each element
 of the list your unchopping/unnesting. This means that if there's a
@@ -25,15 +25,15 @@ coerce \code{cols} to, overriding the default that will be guessed from
 combining the individual values. Alternatively, a single empty ptype
 can be supplied, which will be applied to all \code{cols}.}
     \item{\code{names_sep}}{If \code{NULL}, the default, the names will be left
-as is. In \code{nest()}, inner names will come from the former outer names;
-in \code{unnest()}, the new outer names will come from the inner names.
+as is. In \code{pack()}, inner names will come from the former outer names;
+in \code{unpack()}, the new outer names will come from the inner names.
 
 If a string, the inner and outer names will be used together. In
-\code{unnest()}, the names of the new outer columns will be formed by pasting
+\code{unpack()}, the names of the new outer columns will be formed by pasting
 together the outer and the inner column names, separated by \code{names_sep}. In
-\code{nest()}, the new inner names will have the outer names + \code{names_sep}
+\code{pack()}, the new inner names will have the outer names + \code{names_sep}
 automatically stripped. This makes \code{names_sep} roughly symmetric between
-nesting and unnesting.}
+packing and unpacking.}
     \item{\code{names_repair}}{Used to check that output data frame has valid
 names. Must be one of the following options:
 \itemize{
@@ -48,18 +48,6 @@ names. Must be one of the following options:
 
 See \code{\link[vctrs:vec_as_names]{vctrs::vec_as_names()}} for more details on these terms and the
 strategies used to enforce them.}
-    \item{\code{.drop}}{\ifelse{{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}:
-all list-columns are now preserved; If there are any that you
-don't want in the output use \code{select()} to remove them prior to
-unnesting.}
-    \item{\code{.preserve}}{\ifelse{{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}:
-all list-columns are now preserved; If there are any that you
-don't want in the output use \code{select()} to remove them prior to
-unnesting.}
-    \item{\code{.id}}{\ifelse{{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}:
-convert \code{df \%>\% unnest(x, .id = "id")} to \verb{df \%>\% mutate(id = names(x)) \%>\% unnest(x))}.}
-    \item{\code{.sep}}{\ifelse{{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}:
-use \code{names_sep} instead.}
   }}
 }
 \description{
