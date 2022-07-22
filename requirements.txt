@@ -43,7 +43,7 @@ Jinja2==3.0.3
 jmespath==0.10.0
 joblib==1.1.0
 jsonschema==4.4.0
-lxml==4.8.0
+lxml==4.9.1
 MarkupSafe==2.1.0
 marshmallow==3.14.1
 marshmallow-enum==1.5.1
