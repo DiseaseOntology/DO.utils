@@ -1,3 +1,36 @@
+# DO.utils 0.2.4
+
+## New
+**Testing**
+* `is_boolean()`: T/F type predicate.
+* `write_access()`: Test for file write existence with write access.
+
+**Data Conversion**
+* `to_curie()` & `to_uri()`: Convert between URI & CURIEs.
+* `to_range()`: Convert vector of values to ranges (output as single string).
+
+**Data.frame Manipulation**
+* `append_empty_col()`: Add empty columns to a data.frame.
+* `unnest_cross()`: Unnest list columns in data.frame _always_ creating the
+    cartesian product.
+    * Useful for expanding list columns produced by some SPARQL queries.
+
+**Datasets**
+* `ST_pubs`: Information about official publications describing the Symptom
+    (SYMP) and/or Pathogen Transmission (TRANS) ontologies.
+    * Currently, only one conatins one publication.
+* `ns_prefix`: Named character vector of common namespace-prefix pairs used in
+    DO and/or OBO ontologies.
+
+## Updates
+* `cast_to_string` renamed to `collapse_to_string()`
+* `DO_pubs` now includes `lens_id` with lens.org identifiers for each publication.
+
+## Dependencies
+* Imports 'tidyselect', which is explicitly required for `unnest_cross` but is
+    used throughout DO.utils to enable tidyverse-style semantics (via dplyr).
+
+
 # DO.utils 0.2.3
 
 ## Cited By -- Updates
