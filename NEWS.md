@@ -1,3 +1,10 @@
+# DO.utils (development version)
+
+## New
+* `extract_*_axiom()` family: Extract equivalentClass ('eq'), subClassOf
+    ('subclass'), or both ('class') logical axioms.
+
+
 # DO.utils 0.2.4
 
 ## New
