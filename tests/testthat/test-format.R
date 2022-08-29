@@ -1,6 +1,6 @@
 # format_doid() -----------------------------------------------------------
 
-# input & expected output
+# valid DOID input & expected output
 x <- c("http://purl.obolibrary.org/obo/DOID_0001816", "DOID:4",
        "obo:DOID_14566", "DOID_0040001")
 
@@ -13,6 +13,7 @@ obo_curie <- c("obo:DOID_0001816", "obo:DOID_4", "obo:DOID_14566",
                "obo:DOID_0040001")
 basename <- c("DOID_0001816", "DOID_4", "DOID_14566", "DOID_0040001")
 
+
 # tests
 test_that("format_doid() works", {
     expect_identical(format_doid(x, as = "URI"), uri)
@@ -21,14 +22,27 @@ test_that("format_doid() works", {
     expect_identical(format_doid(x, as = "basename"), basename)
 })
 
-test_that("format_doid() allow_bare switch works", {
+test_that("format_doid() convert_bare switch works", {
     w_bare <- c(x, "0001816")
     bare_expected <- c(curie, "DOID:0001816")
 
     expect_error(format_doid(w_bare))
-    expect_identical(format_doid(w_bare, allow_bare = TRUE), bare_expected)
+    expect_identical(format_doid(w_bare, convert_bare = TRUE), bare_expected)
 })
 
+test_that("format_doid() validate_input switch works", {
+    not_valid <- c("blah", "obo:SYMP_0000000")
+    mixed <- c(x, not_valid, "0001816")
+
+    expect_identical(
+        format_doid(mixed, validate_input = FALSE),
+        c(curie, not_valid, "0001816")
+    )
+    expect_identical(
+        format_doid(mixed, convert_bare = TRUE, validate_input = FALSE),
+        c(curie, not_valid, "DOID:0001816")
+    )
+})
 
 # format_subtree() --------------------------------------------------------
 

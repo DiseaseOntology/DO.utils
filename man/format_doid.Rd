@@ -4,7 +4,7 @@
 \alias{format_doid}
 \title{Format DOIDs}
 \usage{
-format_doid(x, as = "CURIE", allow_bare = FALSE)
+format_doid(x, as = "CURIE", convert_bare = FALSE, validate_input = TRUE)
 }
 \arguments{
 \item{x}{A set of DOIDs, as a character vector.}
@@ -12,13 +12,17 @@ format_doid(x, as = "CURIE", allow_bare = FALSE)
 \item{as}{The format to convert the DOIDs to, as a string. All valid formats
 are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".}
 
-\item{allow_bare}{Whether bare numbers should be allowed as input, \code{TRUE}
-or \code{FALSE} (default).}
+\item{convert_bare}{Whether bare numbers should be converted to canonical
+DOIDs, \code{TRUE} or \code{FALSE} (default).}
+
+\item{validate_input}{Whether to ensure only valid DOIDs are included in \code{x},
+\code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-DOID input will be
+returned unchanged.}
 }
 \description{
-Convert valid DOIDs and/or bare numbers to a specified DOID format. No
-attempt is made to confirm bare numbers or DOIDs match existing diseases in
-the ontology.
+Convert valid DOIDs and/or bare numbers to a specified DOID format. Input
+\emph{may} be tested to ensure it matches a valid DOID format but no attempt is
+made to confirm bare numbers or DOIDs match actual diseases in the ontology.
 }
 \examples{
 x <- c(
@@ -33,7 +37,13 @@ format_doid(x, as = "CURIE")
 format_doid(x, as = "obo_CURIE")
 format_doid(x, as = "basename")
 
+# bare numbers can be converted to canonical DOIDs, if desired
 w_bare <- c(x, "0001816")
-format_doid(w_bare, allow_bare = TRUE)
+format_doid(w_bare, convert_bare = TRUE)
+
+# non-DOIDs can be passed as input, if desired
+mixed_input <- c(x, "random_text", "obo:SYMP_0000000", "0001816")
+format_doid(mixed_input, validate_input = FALSE)
+format_doid(mixed_input, convert_bare = TRUE, validate_input = FALSE)
 
 }
