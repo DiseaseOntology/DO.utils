@@ -23,8 +23,8 @@ test_that("format_doid() works", {
 })
 
 test_that("format_doid() convert_bare switch works", {
-    w_bare <- c(x, "0001816")
-    bare_expected <- c(curie, "DOID:0001816")
+    w_bare <- c(x, "0050117")
+    bare_expected <- c(curie, "DOID:0050117")
 
     expect_error(format_doid(w_bare))
     expect_identical(format_doid(w_bare, convert_bare = TRUE), bare_expected)
@@ -32,15 +32,15 @@ test_that("format_doid() convert_bare switch works", {
 
 test_that("format_doid() validate_input switch works", {
     not_valid <- c("blah", "obo:SYMP_0000000")
-    mixed <- c(x, not_valid, "0001816")
+    mixed <- c(x, not_valid, "0050117")
 
     expect_identical(
         format_doid(mixed, validate_input = FALSE),
-        c(curie, not_valid, "0001816")
+        c(curie, not_valid, "0050117")
     )
     expect_identical(
         format_doid(mixed, convert_bare = TRUE, validate_input = FALSE),
-        c(curie, not_valid, "DOID:0001816")
+        c(curie, not_valid, "DOID:0050117")
     )
 })
 

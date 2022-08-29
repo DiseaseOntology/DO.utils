@@ -27,11 +27,11 @@
 #' format_doid(x, as = "basename")
 #'
 #' # bare numbers can be converted to canonical DOIDs, if desired
-#' w_bare <- c(x, "0001816")
+#' w_bare <- c(x, "0050117")
 #' format_doid(w_bare, convert_bare = TRUE)
 #'
 #' # non-DOIDs can be passed as input, if desired
-#' mixed_input <- c(x, "random_text", "obo:SYMP_0000000", "0001816")
+#' mixed_input <- c(x, "random_text", "obo:SYMP_0000000", "0050117")
 #' format_doid(mixed_input, validate_input = FALSE)
 #' format_doid(mixed_input, convert_bare = TRUE, validate_input = FALSE)
 #'
