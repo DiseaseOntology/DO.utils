@@ -11,7 +11,7 @@ Description: This package is used to automate management of the Human Disease
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Imports:
     assertthat,
