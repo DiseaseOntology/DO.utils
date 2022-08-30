@@ -1,6 +1,6 @@
 # format_subtree() helpers ------------------------------------------------
 
-#' Convert Subtree DF to tidygraph
+#' Convert Subtree DF to tidygraph (INTERNAL)
 #'
 #' Converts a subtree dataframe, from [extract_subtree()], to a tidygraph. This
 #' is the first step in formatting a subtree as a text-based ontology tree
@@ -9,7 +9,7 @@
 #'
 #' @inheritParams format_subtree
 #'
-#' @keywords internal
+#' @noRd
 as_subtree_tidygraph <- function(subtree_df, top_node) {
     # keep all parent info in labels
     label_df <- collapse_col_flex(
@@ -47,7 +47,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
     tg
 }
 
-#' Convert Subtree DF to tidygraph
+#' Convert Subtree DF to tidygraph (INTERNAL)
 #'
 #' Converts a subtree tidygraph, from [as_subtree_tidygraph()], to a
 #' dataframe with the tree hierarchically organized. This is the second step
@@ -57,7 +57,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
 #' @param subtree_tg A subtree tidygraph from [as_subtree_tidygraph()].
 #' @inheritParams format_subtree
 #'
-#' @keywords internal
+#' @noRd
 pivot_subtree <- function(subtree_tg, top_node) {
 
     # ensure alphabetical order of classes to match disease-ontology.org
@@ -102,14 +102,14 @@ pivot_subtree <- function(subtree_tg, top_node) {
 }
 
 
-#' Fill in Subclasses
+#' Fill in Subclasses (INTERNAL)
 #'
 #' Fill in subclasses when a parent appears multiple times in a subtree. This
 #' ensures that the subclasses appear each time their parent/superclass does.
 #'
 #' @inheritParams as_subtree_tidygraph
 #'
-#' @keywords internal
+#' @noRd
 fill_subclass <- function(subtree_df) {
 
     not_dup <- dplyr::filter(subtree_df, !duplicated(.data$id))
