@@ -22,9 +22,9 @@ Scopus ID}
 \item{citation_nlm}{Full NLM-formatted citation}
 }
 
+\code{DO_pubs} includes 9 publications.
 
-
-
+\code{ST_pubs} includes 1 publications.
 }
 \source{
 Compiled by J. Allen Baron; last updated 2022-07-22.

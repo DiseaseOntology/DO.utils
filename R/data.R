@@ -54,11 +54,11 @@ pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
 #' @name pubs
 NULL
 
-#' @format
+#' @format `DO_pubs` includes `r nrow(DO_pubs)` publications.
 #' @rdname pubs
 "DO_pubs"
 
-#' @format
+#' @format `ST_pubs` includes `r nrow(ST_pubs)` publications.
 #' @rdname pubs
 "ST_pubs"
 
