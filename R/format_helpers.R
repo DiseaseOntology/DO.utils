@@ -365,21 +365,19 @@ format_some_phrase <- function(x, placeholders) {
 #' @family format_axiom() > format_inmost_object_phrase() > format_object_phrase() helpers
 #' @noRd
 format_cardinal_phrase <- function(x, placeholders) {
-    mutable_group <- sandwich_text("\\4", placeholders[1:2])
-    replacement <- paste(
-        "\\3", "\\1", "\\2", mutable_group,
-        sep = placeholders[3]
-    )
+    replacement <- paste("\\3", "\\1", "\\2", "\\4", sep = placeholders[3])
 
     out <- stringr::str_replace(
         x,
         "Object([^C]+)Cardinality\\(([0-9]+) ([^ ]+) (.+)\\)",
         replacement = replacement
     )
-
-    mutable_pattern <- sandwich_text("([^ ]+)", placeholders[1:2])
-    out <- stringr::str_replace(out, mutable_pattern, "\\1")
-    out <- stringr::str_replace(out, " Exact ", " Exactly ")
+    out <- sandwich_text(out, placeholders[1:2])
+    out <- stringr::str_replace(
+        out,
+        sandwich_text("Exact", placeholders[3]),
+        sandwich_text("Exactly", placeholders[3])
+    )
 
     out
 }
