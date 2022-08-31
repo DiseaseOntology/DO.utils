@@ -9,6 +9,7 @@
 #'
 #' @inheritParams format_subtree
 #'
+#' @family format_subtree() helpers
 #' @noRd
 as_subtree_tidygraph <- function(subtree_df, top_node) {
     # keep all parent info in labels
@@ -57,6 +58,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
 #' @param subtree_tg A subtree tidygraph from [as_subtree_tidygraph()].
 #' @inheritParams format_subtree
 #'
+#' @family format_subtree() helpers
 #' @noRd
 pivot_subtree <- function(subtree_tg, top_node) {
 
@@ -109,6 +111,7 @@ pivot_subtree <- function(subtree_tg, top_node) {
 #'
 #' @inheritParams as_subtree_tidygraph
 #'
+#' @family format_subtree() > as_subtree_tidygraph() helpers
 #' @noRd
 fill_subclass <- function(subtree_df) {
 
