@@ -21,7 +21,7 @@ scopus_title_query <- function(title) {
     if (length(title) == 1) {
         q <- paste0("REFTITLE(\"", title, "\")")
     } else {
-        q <- DO.utils::vctr_to_string(
+        q <- vctr_to_string(
             paste0("REFTITLE(\"", title, "\")"),
             delim = " OR "
         )

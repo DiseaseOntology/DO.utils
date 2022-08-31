@@ -176,7 +176,7 @@ fill_subclass <- function(subtree_df) {
 label_properties <- function(x, property_df) {
     stopifnot(all(c("property", "label") %in% names(property_df)))
 
-    obo_ns_pattern <- paste0("(", DO.utils::ns_prefix["obo"], "|obo:)")
+    obo_ns_pattern <- paste0("(", ns_prefix["obo"], "|obo:)")
     ns_label <- paste0(
         stringr::str_replace(
             property_df$property,
@@ -243,7 +243,7 @@ generify_obo <- function(x) {
     )
 
     obo_ns_pattern <- paste0(
-        "(", DO.utils::ns_prefix["obo"], "|obo:)([A-Za-z]+)_[0-9]+"
+        "(", ns_prefix["obo"], "|obo:)([A-Za-z]+)_[0-9]+"
     )
     out <- stringr::str_replace_all(x, obo_ns_pattern, "\\2")
     out <- stringr::str_replace_all(out, generic_ns_replacement)

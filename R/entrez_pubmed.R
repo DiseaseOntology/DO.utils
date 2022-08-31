@@ -52,7 +52,7 @@ tidy_pubmed_authors <- function(authors_df) {
             }
         )
 
-    if (DO.utils::is_blank(authors_tidy$auth_clusterid)) {
+    if (is_blank(authors_tidy$auth_clusterid)) {
         authors_tidy <- dplyr::select(.data$authors_tidy, -.data$auth_clusterid)
     }
 
