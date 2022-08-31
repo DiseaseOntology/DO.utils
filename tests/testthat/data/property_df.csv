@@ -1,0 +1,5 @@
+property,label
+http://purl.obolibrary.org/obo/IDO_0000664,has material basis in
+http://purl.obolibrary.org/obo/RO_0001000,derives from
+http://purl.obolibrary.org/obo/RO_0004026,disease has location
+http://purl.obolibrary.org/obo/RO_0004029,disease has feature

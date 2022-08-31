@@ -83,3 +83,16 @@ test_that("format_subtree() works when no fill is needed", {
 
     expect_identical(format_subtree(no_hge, "DOID:3070"), no_hge_res)
 })
+
+
+# format_axiom() ----------------------------------------------------------
+
+axioms <- readr::read_lines("data/axioms.ofn")
+prop_df <- readr::read_csv("data/property_df.csv", col_types = "c")
+
+test_that("format_axiom() works", {
+    expect_snapshot(format_axiom(axioms))
+    expect_snapshot(format_axiom(axioms, prop_df))
+    expect_snapshot(format_axiom(axioms, generify_obo = TRUE))
+    expect_snapshot(format_axiom(axioms, prop_df, generify_obo = TRUE))
+})

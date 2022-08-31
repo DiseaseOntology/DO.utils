@@ -1,0 +1,8 @@
+EquivalentClasses(obo:DOID_231 ObjectIntersectionOf(obo:DOID_4 ObjectSomeValuesFrom(obo:RO_0004026 obo:CL_0000100)))
+EquivalentClasses(obo:DOID_4960 ObjectIntersectionOf(obo:DOID_162 ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0002371)))
+EquivalentClasses(obo:DOID_154 ObjectIntersectionOf(obo:DOID_162 ObjectUnionOf(ObjectIntersectionOf(ObjectSomeValuesFrom(obo:RO_0001000 obo:CL_0000221) ObjectSomeValuesFrom(obo:RO_0001000 obo:CL_0000222)) ObjectIntersectionOf(ObjectSomeValuesFrom(obo:RO_0001000 obo:CL_0000221) ObjectSomeValuesFrom(obo:RO_0001000 obo:CL_0000223)) ObjectIntersectionOf(ObjectSomeValuesFrom(obo:RO_0001000 obo:CL_0000222) ObjectSomeValuesFrom(obo:RO_0001000 obo:CL_0000223)))))
+SubClassOf(obo:DOID_2211 ObjectSomeValuesFrom(obo:RO_0004029 obo:DOID_801))
+SubClassOf(obo:DOID_0112214 ObjectSomeValuesFrom(obo:IDO_0000664 obo:GENO_0000147))
+SubClassOf(obo:DOID_10080 ObjectIntersectionOf(ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0000310) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0000955) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0001008) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0001846) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0002048) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0002402) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0004867) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0011818) ObjectSomeValuesFrom(obo:RO_0004026 obo:UBERON_0017672)))
+SubClassOf(obo:DOID_13515 ObjectSomeValuesFrom(obo:IDO_0000664 ObjectIntersectionOf(obo:SO_0002054 ObjectMinCardinality(1 obo:RO_0004026 obo:SO_0000704))))
+SubClassOf(obo:DOID_13372 ObjectExactCardinality(1 obo:IDO_0000664 ObjectIntersectionOf(obo:SO_0002054 ObjectExactCardinality(1 obo:RO_0004026 obo:SO_0000704))))
