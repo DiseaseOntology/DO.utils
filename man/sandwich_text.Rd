@@ -9,6 +9,11 @@ sandwich_text(x, placeholder, ...)
 \arguments{
 \item{x}{A string or character vector.}
 
+\item{placeholder}{One or two placeholders to sandwich each element of \code{x}
+between. When two placeholders are provided, \code{x} will be sandwiched
+between them with the first on the left and second on the right.
+Otherwise, \code{x} will be sandwiched on both sides by the same placeholder.}
+
 \item{...}{
   Arguments passed on to \code{\link[base:paste]{base::paste0}}
   \describe{
@@ -20,18 +25,13 @@ sandwich_text(x, placeholder, ...)
     \code{""} in the \code{collapse}-phase, i.e., when \code{collapse} is
     not \code{NULL}).}
   }}
-
-\item{placholder}{One or two placeholders to sandwich each element of \code{x}
-between. When two placeholders are provided, \code{x} will be sandwiched
-between them with the first on the left and second on the right.
-Otherwise, \code{x} will be sandwiched on both sides by the same placeholder.}
 }
 \description{
 Sandwiches strings between one or two placeholders.
 }
 \examples{
 sandwich_text("a", placeholder = "h")
-sandwich_text("a", placedholder = c("b", "h"))
+sandwich_text("a", placeholder = c("b", "h"))
 
 }
 \concept{general utilities}

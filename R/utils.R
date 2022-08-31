@@ -3,7 +3,7 @@
 #' Sandwiches strings between one or two placeholders.
 #'
 #' @param x A string or character vector.
-#' @param placholder One or two placeholders to sandwich each element of `x`
+#' @param placeholder One or two placeholders to sandwich each element of `x`
 #'     between. When two placeholders are provided, `x` will be sandwiched
 #'     between them with the first on the left and second on the right.
 #'     Otherwise, `x` will be sandwiched on both sides by the same placeholder.
@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' sandwich_text("a", placeholder = "h")
-#' sandwich_text("a", placedholder = c("b", "h"))
+#' sandwich_text("a", placeholder = c("b", "h"))
 #'
 #' @family general utilities
 #' @export

@@ -30,7 +30,7 @@ examine_format_axiom_snapshots <- function(test_dir = "tests/testthat/") {
         id = 1:8,
         cmd = "original axiom",
         res = readr::read_lines(file.path(test_dir, "data/axioms.ofn")),
-        paren = stringr::str_count(res, "\\(")
+        paren = stringr::str_count(.data$res, "\\(")
     )
 
     ss <- readr::read_lines(file.path(test_dir, "_snaps/format.md"))
@@ -45,13 +45,13 @@ examine_format_axiom_snapshots <- function(test_dir = "tests/testthat/") {
     )
 
     compare_df <- dplyr::bind_rows(ax_df, ss_df) %>%
-        dplyr::arrange(id, dplyr::desc(cmd)) %>%
-        dplyr::group_by(id) %>%
+        dplyr::arrange(.data$id, dplyr::desc(.data$cmd)) %>%
+        dplyr::group_by(.data$id) %>%
         dplyr::mutate(
             paren_correct = dplyr::if_else(
-                cmd == "original axiom",
+                .data$cmd == "original axiom",
                 NA,
-                paren[cmd == "original axiom"] - paren == 1
+                .data$paren[.data$cmd == "original axiom"] - .data$paren == 1
             )
         ) %>%
         dplyr::ungroup()
