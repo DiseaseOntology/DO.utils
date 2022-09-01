@@ -44,6 +44,48 @@ test_that("format_doid() validate_input switch works", {
     )
 })
 
+
+# format_obo() ------------------------------------------------------------
+
+# valid OBO input & expected output
+x <- c("http://purl.obolibrary.org/obo/DOID_0001816",
+       "<http://purl.obolibrary.org/obo/CL_0000066>",
+       "obo:so#has_origin",
+       "obo:SYMP_0000000")
+
+curie <- c("obo:DOID_0001816", "obo:CL_0000066", "obo:so#has_origin",
+           "obo:SYMP_0000000")
+uri <- c("http://purl.obolibrary.org/obo/DOID_0001816",
+         "http://purl.obolibrary.org/obo/CL_0000066",
+         "http://purl.obolibrary.org/obo/so#has_origin",
+         "http://purl.obolibrary.org/obo/SYMP_0000000")
+bracketed_uri <- c("<http://purl.obolibrary.org/obo/DOID_0001816>",
+                   "<http://purl.obolibrary.org/obo/CL_0000066>",
+                   "<http://purl.obolibrary.org/obo/so#has_origin>",
+                   "<http://purl.obolibrary.org/obo/SYMP_0000000>")
+ns_lui <- c("DOID_0001816", "CL_0000066", "so#has_origin", "SYMP_0000000")
+ns <- c("DOID", "CL", "so#", "SYMP")
+
+# tests
+test_that("format_obo() works", {
+    expect_identical(format_obo(x, as = "CURIE"), curie)
+    expect_identical(format_obo(x, as = "URI"), uri)
+    expect_identical(format_obo(x, as = "bracketed_URI"), bracketed_uri)
+    expect_identical(format_obo(x, as = "ns_lui"), ns_lui)
+    expect_identical(format_obo(x, as = "ns"), ns)
+})
+
+test_that("format_obo() validate_input switch works", {
+    not_valid <- c("blah", "obo:SYMP:0000000")
+    mixed <- c(x, not_valid, "0050117")
+
+    expect_identical(
+        format_obo(mixed, validate_input = FALSE),
+        c(curie, not_valid, "0050117")
+    )
+})
+
+
 # format_subtree() --------------------------------------------------------
 
 # data

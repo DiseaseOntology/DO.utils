@@ -7,7 +7,7 @@
 format_doid(x, as = "CURIE", convert_bare = FALSE, validate_input = TRUE)
 }
 \arguments{
-\item{x}{A set of DOIDs, as a character vector.}
+\item{x}{A set of IDs, as a character vector.}
 
 \item{as}{The format to convert the DOIDs to, as a string. All valid formats
 are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".}
@@ -24,6 +24,12 @@ Convert valid DOIDs and/or bare numbers to a specified DOID format. Input
 \emph{may} be tested to ensure it matches a valid DOID format but no attempt is
 made to confirm bare numbers or DOIDs match actual diseases in the ontology.
 }
+\section{Caution}{
+
+Be extra cautious when using \code{format_doid()} with \code{validate_input = FALSE} as
+unexpected text conversion may occur.
+}
+
 \examples{
 x <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816",
@@ -47,3 +53,8 @@ format_doid(mixed_input, validate_input = FALSE)
 format_doid(mixed_input, convert_bare = TRUE, validate_input = FALSE)
 
 }
+\seealso{
+Other format IDs: 
+\code{\link{format_obo}()}
+}
+\concept{format IDs}

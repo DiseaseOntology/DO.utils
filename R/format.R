@@ -13,6 +13,10 @@
 #'     `TRUE` (default) or `FALSE`. When `FALSE`, non-DOID input will be
 #'     returned unchanged.
 #'
+#' @section Caution:
+#' Be extra cautious when using `format_doid()` with `validate_input = FALSE` as
+#' unexpected text conversion may occur.
+#'
 #' @examples
 #' x <- c(
 #'     "http://purl.obolibrary.org/obo/DOID_0001816",
@@ -35,6 +39,7 @@
 #' format_doid(mixed_input, validate_input = FALSE)
 #' format_doid(mixed_input, convert_bare = TRUE, validate_input = FALSE)
 #'
+#' @family format IDs
 #' @export
 format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
                         validate_input = TRUE) {
@@ -65,6 +70,86 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
 
         formatted <- stringr::str_replace(x, "^.*DOID[:_]", prefix)
     }
+
+    formatted
+}
+
+
+#' Format OBO Foundry IDs
+#'
+#' Convert valid OBO Foundry ontology IDs to a specified format. Input
+#' _may_ be tested to ensure it matches a valid OBO ID format but no attempt is
+#' made to confirm IDs match actual terms in any OBO Foundry ontology.
+#'
+#' @inheritParams ID_predicates
+#' @param as The format to convert the OBO IDs to, as a string. The following
+#'     formats are possible options:
+#'
+#' * `"CURIE"` (default)
+#'
+#' * `"URI"`
+#'
+#' * `"bracketed_URI"`: e.g. `"<http://purl.obolibrary.org/obo/CL_0000066>"`
+#'
+#' * `"ns_lui"`: namespace with local unique identifier (preserves separator).
+#'
+#' * `"ns"`: namespace of ontology only
+#'
+#' As valid OBO formats, the first three formats may be modified repeatedly
+#' by `format_obo()`. The 'ns' formats, on the other hand, are not valid OBO
+#' formats and cannot be formatted again by `format_obo()`.
+#'
+#' @param validate_input Whether to ensure only valid OBO IDs are included in
+#'     `x`,`TRUE` (default) or `FALSE`. When `FALSE`, non-OBO ID input will
+#'     _most likely_ be returned unchanged.
+#'
+#' @section Caution:
+#' Be extra cautious when using `format_obo()` with `validate_input = FALSE` as
+#' unexpected text conversion may occur.
+#'
+#' @examples
+#' x <- c(
+#'     "http://purl.obolibrary.org/obo/DOID_0001816",
+#'     "<http://purl.obolibrary.org/obo/CL_0000066>",
+#'     "obo:SYMP_0000000",
+#'     "obo:so#has_origin"
+#' )
+#'
+#' # reversible
+#' format_obo(x, as = "CURIE")
+#' format_obo(x, as = "URI")
+#' format_obo(x, as = "bracketed_URI")
+#'
+#' # irreversible
+#' format_obo(x, as = "ns_lui")
+#' format_obo(x, as = "ns")
+#'
+#' # non-OBO IDs can be passed as input with caution, if desired
+#' mixed_input <- c(x, "random_text", "0050117", "obo:SYMP:0000000")
+#' format_obo(mixed_input, validate_input = FALSE)
+#'
+#' @family format IDs
+#' @export
+format_obo <- function(x, as = "CURIE", validate_input = TRUE) {
+    as <- match.arg(
+        as,
+        choices = c("CURIE", "URI", "bracketed_URI", "ns_lui", "ns")
+    )
+
+    if (validate_input) {
+        assertthat::assert_that(all(is_valid_obo(x)))
+    }
+
+    obo_pattern <- "^.*obo[/:]([A-Za-z_]+)(_[[:alnum:]_]+)>?$|^.*obo[/:]([A-Za-z_]+#)([[:alnum:]_]+)>?$"
+    obo_replacement <- switch(
+        as,
+        URI = "http://purl.obolibrary.org/obo/\\1\\2\\3\\4",
+        CURIE = "obo:\\1\\2\\3\\4",
+        bracketed_URI = "<http://purl.obolibrary.org/obo/\\1\\2\\3\\4>",
+        ns_lui = "\\1\\2\\3\\4",
+        ns = "\\1\\3"
+    )
+    formatted <- stringr::str_replace(x, obo_pattern, obo_replacement)
 
     formatted
 }
