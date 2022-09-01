@@ -120,32 +120,77 @@ is_boolean <- function(x) {
 }
 
 
-#' DO-specific predicate
+#' ID predicates
 #'
-#' This predicate is designed to identify and validate common formats for DOIDs
-#' derived from the Human Disease Ontology (DO). Note that bare numbers are NOT
-#' recognized as valid DOIDs, a prefix is _always_ required.
+#' These predicates are designed to identify and validate common ID formats
+#' defined within OBO Foundry ontologies.
 #'
-#' @param x A set of DOIDs, as a character vector.
+#' * `is_valid_obo()` identifies NA's and blanks
+#'
+#' * `is_valid_doid()` identifies "" or whitespace of any length
+#'
+#' @section Notes:
+#' These predicates _do not_ attempt to confirm any ID actually exists in an
+#' OBO Foundry ontology, but only test if the IDs are syntactically formatted
+#' correctly (see [OBO Foundry ID Policy](https://obofoundry.org/id-policy) and
+#' [OBO File Specification](https://owlcollab.github.io/oboformat/doc/obo-syntax.html)).
+#'
+#' Not all OBO formats are valid DOID formats and vice versa.
+#'
+#' @param x A set of IDs, as a character vector.
 #'
 #' @examples
-#' # formats considered valid
-#' is_valid_doid("http://purl.obolibrary.org/obo/DOID_0001816") # URI
-#' is_valid_doid("DOID:4") # CURIE, standard version
-#' is_valid_doid("obo:DOID_14566") # obo CURIE, less common
-#' is_valid_doid("DOID_0040001") # basename (prefix removed)
+#' # OBO formats
+#' obo_id <- c(
+#'     # valid
+#'     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
+#'     "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
+#'     "obo:DOID_4", # CURIE, standard version
+#'     "http://purl.obolibrary.org/obo/so#has_origin", # namespace-lui '#' separator ~ OBO annotation properties
+#'     # invalid
+#'     "0001816", # bare number without prefix
+#'     "obo:DOID:14566" # namespace-lui separator must be '_' or '#'
+#'     " obo:HP_0000001" # must have NO `[:space:]` characters
+#' )
 #'
-#' # invalid formats
-#' is_valid_doid(c("0001816", "4")) # bare numbers
-#' is_valid_doid("obo:DOID:14566") # some specificity for separators is enforced
+#' is_valid_obo(obo_id)
+#'
+#' # DOID formats
+#' doid <- c(
+#'     # valid
+#'     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
+#'     "DOID:4", # CURIE, standard version
+#'     "obo:DOID_4", # OBO CURIE, less common
+#'     "DOID_0040001", # basename (OBO prefix removed)
+#'     # invalid
+#'     "0001816", # bare number without prefix
+#'     "doid#DO_IEDB_slim", # namespace-lui separator must be '_'
+#'     "obo:doid#DO_IEDB_slim"
+#'     "obo:DOID_21 " # must have NO `[:space:]` characters
+#' )
+#'
+#' is_valid_doid(doid)
 #'
 #' @family type_predicates
+#' @name ID_predicates
+NULL
+
+#' @rdname ID_predicates
+#' @export
+is_valid_obo <- function(x) {
+    assert_character(x)
+    obo_regex <- "^<?http://purl.obolibrary.org/obo/[A-Za-z_]+[_#][[:alnum:]_]+>?$|^obo:[A-Za-z_]+[_#][[:alnum:]_]+$"
+    stringr::str_detect(x, obo_regex)
+}
+
+#' @rdname ID_predicates
 #' @export
 is_valid_doid <- function(x) {
     assert_character(x)
     doid_regex <- "^(http://purl.obolibrary.org/obo/|obo:)?DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$"
     stringr::str_detect(x, doid_regex)
 }
+
 
 # Type tests for internal use only
 is_vctr_or_df <- function(x) {

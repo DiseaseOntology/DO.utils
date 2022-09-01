@@ -4,7 +4,7 @@
 #' _may_ be tested to ensure it matches a valid DOID format but no attempt is
 #' made to confirm bare numbers or DOIDs match actual diseases in the ontology.
 #'
-#' @inheritParams is_valid_doid
+#' @inheritParams ID_predicates
 #' @param as The format to convert the DOIDs to, as a string. All valid formats
 #'     are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".
 #' @param convert_bare Whether bare numbers should be converted to canonical

@@ -16,9 +16,9 @@ vectors).
 }
 \seealso{
 Other type_predicates: 
+\code{\link{ID_predicates}},
 \code{\link{char_val_predicates}},
 \code{\link{is_invariant}()},
-\code{\link{is_valid_doid}()},
 \code{\link{num_val_predicates}}
 }
 \concept{type_predicates}
