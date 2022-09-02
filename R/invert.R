@@ -93,10 +93,20 @@ invert_sublists <- function(x, use_sublist_names = FALSE) {
             stop("Matching names must exist across all sublists when use_sublist_names = TRUE)")
         }
 
-        out <- purrr::map(all_sublist_nm[[1]], function(nm) purrr::map(x, chuck, nm))
+        out <- purrr::map(
+            all_sublist_nm[[1]],
+            function(nm) {
+                purrr::map(x, purrr::chuck, nm)
+            }
+        )
         names(out) <- all_sublist_nm[[1]]
     } else {
-        out <- purrr::map(1:sublist_len, function(i) purrr::map(x, chuck, i))
+        out <- purrr::map(
+            1:sublist_len,
+            function(i) {
+                purrr::map(x, purrr::chuck, i)
+            }
+        )
     }
 
     out
