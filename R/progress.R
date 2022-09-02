@@ -14,7 +14,7 @@ progress_bar <- methods::setRefClass(
             'Initializes a progress bar when called with \\code{progress_bar$new(n, ...)}.
             \\itemize{
             \\item{\\code{n}}{: Total number of ticks.}
-            \\item{\\code{...}}{: Arguments passed on to \\code{\\link[utils::txtProgressBar]{utils::txtProgressBar()}}.}
+            \\item{\\code{...}}{: Arguments passed on to \\code{\\link[utils:txtProgressBar]{utils::txtProgressBar()}}.}
             }'
             args <- list(...)
             bar <<- utils::txtProgressBar(
