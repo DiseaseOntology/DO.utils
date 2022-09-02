@@ -36,14 +36,14 @@ Not all OBO formats are valid DOID formats and vice versa.
 \examples{
 # OBO formats
 obo_id <- c(
-    # valid
+    #### valid ####
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
     "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
     "obo:DOID_4", # CURIE, standard version
-    "http://purl.obolibrary.org/obo/so#has_origin", # namespace-lui '#' separator ~ OBO annotation properties
-    # invalid
+    "obo:so#has_origin", # '#' separator ~ OBO annotation properties
+    #### invalid ####
     "0001816", # bare number without prefix
-    "obo:DOID:14566" # namespace-lui separator must be '_' or '#'
+    "obo:DOID:14566", # namespace-lui separator must be '_' or '#'
     " obo:HP_0000001" # must have NO `[:space:]` characters
 )
 
@@ -51,15 +51,15 @@ is_valid_obo(obo_id)
 
 # DOID formats
 doid <- c(
-    # valid
+    #### valid ####
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
     "DOID:4", # CURIE, standard version
     "obo:DOID_4", # OBO CURIE, less common
     "DOID_0040001", # basename (OBO prefix removed)
-    # invalid
+    #### invalid ####
     "0001816", # bare number without prefix
     "doid#DO_IEDB_slim", # namespace-lui separator must be '_'
-    "obo:doid#DO_IEDB_slim"
+    "obo:doid#DO_IEDB_slim",
     "obo:DOID_21 " # must have NO `[:space:]` characters
 )
 
