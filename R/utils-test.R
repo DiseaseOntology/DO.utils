@@ -41,7 +41,7 @@ examine_format_axiom_snapshots <- function(test_dir = "tests/testthat/") {
         id = rep(1:8, 4),
         cmd = stringr::str_squish(rep(ss[code_pos], each = 8)),
         res = stringr::str_replace(ss[res_pos], '.*"(.+)".*', "\\1"),
-        paren = stringr::str_count(res, "\\(")
+        paren = stringr::str_count(.data$res, "\\(")
     )
 
     compare_df <- dplyr::bind_rows(ax_df, ss_df) %>%
