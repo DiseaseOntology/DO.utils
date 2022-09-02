@@ -4,9 +4,10 @@
 \name{progress_bar-class}
 \alias{progress_bar-class}
 \alias{progress_bar}
-\title{Progress Bar.}
+\title{Progress Bar (RefClass)}
 \description{
-Progress Bar.
+Instantiate a base R-style progress bar and advances it by one 'tick' at a
+time.
 }
 \section{Fields}{
 

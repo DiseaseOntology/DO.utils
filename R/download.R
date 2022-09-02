@@ -175,7 +175,9 @@ download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
 #' @importFrom methods new
 NULL
 
-#' A Reference Class to represent file download status.
+#' File Download Status (RefClass)
+#'
+#' A reference class to track file download status.
 #'
 #' @field successful A character vector for paths of successfully downloaded
 #'      files.
@@ -191,7 +193,7 @@ download_status <- methods::setRefClass(
     ),
     methods = list(
        check = function(status, url, dest_file, abort = FALSE) {
-           "Check download status of file, with choice to abort on failure."
+           "Check download status of file with choice to abort on failure."
             if (status == 0) {
                 successful <<- c(successful, dest_file)
             } else {

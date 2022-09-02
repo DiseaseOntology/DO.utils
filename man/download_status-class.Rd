@@ -4,9 +4,9 @@
 \name{download_status-class}
 \alias{download_status-class}
 \alias{download_status}
-\title{A Reference Class to represent file download status.}
+\title{File Download Status (RefClass)}
 \description{
-A Reference Class to represent file download status.
+A reference class to track file download status.
 }
 \section{Fields}{
 
@@ -23,7 +23,7 @@ files.}
 \section{Methods}{
 
 \describe{
-\item{\code{check(status, url, dest_file, abort = FALSE)}}{Check download status of file, with choice to abort on failure.}
+\item{\code{check(status, url, dest_file, abort = FALSE)}}{Check download status of file with choice to abort on failure.}
 
 \item{\code{return(w_failed = FALSE)}}{Return successful file paths and, optionally, failed URLs.}
 

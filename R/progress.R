@@ -1,4 +1,7 @@
-#' Progress Bar.
+#' Progress Bar (RefClass)
+#'
+#' Instantiate a base R-style progress bar and advances it by one 'tick' at a
+#' time.
 #'
 #' @field bar A `progress_bar` object created by [utils::txtProgressBar()].
 #' @field tick An integer to track progress.
