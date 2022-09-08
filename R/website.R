@@ -85,7 +85,7 @@ make_use_case_html <- function(out_dir, .which = "all") {
 }
 
 
-#' Make HTML for DO User List
+#' Make HTML for DO User List (DEPRECATED)
 #'
 #' Makes the row and cell html code for the "Users of the Disease Ontology"
 #' section of the collaborators page on disease-ontology.org from the DO team's
@@ -94,8 +94,24 @@ make_use_case_html <- function(out_dir, .which = "all") {
 #'
 #' @param file The file path where the output should be saved, as a string.
 #'
+#' @section Deprecation Notice:
+#' The information this was formatting for disease-ontology.org was moved from
+#' the "Collaborators" page to the new "Use Cases" page in mid-2022 and was
+#' split from one section into three, making this function obsolete. Use
+#' [make_use_case_html()] instead.
+#'
 #' @export
 make_user_list_html <- function(file) {
+    continue <- NA
+    while (!continue %in% c("y", "n")) {
+        continue <- readline("This function has been deprecated. Would you like to continue anyway? y/n")
+        cotinue <- stringr::str_to_lower(continue)
+    }
+    if (continue == "n") {
+        message("Use make_use_case_html() instead.")
+        return(invisible())
+    }
+
     # get data
     user_list <- googlesheets4::read_sheet(
         ss = .DO_gs$users,
