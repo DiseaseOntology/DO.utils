@@ -1,29 +1,24 @@
 #' Make HTML for DO Use Case Tables
 #'
 #' Makes the row and cell html code for the various sections/tables of the
-#' disease-ontology.org "Use Cases" page from the DO team's "Uses" google sheet.
-#' This function explicitly avoids including the html code for defining the
-#' table itself to provide for flexibility. The "html" output in the files
-#' specified should be copied and pasted into the disease-ontology.org
+#' disease-ontology.org "Use Cases" page from the DO team's "DO_uses" google
+#' sheet. This function explicitly avoids including the html code for defining
+#' the table itself to provide for flexibility. The "html" output in the files
+#' specified must be manually copied and pasted into the disease-ontology.org
 #' "Use Cases" file in the appropriate section/table.
 #'
 #' @param out_dir The path to the directory where output should be saved, as a
 #'     string.
-#' @param .which The list(s) to generate, as a character vector. One or more of:
-#'     "all" (default, to make all lists), "ontology", "resource", or
-#'     "methodology".
+#' @param group The group(s) to generate html for, as a character vector. One or
+#'      more of: "all" (default), "ontology", "resource", or "methodology".
 #'
 #' @returns
-#' One "html" file for each group in `.which` named as
-#' "DO_use_case-\{.which\}.html".
-#'
-#' Also returns the "User" data from the Google Sheet invisibly.
-#'
-#' NOTE: The "html" is incomplete and cannot be loaded by browsers,
-#' as is.
+#' One "html" file in `out_dir` for each `group` named as
+#' "DO_use_case-\{group\}.html" and the "User" data from the Google Sheet
+#' invisibly.
 #'
 #' @export
-make_use_case_html <- function(out_dir, .which = "all") {
+make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
     # validate arguments
     if (!rlang::is_string(out_dir) || !dir.exists(out_dir)) {
         rlang::abort(
@@ -31,13 +26,12 @@ make_use_case_html <- function(out_dir, .which = "all") {
         )
     }
     possible_use_cases <- c("ontology", "resource", "methodology")
-    .which <- match.arg(.which, c("all", possible_use_cases), several.ok = TRUE)
-    if ("all" %in% .which) {
-        .which <- possible_use_cases
+    group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
+    if ("all" %in% group) {
+        group <- possible_use_cases
     }
 
-    # set out files
-    out_file <- file.path(out_dir, paste0("DO_use_case-", .which, ".html"))
+    out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
 
     # prep data
     use_case_gs <- googlesheets4::read_sheet(
@@ -50,13 +44,13 @@ make_use_case_html <- function(out_dir, .which = "all") {
         dplyr::filter(!is.na(.data$added))
 
     use_case_list <- purrr::map(
-        .which,
+        group,
         ~ dplyr::filter(use_case_df, .data$type == .x) %>%
             # ensure use cases are alphabetical by column
             dplyr::arrange(.data$name) %>%
             html_col_sort(3)
     ) %>%
-        purrr::set_names(nm = .which)
+        purrr::set_names(nm = group)
 
     # build html
     use_case_html_list <- purrr::map(
