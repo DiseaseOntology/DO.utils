@@ -10,8 +10,8 @@ plot_def_src(DO_repo, out_dir = "graphics/website", w = 8, h = 5.6)
 \item{DO_repo}{The local path to the \code{HumanDiseaseOntology} repo, as a
 string.}
 
-\item{out_dir}{The directory where the plot \code{"{date}-DO_def_src.png"}
-should be saved, as a string.}
+\item{out_dir}{The directory where the plot "DO_def_src.png" should be saved,
+as a string.}
 
 \item{w}{The width of the plot in inches, as an integer.}
 

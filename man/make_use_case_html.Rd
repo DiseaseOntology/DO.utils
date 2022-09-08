@@ -16,7 +16,7 @@ string.}
 }
 \value{
 One "html" file for each group in \code{.which} named as
-"\{datestamp\}-\{.which\}.html".
+"DO_use_case-\{.which\}.html".
 
 Also returns the "User" data from the Google Sheet invisibly.
 

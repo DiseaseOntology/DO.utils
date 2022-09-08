@@ -15,7 +15,7 @@
 #'
 #' @returns
 #' One "html" file for each group in `.which` named as
-#' "\{datestamp\}-\{.which\}.html".
+#' "DO_use_case-\{.which\}.html".
 #'
 #' Also returns the "User" data from the Google Sheet invisibly.
 #'
@@ -35,6 +35,9 @@ make_use_case_html <- function(out_dir, .which = "all") {
     if ("all" %in% .which) {
         .which <- possible_use_cases
     }
+
+    # set out files
+    out_file <- file.path(out_dir, paste0("DO_use_case-", .which, ".html"))
 
     # prep data
     use_case_gs <- googlesheets4::read_sheet(
@@ -72,10 +75,6 @@ make_use_case_html <- function(out_dir, .which = "all") {
     )
 
     # save files
-    out_file <- file.path(
-        out_dir,
-        paste0(today_datestamp(), "-", .which, ".html")
-    )
     purrr::walk2(
         .x = use_case_html_list,
         .y = out_file,
@@ -131,7 +130,7 @@ make_user_list_html <- function(file) {
 #'
 #' @param data_file The path to the file containing the list of publications
 #'     citing the DO, as a string.
-#' @param out_dir The directory where the plot `"{date}-DO_cited_by_count.png"`
+#' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string.
 #' @param w The width of the plot in inches, as an integer.
 #' @param h The height of the plot in inches, as an integer.
@@ -143,14 +142,7 @@ make_user_list_html <- function(file) {
 plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
                          out_dir = "graphics/website", w = 8, h = 5.6) {
 
-    file_out <- file.path(
-        out_dir,
-        paste0(
-            stringr::str_remove_all(Sys.Date(), "-"),
-            "-",
-            "DO_cited_by_count.png"
-        )
-    )
+    file_out <- file.path(out_dir, "DO_cited_by_count.png")
 
     df <- readr::read_csv(data_file) %>%
         dplyr::mutate(
@@ -197,7 +189,7 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
 #'     string.
 #' @param counts_file The path to the file containing the count of DO terms
 #'     and definitions by release, as a string.
-#' @param out_dir The directory where the plot `"{date}-DO_term_def_count.png"`
+#' @param out_dir The directory where the plot `"DO_term_def_count.png"`
 #'     should be saved, as a string.
 #' @inheritParams plot_citedby
 #'
@@ -215,14 +207,7 @@ plot_term_def_counts <- function(
     counts_file = "data/DO_release/DO_term_def_counts.csv",
     out_dir = "graphics/website", w = 8, h = 5.6) {
 
-    file_out <- file.path(
-        out_dir,
-        paste0(
-            stringr::str_remove_all(Sys.Date(), "-"),
-            "-",
-            "DO_term_def_count.png"
-        )
-    )
+    file_out <- file.path(out_dir, "DO_term_def_count.png")
 
     release_df <- readr::read_csv(release_file)
     counts_df <- readr::read_csv(counts_file) %>%
@@ -297,7 +282,7 @@ plot_term_def_counts <- function(
 #'
 #' @param data_file The path to the file containing the latest DO branch counts,
 #'     as a string.
-#' @param out_dir The directory where the plot `"{date}-DO_branch_count.png"`
+#' @param out_dir The directory where the plot `"DO_branch_count.png"`
 #'     should be saved, as a string.
 #' @inheritParams plot_citedby
 #'
@@ -312,14 +297,7 @@ plot_branch_counts <- function(
     data_file = "data/DO_release/branch_counts.csv",
     out_dir = "graphics/website", w = 8, h = 5.6) {
 
-    file_out <- file.path(
-        out_dir,
-        paste0(
-            stringr::str_remove_all(Sys.Date(), "-"),
-            "-",
-            "DO_branch_count.png"
-        )
-    )
+    file_out <- file.path(out_dir, "DO_branch_count.png")
 
     branch_order <- c(syndrome = "Syndrome",
                       physicalDisorder = "Physical Disorder",
@@ -367,7 +345,7 @@ plot_branch_counts <- function(
 #'
 #' @param data_file The path to the file containing the latest DO xref counts,
 #'     as a string.
-#' @param out_dir The directory where the plot `"{date}-DO_xref_count.png"`
+#' @param out_dir The directory where the plot `"DO_xref_count.png"`
 #'     should be saved, as a string.
 #' @inheritParams plot_citedby
 #'
@@ -386,14 +364,7 @@ plot_xref_counts <- function(
     data_file = "data/DO_release/cross_references.csv",
     out_dir = "graphics/website", w = 8, h = 5.6) {
 
-    file_out <- file.path(
-        out_dir,
-        paste0(
-            stringr::str_remove_all(Sys.Date(), "-"),
-            "-",
-            "DO_xref_count.png"
-        )
-    )
+    file_out <- file.path(out_dir, "DO_xref_count.png")
 
     df <- readr::read_csv(data_file) %>%
         dplyr::filter(!is.na(.data$Curation)) %>%
@@ -437,8 +408,8 @@ plot_xref_counts <- function(
 #' Disease Ontology.
 #'
 #' @inheritParams read_doid_edit
-#' @param out_dir The directory where the plot `"{date}-DO_def_src.png"`
-#'     should be saved, as a string.
+#' @param out_dir The directory where the plot "DO_def_src.png" should be saved,
+#'     as a string.
 #' @inheritParams plot_citedby
 #'
 #' @section Data Preparation:
@@ -450,14 +421,7 @@ plot_xref_counts <- function(
 plot_def_src <- function(DO_repo, out_dir = "graphics/website",
                                w = 8, h = 5.6) {
 
-    file_out <- file.path(
-        out_dir,
-        paste0(
-            stringr::str_remove_all(Sys.Date(), "-"),
-            "-",
-            "DO_def_src.png"
-        )
-    )
+    file_out <- file.path(out_dir, "DO_def_src.png")
 
     df <- read_doid_edit(DO_repo) %>%
         extract_doid_url() %>%
