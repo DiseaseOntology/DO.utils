@@ -79,6 +79,122 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
 }
 
 
+#' Update HTML for Website Pages with Counts
+#'
+#' Directly updates counts of imports listed in the table on the
+#' disease-ontology.org "DO Imports" page using data from a specified release.
+#' Changes to the Imports html file should be reviewed and, if correct,
+#' committed to the svn repo.
+#'
+#' @param DO_repo A `pyDOID.repo.DOrepo` object (see [DOrepo()]).
+#' @param tag The repo tag to extract data from, as a string.
+#' @param svn_repo The local path to the DO website svn directory, as a string.
+#'     The correct directory will include a Dockerfile and the
+#'     'disease_ontology' directory.
+#'
+#' @returns
+#' Direct count updates in the imports table on DO svn repo's Imports page and
+#' the "User" data from the Google Sheet invisibly.
+#'
+#' @export
+update_import_counts_html <- function(DO_repo, tag, svn_repo) {
+    # validate arguments
+    if (class(DO_repo)[1] != "pyDOID.repo.DOrepo") {
+        rlang::abort("`DO_repo` is not a pyDOID.repo.DOrepo object.")
+    }
+    if (!rlang::is_string(tag)) {
+        rlang::abort("`tag` must be a string corresponding to a DO release.")
+    }
+    if (!rlang::is_string(svn_repo) || !dir.exists(svn_repo)) {
+        rlang::abort(
+            message = "`svn_repo` is not a single directory or does not exist."
+        )
+    }
+
+    # establish file paths
+    import_file <- file.path(
+        svn_repo,
+        "disease_ontology/templates/resources/DO_Imports.html"
+    )
+    query_file <- system.file(
+        "sparql",
+        "website-imports.rq",
+        package = "DO.utils"
+    )
+
+    # reversibly checkout tag; tmp to capture empty lines in output
+    DO_repo$capture_head()
+    on.exit(DO_repo$restore_head())
+    DO_repo$checkout_tag(tag)
+
+    # prep data
+    import_html <- readr::read_lines(import_file)
+    import_df <- DO_repo$doid_merged$query(query_file, reload = TRUE) %>%
+        tibble::as_tibble()
+    count_txt <- format(import_df$count, big.mark = ",")
+    # remove extra space added by format
+    count_txt <- stringr::str_trim(count_txt)
+
+    # replace counts in html
+    detect_recode <- c(
+        chebi = "chemicals", omim_susceptibility = "omim", onset = "onset",
+        `ontology relations` = "relation", ncbitaxon = "taxon",
+        `transmission process` = "transmission"
+    )
+    import_pattern <- paste0(
+        "<td>[^/]*",
+        dplyr::recode(import_df$import_root, !!!detect_recode)
+    )
+    pos <- purrr::map_dbl(
+        import_pattern,
+        function(.p) {
+            match_pos <- which(stringr::str_detect(import_html, .p)) + 2
+            if (length(match_pos) == 0) {
+                0
+            } else {
+                match_pos
+            }
+        }
+    )
+    if (any(pos == 0)) {
+        root_missing <- import_df$import_root[pos == 0]
+        names(root_missing) <- rep("i", length(root_missing))
+        rlang::warn(
+            c("Import(s) exist that are not included in the Imports page count table:",
+              root_missing
+            )
+        )
+    }
+
+    # capture old count for comparison
+    all_html_numbers <- stringr::str_extract(import_html, "[0-9,]+") %>%
+        stringr::str_remove_all(",") %>%
+        as.numeric()
+    import_df <- dplyr::mutate(
+        import_df,
+        old_count = purrr::map_chr(
+            pos,
+            ~ if (.x == 0) { NA } else { all_html_numbers[.x] }
+        )
+    )
+
+    html_out <- import_html
+    for (i in seq_along(pos)) {
+        html_out[pos[i]] <- stringr::str_replace(
+            html_out[pos[i]],
+            "[0-9,]+",
+            count_txt[i]
+        )
+    }
+
+    readr::write_lines(html_out, import_file)
+
+    # add old counts for comparison, if desired
+
+    invisible(import_df)
+}
+
+
 #' Make HTML for DO User List (DEPRECATED)
 #'
 #' Makes the row and cell html code for the "Users of the Disease Ontology"
