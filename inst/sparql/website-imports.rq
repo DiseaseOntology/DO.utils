@@ -1,0 +1,55 @@
+# Return a count of each import by root (auto-identified)
+#
+# NOTES:
+# - Execute query against doid-merged.owl
+# - Class counts are unique within an import branch but will be counted
+# multiple times if in more than one import (example: when created, this query
+# counted duplicate CHEBI terms in DISDRIV & chebi because they were imported by
+# each).
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?import_root (COUNT(DISTINCT ?class) as ?count)
+WHERE {
+	{
+		# Special handling for RO "classes"
+		?class a owl:ObjectProperty .
+		FILTER(CONTAINS(STR(?class), "obo/RO_"))
+
+		BIND("ontology relations" AS ?import_root)
+	}
+	UNION
+	{
+		{
+			# Identify import root classes
+			SELECT ?root
+			WHERE {
+				{
+					# root has no superclass (exclusion of deprecated required)
+					?root a owl:Class .
+					FILTER NOT EXISTS { ?root rdfs:subClassOf ?any . }
+					FILTER(!isBlank(?root) && !CONTAINS(STR(?root), "DOID"))
+					FILTER NOT EXISTS { ?root owl:deprecated ?obsolete . }
+				}
+				UNION
+				{
+					# root subClassOf owl:Thing
+					?root a owl:Class ;
+						rdfs:subClassOf owl:Thing .
+					FILTER(!CONTAINS(STR(?root), "DOID"))
+				}
+			}
+		}
+		?root rdfs:label ?root_label .
+
+		?class a owl:Class ;
+			rdfs:subClassOf* ?root .
+		FILTER(!isBlank(?class) && !CONTAINS(STR(?class), "doid"))
+
+		# prevent grouping due to absence/presence of language tag
+		BIND(str(?root_label) AS ?import_root)
+	}
+}
+GROUP BY ?import_root
+ORDER BY ?import_root
