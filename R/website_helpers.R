@@ -1,6 +1,13 @@
-# make_use_case_html() helper
-#   sorts list into n cols (integer); fixes the alphabetical ordering from row
-#   first to column first.
+# make_use_case_html() helpers --------------------------------------------
+
+#' Sorts lists into the specified number of `cols` to switch alphabetical
+#' ordering of HTML cells from row first to column first.
+#'
+#' @param x HTML elements, as a character vector.
+#' @param cols The number of columns to sort cells into, as an integer.
+#'
+#' @family make_use_case_html() helpers
+#' @noRd
 html_col_sort <- function(x, cols) {
     UseMethod("html_col_sort")
 }
@@ -11,8 +18,8 @@ html_col_sort.data.frame <- function(x, cols) {
     idx <- create_row_index(len, cols)
     x %>%
         dplyr::mutate(.row_id = idx) %>%
-        dplyr::arrange(.row_id) %>%
-        dplyr::select(-.row_id)
+        dplyr::arrange(.data$.row_id) %>%
+        dplyr::select(-.data$.row_id)
 }
 
 #' @export
@@ -27,8 +34,14 @@ html_col_sort.default <- function(x, cols) {
         unlist(recursive = FALSE)
 }
 
-# Ensures correct ordering; needed because repeating 1:rows when there
-# are < cols - 1 items in the last row causes misordering of last row.
+#' Ensures correct ordering; needed because repeating 1:rows when there
+#' are < cols - 1 items in the last row causes incorrect ordering of last row.
+#'
+#' @param len The number of HTML elements, as an integer.
+#' @inheritParams html_col_sort
+#'
+#' @family make_use_case_html() > html_col_sort() helpers
+#' @noRd
 create_row_index <- function(len, cols) {
     in_last_row <- len %% cols
     rows <- round_up(len / cols, 0)
@@ -105,9 +118,9 @@ replace_html_counts <- function(DO_repo, svn_repo, page, reload = FALSE) {
                 as.integer(all_html_numbers[.x])
             )
         ),
-        new = count,
+        new = .data$count,
         count = NULL,
-        diff = new - old
+        diff = .data$new - .data$old
     )
 
     html_out <- page_html
@@ -215,46 +228,21 @@ warn_missing_pos <- function(pos, data_df, page) {
 }
 
 
-
-
-
 # Website plot() helpers --------------------------------------------------
 
-# plot_def_src() helper
-is_nlm_subdomain <- function(subdomain) {
-    df <- get(".", envir = parent.frame())
-    df$Source %in% c("ncbi.nlm.nih.gov", "nlm.nih.gov") &
-        stringr::str_detect(df$path, subdomain)
-}
-
-
-# plot_citedby() helper
-clean_pub_type <- function(pub_type, as_fctr = TRUE) {
-    pt_lc <- stringr::str_to_lower(pub_type)
-    tidy <- dplyr::case_when(
-        stringr::str_detect(pt_lc, "retract") ~ "Retracted",
-        stringr::str_detect(pt_lc, "clinical trial") ~ "Clinical Trial",
-        stringr::str_detect(pt_lc, "review") ~ "Review",
-        stringr::str_detect(pt_lc, "conference") &
-            pt_lc != "Journal|Conference Paper" ~ "Conference",
-        stringr::str_detect(pt_lc, "book") ~ "Book",
-        stringr::str_detect(pt_lc, "journal.*article") ~ "Article",
-        TRUE ~ "Commentary"
-    )
-
-    if (as_fctr) {
-        tidy <- factor(
-            tidy,
-            # order by least to most important (most important at bottom of graph)
-            levels = c("Retracted", "Commentary", "Review", "Conference", "Book",
-                       "Clinical Trial", "Article")
-        )
-    }
-
-    tidy
-}
-
-# establish DO theme
+#' DO Theme for Stats Plots
+#'
+#' The default ggplot2 theme used for statistical plots uploaded to
+#' disease-ontology.org. This _only_ manages the base plot style and does _not_
+#' incorporate DO's color scheme.
+#'
+#' @inheritParams ggplot2::theme_grey
+#'
+#' @section Background:
+#' For more information refer to ggplot2's
+#' [theme documentation](ggplot2::theme_grey()).
+#'
+#' @export
 theme_DO <- function(base_size = 11, base_family = "",
                      base_line_size = base_size/22,
                      base_rect_size = base_size/22) {
@@ -291,4 +279,45 @@ theme_DO <- function(base_size = 11, base_family = "",
             complete = TRUE
         )
     )
+}
+
+#' Identifies NLM URLs of various subdomains.
+#'
+#' @family plot_def_src() helpers
+#' @noRd
+is_nlm_subdomain <- function(subdomain) {
+    df <- get(".", envir = parent.frame())
+    df$Source %in% c("ncbi.nlm.nih.gov", "nlm.nih.gov") &
+        stringr::str_detect(df$path, subdomain)
+}
+
+
+#' Standardizes publication types from PubMed and Scopus in DO_uses > citedby
+#' corpus.
+#'
+#' @family plot_citedby() helpers
+#' @noRd
+clean_pub_type <- function(pub_type, as_fctr = TRUE) {
+    pt_lc <- stringr::str_to_lower(pub_type)
+    tidy <- dplyr::case_when(
+        stringr::str_detect(pt_lc, "retract") ~ "Retracted",
+        stringr::str_detect(pt_lc, "clinical trial") ~ "Clinical Trial",
+        stringr::str_detect(pt_lc, "review") ~ "Review",
+        stringr::str_detect(pt_lc, "conference") &
+            pt_lc != "Journal|Conference Paper" ~ "Conference",
+        stringr::str_detect(pt_lc, "book") ~ "Book",
+        stringr::str_detect(pt_lc, "journal.*article") ~ "Article",
+        TRUE ~ "Commentary"
+    )
+
+    if (as_fctr) {
+        tidy <- factor(
+            tidy,
+            # order by least to most important (most important at bottom of graph)
+            levels = c("Retracted", "Commentary", "Review", "Conference", "Book",
+                       "Clinical Trial", "Article")
+        )
+    }
+
+    tidy
 }
