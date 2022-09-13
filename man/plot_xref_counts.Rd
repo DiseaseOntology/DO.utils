@@ -15,7 +15,7 @@ plot_xref_counts(
 \item{data_file}{The path to the file containing the latest DO xref counts,
 as a string.}
 
-\item{out_dir}{The directory where the plot \code{"{date}-DO_xref_count.png"}
+\item{out_dir}{The directory where the plot \code{"DO_xref_count.png"}
 should be saved, as a string.}
 
 \item{w}{The width of the plot in inches, as an integer.}

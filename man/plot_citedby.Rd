@@ -15,7 +15,7 @@ plot_citedby(
 \item{data_file}{The path to the file containing the list of publications
 citing the DO, as a string.}
 
-\item{out_dir}{The directory where the plot \code{"{date}-DO_cited_by_count.png"}
+\item{out_dir}{The directory where the plot \code{"DO_cited_by_count.png"}
 should be saved, as a string.}
 
 \item{w}{The width of the plot in inches, as an integer.}

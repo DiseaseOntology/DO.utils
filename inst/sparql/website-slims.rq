@@ -1,0 +1,27 @@
+# Return a count of each slim
+#
+# NOTES:
+# - Execute query against doid-merged.owl
+# - Class counts are unique within an import branch but will be counted
+# multiple times if in more than one import (example: when created, this query
+# counted duplicate CHEBI terms in DISDRIV & chebi because they were imported by
+# each).
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT ?slim (COUNT(DISTINCT ?class) as ?count)
+WHERE {
+	?slim_uri rdfs:subPropertyOf oboInOwl:SubsetProperty ;
+		rdfs:label ?slim_label .
+
+	?class a owl:Class ;
+		oboInOwl:inSubset ?slim_uri .
+	FILTER(CONTAINS(STR(?class), "DOID_"))
+
+	# prevent grouping due to absence/presence of language tag
+	BIND(str(?slim_label) AS ?slim)
+}
+GROUP BY ?slim
+ORDER BY ?slim

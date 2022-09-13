@@ -15,7 +15,7 @@ plot_branch_counts(
 \item{data_file}{The path to the file containing the latest DO branch counts,
 as a string.}
 
-\item{out_dir}{The directory where the plot \code{"{date}-DO_branch_count.png"}
+\item{out_dir}{The directory where the plot \code{"DO_branch_count.png"}
 should be saved, as a string.}
 
 \item{w}{The width of the plot in inches, as an integer.}

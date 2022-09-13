@@ -19,7 +19,7 @@ string.}
 \item{counts_file}{The path to the file containing the count of DO terms
 and definitions by release, as a string.}
 
-\item{out_dir}{The directory where the plot \code{"{date}-DO_term_def_count.png"}
+\item{out_dir}{The directory where the plot \code{"DO_term_def_count.png"}
 should be saved, as a string.}
 
 \item{w}{The width of the plot in inches, as an integer.}

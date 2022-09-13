@@ -2,7 +2,7 @@
 % Please edit documentation in R/website.R
 \name{make_user_list_html}
 \alias{make_user_list_html}
-\title{Make HTML for DO User List}
+\title{Make HTML for DO User List (DEPRECATED)}
 \usage{
 make_user_list_html(file)
 }
@@ -15,3 +15,11 @@ section of the collaborators page on disease-ontology.org from the DO team's
 "Uses" google sheet. This function explicitly avoids including the html
 code for defining the table itself to provide for flexibility.
 }
+\section{Deprecation Notice}{
+
+The information this was formatting for disease-ontology.org was moved from
+the "Collaborators" page to the new "Use Cases" page in mid-2022 and was
+split from one section into three, making this function obsolete. Use
+\code{\link[=make_use_case_html]{make_use_case_html()}} instead.
+}
+
