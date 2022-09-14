@@ -3,6 +3,31 @@
 ## New
 * `extract_*_axiom()` family: Extract equivalentClass ('eq'), subClassOf
     ('subclass'), or both ('class') logical axioms.
+* `update_website_count_tables()`: Update counts in tables on 'DO Imports' and
+    'DO Slims' pages with data from a specified release of doid-merged.owl.
+    _Updates data in place_.
+* `invert_sublists()`: Swaps the list elements between depths 2 & 3, essentially
+    inverting the grouping.
+* `format_obo()`: Formats OBO Foundry IDs.
+* `is_valid_obo()`: Tests whether the elements of a character vector are 'valid'
+    OBO Foundry IDs (based on formatting, not actual existence).
+* `format_axiom()`: Formats OWL functional syntax EQ/SubClassOf axioms to be
+    more human readable, similar to that of Protege.
+* `sandwich_text()`: Pastes text around strings.
+
+## Updates
+* `make_use_case_html()` replaces `make_user_list_html()` because the user/use
+    case information on disease-ontology.org was moved from the 'Collaborators'
+    page to the new 'Use Cases' page and split into 3 sections: Ontologies,
+    Resources, and Methodologies.
+    * `make_use_case_html()` produces 3 files, one per section on the page, with
+        HTML for the rows & cells that must be copied and pasted over the HTML
+        for each section in the 'Use Cases' file. _Does not update data in place._
+    * Content is now sorted alphabetically by column.
+* `format_doid()` parameters changed:
+    * `allow_bare` renamed to `convert_bare` [BREAKING CHANGE]
+    * `validate_input` added to allow invalid input to pass-through without
+        modification.
 
 
 # DO.utils 0.2.4
