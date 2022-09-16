@@ -14,6 +14,7 @@
 * `format_axiom()`: Formats OWL functional syntax EQ/SubClassOf axioms to be
     more human readable, similar to that of Protege.
 * `sandwich_text()`: Pastes text around strings.
+* `wrap_onscreen()`: Wraps messages to be printed on the screen.
 
 ## Updates
 * `make_use_case_html()` replaces `make_user_list_html()` because the user/use
@@ -28,6 +29,7 @@
     * `allow_bare` renamed to `convert_bare` [BREAKING CHANGE]
     * `validate_input` added to allow invalid input to pass-through without
         modification.
+* `plot_*()` no longer include the datestamp in saved file names.
 
 
 # DO.utils 0.2.4
