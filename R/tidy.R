@@ -1,3 +1,7 @@
+# to make where available, since it's not exported from tidyselect yet
+#   will be in next version > 1.1.2
+utils::globalVariables("where")
+
 #' Tidy SPARQL Query
 #'
 #' Tidies SPARQL query results, unnesting list columns and returning results as
@@ -13,7 +17,8 @@
 #'
 #' @export
 tidy_sparql <- function(query_res) {
-    query_df %>%
+    query_res %>%
         tibble::as_tibble() %>%
         DO.utils::unnest_cross(where(is.list), keep_empty = TRUE)
 }
+
