@@ -75,7 +75,67 @@ to_uri <- function(x) {
     )
 }
 
-
+#' Convert Vectors to Range String
+#'
+#' Converts vectors to a string of ranges. All vector types are accepted and the
+#' original values will appear in the final output range, but where input is not
+#' a numeric vector of [whole numbers](is_whole_number()), a function to convert
+#' the values to integers must be provided (`int_fn`) for the purpose of
+#' identifying the range(s).
+#'
+#' @param x A numeric vector of [whole numbers](is_whole_number()).
+#' @param int_fun A function (or tidyverse-style formula) to convert `x` into an
+#' integer vector, used _ONLY for creating ranges_; the original value will
+#' appear in the range except where modified by `start_rm` and/or `end_rm`.
+#'  `int_fun` is required when `x` is not a numeric vector.
+#' @param ... Arguments passed on to `int_fn`.
+#' @param sep The separators to use between ranges (default: ',') and within
+#' a range (default: '-'), as a length-2 character vector.
+#' @param start_rm A regular expression to remove from `x` values at the
+#' _beginning_ of a range.
+#' #' @param end_rm A regular expression to remove from `x` values at the
+#' _end_ of a range.
+#'
+#' @section Notes:
+#'
+#' * `NA` values are always dropped.
+#'
+#' * `to_range()` was inspired by answers at
+#' https://stackoverflow.com/q/16911773/6938922, most heavily by speendo
+#' (CC-BY-SA 3.0, accessed 2022-07-01). This is the fastest approach with
+#' few inputs but is significantly slower than other answers for large inputs.
+#' The internal approach will likely be modified in the future, but arguments
+#' and output will remain the same.
+#'
+#' @examples
+#' x <- c(1:2, 8:6, 4, -1:-2, 20:37, 4, 40, 43, 45)
+#' to_range(x)
+#'
+#'
+#' # `NA` values are dropped
+#' y <- c(1:4, NA, 5, 7:10)
+#' to_range(x)
+#'
+#'
+#' # Use `int_fn` when `x` is not a numeric vector (tidyverse-style formulas
+#' #    accepted)
+#' x_char <- as.character(x)
+#' to_range(x, int_fn = as.integer)
+#' to_range(x, int_fn = ~ as.integer(.x))
+#'
+#'
+#' # `int_fn` allows non-numeric ranges to be created
+#' txt <- paste0(x, "txt")
+#' to_int <- function(x, y) as.integer(stringr::str_remove(x, "txt"))
+#' to_range(txt, to_int, y = "txt")
+#'
+#'
+#' # text can be selectively removed from the values at the beginning of ranges
+#' #     (`start_rm`) or end of ranges (`end_rm`)
+#' to_range(txt, to_int, start_rm = "txt")
+#' to_range(txt, to_int, end_rm = "txt")
+#'
+#' @export
 to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
                      start_rm = NULL, end_rm = NULL) {
     uniq <- unique(x)
