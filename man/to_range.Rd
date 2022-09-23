@@ -16,20 +16,21 @@ to_range(
 \arguments{
 \item{x}{A numeric vector of \href{is_whole_number()}{whole numbers}.}
 
+\item{int_fn}{A function (or tidyverse-style formula) to convert \code{x} into an
+integer vector, used \emph{ONLY for creating ranges}; the original value will
+appear in the range except where modified by \code{start_rm} and/or \code{end_rm}.
+\code{int_fun} is required when \code{x} is not a numeric vector.}
+
 \item{...}{Arguments passed on to \code{int_fn}.}
 
 \item{sep}{The separators to use between ranges (default: ',') and within
 a range (default: '-'), as a length-2 character vector.}
 
 \item{start_rm}{A regular expression to remove from \code{x} values at the
-\emph{beginning} of a range.
-#' @param end_rm A regular expression to remove from \code{x} values at the
-\emph{end} of a range.}
+\emph{beginning} of a range.}
 
-\item{int_fun}{A function (or tidyverse-style formula) to convert \code{x} into an
-integer vector, used \emph{ONLY for creating ranges}; the original value will
-appear in the range except where modified by \code{start_rm} and/or \code{end_rm}.
-\code{int_fun} is required when \code{x} is not a numeric vector.}
+\item{end_rm}{A regular expression to remove from \code{x} values at the
+\emph{end} of a range.}
 }
 \description{
 Converts vectors to a string of ranges. All vector types are accepted and the

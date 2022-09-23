@@ -84,7 +84,7 @@ to_uri <- function(x) {
 #' identifying the range(s).
 #'
 #' @param x A numeric vector of [whole numbers](is_whole_number()).
-#' @param int_fun A function (or tidyverse-style formula) to convert `x` into an
+#' @param int_fn A function (or tidyverse-style formula) to convert `x` into an
 #' integer vector, used _ONLY for creating ranges_; the original value will
 #' appear in the range except where modified by `start_rm` and/or `end_rm`.
 #'  `int_fun` is required when `x` is not a numeric vector.
@@ -93,7 +93,7 @@ to_uri <- function(x) {
 #' a range (default: '-'), as a length-2 character vector.
 #' @param start_rm A regular expression to remove from `x` values at the
 #' _beginning_ of a range.
-#' #' @param end_rm A regular expression to remove from `x` values at the
+#' @param end_rm A regular expression to remove from `x` values at the
 #' _end_ of a range.
 #'
 #' @section Notes:
