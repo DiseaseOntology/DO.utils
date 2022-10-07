@@ -5,22 +5,46 @@ prefix_json <- system2("robot", args = "export-prefixes", stdout = TRUE)
 prefix <- jsonlite::fromJSON(prefix_json)[[1]] %>%
     unlist()
 
-# add DO ontology internal prefixes
-ns_prefix <- c(
-    prefix,
-    "doid" = "http://purl.obolibrary.org/obo/doid#",
-    "symp" = "http://purl.obolibrary.org/obo/symp#"
-)
+
+# non-OBO prefixes --------------------------------------------------------
+not_obo_prefix <- prefix[!stringr::str_detect(prefix, "/obo")] %>%
+    sort()
 
 # switch prefixes to match use in DO
-names(ns_prefix) <- dplyr::recode(
-    names(ns_prefix),
+names(not_obo_prefix) <- dplyr::recode(
+    names(not_obo_prefix),
     "dc" = "terms",
     "dc11" = "dc"
 )
 
-# prioritize with more specific first (assumes length ~ specificity)
-ns_prefix <- ns_prefix[order(-str_length(ns_prefix))]
 
+
+# Standard OBO prefixes ---------------------------------------------------
+obo_general <- prefix[stringr::str_detect(prefix, "/obo(/|InOwl#)$")] %>%
+    sort(decreasing = TRUE)
+
+obo_prefix <- prefix[stringr::str_detect(prefix, "/obo/.")] %>%
+    sort()
+
+
+# Common OBO property prefix ----------------------------------------------
+obo_prop_prefix <- obo_prefix %>%
+    stringr::str_to_lower() %>%
+    stringr::str_replace("_$", "#")
+names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prefix))
+
+
+# All prefixes ------------------------------------------------------------
+# ordered specific-to-general (with standard OBO ontology prefixes first)
+ns_prefix <- c(
+    obo_prefix,
+    obo_prop_prefix,
+    obo_general,
+    not_obo_prefix
+)
+
+usethis::use_data(not_obo_prefix, overwrite = TRUE)
+usethis::use_data(obo_prefix, overwrite = TRUE)
+usethis::use_data(obo_prop_prefix, overwrite = TRUE)
 usethis::use_data(ns_prefix, overwrite = TRUE)
 usethis::use_r("data", open = TRUE)

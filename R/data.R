@@ -103,9 +103,34 @@ NULL
 #' OBO Foundry ontologies, with a few additional prefixes and slight
 #' modifications to match the prefixes as used in the Human Disease Ontology.
 #'
-#' @format A `r class(ns_prefix)` vector of `r length(ns_prefix)` namespaces,
-#' named by their corresponding prefix
-#' (e.g.`r paste0('\ua0', utils::tail(names(ns_prefix), 1), '\ua0=\ua0"', utils::tail(ns_prefix, 1), '"')`).
+#' @format
+#' Character vectors of namespaces named by their corresponding prefix:
 #'
-#' @source "`robot` (v1.9.0) via data-raw/ns_prefix.R; last updated 2022-07-22."
+#' `ns_prefix`: Superset of all `r length(ns_prefix)` objects listed below.
+#'
+#' @source "`robot` (v1.8.3) via data-raw/ns_prefix.R; last updated 2022-10-07."
 "ns_prefix"
+
+#' @format `obo_prefix`: `r length(obo_prefix)` _standard_ OBO Foundry
+#' namespaces
+#' (e.g.`r paste0('\ua0', utils::head(names(obo_prefix), 1), '\ua0=\ua0"', utils::head(obo_prefix, 1), '"')`).
+#' @rdname ns_prefix
+"obo_prefix"
+
+#' @format `obo_prop_prefix`: `r length(obo_prop_prefix)` OBO Foundry _property_
+#' namespaces; _these may not all be in actual use_
+#' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
+#' @rdname ns_prefix
+"obo_prop_prefix"
+
+#' @format `not_obo_prefix`: `r length(not_obo_prefix)` namespaces outside but
+#' commonly used in the OBO Foundry
+#' (e.g.`r paste0('\ua0', names(not_obo_prefix)[3], '\ua0=\ua0"', not_obo_prefix[3], '"')`)
+#' @rdname ns_prefix
+"not_obo_prefix"
+
+
+# all possible extensions of OBO Foundry ontologies
+ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
+                  "OWL Functional" = "ofn", "Manchester" = "omn",
+                  "RDF/XML" = "owl", "OWL/XML" = "owx", "Turtle" = "ttl")

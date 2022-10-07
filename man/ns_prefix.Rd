@@ -3,17 +3,38 @@
 \docType{data}
 \name{ns_prefix}
 \alias{ns_prefix}
+\alias{obo_prefix}
+\alias{obo_prop_prefix}
+\alias{not_obo_prefix}
 \title{Namespace Prefixes}
 \format{
-A character vector of 268 namespaces,
-named by their corresponding prefix
-(e.g. schema = "http://schema.org/").
+Character vectors of namespaces named by their corresponding prefix:
+
+\code{ns_prefix}: Superset of all 516 objects listed below.
+
+\code{obo_prefix}: 250 \emph{standard} OBO Foundry
+namespaces
+(e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").
+
+\code{obo_prop_prefix}: 250 OBO Foundry \emph{property}
+namespaces; \emph{these may not all be in actual use}
+(e.g. AAO = "http://purl.obolibrary.org/obo/aao#")
+
+\code{not_obo_prefix}: 14 namespaces outside but
+commonly used in the OBO Foundry
+(e.g. dc = "http://purl.org/dc/terms/")
 }
 \source{
-"\code{robot} (v1.9.0) via data-raw/ns_prefix.R; last updated 2022-07-22."
+"\code{robot} (v1.8.3) via data-raw/ns_prefix.R; last updated 2022-10-07."
 }
 \usage{
 ns_prefix
+
+obo_prefix
+
+obo_prop_prefix
+
+not_obo_prefix
 }
 \description{
 Prefixes for namespaces sourced from \code{robot} that cover most uses in

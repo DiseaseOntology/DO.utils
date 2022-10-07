@@ -16,7 +16,7 @@ uri <- c(
 )
 curie <- c(
     "SYMP:0000000",
-    "obo:so#has_origin",
+    "so:has_origin",
     "oboInOwl:SubsetProperty",
     "dc:date",
     "owl:deprecated",
