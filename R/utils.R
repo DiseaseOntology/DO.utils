@@ -31,3 +31,8 @@ sandwich_text <- function(x, placeholder, ...) {
 
     out
 }
+
+
+glueV <- function(..., .envir = parent.frame()) {
+    glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
+}
