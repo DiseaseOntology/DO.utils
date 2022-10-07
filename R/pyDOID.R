@@ -109,3 +109,21 @@ access_owl_xml <- function(x) {
 
     owl_xml(x)
 }
+
+#' Access DOrepo (INTERNAL)
+#'
+#' Access `x` as a 'pyDOID.repo.DOrepo' by confirming it's class, if already
+#' instantiated, or instantiating the object from a given path.
+#'
+#' @param x A 'pyDOID.repo.DOrepo' object or the path to a local copy of the
+#'     HumanDiseaseOntology repository.
+#'
+#' @seealso DOrepo
+#' @keywords internal
+access_DOrepo <- function(x) {
+    if (is_DOrepo(x)) {
+        return(x)
+    }
+
+    DOrepo(x)
+}

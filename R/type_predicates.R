@@ -197,6 +197,10 @@ is_vctr_or_df <- function(x) {
     is.vector(x) || is.data.frame(x)
 }
 
+is_DOrepo <- function(x) {
+    class(x)[1] == "pyDOID.repo.DOrepo"
+}
+
 is_owl_xml <- function(x) {
     class(x)[1] == "pyDOID.owl.xml"
 }
