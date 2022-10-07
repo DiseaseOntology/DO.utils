@@ -5,9 +5,23 @@
 \alias{unique_to_string}
 \title{Convert Vectors to Strings}
 \usage{
-vctr_to_string(x, delim = "|", na.rm = FALSE)
+vctr_to_string(
+  x,
+  delim = "|",
+  na.rm = FALSE,
+  sort = FALSE,
+  decreasing = FALSE,
+  ...
+)
 
-unique_to_string(x, delim = "|", na.rm = FALSE)
+unique_to_string(
+  x,
+  delim = "|",
+  na.rm = FALSE,
+  sort = FALSE,
+  decreasing = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A vector.}
@@ -16,6 +30,17 @@ unique_to_string(x, delim = "|", na.rm = FALSE)
 
 \item{na.rm}{A logical scalar indicating whether \code{NA} values should be
 removed (default: \code{FALSE}).}
+
+\item{sort}{A logical scalar indicating whether values should be sorted
+(default: \code{FALSE}).}
+
+\item{decreasing}{logical.  Should the sort be increasing or decreasing?
+    For the \code{"radix"} method, this can be a vector of
+    length equal to the number of arguments in \code{\dots}. For the
+    other methods, it must be length one. Not available for partial sorting.}
+
+\item{...}{arguments to be passed to or from methods or (for the
+    default methods and objects without a class) to \code{sort.int}.}
 }
 \description{
 Concatenate values in a vector into a single string.

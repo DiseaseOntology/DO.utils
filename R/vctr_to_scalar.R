@@ -45,12 +45,16 @@ unique_if_invariant.numeric <- function(x, na.rm = FALSE,
 #' @param delim A delimiter to place between vector elements (default: "|").
 #' @param na.rm A logical scalar indicating whether `NA` values should be
 #'     removed (default: `FALSE`).
+#' @param sort A logical scalar indicating whether values should be sorted
+#'     (default: `FALSE`).
+#' @inheritParams base::sort
 #'
 #' @seealso [unique_if_invariant()] for an alternative, _conditional_ `unique`
 #'     vector-to-string conversion method
 #'
 #' @export
-vctr_to_string <- function(x, delim = "|", na.rm = FALSE) {
+vctr_to_string <- function(x, delim = "|", na.rm = FALSE, sort = FALSE,
+                           decreasing = FALSE, ...) {
     assert_scalar_logical(na.rm)
 
     if (na.rm) {
@@ -60,11 +64,22 @@ vctr_to_string <- function(x, delim = "|", na.rm = FALSE) {
         x <- stats::na.omit(x)
     }
 
+    if (isTRUE(sort)) {
+        x <- sort(x, decreasing = decreasing, ...)
+    }
     paste0(x, collapse = delim)
 }
 
 #' @rdname vctr_to_string
 #' @export
-unique_to_string <- function(x, delim = "|", na.rm = FALSE) {
-    vctr_to_string(unique(x), delim = delim, na.rm = na.rm)
+unique_to_string <- function(x, delim = "|", na.rm = FALSE, sort = FALSE,
+                             decreasing = FALSE, ...) {
+    vctr_to_string(
+        unique(x),
+        delim = delim,
+        na.rm = na.rm,
+        sort = sort,
+        decreasing = decreasing,
+        ...
+    )
 }
