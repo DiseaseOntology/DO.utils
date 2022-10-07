@@ -7,8 +7,8 @@
 extract_subtree(x, top_node, reload = FALSE)
 }
 \arguments{
-\item{x}{A pyDOID.owl.xml object or the path to an OWL/RDF XML file that
-can be instantiated as such an object.}
+\item{x}{A 'pyDOID.owl.xml' object or the path to an OWL/RDF XML file that
+can be instantiated as such an object by \code{\link[=owl_xml]{owl_xml()}}.}
 
 \item{top_node}{The top node of the tree, as a valid DOID (see
 \code{\link[=is_valid_doid]{is_valid_doid()}} for valid input formats).}

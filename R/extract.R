@@ -284,7 +284,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' Extracts the classes and parents of a DO subtree from a `pyDOID.owl.xml`
 #' object.
 #'
-#' @inheritParams establish_owl_xml
+#' @inheritParams access_owl_xml
 #' @param top_node The top node of the tree, as a valid DOID (see
 #'     [is_valid_doid()] for valid input formats).
 #' @param reload Force reload the file into memory, as `TRUE` or `FALSE`
@@ -297,7 +297,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #'
 #' @export
 extract_subtree <- function(x, top_node, reload = FALSE) {
-    owl <- establish_owl_xml(x)
+    owl <- access_owl_xml(x)
     assert_string(top_node)
 
     top_class <- format_doid(top_node, as = "obo_CURIE")
