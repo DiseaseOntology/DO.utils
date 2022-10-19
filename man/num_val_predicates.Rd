@@ -33,7 +33,6 @@ desired (whether integer or double) instead of \link[base:integer]{base::is.inte
 }
 \seealso{
 Other type_predicates: 
-\code{\link{ID_predicates}},
 \code{\link{char_val_predicates}},
 \code{\link{is_invariant}()},
 \code{\link{lgl_predicates}}

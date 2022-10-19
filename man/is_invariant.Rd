@@ -27,7 +27,6 @@ tolerance for numeric vectors).
 }
 \seealso{
 Other type_predicates: 
-\code{\link{ID_predicates}},
 \code{\link{char_val_predicates}},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}}

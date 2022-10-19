@@ -25,7 +25,6 @@ in character vectors.
 }
 \seealso{
 Other type_predicates: 
-\code{\link{ID_predicates}},
 \code{\link{is_invariant}()},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}}

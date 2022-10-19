@@ -18,11 +18,11 @@ namespaces
 
 \code{obo_prop_prefix}: 250 OBO Foundry \emph{property}
 namespaces; \emph{these may not all be in actual use}
-(e.g. AAO = "http://purl.obolibrary.org/obo/aao#")
+(e.g. aao = "http://purl.obolibrary.org/obo/aao#")
 
 \code{not_obo_prefix}: 14 namespaces outside but
 commonly used in the OBO Foundry
-(e.g. dc = "http://purl.org/dc/terms/")
+(e.g. terms = "http://purl.org/dc/terms/")
 }
 \source{
 "\code{robot} (v1.8.3) via data-raw/ns_prefix.R; last updated 2022-10-07."
