@@ -1,35 +1,118 @@
-# DO.utils (development version)
+# DO.utils 0.2.5
+
+## Deprecations
+**Website**
+* `make_user_list_html()` is deprecated because the user/use case information on
+    disease-ontology.org was moved from the 'Collaborators' page to the new
+    'Use Cases' page. Replaced by `make_use_case_html()`.
+
+
+## Breaking Changes
+**Website**
+* `plot_*()` no longer include the datestamp in saved file names.
+
+**Formatters**
+* `format_doid()` parameters changed:
+    * `allow_bare` renamed to `convert_bare`
+    * `validate_input` added to allow invalid input to pass-through without
+        modification.
+
+**Cited by / Search**
+* `read_pubmed_txt()` now parses IDs (PMID, PMCID, & DOI) from citations and
+    returns a data.frame that includes a record number, IDs, and full citations
+    instead of a vector of citations.
+
+
+## Bug Fixes
+**Cited by / Search**
+* `extract_pmid()` updated to recognize 1- to 8-long PubMed IDs which
+    should cover the whole set of actual PMIDs; previously limited to
+    recognizing 8-long PMIDs.
+* `as_tibble.esummary_list()` fixed error due to reduced data output
+    (fewer columns of information) from `pubmed_summary()` caused by API changes.
+* `match_citations()` now matches DOIs in a case insensitive manner
+    bringing it into compliance with the
+    [DOI spec](https://www.doi.org/doi_handbook/2_Numbering.html#2.4).
+
+
+## Updates
+**URLs**
+* `append_to_url()`:
+    * Gained a new parameter `preserve_NA`, which allows `NA` values to pass
+        through instead of being appended to the URL.
+    * Added 'github' and 'orcid' as named URLs that might be appended to (via
+        `get_url()`).
+
+**Datasets**
+* More prefixes in `ns_prefix` and new prefix subsets added:
+    * `not_obo_prefix`: Subset of `ns_prefix` with everything except OBO
+    ontology prefixes (e.g. 'dc', 'terms', 'skos', 'owl', etc.).
+    * `obo_prefix`: Subset of `ns_prefix` with standard OBO ontology prefixes
+    and namespaces.
+    * `obo_prop_prefix`: New set of prefixes created to represent frequently
+    used OBO ontology property prefixes. NOTE: There is one per ontology but
+    these may not exist or may not be the actual property prefix used by the
+    stated ontology... use with caution.
+
+**General Utilities**
+* `unique_to_string()`/`vctr_to_string()`: added `sort` and other arguments for
+control of sorting.
+
 
 ## New
+**Ontology Extracters/Modifiers**
 * `extract_*_axiom()` family: Extract equivalentClass ('eq'), subClassOf
     ('subclass'), or both ('class') logical axioms.
+* `queue_xref_split()`: Creates a 'curation queue' of diseases that may need to
+    split because they have multiple cross-references from the same source.
+* `tidy_sparql()`: Tidies SPARQL query results.
+
+**Website**
 * `update_website_count_tables()`: Update counts in tables on 'DO Imports' and
     'DO Slims' pages with data from a specified release of doid-merged.owl.
     _Updates data in place_.
-* `invert_sublists()`: Swaps the list elements between depths 2 & 3, essentially
-    inverting the grouping.
-* `format_obo()`: Formats OBO Foundry IDs.
-* `is_valid_obo()`: Tests whether the elements of a character vector are 'valid'
-    OBO Foundry IDs (based on formatting, not actual existence).
-* `format_axiom()`: Formats OWL functional syntax EQ/SubClassOf axioms to be
-    more human readable, similar to that of Protege.
+* `make_use_case_html()`: Produces the html for the new 'Use Cases' page, split
+    into 3 files, 1 per section for: Ontologies, Resources, and Methodologies.
+    * _Does not update data in place._ HTML for the rows & cells must be copied
+        and pasted over the HTML for each section in the 'Use Cases' file.
+    * Content is sorted alphabetically by column.
+* `make_contributor_html()`: Produces HTML list of contributors as `<li>`
+    elements for disease-ontology.org, including links to Github and ORCID, as
+    available.
+
+**URLs**
+* `format_hyperlink()`: Converts URLs into hyperlinks for Google Sheets, Excel,
+    or HTML.
+* `build_hyperlink()`: Shorthand for common `append_to_url()` plus
+    `format_hyperlink()` combination.
+
+**Cited by / Search**
+* `pub_id_match` (DATA): A named character vector of regex's to identify/extract
+    publication IDs (currently PMID, PMCID, DOI, & Scopus EID).
+
+**General Utilities**
 * `sandwich_text()`: Pastes text around strings.
 * `wrap_onscreen()`: Wraps messages to be printed on the screen.
+* `invert_sublists()`: Swaps the list elements between depths 2 & 3, essentially
+    inverting the grouping.
+* `lengthen_col()`: Splits column(s) by a delimiter and lengthens the data.frame
+    so each value is in its own row.
+    * **NOTES:**
+        * This is the reverse of `collapse_col()` but will not recreate the
+            original data.frame after round trip _in most cases_.
+        * Uses `unnest_cross()` internally so the results will always be the
+            cartesian product of lengthened columns.
+* `count_delim()`: Counts the values in delimited columns; essentially the
+    combination of `lengthen_col()` and `dplyr::count()`.
 
-## Updates
-* `make_use_case_html()` replaces `make_user_list_html()` because the user/use
-    case information on disease-ontology.org was moved from the 'Collaborators'
-    page to the new 'Use Cases' page and split into 3 sections: Ontologies,
-    Resources, and Methodologies.
-    * `make_use_case_html()` produces 3 files, one per section on the page, with
-        HTML for the rows & cells that must be copied and pasted over the HTML
-        for each section in the 'Use Cases' file. _Does not update data in place._
-    * Content is now sorted alphabetically by column.
-* `format_doid()` parameters changed:
-    * `allow_bare` renamed to `convert_bare` [BREAKING CHANGE]
-    * `validate_input` added to allow invalid input to pass-through without
-        modification.
-* `plot_*()` no longer include the datestamp in saved file names.
+**Type Predicates**
+* `is_valid_obo()`: Tests whether the elements of a character vector are 'valid'
+    OBO Foundry IDs (based on formatting, not actual existence).
+
+**Formatters**
+* `format_obo()`: Formats OBO Foundry IDs.
+* `format_axiom()`: Formats OWL functional syntax EQ/SubClassOf axioms to be
+    more human readable, similar to that of Protege.
 
 
 # DO.utils 0.2.4
