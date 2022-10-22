@@ -23,10 +23,9 @@ count_alliance_records(
 (i.e. gene, allele, model)}
 
 \item{pivot}{logical indicating whether to pivot values to type columns;
-ignored if by_type = FALSE}
+ignored if by_type = FALSE.}
 
-\item{record_lvl}{a string indicating the desired specificity of records;
-one of "disease-object", "unique", or "object"}
+\item{record_lvl}{a string indicating the desired specificity of records.}
 
 \item{assign_to}{how to assign records when counting; one of "species" or
 "curator" (i.e. the organization responsible for curating the record)}

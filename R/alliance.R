@@ -68,9 +68,8 @@ read_alliance <- function(alliance_tsv) {
 #' @param by_type logical indicating whether to count by Alliance object type
 #'     (i.e. gene, allele, model)
 #' @param pivot logical indicating whether to pivot values to type columns;
-#'     ignored if by_type = FALSE
-#' @param record_lvl a string indicating the desired specificity of records;
-#'     one of "disease-object", "unique", or "object"
+#'     ignored if by_type = FALSE.
+#' @param record_lvl a string indicating the desired specificity of records.
 #' @param assign_to how to assign records when counting; one of "species" or
 #'     "curator" (i.e. the organization responsible for curating the record)
 #'
