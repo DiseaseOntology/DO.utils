@@ -33,10 +33,10 @@ queue_xref_split <- function(.DOrepo, src = "all") {
         tidy_sparql()
 
     to_split <- xref %>%
-        dplyr::group_by(ns) %>%
-        dplyr::filter(all_duplicated(id)) %>%
+        dplyr::group_by(.data$ns) %>%
+        dplyr::filter(all_duplicated(.data$id)) %>%
         dplyr::ungroup() %>%
-        dplyr::arrange(id, ns, xref)
+        dplyr::arrange(.data$id, .data$ns, .data$xref)
 
     if (!"all" %in% src_lc) {
         invalid <- !src_lc %in% stringr::str_to_lower(xref$ns)
@@ -58,7 +58,7 @@ queue_xref_split <- function(.DOrepo, src = "all") {
         }
         to_split <- dplyr::filter(
             to_split,
-            stringr::str_to_lower(ns) %in% src_lc
+            stringr::str_to_lower(.data$ns) %in% src_lc
         )
     }
     to_split
