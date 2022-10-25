@@ -10,7 +10,13 @@
 count_delim <- function(data, ..., delim = "|", sort = FALSE, name = NULL,
                         trim = TRUE, convert = FALSE) {
     .col <- vapply(rlang::exprs(...), rlang::as_string, character(1))
-    .df <- lengthen_col(data, .col)
+    .df <- lengthen_col(
+        data,
+        .col,
+        delim = delim,
+        trim = trim,
+        convert = convert
+    )
     out <- dplyr::count(.df, ..., sort = sort, name = name)
 
     out
