@@ -55,9 +55,12 @@ append_empty_col <- function(df, col, order = FALSE) {
 #' @param x value to append
 #' @param url a URL or the internal name of a URL used in this package (see
 #' [get_url] for possible names)
+#' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
+#' will result in `NA` being appended to the end of `url` (almost certainly not
+#' desired).
 #'
 #' @export
-append_to_url <- function(x, url) {
+append_to_url <- function(x, url, preserve_NA = TRUE) {
 
     url <- tryCatch(get_url(url), error = function(e) url)
 
@@ -66,6 +69,10 @@ append_to_url <- function(x, url) {
         new_url <- paste0(url, x)
     } else {
         new_url <- paste0(url, "/", x)
+    }
+
+    if (preserve_NA) {
+        new_url[is.na(x)] <- NA
     }
 
     new_url
