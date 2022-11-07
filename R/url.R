@@ -45,14 +45,16 @@ trim_url <- function(url_no_domain) {
 
 #' Get URL (internal)
 #'
-#' Get a URL used within this package. Available URLs: "doi", "pubmed", "pmc",
-#' "pmc_article" (append as prefix to article pmcid for direct navigation),
-#' "alliance_disease_tsv"
+#' Get a URL used within this package. Available URLs: "doi", "github", "orcid",
+#' "pubmed", "pmc", "pmc_article" (append as prefix to article pmcid for direct
+#' navigation), or "alliance_disease_tsv".
 #'
 #' @param .name internal name of desired URL
 get_url <- function(.name) {
     base_url <- c(
         doi = "https://www.doi.org/",
+        github = "https://github.com/",
+        orcid = "https://orcid.org/",
         pubmed = "https://pubmed.ncbi.nlm.nih.gov/",
         pmc = "https://www.ncbi.nlm.nih.gov/pmc/",
         pmc_article = "https://www.ncbi.nlm.nih.gov/pmc/articles/",
