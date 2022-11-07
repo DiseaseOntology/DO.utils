@@ -51,17 +51,17 @@ trim_url <- function(url_no_domain) {
 #'
 #' @param .name internal name of desired URL
 get_url <- function(.name) {
-    .name <- match.arg(
-        .name,
-        c("doi", "pubmed", "pmc", "pmc_article", "alliance_disease_tsv")
-    )
-
-    switch(
-        .name,
+    base_url <- c(
         doi = "https://www.doi.org/",
         pubmed = "https://pubmed.ncbi.nlm.nih.gov/",
         pmc = "https://www.ncbi.nlm.nih.gov/pmc/",
         pmc_article = "https://www.ncbi.nlm.nih.gov/pmc/articles/",
         alliance_disease_tsv = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
     )
+
+    if (.name == "names") {
+        names(base_url)
+    } else {
+        base_url[[.name]]
+    }
 }
