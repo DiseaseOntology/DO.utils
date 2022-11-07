@@ -182,6 +182,60 @@ make_user_list_html <- function(file) {
 }
 
 
+#' Make "Contributors" HTML
+#'
+#' Makes the "Contributor" `<li>` elements for disease-ontology.org. Can be used
+#' for any ontology given the appropriate input.
+#'
+#' @param contrib_df A data.frame with information about contributors, including
+#' the required columns: 'name', 'team_member', 'github', and 'orcid'. 'github'
+#' and 'orcid' columns can have data missing but at least one should be present
+#' for each contributor.
+#'
+#' @examplesIf interactive()
+#' trans_contributors <- googlesheets4::read_sheet(
+#'     ss = "1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM",
+#'     sheet = "TRANS",
+#'     col_types = "c"
+#' ) %>%
+#'     dplyr::mutate(dplyr::across(dplyr::everything(), readr::parse_guess))
+#' trans_contributors
+#'
+#' make_contributors_html(trans_contributors)
+#'
+#' @export
+make_contributor_html <- function(contrib_df) {
+    .data <- contrib_df %>%
+        dplyr::mutate(
+            github = build_hyperlink_html(
+                x = github,
+                url = "github",
+                text = "Github"
+            ),
+            orcid = build_hyperlink_html(
+                x = orcid,
+                url = "orcid",
+                text = "ORCID"
+            ),
+            links = purrr::map2_chr(
+                github,
+                orcid,
+                ~ vctr_to_string(c(.x, .y), delim = ", ", na.rm = TRUE)
+            )
+        )
+
+    member <- dplyr::filter(.data, team_member) %>%
+        dplyr::arrange(name)
+    member_html <- glue::glue_data(.x = member, "{name} ({links})")
+
+    nonmember <- dplyr::filter(.data, !team_member) %>%
+        dplyr::arrange(name)
+    nonmember_html <- glue::glue_data(.x = nonmember, "{name} ({links})")
+
+    list(member = member_html, nonmember = nonmember_html)
+}
+
+
 
 # Statistics Plots --------------------------------------------------------
 
