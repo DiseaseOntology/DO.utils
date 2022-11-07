@@ -226,11 +226,11 @@ make_contributor_html <- function(contrib_df) {
 
     member <- dplyr::filter(.data, team_member) %>%
         dplyr::arrange(name)
-    member_html <- glue::glue_data(.x = member, "{name} ({links})")
+    member_html <- glue::glue_data(.x = member, "<li>{name} ({links})</li>")
 
     nonmember <- dplyr::filter(.data, !team_member) %>%
         dplyr::arrange(name)
-    nonmember_html <- glue::glue_data(.x = nonmember, "{name} ({links})")
+    nonmember_html <- glue::glue_data(.x = nonmember, "<li>{name} ({links})</li>")
 
     list(member = member_html, nonmember = nonmember_html)
 }
