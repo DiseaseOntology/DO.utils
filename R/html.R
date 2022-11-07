@@ -64,7 +64,40 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 }
 
 
-# helpers -----------------------------------------------------------------
+#' Build an HTML Hyperlink (INTERNAL)
+#'
+#' Builds a hyperlink formatted as html.
+#'
+#' @inheritParams append_to_url
+#' @param text The text to display for the link, as a character vector.
+#' @param target An html `<a>`
+#' [target](https://www.w3schools.com/tags/att_a_target.asp) attribute.
+#'
+#' @examples
+#' build_html_hyperlink(x = "allenbaron", url = "github", text = "A hyperlink!")
+#'
+#' @keywords internal
+build_hyperlink_html <- function(x, url, text, target = "_blank",
+                                 preserve_NA = TRUE) {
+    full_url <- append_to_url(x, url)
+
+    if (!is.null(target)) {
+        html_target <- glue::glue(' target="{target}"')
+    } else {
+        html_target <- NULL
+    }
+    href <- glue::glue('<a href="{full_url}"{html_target}>{text}</a>')
+
+    if (preserve_NA) {
+        href[is.na(x)] <- NA
+    }
+
+    href
+}
+
+
+
+# html_in_rows() helpers --------------------------------------------------
 
 indent_html <- function(n) {
     collapse_to_string(rep('  ', n), delim = "")
