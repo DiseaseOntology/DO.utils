@@ -208,28 +208,28 @@ make_contributor_html <- function(contrib_df) {
     .data <- contrib_df %>%
         dplyr::mutate(
             github = build_hyperlink_html(
-                x = github,
+                x = .data$github,
                 url = "github",
                 text = "Github"
             ),
             orcid = build_hyperlink_html(
-                x = orcid,
+                x = .data$orcid,
                 url = "orcid",
                 text = "ORCID"
             ),
             links = purrr::map2_chr(
-                github,
-                orcid,
+                .data$github,
+                .data$orcid,
                 ~ vctr_to_string(c(.x, .y), delim = ", ", na.rm = TRUE)
             )
         )
 
-    member <- dplyr::filter(.data, team_member) %>%
-        dplyr::arrange(name)
+    member <- dplyr::filter(.data, .data$team_member) %>%
+        dplyr::arrange(.data$name)
     member_html <- glue::glue_data(.x = member, "<li>{name} ({links})</li>")
 
-    nonmember <- dplyr::filter(.data, !team_member) %>%
-        dplyr::arrange(name)
+    nonmember <- dplyr::filter(.data, !.data$team_member) %>%
+        dplyr::arrange(.data$name)
     nonmember_html <- glue::glue_data(.x = nonmember, "<li>{name} ({links})</li>")
 
     list(member = member_html, nonmember = nonmember_html)
