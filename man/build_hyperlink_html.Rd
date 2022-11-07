@@ -25,7 +25,8 @@ desired).}
 Builds a hyperlink formatted as html.
 }
 \examples{
+\dontshow{if (interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 build_hyperlink_html(x = "allenbaron", url = "github", text = "A hyperlink!")
-
+\dontshow{\}) # examplesIf}
 }
 \keyword{internal}
