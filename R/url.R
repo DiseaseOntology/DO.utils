@@ -50,6 +50,7 @@ trim_url <- function(url_no_domain) {
 #' navigation), or "alliance_disease_tsv".
 #'
 #' @param .name internal name of desired URL
+#' @keywords internal
 get_url <- function(.name) {
     base_url <- c(
         doi = "https://www.doi.org/",

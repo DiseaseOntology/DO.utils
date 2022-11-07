@@ -10,7 +10,8 @@ get_url(.name)
 \item{.name}{internal name of desired URL}
 }
 \description{
-Get a URL used within this package. Available URLs: "doi", "pubmed", "pmc",
-"pmc_article" (append as prefix to article pmcid for direct navigation),
-"alliance_disease_tsv"
+Get a URL used within this package. Available URLs: "doi", "github", "orcid",
+"pubmed", "pmc", "pmc_article" (append as prefix to article pmcid for direct
+navigation), or "alliance_disease_tsv".
 }
+\keyword{internal}
