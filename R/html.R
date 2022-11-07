@@ -74,7 +74,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #' [target](https://www.w3schools.com/tags/att_a_target.asp) attribute.
 #'
 #' @examples
-#' build_html_hyperlink(x = "allenbaron", url = "github", text = "A hyperlink!")
+#' build_hyperlink_html(x = "allenbaron", url = "github", text = "A hyperlink!")
 #'
 #' @keywords internal
 build_hyperlink_html <- function(x, url, text, target = "_blank",

@@ -25,7 +25,7 @@ desired).}
 Builds a hyperlink formatted as html.
 }
 \examples{
-build_html_hyperlink(x = "allenbaron", url = "github", text = "A hyperlink!")
+build_hyperlink_html(x = "allenbaron", url = "github", text = "A hyperlink!")
 
 }
 \keyword{internal}
