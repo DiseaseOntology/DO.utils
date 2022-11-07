@@ -52,9 +52,9 @@ append_empty_col <- function(df, col, order = FALSE) {
 #' @section Note:
 #' No URL validation is performed.
 #'
-#' @param x value to append
-#' @param url a URL or the internal name of a URL used in this package (see
-#' [get_url] for possible names)
+#' @param x Value(s) to append, as a character vector.
+#' @param url A URL or a URL name recognized by this package, as a string;
+#' see [get_url] for recognized names.
 #' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
 #' will result in `NA` being appended to the end of `url` (almost certainly not
 #' desired).

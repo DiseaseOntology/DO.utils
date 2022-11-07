@@ -4,13 +4,17 @@
 \alias{append_to_url}
 \title{Append to URL}
 \usage{
-append_to_url(x, url)
+append_to_url(x, url, preserve_NA = TRUE)
 }
 \arguments{
-\item{x}{value to append}
+\item{x}{Value(s) to append, as a character vector.}
 
-\item{url}{a URL or the internal name of a URL used in this package (see
-\link{get_url} for possible names)}
+\item{url}{A URL or a URL name recognized by this package, as a string;
+see \link{get_url} for recognized names.}
+
+\item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
+will result in \code{NA} being appended to the end of \code{url} (almost certainly not
+desired).}
 }
 \description{
 Append a value to a URL.
