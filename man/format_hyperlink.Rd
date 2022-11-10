@@ -16,7 +16,8 @@ format_hyperlink(url, as, ..., txt = NULL, preserve_NA = TRUE)
 \href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
 
 \item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
-vector. If \code{NULL} (default), the URL itself will serve as the text.}
+vector. If \code{NULL} (default), the URL itself will serve as the text. If a
+string, the value will be used for the text of each hyperlink.}
 
 \item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
 will result in hyperlinks built from \code{NA} values in \code{url} (almost

@@ -274,7 +274,8 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #' @param ... One or more name-value pairs of html `<a>`
 #' [attributes](https://www.w3schools.com/tags/tag_a.asp).
 #' @param txt _(OPTIONAL)_ The text to display for each link, as a character
-#' vector. If `NULL` (default), the URL itself will serve as the text.
+#' vector. If `NULL` (default), the URL itself will serve as the text. If a
+#' string, the value will be used for the text of each hyperlink.
 #' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
 #' will result in hyperlinks built from `NA` values in `url` (almost
 #' certainly not desired).
@@ -309,8 +310,10 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #' @export
 format_hyperlink <- function(url, as, ..., txt = NULL, preserve_NA = TRUE) {
     as <- match.arg(as, c("gs", "xlsx", "html"))
-    if (!is.null(txt) && length(txt) != length(url)) {
-        rlang::abort("`txt` must be the same length as `url`")
+    if (!is.null(txt) && length(txt) != 1 && length(txt) != length(url)) {
+        rlang::abort(
+            "`txt` must be a string or character vector of the same length as `url`"
+        )
     }
 
     if (as == "gs") {
