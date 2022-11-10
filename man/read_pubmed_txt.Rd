@@ -15,5 +15,5 @@ A data.frame with a record number (\code{n}), identifiers (\code{pmid}, \code{pm
 }
 \description{
 Reads PubMed text-format citations spanning multiple lines, usually
-obtained by downloading a text file from PubMed as 'Summary (text)').
+obtained by downloading a text file from PubMed as 'Summary (text)'.
 }
