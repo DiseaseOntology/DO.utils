@@ -16,11 +16,14 @@ read_doid_edit <- function(DO_repo) {
 
 #' Read in PubMed Citations (from txt file)
 #'
-#' Reads in and concatenates PubMed text-format citations (span multiple
-#' lines, usually obtained by downloading a text file from PubMed as
-#' 'Summary (text)).
+#' Reads PubMed text-format citations spanning multiple lines, usually
+#' obtained by downloading a text file from PubMed as 'Summary (text)'.
 #'
 #' @param file Path to .txt file; or another possible input to `readLines()`.
+#'
+#' @returns
+#' A data.frame with a record number (`n`), identifiers (`pmid`, `pmcid`,
+#' `doi`), and the full citation (`citation`).
 #'
 #' @export
 read_pubmed_txt <- function(file) {
@@ -47,5 +50,15 @@ read_pubmed_txt <- function(file) {
         # remove extra whitespace
         stringr::str_squish()
 
-    citations
+    # extract identifiers and format as tibble
+    citation_df <- tibble::tibble(
+        n = 1:length(citations),
+        pmid = stringr::str_match(citations, "PMID: ([0-9]+)")[, 2] %>%
+            dplyr::na_if("0"),
+        pmcid = stringr::str_match(citations, "PMCID: (PMC[0-9]+)")[, 2],
+        doi = stringr::str_match(citations, "(doi|DOI): (10[^[:space:]]+)\\.?")[, 3],
+        citation = citations
+    )
+
+    citation_df
 }

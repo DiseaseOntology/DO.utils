@@ -9,8 +9,11 @@ read_pubmed_txt(file)
 \arguments{
 \item{file}{Path to .txt file; or another possible input to \code{readLines()}.}
 }
+\value{
+A data.frame with a record number (\code{n}), identifiers (\code{pmid}, \code{pmcid},
+\code{doi}), and the full citation (\code{citation}).
+}
 \description{
-Reads in and concatenates PubMed text-format citations (span multiple
-lines, usually obtained by downloading a text file from PubMed as
-'Summary (text)).
+Reads PubMed text-format citations spanning multiple lines, usually
+obtained by downloading a text file from PubMed as 'Summary (text)').
 }
