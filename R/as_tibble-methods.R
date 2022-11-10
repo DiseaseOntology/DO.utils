@@ -26,13 +26,16 @@ as_tibble.esummary_list <- function(x, ...) {
     # ensure consistently formatted list-columns
     list_cols <- c("Authors", "Lang", "PubType", "ArticleIds", "History",
                    "References", "Attributes")
+        # 2022-11-10 PMC results no longer have all these columns
+    cols_in_df <- list_cols[list_cols %in% names(df)]
     list_in_df <- names(df)[purrr::map_lgl(df, rlang::is_list)]
-    not_list <- list_cols[!list_cols %in% list_in_df]
-    if (length(not_list) > 0) {
+    reformat_col <- cols_in_df[!cols_in_df %in% list_in_df]
+
+    if (length(reformat_col) > 0) {
         df <- dplyr::mutate(
             df,
             dplyr::across(
-                dplyr::one_of(not_list),
+                dplyr::one_of(reformat_col),
                 as.list
             )
         )
