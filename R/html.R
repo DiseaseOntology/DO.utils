@@ -64,35 +64,34 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 }
 
 
-#' Build an HTML Hyperlink (INTERNAL)
+#' Build Hyperlinks
 #'
-#' Builds a hyperlink formatted as html.
+#' Builds hyperlinks for Google Sheets, Excel, or HTML by appending a value to
+#' the end of a base url.
 #'
 #' @inheritParams append_to_url
-#' @param text The text to display for the link, as a character vector.
-#' @param target An html `<a>`
-#' [target](https://www.w3schools.com/tags/att_a_target.asp) attribute.
+#' @inheritParams format_hyperlink
 #'
-#' @examplesIf interactive()
-#' build_hyperlink_html(x = "allenbaron", url = "github", text = "A hyperlink!")
+#' @examples
+#' build_hyperlink(
+#'     x = "allenbaron",
+#'     url = "github",
+#'     as = "html",
+#'     txt = "A hyperlink!"
+#' )
 #'
-#' @keywords internal
-build_hyperlink_html <- function(x, url, text, target = "_blank",
-                                 preserve_NA = TRUE) {
-    full_url <- append_to_url(x, url)
+#' @export
+build_hyperlink <- function(x, url, as, ..., txt = NULL, preserve_NA = TRUE) {
+    full_url <- append_to_url(x, url, preserve_NA = preserve_NA)
+    hyperlink <- format_hyperlink(
+        full_url,
+        as = as,
+        ...,
+        txt = txt,
+        preserve_NA = preserve_NA
+    )
 
-    if (!is.null(target)) {
-        html_target <- glue::glue(' target="{target}"')
-    } else {
-        html_target <- NULL
-    }
-    href <- glue::glue('<a href="{full_url}"{html_target}>{text}</a>')
-
-    if (preserve_NA) {
-        href[is.na(x)] <- NA
-    }
-
-    href
+    hyperlink
 }
 
 
