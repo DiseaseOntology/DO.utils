@@ -17,7 +17,8 @@
 #' @export
 as_tibble.esummary_list <- function(x, ...) {
     df <- x %>%
-        # strip esummary class, required for tidyr::unnest_wider
+        # strip esummary class, required workaround for tidyr::unnest_wider
+        #   see https://github.com/tidyverse/tidyr/issues/1327
         purrr::map(~ `class<-`(.x, "list")) %>%
         tibble::enframe(name = "esummary_id", value = "tmp") %>%
         tidyr::unnest_wider(col = "tmp")
