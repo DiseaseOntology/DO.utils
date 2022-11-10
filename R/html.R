@@ -71,6 +71,10 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'
 #' @inheritParams append_to_url
 #' @inheritParams format_hyperlink
+#' @param txt _(OPTIONAL)_ The text to display for each link, as a character
+#' vector. The default uses `x` as the text. If `NULL`, the full URL will serve
+#' as the text.  If a string, the value will be used for the text of each
+#' hyperlink.
 #'
 #' @examples
 #' build_hyperlink(
@@ -81,7 +85,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #' )
 #'
 #' @export
-build_hyperlink <- function(x, url, as, ..., txt = NULL, preserve_NA = TRUE) {
+build_hyperlink <- function(x, url, as, ..., txt = x, preserve_NA = TRUE) {
     full_url <- append_to_url(x, url, preserve_NA = preserve_NA)
     hyperlink <- format_hyperlink(
         full_url,

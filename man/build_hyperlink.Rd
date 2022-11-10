@@ -20,7 +20,8 @@ see \link{get_url} for recognized names.}
 
 \item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
 vector. The default uses \code{x} as the text. If \code{NULL}, the full URL will serve
-as the text.}
+as the text.  If a string, the value will be used for the text of each
+hyperlink.}
 
 \item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
 will result in \code{NA} being appended to the end of \code{url} (almost certainly not
