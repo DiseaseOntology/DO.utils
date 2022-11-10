@@ -263,3 +263,87 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
     out
 }
 
+
+#' Format URLs as Hyperlinks
+#'
+#' Formats URLs as hyperlinks for Google Sheets, Excel, or html.
+#'
+#' @param url One or more URLs, as a character vector.
+#' @param txt The text to display for each link, as a character vector.
+#' @param as What format to use for the hyperlink, as a string; one of "gs"
+#' (Google Sheet), "xlsx" (Excel), or "html".
+#' @param ... One or more name-value pairs of html `<a>`
+#' [attributes](https://www.w3schools.com/tags/tag_a.asp).
+#' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
+#' will result in hyperlinks built from `NA` values in `url` (almost
+#' certainly not desired).
+#'
+#' @section Excel Note:
+#' Use the `openxlsx` pkg to write data with hyperlinks to Excel.
+#'
+#' @examples
+#' format_hyperlink("https://www.google.com", "Google", "gs")
+#' format_hyperlink("https://www.google.com", "Google", "xlsx")
+#' format_hyperlink("https://www.google.com", "Google", "html")
+#'
+#' # html with `<a>` attributes
+#' format_hyperlink(
+#'     "https://www.google.com",
+#'     "Google",
+#'     "html",
+#'     target = "_blank",
+#'     rel = "external"
+#' )
+#'
+#' @export
+format_hyperlink <- function(url, txt, as, ..., preserve_NA = TRUE) {
+    as <- match.arg(as, c("gs", "xlsx", "html"))
+    if (length(txt) != length(url)) {
+        rlang::abort("`txt` must be the same length as `url`")
+    }
+
+    if (as %in% c("gs", "xlsx")) {
+        formula <- as.character(glue::glue('=HYPERLINK("{url}", "{txt}")'))
+
+        if (as == "gs") {
+            formatted <- googlesheets4::gs4_formula(formula)
+        } else {
+            formatted <- formula
+            class(formatted) <- "formula"
+        }
+    }
+
+    if (as == "html") {
+        attr <- list(...)
+        if (length(attr) > 0) {
+            unnamed <- names(attr) == ""
+            if (any(unnamed)) {
+                rlang::abort(
+                    c(
+                        "All hyperlink attributes in `...` must be named.",
+                        purrr::set_names(attr[unnamed], nm = rep("x", sum(unnamed)))
+                    )
+                )
+            }
+
+            html_attr <- paste0(
+                " ", names(attr), "=", sandwich_text(attr, '"'),
+                collapse = ""
+            )
+        } else {
+            html_attr <- NULL
+        }
+
+        formatted <- glue::glue(
+            '<a href="{url}"{html_attr}>{txt}</a>',
+            .null = ""
+        )
+        formatted <- as.character(formatted)
+    }
+
+    if (preserve_NA) {
+        formatted[is.na(url)] <- NA
+    }
+
+    formatted
+}

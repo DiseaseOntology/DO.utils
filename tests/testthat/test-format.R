@@ -138,3 +138,89 @@ test_that("format_axiom() works", {
     expect_snapshot(format_axiom(axioms, generify_obo = TRUE))
     expect_snapshot(format_axiom(axioms, prop_df, generify_obo = TRUE))
 })
+
+
+
+# format_hyperlink() ------------------------------------------------------
+
+# input
+url <- c("https://www.google.com/", "https://disease-ontology.org/")
+txt <- c("google", "DO")
+
+# expectations
+ws_expect <- c(
+    '=HYPERLINK(\"https://www.google.com/\", \"google\")',
+    '=HYPERLINK(\"https://disease-ontology.org/\", \"DO\")'
+)
+gs_expect <- ws_expect
+class(gs_expect) <- c("googlesheets4_formula", "vctrs_vctr")
+
+xlsx_expect <- ws_expect
+class(xlsx_expect) <- "formula"
+
+html_expect <- c(
+    "<a href=\"https://www.google.com/\">google</a>",
+    "<a href=\"https://disease-ontology.org/\">DO</a>"
+)
+html_attr_expect <- c(
+    "<a href=\"https://www.google.com/\" target=\"_blank\" rel=\"external\">google</a>",
+    "<a href=\"https://disease-ontology.org/\" target=\"_blank\" rel=\"external\">DO</a>"
+)
+
+
+test_that("format_hyperlink() works", {
+    expect_equal(format_hyperlink(url, txt, "gs"), gs_expect)
+    expect_equal(format_hyperlink(url, txt, "xlsx"), xlsx_expect)
+    expect_equal(format_hyperlink(url, txt, "html"), html_expect)
+})
+
+test_that("format_hyperlink() ... works for html attributes", {
+    expect_equal(
+        format_hyperlink(url, txt, "html", target = "_blank", rel = "external"),
+        html_attr_expect
+    )
+
+    # ignored for other formats
+    expect_equal(
+        format_hyperlink(url, txt, "gs", target = "_blank", rel = "external"),
+        gs_expect
+    )
+    expect_equal(
+        format_hyperlink(url, txt, "xlsx",target = "_blank", rel = "external"),
+        xlsx_expect
+    )
+})
+
+test_that("format_hyperlink() preserve_NA arg works", {
+    url <- c(url, NA)
+    txt <- c(txt, "blah")
+
+    # default: TRUE
+    expect_equal(format_hyperlink(url, txt, "gs"), c(gs_expect, NA))
+
+    xlsx_expect <- c(xlsx_expect, NA)
+    class(xlsx_expect) <- "formula"
+    expect_equal(format_hyperlink(url, txt, "xlsx"), xlsx_expect)
+
+    expect_equal(format_hyperlink(url, txt, "html"), c(html_expect, NA))
+
+    # FALSE
+    gs_expect_na <- c(gs_expect, '=HYPERLINK(\"NA\", \"blah\")')
+    class(gs_expect_na) <- c("googlesheets4_formula", "vctrs_vctr")
+    expect_equal(
+        format_hyperlink(url, txt, "gs", preserve_NA = FALSE),
+        gs_expect_na
+    )
+
+    xlsx_expect_na <- c(xlsx_expect[1:2], '=HYPERLINK(\"NA\", \"blah\")')
+    class(xlsx_expect_na) <- "formula"
+    expect_equal(
+        format_hyperlink(url, txt, "xlsx", preserve_NA = FALSE),
+        xlsx_expect_na
+    )
+
+    expect_equal(
+        format_hyperlink(url, txt, "html", preserve_NA = FALSE),
+        c(html_expect, "<a href=\"NA\">blah</a>")
+    )
+})
