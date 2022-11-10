@@ -4,18 +4,19 @@
 \alias{format_hyperlink}
 \title{Format URLs as Hyperlinks}
 \usage{
-format_hyperlink(url, txt, as, ..., preserve_NA = TRUE)
+format_hyperlink(url, as, ..., txt = NULL, preserve_NA = TRUE)
 }
 \arguments{
 \item{url}{One or more URLs, as a character vector.}
-
-\item{txt}{The text to display for each link, as a character vector.}
 
 \item{as}{What format to use for the hyperlink, as a string; one of "gs"
 (Google Sheet), "xlsx" (Excel), or "html".}
 
 \item{...}{One or more name-value pairs of html \verb{<a>}
 \href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
+
+\item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
+vector. If \code{NULL} (default), the URL itself will serve as the text.}
 
 \item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
 will result in hyperlinks built from \code{NA} values in \code{url} (almost
@@ -30,17 +31,27 @@ Use the \code{openxlsx} pkg to write data with hyperlinks to Excel.
 }
 
 \examples{
-format_hyperlink("https://www.google.com", "Google", "gs")
-format_hyperlink("https://www.google.com", "Google", "xlsx")
-format_hyperlink("https://www.google.com", "Google", "html")
+format_hyperlink("https://www.google.com", "gs")
+format_hyperlink("https://www.google.com", "xlsx")
+format_hyperlink("https://www.google.com", "html")
+
+# with `txt` (argument must be named)
+format_hyperlink("https://www.google.com", "gs", txt = "Google")
+format_hyperlink("https://www.google.com", "xlsx", txt = "Google")
+format_hyperlink("https://www.google.com", "html", txt = "Google")
 
 # html with `<a>` attributes
 format_hyperlink(
     "https://www.google.com",
-    "Google",
     "html",
+    txt = "Google",
     target = "_blank",
     rel = "external"
 )
+
+# `NA` values are passed through without modification by default but can be
+# made into hyperlinks when preserve_NA = FALSE
+format_hyperlink(c("https://www.google.com", NA), "gs")
+format_hyperlink(c("https://www.google.com", NA), "gs", preserve_NA = FALSE)
 
 }
