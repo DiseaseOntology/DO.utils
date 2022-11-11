@@ -55,6 +55,11 @@ test_that("match_citations(): works for single, similar type w/matches", {
     )
 })
 
+test_that("match_citations() works when DOIs differ by case", {
+    df_NA$doi <- stringr::str_to_upper(df_NA$doi)
+    expect_eq_no_msg(match_citations(df_all, df_NA), 1:4)
+})
+
 test_that("match_citations(): works for single, similar type w/NO matches", {
     # --> says matching but no result (make warning?)
     df0 <- df_NA[1]
