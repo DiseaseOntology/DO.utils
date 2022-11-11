@@ -7,11 +7,17 @@ utils::globalVariables(
 pkg_user_agent <- "DO.utils (github.com/allenbaron/DO.utils)"
 
 
-#' Prioritized List of Publication IDs for Matching
+#' Prioritized List of Publication IDs & Regex's for Matching
 #'
-#' @format A length-`r length(pub_id_types)` character vector:
-#' \describe{ `r vctr_to_string(pub_id_types, delim = " > ")` }
-pub_id_types <- c("pmid", "pmcid", "doi", "scopus_eid")
+#' @format A length-`r length(pub_id_match)` character vector of named regex's
+#' prioritized as follows:
+#' \describe{ `r vctr_to_string(names(pub_id_match), delim = " > ")` }
+pub_id_match <- c(
+    pmid = "[0-9]{1,8}",
+    pmcid = "PMC[0-9]+",
+    doi = "10.+/.+",
+    scopus_eid = "2-s2.0-[0-9]{11}"
+)
 
 
 #' Human Disease Ontology Official Colors
