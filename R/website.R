@@ -207,15 +207,17 @@ make_user_list_html <- function(file) {
 make_contributor_html <- function(contrib_df) {
     .data <- contrib_df %>%
         dplyr::mutate(
-            github = build_hyperlink_html(
+            github = build_hyperlink(
                 x = .data$github,
                 url = "github",
-                text = "Github"
+                as = "html",
+                txt = "Github"
             ),
-            orcid = build_hyperlink_html(
+            orcid = build_hyperlink(
                 x = .data$orcid,
                 url = "orcid",
-                text = "ORCID"
+                as = "html",
+                txt = "ORCID"
             ),
             links = purrr::map2_chr(
                 .data$github,
