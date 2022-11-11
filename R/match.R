@@ -96,6 +96,13 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
             ref1 <- ref
         }
 
+        # Ensure DOI matches are not affected by case; DOIs are case
+        # insensitive (https://www.doi.org/doi_handbook/2_Numbering.html#2.4)
+        if (type_both == "doi") {
+            x1 <- stringr::str_to_lower(x1)
+            ref1 <- stringr::str_to_lower(ref1)
+        }
+
         match_vctr <- match_carefully(x1, ref1, nomatch)
     } else {
         # for both data.frame (guaranteed if length(type_both) > 1)
@@ -109,6 +116,13 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
                 message("* ", type)
                 x_col <- get_pub_id_col(x, type)
                 ref_col <- get_pub_id_col(ref, type)
+
+                # Ensure DOI matches are not affected by case
+                if (type == "doi") {
+                    x_col <- stringr::str_to_lower(x_col)
+                    ref_col <- stringr::str_to_lower(ref_col)
+                }
+
                 match_res <- match_carefully(x_col, ref_col, nomatch)
             }
         )
