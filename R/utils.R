@@ -29,6 +29,10 @@ sandwich_text <- function(x, placeholder, ...) {
         out <- paste0(placeholder[1], x, placeholder[2], ...)
     }
 
+    if (!is.null(names(x))) {
+        names(out) <- names(x)
+    }
+
     out
 }
 
