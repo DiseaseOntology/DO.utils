@@ -46,6 +46,8 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
         )
     }
 
+    pub_id_types <- names(pub_id_match)
+
     if (is.vector(x)) {
         x_type <- type_pub_id(x)
     } else {
@@ -244,6 +246,7 @@ get_pub_id_col <- function(df, type) {
 #' @noRd
 find_pub_id_cols <- function(df) {
     df_lc <- dplyr::rename_with(df, tolower)
+    pub_id_types <- names(pub_id_match)
 
     id_cols <- pub_id_types[pub_id_types %in% names(df_lc)]
 
@@ -257,19 +260,22 @@ find_pub_id_cols <- function(df) {
 }
 
 
+
 #' Identify Publication ID Type
 #'
-#' Returns one of pmid, pmcid, doi based on standards
+#' Returns one of pmid, pmcid, doi, or scopus_eid based on regex matches.
 #'
-#' @param x a vector of same-type IDs
+#' @param x A vector of same-type IDs.
 #' @noRd
 type_pub_id <- function(x) {
 
+    full_match <- sandwich_text(pub_id_match, c("^", "$"))
+
     id_type <- dplyr::case_when(
-        stringr::str_detect(x, "^10.+/.+$") ~ "doi",
-        stringr::str_detect(x, "^PMC[0-9]+$") ~ "pmcid",
-        stringr::str_detect(x, "^[0-9]{1,8}$") ~ "pmid",
-        stringr::str_detect(x, "^2-s2.0-[0-9]{11}$") ~ "scopus_eid",
+        stringr::str_detect(x, full_match[["doi"]]) ~ "doi",
+        stringr::str_detect(x, full_match[["pmcid"]]) ~ "pmcid",
+        stringr::str_detect(x, full_match[["pmid"]]) ~ "pmid",
+        stringr::str_detect(x, full_match[["scopus_eid"]]) ~ "scopus_eid",
         !is.na(x) ~ "not identifiable"
     )
 
@@ -301,9 +307,8 @@ type_pub_id <- function(x) {
         )
     )
 
-    assertthat::assert_that(
-        id_type %in% pub_id_types
-    )
+    pub_id_types <- names(pub_id_match)
+    assertthat::assert_that(id_type %in% pub_id_types)
 
     id_type
 }

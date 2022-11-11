@@ -1,6 +1,8 @@
 # match_citations() -------------------------------------------------------
 
 ##### DATA #####
+pub_id_types <- names(pub_id_match)
+
 df_all <- DO_pubs %>%
     # ensure priority order here matches that set by pub_id_types & all present
     dplyr::select(dplyr::one_of(pub_id_types)) %>%
