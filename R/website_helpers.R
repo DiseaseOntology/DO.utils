@@ -307,14 +307,14 @@ clean_pub_type <- function(pub_type, as_fctr = TRUE) {
             pt_lc != "Journal|Conference Paper" ~ "Conference",
         stringr::str_detect(pt_lc, "book") ~ "Book",
         stringr::str_detect(pt_lc, "journal.*article") ~ "Article",
-        TRUE ~ "Commentary"
+        TRUE ~ "Other"
     )
 
     if (as_fctr) {
         tidy <- factor(
             tidy,
             # order by least to most important (most important at bottom of graph)
-            levels = c("Retracted", "Commentary", "Review", "Conference", "Book",
+            levels = c("Retracted", "Other", "Review", "Conference", "Book",
                        "Clinical Trial", "Article")
         )
     }
