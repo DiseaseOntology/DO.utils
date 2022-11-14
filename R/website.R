@@ -249,7 +249,7 @@ make_contributor_html <- function(contrib_df) {
 #' @param data_file The path to the file containing the list of publications
 #'     citing the DO, as a string.
 #' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
-#'     should be saved, as a string.
+#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
 #' @param w The width of the plot in inches, as an integer.
 #' @param h The height of the plot in inches, as an integer.
 #'
@@ -259,8 +259,6 @@ make_contributor_html <- function(contrib_df) {
 #' @export
 plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
                          out_dir = "graphics/website", w = 8, h = 5.6) {
-
-    file_out <- file.path(out_dir, "DO_cited_by_count.png")
 
     df <- readr::read_csv(data_file) %>%
         dplyr::mutate(
@@ -288,11 +286,18 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
         ggplot2::labs(x = "Year", y = NULL) +
         theme_DO(base_size = 13)
 
-    ggplot2::ggsave(
-        filename = file_out, plot = g,
-        width = w, height = h, units = "in",
-        dpi = 600
-    )
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_cited_by_count.png")
+
+        ggplot2::ggsave(
+            filename = file_out,
+            plot = g,
+            width = w,
+            height = h,
+            units = "in",
+            dpi = 600
+        )
+    }
 
     g
 }
@@ -308,7 +313,7 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
 #' @param counts_file The path to the file containing the count of DO terms
 #'     and definitions by release, as a string.
 #' @param out_dir The directory where the plot `"DO_term_def_count.png"`
-#'     should be saved, as a string.
+#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
 #' @inheritParams plot_citedby
 #'
 #' @section Data Preparation:
@@ -324,8 +329,6 @@ plot_term_def_counts <- function(
     release_file = "data/DO_release/DO_release_details.csv",
     counts_file = "data/DO_release/DO_term_def_counts.csv",
     out_dir = "graphics/website", w = 8, h = 5.6) {
-
-    file_out <- file.path(out_dir, "DO_term_def_count.png")
 
     release_df <- readr::read_csv(release_file)
     counts_df <- readr::read_csv(counts_file) %>%
@@ -383,11 +386,15 @@ plot_term_def_counts <- function(
         ) +
         theme_DO(base_size = 13)
 
-    ggplot2::ggsave(
-        filename = file_out, plot = g,
-        width = w, height = h, units = "in",
-        dpi = 600
-    )
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_term_def_count.png")
+
+        ggplot2::ggsave(
+            filename = file_out, plot = g,
+            width = w, height = h, units = "in",
+            dpi = 600
+        )
+    }
 
     g
 }
@@ -401,7 +408,7 @@ plot_term_def_counts <- function(
 #' @param data_file The path to the file containing the latest DO branch counts,
 #'     as a string.
 #' @param out_dir The directory where the plot `"DO_branch_count.png"`
-#'     should be saved, as a string.
+#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
 #' @inheritParams plot_citedby
 #'
 #' @section Data Preparation:
@@ -414,8 +421,6 @@ plot_term_def_counts <- function(
 plot_branch_counts <- function(
     data_file = "data/DO_release/branch_counts.csv",
     out_dir = "graphics/website", w = 8, h = 5.6) {
-
-    file_out <- file.path(out_dir, "DO_branch_count.png")
 
     branch_order <- c(syndrome = "Syndrome",
                       physicalDisorder = "Physical Disorder",
@@ -447,11 +452,15 @@ plot_branch_counts <- function(
         theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
-    ggplot2::ggsave(
-        filename = file_out, plot = g,
-        width = w, height = h, units = "in",
-        dpi = 600
-    )
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_branch_count.png")
+
+        ggplot2::ggsave(
+            filename = file_out, plot = g,
+            width = w, height = h, units = "in",
+            dpi = 600
+        )
+    }
 
     g
 }
@@ -464,7 +473,7 @@ plot_branch_counts <- function(
 #' @param data_file The path to the file containing the latest DO xref counts,
 #'     as a string.
 #' @param out_dir The directory where the plot `"DO_xref_count.png"`
-#'     should be saved, as a string.
+#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
 #' @inheritParams plot_citedby
 #'
 #' @section Data Preparation:
@@ -481,8 +490,6 @@ plot_branch_counts <- function(
 plot_xref_counts <- function(
     data_file = "data/DO_release/cross_references.csv",
     out_dir = "graphics/website", w = 8, h = 5.6) {
-
-    file_out <- file.path(out_dir, "DO_xref_count.png")
 
     df <- readr::read_csv(data_file) %>%
         dplyr::filter(!is.na(.data$Curation)) %>%
@@ -510,11 +517,15 @@ plot_xref_counts <- function(
         ggplot2::labs(x ="Cross References") +
         theme_DO(base_size = 13)
 
-    ggplot2::ggsave(
-        filename = file_out, plot = g,
-        width = w, height = h, units = "in",
-        dpi = 600
-    )
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_xref_count.png")
+
+        ggplot2::ggsave(
+            filename = file_out, plot = g,
+            width = w, height = h, units = "in",
+            dpi = 600
+        )
+    }
 
     g
 }
@@ -527,7 +538,7 @@ plot_xref_counts <- function(
 #'
 #' @inheritParams read_doid_edit
 #' @param out_dir The directory where the plot "DO_def_src.png" should be saved,
-#'     as a string.
+#'     as a string. If `NULL` the plot is not saved to disk.
 #' @inheritParams plot_citedby
 #'
 #' @section Data Preparation:
@@ -538,9 +549,6 @@ plot_xref_counts <- function(
 #' @export
 plot_def_src <- function(DO_repo, out_dir = "graphics/website",
                                w = 8, h = 5.6) {
-
-    file_out <- file.path(out_dir, "DO_def_src.png")
-
     df <- read_doid_edit(DO_repo) %>%
         extract_doid_url() %>%
         dplyr::mutate(tmp = parse_url(.data$url)) %>%
@@ -631,11 +639,15 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
         theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
 
-    ggplot2::ggsave(
-        filename = file_out, plot = g,
-        width = w, height = h, units = "in",
-        dpi = 600
-    )
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_def_src.png")
+
+        ggplot2::ggsave(
+            filename = file_out, plot = g,
+            width = w, height = h, units = "in",
+            dpi = 600
+        )
+    }
 
     g
 }

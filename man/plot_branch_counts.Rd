@@ -16,7 +16,7 @@ plot_branch_counts(
 as a string.}
 
 \item{out_dir}{The directory where the plot \code{"DO_branch_count.png"}
-should be saved, as a string.}
+should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 
 \item{w}{The width of the plot in inches, as an integer.}
 

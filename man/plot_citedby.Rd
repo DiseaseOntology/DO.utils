@@ -16,7 +16,7 @@ plot_citedby(
 citing the DO, as a string.}
 
 \item{out_dir}{The directory where the plot \code{"DO_cited_by_count.png"}
-should be saved, as a string.}
+should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 
 \item{w}{The width of the plot in inches, as an integer.}
 

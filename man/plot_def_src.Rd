@@ -11,7 +11,7 @@ plot_def_src(DO_repo, out_dir = "graphics/website", w = 8, h = 5.6)
 string.}
 
 \item{out_dir}{The directory where the plot "DO_def_src.png" should be saved,
-as a string.}
+as a string. If \code{NULL} the plot is not saved to disk.}
 
 \item{w}{The width of the plot in inches, as an integer.}
 
