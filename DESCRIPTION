@@ -16,7 +16,6 @@ Roxygen: list(markdown = TRUE)
 Imports:
     assertthat,
     dplyr,
-    generics,
     ggplot2,
     glue,
     googlesheets4,
@@ -38,8 +37,7 @@ Imports:
     tibble,
     tidyr,
     tidyselect,
-    utils,
-    XML
+    utils
 Suggests:
     rmarkdown,
     knitr,
