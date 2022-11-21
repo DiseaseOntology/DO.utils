@@ -1,3 +1,10 @@
+# DO.utils 0.2.6
+
+Change license to CC0 1.0 Universal to match standard for the Human Disease
+Ontology project and in preparation for use in resource use assessment
+publication.
+
+
 # DO.utils 0.2.5
 
 ## Deprecations
