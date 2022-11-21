@@ -43,6 +43,8 @@ parse_mapping <- function(py_gilda_res_list, ...) {
 #'
 #' @returns
 #' List of data frames with the mapping result(s) for each term.
+#'
+#' @keywords internal
 parse_term_mapping <- function(py_gilda_term_mappings, best_only = TRUE,
                                warn_best_gt1 = FALSE, ...) {
 
@@ -82,6 +84,8 @@ parse_term_mapping <- function(py_gilda_term_mappings, best_only = TRUE,
 #'     create a complete namespace ID (e.g. "DOID:4").
 #' @param prefix_sep _Optional_ separator placed between `prefix` and
 #'     namespace LUIs, as a string. Ignored if `prefix = NULL`.
+#'
+#' @keywords internal
 extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
                                 prefix_sep = ":") {
     if (is.null(prefix)) {

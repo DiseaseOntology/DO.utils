@@ -14,3 +14,4 @@ string.}
 Read the doid-edit.owl file from a local copy of the Human Disease Ontology
 Github repo.
 }
+\keyword{internal}

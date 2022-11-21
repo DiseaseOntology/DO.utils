@@ -20,3 +20,4 @@ namespace LUIs, as a string. Ignored if \code{prefix = NULL}.}
 Extracts mapping results from specialized \code{ScoredMatch} python objects
 (as defined by GILDA) AT THE LEVEL of individual mappings.
 }
+\keyword{internal}
