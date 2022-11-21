@@ -281,6 +281,24 @@ theme_DO <- function(base_size = 11, base_family = "",
     )
 }
 
+
+#' Extract URL Domain
+#'
+#' VERY basic implementation.
+#'
+#' @family plot_def_src() helpers
+#' @noRd
+extract_url_domain <- function(url, drop_www = FALSE) {
+    domain <- stringr::str_remove_all(url, "^(.*://)|/.*")
+
+    if (drop_www) {
+        domain <- stringr::str_remove(domain, "^www[^.]*\\.")
+    }
+
+    domain
+}
+
+
 #' Identifies NLM URLs of various subdomains.
 #'
 #' @family plot_def_src() helpers
@@ -288,7 +306,7 @@ theme_DO <- function(base_size = 11, base_family = "",
 is_nlm_subdomain <- function(subdomain) {
     df <- get(".", envir = parent.frame())
     df$Source %in% c("ncbi.nlm.nih.gov", "nlm.nih.gov") &
-        stringr::str_detect(df$path, subdomain)
+        stringr::str_detect(df$url, subdomain)
 }
 
 

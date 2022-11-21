@@ -551,14 +551,10 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
                                w = 8, h = 5.6) {
     df <- read_doid_edit(DO_repo) %>%
         extract_doid_url() %>%
-        dplyr::mutate(tmp = parse_url(.data$url)) %>%
-        tidyr::unnest(.data$tmp, keep_empty = TRUE) %>%
+        dplyr::mutate(domain = extract_url_domain(.data$url, drop_www = TRUE)) %>%
         # tidy source names
         dplyr::mutate(
-            # strip start www and all variants & make lowercase
-            Source = stringr::str_remove(.data$domain, "^www[^.]*\\."),
-            Source = stringr::str_to_lower(.data$Source),
-            # temporary fix for some malformed/old web domains
+            Source = stringr::str_to_lower(.data$domain),
             Source = dplyr::recode(
                 .data$Source,
                 # malformed/not working
