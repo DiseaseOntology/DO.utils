@@ -557,20 +557,21 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
             Source = stringr::str_to_lower(.data$domain),
             Source = dplyr::recode(
                 .data$Source,
-                # malformed/not working
+                # malformed/not working/need replacement
                 "pubmed-ncbi-nlm-nih-gov" = "PubMed",
-                "ncithesaurus-stage.nci.nih.gov" = "NCI thesaurus",
+                "ncithesaurus-stage.nci.nih.gov" = "NCI Thesaurus",
+                "ncim.nci.nih.gov" = "NCI Thesaurus",
                 "bt.cdc.gov" = "CDC",
                 # redirects
                 "mayoclinic.com" = "Mayo Clinic",
-                "nci.nih.gov" = "cancer.gov",
-                "cancergenome.nih.gov" = "cancer.gov",
+                "nci.nih.gov" = "NCI",
+                "cancergenome.nih.gov" = "NCI",
                 "dpd.cdc.gov" = "CDC",
                 "springerlink.com" = "link.springer.com",
                 "ghr.nlm.nih.gov" = "MedlinePlus",
                 # general tidying
-                "apps.who.int" = "who.int",
-                "whqlibdoc.who.int" = "who.int",
+                "apps.who.int" = "WHO",
+                "whqlibdoc.who.int" = "WHO",
                 "ncithesaurus.nci.nih.gov" = "NCI Thesaurus",
                 "pubmed.ncbi.nlm.nih.gov" = "PubMed",
                 "pubmedcentral.nih.gov" = "PubMed Central",
