@@ -79,9 +79,10 @@ pubmed_summary <- function(input, config = NULL, version = "2.0",
 #' limit / cell = 50,000. 120 authors is a conservative limit that's unlikely
 #' to cause problems (and is plenty long).
 #'
-#' @param pubmed_df A tidy data frame, as produced by [tidy()] on a PubMed
-#' `esummary_list`
+#' @param pubmed_df A tidy data frame, as produced by [generics::tidy()] on a
+#' PubMed `esummary_list`
 #'
+#' @noRd
 truncate_authors <- function(pubmed_df) {
     dplyr::mutate(
         pubmed_df,
@@ -121,6 +122,7 @@ truncate_authors <- function(pubmed_df) {
 #'     (default), all IDs will be hoisted. Available IDs may include "doi",
 #'     "eid", "mid", "pii", "pmcid", "pmcid_long", "pmid", or "rid".
 #'
+#' @noRd
 hoist_ArticleIds <- function(pubmed_df, id = NULL) {
 
     id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) %>%

@@ -184,6 +184,8 @@ NULL
 #' @field failed A character vector for paths of files that failed to download
 #' @field fail_status An integer vector with an exit code from
 #'     [utils::download.file()] for each file in `failed`.
+#'
+#' @noRd
 download_status <- methods::setRefClass(
     "download_status",
     fields = list(

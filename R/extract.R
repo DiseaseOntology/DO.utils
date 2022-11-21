@@ -247,6 +247,8 @@ extract_pm_date <- function(citation) {
 #'
 #' @return
 #' A tibble of DOIDs and their associated URLs.
+#'
+#' @noRd
 extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
                              w_raw_match = FALSE) {
     doid_w_url <- doid_edit[has_doid_url(doid_edit)]
