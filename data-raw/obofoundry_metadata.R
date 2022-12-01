@@ -86,4 +86,5 @@ obofoundry_metadata <- obofoundry_df %>%
     dplyr::mutate(
         publications = purrr::map(release_list(publications), tibble::as_tibble)
     )
+
 usethis::use_data(obofoundry_metadata, overwrite = TRUE)
