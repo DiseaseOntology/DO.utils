@@ -140,3 +140,20 @@ NULL
 ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
                   "OWL Functional" = "ofn", "Manchester" = "omn",
                   "RDF/XML" = "owl", "OWL/XML" = "owx", "Turtle" = "ttl")
+
+
+#' Country-code Web Domains
+#'
+#' Country-code Top-level domain information from Wikipedia
+#' [Country code top-level domain](https://en.wikipedia.org/wiki/Country_code_top-level_domain)
+#' article.
+#'
+#' @format A data frame with `r nrow(cc_tld)` rows and 3 columns:
+#' \describe{
+#'   \item{domain}{DNS name of the two-letter country-code top-level domain. They follow ISO 3166-1 alpha-2, with some exceptions such as ".ac" for Ascension Island, ".eu" for the European Union, or ".uk" for United Kingdom of Great Britain and Northern Ireland instead of ".gb". ISO codes bv, bl, mf, sj, gb, and um are not used for country code top-level domains. }
+#'   \item{entity}{Country, dependency, or region }
+#'   \item{generic}{Whether `domain` is a technically "non-restricted ccTLD" used like traditional generic TLDs; ie. it may be used outside of `entity`}
+#' }
+#'
+#' @source Compiled by J. Allen Baron; last updated 2022-12-01.
+"cc_tld"
