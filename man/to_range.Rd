@@ -32,6 +32,9 @@ a range (default: '-'), as a length-2 character vector.}
 \item{end_rm}{A regular expression to remove from \code{x} values at the
 \emph{end} of a range.}
 }
+\value{
+The range(s) formatted as a string or \code{NA} if the input is an empty vector.
+}
 \description{
 Converts vectors to a string of ranges. All vector types are accepted and the
 original values will appear in the final output range, but where input is not

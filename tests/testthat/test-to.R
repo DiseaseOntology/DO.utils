@@ -120,3 +120,7 @@ test_that("to_range() works when a 2-long range starts at end", {
         regexp = NA
     )
 })
+
+test_that("to_range() returns NA for empty vectors", {
+    expect_identical(to_range(integer(0)), NA)
+})
