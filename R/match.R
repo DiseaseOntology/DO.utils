@@ -218,7 +218,7 @@ match_fz <- function(x, table, method = "lcs", maxDist = 115, ...) {
 #' Get Publication ID Column
 #'
 #' Gets a publication ID column from a data.frame and ensures the data matches
-#' the specified type
+#' the specified type, when possible.
 #' @param df a data.frame
 #' @param type the expected publication ID type (derived from the column name)
 #'
@@ -227,7 +227,8 @@ get_pub_id_col <- function(df, type) {
 
     x <- df[[type]]
 
-    # confirm type
+    # confirm type unless all NA which makes it impossible
+    if (all(is.na(x))) return(x)
     computed_type <- type_pub_id(x)
 
     assertthat::assert_that(
