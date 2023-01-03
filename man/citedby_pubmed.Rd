@@ -9,6 +9,8 @@ citedby_pubmed(
   web_history = NULL,
   by_id = FALSE,
   no_result = "warning",
+  save_raw = NULL,
+  overwrite = FALSE,
   config = NULL,
   version = "2.0",
   retmode = "xml",
@@ -30,6 +32,12 @@ cite, as a boolean (default: \code{TRUE}); \code{FALSE} returns a unified list o
 \item{no_result}{The type of condition that should be signaled when no PubMed
 results exist in a response; one of "error" (default), "warning",
 "message" or "none".}
+
+\item{save_raw}{The \code{.rda} file path for saving the unprocessed citation
+response, as a string. Not saved if \code{NULL} (default).}
+
+\item{overwrite}{Whether an existing unprocessed citation response should be
+overwritten; one of \code{TRUE} or \code{FALSE} (default).}
 
 \item{config}{Configuration options passed to \code{\link[httr:GET]{httr::GET()}}.}
 

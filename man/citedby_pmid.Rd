@@ -4,7 +4,15 @@
 \alias{citedby_pmid}
 \title{Get Cited By PMIDs from PubMed}
 \usage{
-citedby_pmid(id = NULL, web_history = NULL, by_id = FALSE, config = NULL, ...)
+citedby_pmid(
+  id = NULL,
+  web_history = NULL,
+  by_id = FALSE,
+  config = NULL,
+  save_raw = NULL,
+  overwrite = FALSE,
+  ...
+)
 }
 \arguments{
 \item{id}{PubMed IDs for which to retrieve "cited by", as a character vector.}

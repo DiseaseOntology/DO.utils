@@ -10,6 +10,8 @@ citedby_scopus(
   id = NULL,
   api_key = NULL,
   view = "STANDARD",
+  save_raw = NULL,
+  overwrite = FALSE,
   start = 0,
   count = NULL,
   max_count = 20000,
@@ -36,6 +38,12 @@ ignored.}
 
 \item{view}{type of view to give, see
 \url{https://api.elsevier.com/documentation/ScopusSearchAPI.wadl}}
+
+\item{save_raw}{The \code{.rda} file path for saving the unprocessed citation
+response, as a string. Not saved if \code{NULL} (default).}
+
+\item{overwrite}{Whether an existing unprocessed citation response should be
+overwritten; one of \code{TRUE} or \code{FALSE} (default).}
 
 \item{start}{where should the records start gathering}
 

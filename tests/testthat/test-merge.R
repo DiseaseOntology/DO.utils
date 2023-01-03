@@ -1,6 +1,6 @@
 test_that("certify_unique_citations() works", {
     # no problems
-    citation_df <- tibble(
+    citation_df <- tibble::tibble(
         fake1 = 1:4,
         fake2 = letters[1:4],
         pmid = c("36157238", "36104825","36085310", "35967426"),

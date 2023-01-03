@@ -1,3 +1,19 @@
+#
+merge_citations_ <- function(df1, df2) {
+    certify_unique_citations(df1)
+    certify_unique_citations(df2)
+
+    df1 <- dplyr::mutate(unique(df1), match_index = dplyr::row_number())
+    df2 <- match_citations(df2, df1, add_col = "match_index")
+
+    merged <- dplyr::bind_rows(df1, df2) %>%
+        collapse_col(match_index) %>%
+        dplyr::select(-match_index)
+
+    merged
+}
+
+
 # merge_citations() helpers -----------------------------------------------
 
 certify_unique_citations <- function(citation_df) {
