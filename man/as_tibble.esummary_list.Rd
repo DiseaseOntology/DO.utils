@@ -12,19 +12,21 @@
 \arguments{
 \item{x}{An \code{esummary} object (\code{esummary_list} or \code{esummary_list_nested})}
 
-\item{...}{Additional arguments. Not used.}
+\item{...}{Ignored; included for extensibility.}
 }
 \value{
-A tibble, where \code{esummary_id} is the input identifier. \code{esummary_list_nested}
-objects will additionally have a \code{cites} column.
+An untidy, where \code{esummary_id} is the input identifier. \code{esummary_list_nested}
+objects will have an additional \code{cites} column.
 }
 \description{
-Converts an \code{esummary} object created by \code{\link[=pubmed_summary]{pubmed_summary()}} or
-\code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}} into a \link[tibble:tibble]{tibble}.
+Converts an \code{esummary} object into a \link[tibble:tibble]{tibble}.
 }
 \section{Note}{
 
 For single inputs to \code{\link[rentrez:entrez_summary]{rentrez::entrez_summary()}}, \code{always_return_list} must
-be \code{TRUE}).
+be \code{TRUE}.
 }
 
+\seealso{
+citedby_pubmed, pubmed_summary
+}

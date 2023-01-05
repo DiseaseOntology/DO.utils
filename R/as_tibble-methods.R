@@ -1,22 +1,22 @@
 #' Convert `esummary` Object into Tibble
 #'
-#' Converts an `esummary` object created by [pubmed_summary()] or
-#' [rentrez::entrez_summary()] into a [tibble][tibble::tibble].
+#' Converts an `esummary` object into a [tibble][tibble::tibble].
 #'
 #' @section Note:
 #' For single inputs to [rentrez::entrez_summary()], `always_return_list` must
-#' be `TRUE`).
+#' be `TRUE`.
 #'
 #' @param x An `esummary` object (`esummary_list` or `esummary_list_nested`)
-#' @param ... Additional arguments. Not used.
+#' @param ... Ignored; included for extensibility.
 #'
 #' @return
-#' A tibble, where `esummary_id` is the input identifier. `esummary_list_nested`
-#' objects will additionally have a `cites` column.
+#' An untidy, where `esummary_id` is the input identifier. `esummary_list_nested`
+#' objects will have an additional `cites` column.
 #'
+#' @seealso citedby_pubmed, pubmed_summary
 #' @export
 as_tibble.esummary_list <- function(x, ...) {
-    df <- x %>%
+    tbl_out <- x %>%
         # strip esummary class, required workaround for tidyr::unnest_wider
         #   see https://github.com/tidyverse/tidyr/issues/1327
         purrr::map(~ `class<-`(.x, "list")) %>%
@@ -27,13 +27,13 @@ as_tibble.esummary_list <- function(x, ...) {
     list_cols <- c("Authors", "Lang", "PubType", "ArticleIds", "History",
                    "References", "Attributes")
         # 2022-11-10 PMC results no longer have all these columns
-    cols_in_df <- list_cols[list_cols %in% names(df)]
-    list_in_df <- names(df)[purrr::map_lgl(df, rlang::is_list)]
-    reformat_col <- cols_in_df[!cols_in_df %in% list_in_df]
+    cols_in_tbl <- list_cols[list_cols %in% names(tbl_out)]
+    list_in_tbl <- names(tbl_out)[purrr::map_lgl(tbl_out, rlang::is_list)]
+    reformat_col <- cols_in_tbl[!cols_in_tbl %in% list_in_tbl]
 
     if (length(reformat_col) > 0) {
-        df <- dplyr::mutate(
-            df,
+        tbl_out <- dplyr::mutate(
+            tbl_out,
             dplyr::across(
                 dplyr::one_of(reformat_col),
                 as.list
@@ -41,7 +41,8 @@ as_tibble.esummary_list <- function(x, ...) {
         )
     }
 
-    df
+    tbl_out <- dplyr::mutate(tbl_out, added_dt = lubridate::now(tzone = "UTC"))
+    tbl_out
 }
 
 #' @rdname as_tibble.esummary_list
@@ -51,6 +52,18 @@ as_tibble.esummary_list_nested <- function(x, ...) {
         dplyr::bind_rows(.id = "cites")
 }
 
+#' Convert `scopus_search` Object into Tibble
+#'
+#' Converts a `scopus_search` object into a [tibble][tibble::tibble].
+#'
+#' @param x A `scopus_search` or `scopus_search_list` object.
+#' @param ... Ignored; included for extensibility.
+#'
+#' @return
+#' An untidy tibble. `scopus_search_list` objects will have an additional
+#' `cites` column.
+#'
+#' @seealso citedby_scopus
 #' @export
 as_tibble.scopus_search <- function(x, ...) {
     tbl_out <- x$entries %>%
@@ -62,12 +75,13 @@ as_tibble.scopus_search <- function(x, ...) {
     get_stmt <- x$get_statements
     tbl_out <- tbl_out %>%
         dplyr::mutate(
-            added = dplyr::first(get_stmt[names(get_stmt) == "date"])
+            added_dt = dplyr::first(get_stmt[names(get_stmt) == "date"])
         )
 
     tbl_out
 }
 
+#' @rdname as_tibble.scopus_search
 #' @export
 as_tibble.scopus_search_list <- function(x, ...) {
     purrr::map(x, as_tibble) %>%
