@@ -54,36 +54,3 @@ all_duplicated <- function (x, ...)
 glueV <- function(..., .envir = parent.frame()) {
     glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
 }
-
-
-# API key management ------------------------------------------------------
-
-possible_api_keys <- c("ENTREZ_KEY", "Elsevier_API", "Elsevier_insttoken")
-
-has_keyring_api_key <- function(key_name = "all", verbose = FALSE) {
-    key_name <- match.arg(
-        key_name,
-        choices = c(possible_api_keys, "all"),
-        several.ok = TRUE
-    )
-    if ("all" %in% key_name) key_name <- possible_api_keys
-
-    if (!rlang::is_installed("keyring")) return(FALSE)
-
-    keys <- purrr::map_chr(
-        key_name,
-        ~ tryCatch(keyring::key_get(.x), error = function(e) "")
-    )
-
-    key_missing <- keys == "" | is.na(keys) | length(keys) != length(key_name)
-
-    if (any(key_missing) && verbose) {
-        rlang::inform(
-            paste0(
-                "Keys missing: ",
-                vctr_to_string(key_name[key_missing], ", ")
-            )
-        )
-    }
-    invisible(!any(key_missing))
-}
