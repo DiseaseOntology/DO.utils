@@ -46,7 +46,8 @@ Suggests:
     devtools,
     tidygraph,
     waldo,
-    keyring
+    keyring,
+    withr
 Config/testthat/edition: 3
 Config/reticulate:
     list(
