@@ -63,13 +63,13 @@ tidy_pub_records.scopus_search <- function(x, ...) {
 
     pub_tidy <- pub_tbl %>%
         dplyr::mutate(
-            first_author = stringr::str_remove_all(`dc:creator`, "\\."),
+            first_author = stringr::str_remove_all(.data$`dc:creator`, "\\."),
             pub_type = paste(
-                `prism:aggregationType`,
-                subtypeDescription,
+                .data$`prism:aggregationType`,
+                .data$subtypeDescription,
                 sep = "|"
             ),
-            pub_date = lubridate::date(`prism:coverDate`)
+            pub_date = lubridate::date(.data$`prism:coverDate`)
         ) %>%
         dplyr::select(!!!col_select) %>%
         collapse_col_flex(!!!col_collapse)
@@ -103,8 +103,12 @@ tidy_pub_records.esummary_list <- function(x, ...) {
     pub_tidy <- pub_tbl %>%
         hoist_ArticleIds() %>%
         dplyr::mutate(
-            pub_type = purrr::map_chr(PubType, vctr_to_string, delim = "|"),
-            pub_date = lubridate::date(SortPubDate)
+            pub_type = purrr::map_chr(
+                .data$PubType,
+                vctr_to_string,
+                delim = "|"
+            ),
+            pub_date = lubridate::date(.data$SortPubDate)
         ) %>%
             dplyr::select(!!!col_select) %>%
             collapse_col_flex(!!!col_collapse)

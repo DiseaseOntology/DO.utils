@@ -97,10 +97,12 @@ res <- readr::read_csv(
 
 # tests
 test_that("format_subtree() works", {
+    skip_if_not_installed("tidygraph")
     expect_identical(format_subtree(subtree, "DOID:3070"), res)
 })
 
 test_that("format_subtree() works when no fill is needed", {
+    skip_if_not_installed("tidygraph")
     # remove high grade ependymoma = no duplication --> no fill needed
     no_hge <- dplyr::filter(
         subtree,
