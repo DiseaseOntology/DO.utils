@@ -11,10 +11,12 @@
 #'     the same length as `title`; _REQUIRED_ if `by_id = TRUE`, otherwise
 #'     ignored.
 #' @inheritParams rscopus::scopus_search
-#' @param headers Additional headers to be added by [httr::add_headers()].
+#' @param insttoken Elsevier institutional token (_REQUIRED_). See
+#'     `vignette("obtain_use_records")` for more details.
 #' @param ... Named arguments to be passed to [httr::GET()]. Available arguments
 #'     are listed in the
 #'     [Scopus Search Documentation: API Specification](https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl).
+#' @param headers Additional headers to be added by [httr::add_headers()].
 #'
 #' @return If `by_id = FALSE`, the list result from the Scopus Search API (as
 #'     produced by [rscopus::scopus_search]). If `by_id = TRUE`, an `id` named
@@ -22,11 +24,10 @@
 #'
 #' @family citedby_functions
 #' @export
-citedby_scopus <- function(title, by_id = FALSE, id = NULL,
-                           api_key = NULL, view = "STANDARD",
-                           start = 0, count = NULL, max_count = 20000,
-                           headers = NULL, wait_time = 0, verbose = TRUE, ...) {
-
+citedby_scopus <- function(title, by_id = FALSE, id = NULL, api_key = NULL,
+                           insttoken = NULL, view = "STANDARD", start = 0,
+                           count = NULL, max_count = 20000, headers = NULL,
+                           wait_time = 0, verbose = FALSE, ...) {
     assert_character(title)
     assert_scalar_logical(by_id)
 
@@ -36,6 +37,7 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL,
     if (is.null(count)) {
         count <- switch(view, STANDARD = 200, COMPLETE = 25)
     }
+    headers <- use_scopus_insttoken(insttoken, headers)
 
     if (by_id && length(title) > 1) {
         assert_character(id)
