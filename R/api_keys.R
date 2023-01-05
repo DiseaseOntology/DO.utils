@@ -1,3 +1,8 @@
+#' @importFrom rentrez set_entrez_key
+#' @export
+rentrez::set_entrez_key
+
+
 #' Set Keys for Scopus API Access
 #'
 #' Sets Elsevier API key and/or institutional token as environment variables
