@@ -12,6 +12,8 @@ rentrez::set_entrez_key
 #' @param api_key Elsevier API key, as a string.
 #' @param insttoken Elsevier institutional token, as a string.
 #'
+#' @returns Named logical vector stating whether setting operation was
+#' successful for each key provided as input (invisibly).
 #' @seealso citedby_scopus
 #'
 #' @export
@@ -21,11 +23,22 @@ set_scopus_keys <- function(api_key, insttoken) {
     }
 
     out <- NULL
-    if (!missing(api_key)) out <- Sys.setenv(Elsevier_API = api_key)
-    if (!missing(insttoken)) {
-        out <- c(out, Sys.setenv(Elsevier_insttoken = insttoken))
+    if (!missing(api_key)) {
+        out <- stats::setNames(
+            Sys.setenv(Elsevier_API = api_key),
+            "api_key"
+        )
     }
-    out
+    if (!missing(insttoken)) {
+        out <- c(
+            out,
+            stats::setNames(
+                Sys.setenv(Elsevier_insttoken = insttoken),
+                "insttoken"
+            )
+        )
+    }
+    invisible(out)
 }
 
 #' Ensure Scopus institutional token is in headers and, if not, adds it from

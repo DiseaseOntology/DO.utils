@@ -29,22 +29,30 @@ test_that("use_scopus_insttoken() works (with envvar)", {
 
 test_that("set_scopus_keys() works", {
     withr::local_envvar(c(Elsevier_API = NA, Elsevier_insttoken = NA))
-
-    expect_equal(set_scopus_keys("ABC123", "blah"), c(TRUE, TRUE))
+    expect_equal(
+        set_scopus_keys("ABC123", "blah"),
+        c(api_key = TRUE, insttoken = TRUE)
+    )
     expect_equal(
         Sys.getenv(c("Elsevier_API", "Elsevier_insttoken")),
         c(Elsevier_API = "ABC123", Elsevier_insttoken = "blah")
     )
 
     withr::local_envvar(c(Elsevier_API = NA, Elsevier_insttoken = NA))
-    expect_equal(set_scopus_keys("hello"), TRUE)
+    expect_equal(
+        set_scopus_keys("hello"),
+        c(api_key = TRUE)
+    )
     expect_equal(
         Sys.getenv(c("Elsevier_API", "Elsevier_insttoken")),
         c(Elsevier_API = "hello", Elsevier_insttoken = "")
     )
 
     withr::local_envvar(c(Elsevier_API = NA, Elsevier_insttoken = NA))
-    expect_equal(set_scopus_keys(insttoken = "goodbye"), TRUE)
+    expect_equal(
+        set_scopus_keys(insttoken = "goodbye"),
+        c(insttoken = TRUE)
+    )
     expect_equal(
         Sys.getenv(c("Elsevier_API", "Elsevier_insttoken")),
         c(Elsevier_API = "", Elsevier_insttoken = "goodbye")

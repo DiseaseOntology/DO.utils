@@ -11,6 +11,10 @@ set_scopus_keys(api_key, insttoken)
 
 \item{insttoken}{Elsevier institutional token, as a string.}
 }
+\value{
+Named logical vector stating whether setting operation was
+successful for each key provided as input (invisibly).
+}
 \description{
 Sets Elsevier API key and/or institutional token as environment variables
 (\code{Elsevier_API} and \code{Elsevier_insttoken}) for access by subsequent Scopus
