@@ -16,9 +16,9 @@ test_that("extract_pmid elink method works", {
 test_that("extract_pmid elink_list method works", {
     expect_snapshot(extract_pmid(elink_list)) # default = warning
     expect_snapshot(extract_pmid(elink_list, no_result = "message"))
-    expect_snapshot(
-        error = TRUE,
-        extract_pmid(elink_list, no_result = "error")
+    expect_error( #removed snapshot due to tidyverse/purrr#945, v1.0.0)
+        extract_pmid(elink_list, no_result = "error"),
+        regexp = "35504280: 0 PubMed citedby results"
     )
     expect_equal(
         extract_pmid(elink_list, no_result = "none"),
