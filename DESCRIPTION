@@ -1,13 +1,13 @@
 Package: DO.utils
 Type: Package
-Title: Support Management of the Disease Ontology (DO)
+Title: Public Resource Utilities Designed by/for the Disease Ontology
 Version: 0.2.6
 Author: J. Allen Baron
 Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
-Description: This package is used to automate management of the Human Disease
-    Ontology (DO). Functionality is currently limited to tracking citations but
-    will eventually include automating preparation of terms and definitions to
-    speed the curation process.
+Description: Generally useful tools to assess use of public resources in
+    scientific literature ("cited by", search, etc.) and to simplify common R
+    tasks, along with tools specifically designed for analysis and
+    improvement of the Human Disease Ontology (DO; disease-ontology.org).
 License: CC0
 Encoding: UTF-8
 LazyData: true

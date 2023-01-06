@@ -4,8 +4,8 @@
 \name{DO.utils-package}
 \alias{DO.utils}
 \alias{DO.utils-package}
-\title{DO.utils: Support Management of the Disease Ontology (DO)}
+\title{DO.utils: Public Resource Utilities Designed by/for the Disease Ontology}
 \description{
-This package is used to automate management of the Human Disease Ontology (DO). Functionality is currently limited to tracking citations but will eventually include automating preparation of terms and definitions to speed the curation process.
+Generally useful tools to assess use of public resources in scientific literature ("cited by", search, etc.) and to simplify common R tasks, along with tools specifically designed for analysis and improvement of the Human Disease Ontology (DO; [disease-ontology.org](https://disease-ontology.org/)).
 }
 \keyword{internal}
