@@ -96,6 +96,9 @@ to_uri <- function(x) {
 #' @param end_rm A regular expression to remove from `x` values at the
 #' _end_ of a range.
 #'
+#' @returns
+#' The range(s) formatted as a string or `NA` if the input is an empty vector.
+#'
 #' @section Notes:
 #'
 #' * `NA` values are always dropped.
@@ -138,6 +141,10 @@ to_uri <- function(x) {
 #' @export
 to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
                      start_rm = NULL, end_rm = NULL) {
+    if (length(x) == 0) {
+        return(NA)
+    }
+
     uniq <- unique(x)
     if (!is.numeric(uniq) || any(!is_whole_number(uniq), na.rm = TRUE)) {
         if (is.null(int_fn)) {

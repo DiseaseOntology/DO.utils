@@ -9,13 +9,14 @@ citedby_scopus(
   by_id = FALSE,
   id = NULL,
   api_key = NULL,
+  insttoken = NULL,
   view = "STANDARD",
   start = 0,
   count = NULL,
   max_count = 20000,
   headers = NULL,
   wait_time = 0,
-  verbose = TRUE,
+  verbose = FALSE,
   ...
 )
 }
@@ -33,6 +34,9 @@ the same length as \code{title}; \emph{REQUIRED} if \code{by_id = TRUE}, otherwi
 ignored.}
 
 \item{api_key}{API Key for Elsevier}
+
+\item{insttoken}{Elsevier institutional token (\emph{REQUIRED}). See
+\code{vignette("obtain_use_records")} for more details.}
 
 \item{view}{type of view to give, see
 \url{https://api.elsevier.com/documentation/ScopusSearchAPI.wadl}}

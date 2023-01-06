@@ -1,0 +1,30 @@
+1. Guha R, Nguyen DT, Southall N, Jadhav A. Dealing with the Data Deluge: Handling
+the Multitude Of Chemical Biology Data Sources. Curr Protoc Chem Biol. 2012
+Sep;4:193-209. Epub 2012 Sep 1. PubMed [citation] PMID: 26609498, PMCID:
+PMC4655879
+
+2. Collier N, Groza T, Smedley D, Robinson PN, Oellrich A, Rebholz-Schuhmann D.
+PhenoMiner: from text to a database of phenotypes associated with OMIM diseases.
+Database (Oxford). 2015 Oct 27;2015. pii: bav104. doi: 10.1093/database/bav104.
+Print 2015. PubMed [citation] PMID: 26507285, PMCID: PMC4622021
+
+3. Ni Y, Li J, Panagiotou G. A Molecular-Level Landscape of Diet-Gut Microbiome
+Interactions: Toward Dietary Interventions Targeting Bacterial Genes. mBio. 2015
+Oct 27;6(6):e01263-15. doi: 10.1128/mBio.01263-15. PubMed [citation] PMID:
+26507230, PMCID: PMC4626853
+
+4. Rabattu PY, Massé B, Ulliana F, Rousset MC, Rohmer D, Léon JC, Palombi O. My
+Corporis Fabrica Embryo: An ontology-based 3D spatio-temporal modeling of human
+embryo development. J Biomed Semantics. 2015 Sep 24;6:36. doi:
+10.1186/s13326-015-0034-0. eCollection 2015. PubMed [citation] PMID: 26413258,
+PMCID: PMC4582726
+
+5. Subramanian SL, Kitchen RR, Alexander R, Carter BS, Cheung KH, Laurent LC, Pico
+A, Roberts LR, Roth ME, Rozowsky JS, Su AI, Gerstein MB, Milosavljevic A.
+Integration of extracellular RNA profiling data using metadata, biomedical
+ontologies and Linked Data technologies. J Extracell Vesicles. 2015 Aug
+28;4:27497. doi: 10.3402/jev.v4.27497. eCollection 2015. PubMed [citation] PMID:
+26320941, PMCID: PMC4553261
+
+
+
