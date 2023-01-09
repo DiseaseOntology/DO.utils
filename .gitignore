@@ -16,3 +16,4 @@ __pycache__
 
 # files to understand non-DO.utils fxns
 docs/*pseudocode*
+docs

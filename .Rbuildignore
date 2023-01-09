@@ -17,3 +17,5 @@
 ^.idea$
 ^\.github$
 ^codecov\.yml$
+^_pkgdown\.yml$
+^pkgdown$

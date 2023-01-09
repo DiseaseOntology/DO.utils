@@ -65,3 +65,4 @@ Depends:
     R (>= 3.5.0)
 Remotes: allenbaron/rentrez
 VignetteBuilder: knitr
+URL: https://allenbaron.github.io/DO.utils/
