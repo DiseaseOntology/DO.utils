@@ -2,7 +2,7 @@
 title: "Using DO.utils with reticulate and Python"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{use-reticulate-python}
+  %\VignetteIndexEntry{Using DO.utils with reticulate and Python}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
