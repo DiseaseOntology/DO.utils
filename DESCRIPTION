@@ -7,7 +7,7 @@ Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
 Description: Generally useful tools to assess use of public resources in
     scientific literature ("cited by", search, etc.) and to simplify common R
     tasks, along with tools specifically designed for analysis and
-    improvement of the Human Disease Ontology (DO; disease-ontology.org).
+    improvement of the Human Disease Ontology (DO; https://disease-ontology.org).
 License: CC0
 Encoding: UTF-8
 LazyData: true

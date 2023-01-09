@@ -6,6 +6,6 @@
 \alias{DO.utils-package}
 \title{DO.utils: Public Resource Utilities Designed by/for the Disease Ontology}
 \description{
-Generally useful tools to assess use of public resources in scientific literature ("cited by", search, etc.) and to simplify common R tasks, along with tools specifically designed for analysis and improvement of the Human Disease Ontology (DO; [disease-ontology.org](https://disease-ontology.org/)).
+Generally useful tools to assess use of public resources in scientific literature ("cited by", search, etc.) and to simplify common R tasks, along with tools specifically designed for analysis and improvement of the Human Disease Ontology (DO; https://disease-ontology.org).
 }
 \keyword{internal}
