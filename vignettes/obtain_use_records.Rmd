@@ -1,0 +1,520 @@
+---
+title: "Assessing Resource Use: Obtaining Use Records"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    df_print: paged
+vignette: >
+  %\VignetteIndexEntry{Assessing Resource Use: Obtaining Use Records}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+
+
+
+# Overview
+
+The first step in the **Assessing Resource Use** workflow is to obtain use records from published literature databases. DO.utils supports obtaining records in 3 ways:
+
+1. By using publications about a resource to identify publications these are cited by (referred to as "cited by").
+2. Via search.
+3. By parsing and loading a MyNCBI collection.
+
+DO.utils can obtain records via "cited by" from the PubMed or Scopus databases and via search from the PubMed or PubMed Central (PMC) databases. Additionally, the europepmc R package can be used for search against the Europe PMC database. Any of these can be used singly or in combination to obtain records of published literature that _likely_ use a resource.
+
+
+# Setup and API keys {#api_key}
+
+API keys are generally needed to access publication record databases. The specific keys needed are listed by database below.
+
+The DO team's preferred method for storing and retrieving API keys with R is to save them once to the system credential store using the keyring package and retrieve them as needed.
+
+To save a key, use `keyring::key_set(<key_name>)`, replacing `<key_name>` with the default key name specified in the relevant section below, then paste/enter the key in the prompt.
+
+To retrieve a key, use `keyring::key_get(<key_name>)`.
+
+
+## PubMed/PMC
+
+DO.utils _may_ be able to access PubMed and PMC databases without any user preparation. However, NCBI has set rate limits for these services and a free API key is recommended. For information on obtaining an API key, refer to NCBI's support article [How do I obtain an API Key through an NCBI account?](https://support.nlm.nih.gov/knowledgebase/article/KA-05317/en-us) or the [Entrez Programming Utilities Help](https://0-www-ncbi-nlm-nih-gov.brum.beds.ac.uk/books/NBK25497/) book (under "A General Introduction to the E-utilities" > "Usage Guidelines and Requirements" > "API Keys").
+
+**Default key name:** `ENTREZ_KEY`
+
+Alternate methods of saving and using an Entrez Utilities API key are documented in `vignette("rentrez_tutorial", package = "rentrez")` (the rentrez package is used by DO.utils under the hood).
+
+
+## Scopus
+
+An institutional subscription and user API key are required to access any Scopus API. In addition, Scopus requires an "institutional token" for "cited by" access (refer to the Scopus developer [FAQ](https://dev.elsevier.com/support.html), question "Q: How can I obtain a list of articles (cited-by list) that cite the articles of interest to me?"). An API key can be obtained from Elsevier at https://dev.elsevier.com/. To obtain an institutional token, your institution's librarian or information specialist must email an Elsevier account manager or customer consultant, describe your use case, and request an institutional token.
+
+**Default key names:**
+
+  - API key = `Elsevier_API`
+  - Institutional token = `Elsevier_insttoken`
+
+For additional, but limited, documentation see `vignette("api_key", package = "rscopus")` (the rscopus package is used by DO.utils under the hood).
+
+
+## Europe PMC
+
+Europe PMC can be accessed with the europepmc R package and does not require an API key (at the time of writing).
+
+
+# Tutorial: Obtaining Use Records
+
+
+```r
+library(DO.utils)
+suppressPackageStartupMessages(library(dplyr))
+```
+
+## Cited By
+In this tutorial, the citations for two of the official publications describing the Human Disease Ontology were copied from PubMed (below). The information from these citations that will be used by DO.utils to identify publications these are "cited by" have been bolded (titles and PubMed IDs).
+
+> Schriml LM, Mitraka E. **The Disease Ontology: fostering interoperability between biological and clinical human disease-related data**. Mamm Genome. 2015 Oct;26(9-10):584-9. doi: 10.1007/s00335-015-9576-9. Epub 2015 Jun 21. PMID: **26093607**; PMCID: PMC4602048.
+
+
+> Bello SM, Shimoyama M, Mitraka E, Laulederkind SJF, Smith CL, Eppig JT, Schriml LM. **Disease Ontology: improving and unifying disease annotations across species**. Dis Model Mech. 2018 Mar 12;11(3):dmm032839. doi: 10.1242/dmm.032839. PMID: **29590633**; PMCID: PMC5897730.
+
+
+### PubMed
+Obtain "cited by" records from PubMed as follows:
+
+1. Make your Entrez Utilities API key available (see [Setup and API keys](#api_key) for how to set it).
+
+
+```r
+set_entrez_key(keyring::key_get("ENTREZ_KEY"))
+```
+
+2. Obtain records from PubMed using the resource publication PubMed IDs (`pmid`), optionally include which publication each record cites by specifying `by_id = TRUE`.
+
+
+```r
+cb_pm_res <- citedby_pubmed(id = c("26093607", "29590633"), by_id = TRUE)
+```
+
+The full results are returned as a list and can be saved to disk as an R object (`?save`) for later analysis if desired.
+
+3. Tidy records into a data.frame (limited information is retained).
+
+
+```r
+cb_pm <- tidy_pub_records(cb_pm_res)
+```
+
+**Result:**
+
+```
+#> # A tibble: 58 × 10
+#>    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type
+#>    <chr>         <chr> <chr>   <date>     <chr> <chr> <chr> <chr> <chr>   
+#>  1 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… PMC6… 2959… Journal…
+#>  2 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… PMC7… 2959… Journal…
+#>  3 Bello SM      Dise… Dis Mo… 2018-03-12 10.1… 2959… PMC5… 2609… Journal…
+#>  4 Bradford YM   Zebr… ILAR J  2017-07-01 10.1… 2883… PMC5… 2609… Journal…
+#>  5 Casaletto J   Fede… Cell G… 2022-03-09 10.1… 3537… PMC8… 2609… Journal…
+#>  6 El-Sappagh S  DMTO… J Biom… 2018-02-06 10.1… 2940… PMC5… 2609… Journal…
+#>  7 Elmore SA     A Re… ILAR J  2018-12-01 10.1… 3047… PMC6… 2959… Journal…
+#>  8 Eppig JT      Mous… ILAR J  2017-07-01 10.1… 2883… PMC5… 2609… Journal…
+#>  9 Fernández-To… Inte… Nat Co… 2022-09-09 10.1… 3608… PMC9… 2959… Journal…
+#> 10 Finke MT      Inte… J Am M… 2019-02-01 10.1… 3062… PMC7… 2609… Journal…
+#> # … with 48 more rows, and 1 more variable: added_dt <dttm>
+```
+
+
+### Scopus
+
+Obtain "cited by" records from PubMed as follows:
+
+1. Make your Scopus API key and institutional token available.
+
+
+```r
+set_scopus_keys(
+    api_key = keyring::key_get("Elsevier_API"),
+    insttoken = keyring::key_get("Elsevier_insttoken")
+)
+```
+
+2. Obtain records from Scopus using the resource publication titles, optionally include which publication each record cites by specifying `by_id = TRUE` and providing identifiers (`id`; titles are too long to use as identifiers).
+
+Here, the PubMed IDs serve only as user-provided identifiers while the titles are used to actually obtain "cited by" records from the Scopus search API.
+
+
+
+```r
+cb_scopus_res <- citedby_scopus(
+  title = c(
+    "The Disease Ontology: fostering interoperability between biological and clinical human disease-related data",
+    "Disease Ontology: improving and unifying disease annotations across species"
+  ),
+  by_id = TRUE,
+  id = c("26093607", "29590633")
+)
+```
+
+The full results are returned as a list and can be saved to disk as an R object (`?save`) for later analysis if desired.
+
+3. Tidy records into a data.frame (limited information is retained).
+
+
+```r
+cb_scopus <- tidy_pub_records(cb_scopus_res)
+```
+
+**Result:**
+
+```
+#> # A tibble: 92 × 10
+#>    first_author  title   journal   pub_date   doi   pmid  scopus_eid cites
+#>    <chr>         <chr>   <chr>     <date>     <chr> <chr> <chr>      <chr>
+#>  1 Abburu S      Ontolo… Internat… 2018-07-01 10.4… <NA>  2-s2.0-85… 2609…
+#>  2 Abburu S      Ontolo… Geospati… 2019-01-01 10.4… <NA>  2-s2.0-85… 2609…
+#>  3 Al-Mubaid H   Gene m… Journal … 2018-10-01 10.1… 3041… 2-s2.0-85… 2609…
+#>  4 Amberger JS   OMIM.o… Nucleic … 2019-01-08 10.1… 3044… 2-s2.0-85… 2959…
+#>  5 Baldarelli RM The mo… Nucleic … 2021-01-08 10.1… 3310… 2-s2.0-85… 2959…
+#>  6 Barcellos Al… Ontolo… Journal … 2017-11-01 10.1… <NA>  2-s2.0-85… 2609…
+#>  7 Bello SM      Diseas… DMM Dise… 2018-03-01 10.1… 2959… 2-s2.0-85… 2609…
+#>  8 Bradford Y    Zebraf… ILAR Jou… 2017-07-01 10.1… 2883… 2-s2.0-85… 2609…
+#>  9 Chen F        Identi… Patholog… 2018-12-01 10.1… 3047… 2-s2.0-85… 2609…
+#> 10 Chen F        Identi… Journal … 2019-06-01 10.1… 3053… 2-s2.0-85… 2609…
+#> # … with 82 more rows, and 2 more variables: pub_type <chr>,
+#> #   added_dt <dttm>
+```
+
+
+## Search
+
+You can search PubMed or PubMed Central with the same searches you would use on the NCBI websites (e.g. MeSH terms for PubMed). The terms used should be carefully selected to identify publications that use your resource, with particular effort made to avoid false positive results.
+
+For example, some publications that use the Disease Ontology can be found with `doid` or `"disease-ontology.org"` as the search terms. If quotes are used within a search, as is the case for `"disease-ontology.org"`, they must be escaped (to prevent confusion with R) or outer single quotes must be used.
+
+1. Make your Entrez Utilities API key available, if necessary (this was already done for above for this tutorial and doesn't need to be done again).
+
+2. Search PubMed (`search_pubmed()`), PubMed Central (`search_pmc()`), and/or Europe PMC (use `europepmc::epmc_search()` function of europepmc package) with desired search terms.
+- _In this tutorial PubMed is searched with two different search terms; the second primarily to show how quoted terms should be entered._
+
+
+```r
+pm_doid <- search_pubmed("doid")
+pm_full_nm <- search_pubmed("\"human disease ontology\"")
+```
+
+Search results from PubMed & PubMed Central only include publication identifiers currently.
+
+**Results for `doid` search:**
+
+```
+#> Entrez search result with 7 hits (object contains 7 IDs and no web_history object)
+#>  Search term (as translated):  "doid"[All Fields]
+#> [1] "36509991" "35599774" "30441083" "27638616" "27577487" "25841438"
+#> [7] "22080554"
+```
+
+If a large number of results are expected, considering creating a `web_history` object and using that instead (documented in `vignette("rentrez_tutorial", package = "rentrez")`).
+
+
+3. Obtain publication details using the unique PubMed IDs identified in the searches as input (search results are combined in this example).
+
+
+```r
+search_pmids <- unique(c(pm_doid$ids, pm_full_nm$ids))
+pm_doid_res <- pubmed_summary(search_pmids)
+```
+
+The full results are returned as a list and can be saved to disk as an R object (`?save`) for later analysis if desired.
+
+4. Tidy records into a data.frame (limited information is retained).
+
+
+```r
+search_pm <- tidy_pub_records(pm_doid_res)
+```
+
+**Result:**
+
+```
+#> # A tibble: 22 × 9
+#>    first_author title     journal   pub_date   doi    pmid  pmcid pub_type
+#>    <chr>        <chr>     <chr>     <date>     <chr>  <chr> <chr> <chr>   
+#>  1 Althubaiti S Combinin… J Biomed… 2020-01-13 10.11… 3193… PMC6… Journal…
+#>  2 Fang H       DcGO: da… Nucleic … 2013-01-01 10.10… 2316… PMC3… Journal…
+#>  3 Good BM      Mining t… BMC Geno… 2011-12-13 10.11… 2216… PMC3… Journal…
+#>  4 Hoehndorf R  Identify… Bioinfor… 2012-08-15 10.10… 2271… PMC3… Journal…
+#>  5 Hofer P      Semi-Aut… Stud Hea… 2016-01-01 <NA>   2757… <NA>  Journal…
+#>  6 Jupp S       Logical … J Biomed… 2012-04-24 10.11… 2254… PMC3… Journal…
+#>  7 Kibbe WA     Disease … Nucleic … 2015-01-01 10.10… 2534… PMC4… Journal…
+#>  8 LePendu P    Enabling… J Biomed… 2011-12-01 10.10… 2155… PMC3… Journal…
+#>  9 Maes M       Aberrati… Front Ps… 2022-05-06 10.33… 3559… PMC9… Journal…
+#> 10 Marquet G    Aligning… Stud Hea… 2006-01-01 <NA>   1710… <NA>  Journal…
+#> # … with 12 more rows, and 1 more variable: added_dt <dttm>
+```
+
+
+## MyNCBI Collection
+
+For instructions on how to create and add to a MyNCBI collection refer to the "Collections" chapter of the [My NCBI help](https://www.ncbi.nlm.nih.gov/books/NBK53590/) book.
+
+Then load a collection into R with DO.utils as follows:
+
+1. Download the collection to your computer.
+    1. Open the collection on NCBI's website in a web browser.
+    2. Select “Send to:”.
+    3. Select the “File” option and “Summary (text)” as the format.
+    4. Click “Create File” and specify where to save it to (for this tutorial a few records from DO's collection have been saved to `collection.txt` with this vignette).
+2. Provide the local path of the saved file to `read_pubmed_txt()` of DO.utils to read & parse records.
+
+
+```r
+myncbi_col <- read_pubmed_txt("collection.txt")
+```
+
+Currently, publication identifiers and the full citation are returned as a data.frame. While this is sufficient for merging with "cited by" or search results, it does come with some downsides.
+
+**Result:**
+
+```
+#> # A tibble: 5 × 5
+#>       n pmid     pmcid      doi                        citation           
+#>   <int> <chr>    <chr>      <chr>                      <chr>              
+#> 1     1 26609498 PMC4655879 <NA>                       1. Guha R, Nguyen …
+#> 2     2 26507285 PMC4622021 10.1093/database/bav104.   2. Collier N, Groz…
+#> 3     3 26507230 PMC4626853 10.1128/mBio.01263-15.     3. Ni Y, Li J, Pan…
+#> 4     4 26413258 PMC4582726 10.1186/s13326-015-0034-0. 4. Rabattu PY, Mas…
+#> 5     5 26320941 PMC4553261 10.3402/jev.v4.27497.      5. Subramanian SL,…
+```
+
+
+3. Optionally, use `pubmed_summary()` with the PubMed IDs to get data in the same format as "cited by" and search.
+
+
+```r
+myncbi_res <- pubmed_summary(myncbi_col$pmid)
+```
+
+The full results are returned as a list and can be saved to disk as an R object (`?save`) for later analysis if desired.
+
+4. Tidy records into a data.frame (limited information is retained).
+
+
+```r
+myncbi_pm <- tidy_pub_records(myncbi_res)
+```
+
+**Result:**
+
+```
+#> # A tibble: 5 × 9
+#>   first_author   title     journal  pub_date   doi    pmid  pmcid pub_type
+#>   <chr>          <chr>     <chr>    <date>     <chr>  <chr> <chr> <chr>   
+#> 1 Collier N      PhenoMin… Databas… 2015-10-27 10.10… 2650… PMC4… Journal…
+#> 2 Guha R         Dealing … Curr Pr… 2012-09-01 10.10… 2660… PMC4… Journal…
+#> 3 Ni Y           A Molecu… mBio     2015-10-27 10.11… 2650… PMC4… Journal…
+#> 4 Rabattu PY     My Corpo… J Biome… 2015-09-24 10.11… 2641… PMC4… Journal…
+#> 5 Subramanian SL Integrat… J Extra… 2015-08-28 10.34… 2632… PMC4… Journal…
+#> # … with 1 more variable: added_dt <dttm>
+```
+
+
+## Matching and Merging Records
+
+If more than one set of records are obtained, you will likely want to match them and merge them into one or more datasets to make review easier. DO.utils can match publication records using standard identifiers (these are identified by matching column names; see `?match_citations` for more details) but does not currently provide merging, which is a complex process due to variation in records.
+
+In this tutorial, a procedure for matching and merging all of the previously obtained record sets ("cited by", search, and MyNCBI collection records) into a single dataset will be shown.
+
+> NOTE: In practice, the DO team usually keeps "cited by" and search records separate because we feel it makes review easier.
+
+
+### Matching
+
+If more than two datasets will be matched, they should be matched recursively (as shown in step #4 below).
+
+1. Choose a starting record set and number all records.
+
+
+```r
+cb_pm <- dplyr::mutate(cb_pm, record_n = dplyr::row_number())
+```
+
+2. Use `match_citations()` to add matching record numbers from the first set to another set. The identifiers used for matching are listed in the order used.
+
+
+```r
+cb_scopus <- match_citations(cb_scopus, cb_pm, add_col = "record_n")
+#> Matching by types:
+#> * pmid
+#> * doi
+```
+
+3. Number the records in the second set _without matches_ in the first.
+
+
+```r
+cb_scopus <- dplyr::mutate(
+    cb_scopus,
+    record_n = dplyr::if_else(
+        !is.na(record_n),
+        record_n,
+        cumsum(is.na(record_n)) + max(cb_pm$record_n)
+    )
+)
+```
+
+4. Repeat steps 2 & 3 to identify matches in each record set to the previously matched set.
+
+
+```r
+# matching search
+search_pm <- match_citations(search_pm, cb_scopus, add_col = "record_n") |>
+    dplyr::mutate(
+        record_n = dplyr::if_else(
+            !is.na(record_n),
+            record_n,
+            cumsum(is.na(record_n)) + max(cb_scopus$record_n)
+        )
+    )
+#> Matching by types:
+#> * pmid
+#> * doi
+
+# merging myncbi_collection
+myncbi_pm <- match_citations(myncbi_pm, search_pm, add_col = "record_n") |>
+    dplyr::mutate(
+        record_n = dplyr::if_else(
+            !is.na(record_n),
+            record_n,
+            cumsum(is.na(record_n)) + max(search_pm$record_n)
+        )
+    )
+#> Matching by types:
+#> * pmid
+#> * pmcid
+#> * doi
+```
+
+
+### Merging
+
+Prior to merging datasets we recommend adding information to indicate how each record was obtained. This can be done with `mutate` from the `dplyr` package.
+
+1. Add record set identifiers to each record. _Be sure to use the same column name(s) across all record sets._
+    - Here a compound identifier column (`source`) is added to each record set to indicate the approach and database used to obtain it.
+
+
+```r
+# cited by record sets
+cb_pm <- dplyr::mutate(cb_pm, source = "citedby-pubmed")
+cb_scopus <- dplyr::mutate(cb_scopus, source = "citedby-scopus")
+
+# search record set
+search_pm <- dplyr::mutate(search_pm, source = "search-pubmed")
+
+# MyNCBI collection record set
+myncbi_pm <- dplyr::mutate(myncbi_pm, source = "myncbi_collection-pubmed")
+```
+
+
+2. Merge the record sets.
+
+This can be done in a number of ways but no perfect solution currently exists. In this tutorial, two separate ways are demonstrated. In the first, all records are unique but there may be slight data loss. In the second, there is zero data loss but all records may not be unique.
+
+
+**2A. Unique records, slight data loss:** Combine record sets into a single data.frame, concatenate all source information, and then drop duplicates. _This is the approach currently used by the DO team to merge record sets for later review._
+
+> NOTE: Records added earlier are preferentially retained.
+
+
+```r
+uniq_records <- dplyr::bind_rows(cb_pm, cb_scopus, search_pm, myncbi_pm) |>
+    # concatenate source info
+    dplyr::group_by(record_n) |>
+    dplyr::mutate(source = paste0(unique(source), collapse = "; ")) |>
+    dplyr::ungroup() |>
+    # drop duplicates
+    dplyr::filter(duplicated(record_n))
+```
+
+**Result:**
+
+```r
+uniq_records
+#> # A tibble: 56 × 13
+#>    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type
+#>    <chr>         <chr> <chr>   <date>     <chr> <chr> <chr> <chr> <chr>   
+#>  1 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… <NA>  2959… Journal…
+#>  2 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… <NA>  2959… Journal…
+#>  3 Bello SM      Dise… DMM Di… 2018-03-01 10.1… 2959… <NA>  2609… Journal…
+#>  4 Bradford Y    Zebr… ILAR J… 2017-07-01 10.1… 2883… <NA>  2609… Journal…
+#>  5 De Evsikova … The … Journa… 2019-06-01 10.3… <NA>  <NA>  2959… Journal…
+#>  6 El-Sappagh S  DMTO… Journa… 2018-02-06 10.1… 2940… <NA>  2609… Journal…
+#>  7 Elmore SA     A Re… ILAR J… 2018-12-01 10.1… 3047… <NA>  2959… Journal…
+#>  8 Eppig JT      Mous… ILAR J… 2017-07-01 10.1… 2883… <NA>  2609… Journal…
+#>  9 Fernández-To… Inte… Nature… 2022-12-01 10.1… 3608… <NA>  2959… Journal…
+#> 10 Finke MT      Inte… Journa… 2019-02-01 10.1… 3062… <NA>  2609… Journal…
+#> # … with 46 more rows, and 4 more variables: added_dt <dttm>,
+#> #   record_n <int>, source <chr>, scopus_eid <chr>
+```
+
+For matches between PubMed and Scopus "cited by" results, additional information for a record obtained from Scopus may be lost.
+
+
+**2B. No data loss, possible duplication:** Combine record sets by specifying columns to concatenate unique values with `collapse_col()` (see `?collapse_col` for details). If values in these columns are the same, only one will be retained. If they differ, they will be concatenated. At a minimum, record number and record set identifier columns should be collapsed.
+
+> NOTE: `collapse_col()` will _only_ collapse records that have identical non-collapsing columns. Even small differences in punctuation or case will prevent record de-duplication in favor of preserving information. Records will be increasingly de-duplicated as more columns are specified for collapse but care should be taken to avoid merging truly distinct records.
+
+
+```r
+complete_records <- dplyr::bind_rows(cb_pm, cb_scopus) |>
+    collapse_col(.cols = c(record_n, source))
+```
+
+**Result:**
+
+```r
+complete_records
+#> # A tibble: 150 × 13
+#>    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type
+#>    <chr>         <chr> <chr>   <date>     <chr> <chr> <chr> <chr> <chr>   
+#>  1 Abburu S      Onto… Intern… 2018-07-01 10.4… <NA>  <NA>  2609… Journal…
+#>  2 Abburu S      Onto… Geospa… 2019-01-01 10.4… <NA>  <NA>  2609… Book|Bo…
+#>  3 Al-Mubaid H   Gene… Journa… 2018-10-01 10.1… 3041… <NA>  2609… Journal…
+#>  4 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… <NA>  2959… Journal…
+#>  5 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… PMC6… 2959… Journal…
+#>  6 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… <NA>  2959… Journal…
+#>  7 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… PMC7… 2959… Journal…
+#>  8 Barcellos Al… Onto… Journa… 2017-11-01 10.1… <NA>  <NA>  2609… Journal…
+#>  9 Bello SM      Dise… DMM Di… 2018-03-01 10.1… 2959… <NA>  2609… Journal…
+#> 10 Bello SM      Dise… Dis Mo… 2018-03-12 10.1… 2959… PMC5… 2609… Journal…
+#> # … with 140 more rows, and 4 more variables: added_dt <dttm>,
+#> #   record_n <chr>, source <chr>, scopus_eid <chr>
+```
+
+
+## Saving Merged Records
+
+Merged records can be saved to a Google Sheet (shown) or to a file (csv/Excel).
+
+> NOTE: A Google Sheet (proper case) is Google's .xlsx file equivalent. This should not be confused with a sheet (written in lowercase here), which is a tab within a Google Sheet and is equivalent to a sheet within an .xlsx file.
+
+To save data to an existing Google Sheet (the DO team's preference):
+
+1. Copy the URL to the Google Sheet where data will be saved.
+2. Save data with the googlesheets4 package, optionally specifying the sheet within the Google Sheet to save data to.
+
+
+```r
+library(googlesheets4)
+
+gs_url <-
+googlesheets4::write_sheet(
+    data = uniq_records,
+    ss = "https://docs.google.com/spreadsheets/d/1soEnbGY2uVVDEC_xKOpjs9WQg-wQcLiXqmh_iJ-2qsM/",
+    sheet = "new_tab"
+)
+```
+
+For more saving options, see the documentation for `googlesheets4::write_sheet()`.
