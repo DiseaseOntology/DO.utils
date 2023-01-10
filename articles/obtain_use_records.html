@@ -74,7 +74,6 @@
 
     
     
-<pre><code>API keys and/or dplyr are not available. Code chunks will not be evaluated.</code></pre>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -89,10 +88,10 @@ these are cited by (referred to as “cited by”).</li>
 </ol>
 <p>DO.utils can obtain records via “cited by” from the PubMed or Scopus
 databases and via search from the PubMed or PubMed Central (PMC)
-databases. Additionally, the <code>europepmc</code> R package can be
-used for search against the Europe PMC database. Any of these can be
-used singly or in combination to obtain records of published literature
-that <em>likely</em> use a resource.</p>
+databases. Additionally, the europepmc R package can be used for search
+against the Europe PMC database. Any of these can be used singly or in
+combination to obtain records of published literature that
+<em>likely</em> use a resource.</p>
 </div>
 <div class="section level2">
 <h2 id="api_key">Setup and API keys<a class="anchor" aria-label="anchor" href="#api_key"></a>
@@ -101,7 +100,7 @@ that <em>likely</em> use a resource.</p>
 The specific keys needed are listed by database below.</p>
 <p>The DO team’s preferred method for storing and retrieving API keys
 with R is to save them once to the system credential store using the
-<code>keyring</code> package and retrieve them as needed.</p>
+keyring package and retrieve them as needed.</p>
 <p>To save a key, use <code>keyring::key_set(&lt;key_name&gt;)</code>,
 replacing <code>&lt;key_name&gt;</code> with the default key name
 specified in the relevant section below, then paste/enter the key in the
@@ -140,7 +139,7 @@ case, and request an institutional token.</p>
 <ul>
 <li>API key = <code>Elsevier_API</code>
 </li>
-<li>Insitutional token = <code>Elsevier_insttoken</code>
+<li>Institutional token = <code>Elsevier_insttoken</code>
 </li>
 </ul>
 <p>For additional, but limited, documentation see
@@ -150,14 +149,14 @@ package is used by DO.utils under the hood).</p>
 <div class="section level3">
 <h3 id="europe-pmc">Europe PMC<a class="anchor" aria-label="anchor" href="#europe-pmc"></a>
 </h3>
-<p>Europe PMC can be accessed with the <code>europepmc</code> R package
-and does not require an API key (at the time of writing).</p>
+<p>Europe PMC can be accessed with the europepmc R package and does not
+require an API key (at the time of writing).</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="tutorial-obtaining-use-records">Tutorial: Obtaining Use Records<a class="anchor" aria-label="anchor" href="#tutorial-obtaining-use-records"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://allenbaron.github.io/DO.utils/">DO.utils</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
@@ -173,12 +172,14 @@ PubMed IDs).</p>
 interoperability between biological and clinical human disease-related
 data</strong>. Mamm Genome. 2015 Oct;26(9-10):584-9. doi:
 10.1007/s00335-015-9576-9. Epub 2015 Jun 21. PMID:
-<strong>26093607</strong>; PMCID: PMC4602048. Bello SM, Shimoyama M,
-Mitraka E, Laulederkind SJF, Smith CL, Eppig JT, Schriml LM.
-<strong>Disease Ontology: improving and unifying disease annotations
-across species</strong>. Dis Model Mech. 2018 Mar 12;11(3):dmm032839.
-doi: 10.1242/dmm.032839. PMID: <strong>29590633</strong>; PMCID:
-PMC5897730.</p>
+<strong>26093607</strong>; PMCID: PMC4602048.</p>
+</blockquote>
+<blockquote>
+<p>Bello SM, Shimoyama M, Mitraka E, Laulederkind SJF, Smith CL, Eppig
+JT, Schriml LM. <strong>Disease Ontology: improving and unifying disease
+annotations across species</strong>. Dis Model Mech. 2018 Mar
+12;11(3):dmm032839. doi: 10.1242/dmm.032839. PMID:
+<strong>29590633</strong>; PMCID: PMC5897730.</p>
 </blockquote>
 <div class="section level4">
 <h4 id="pubmed">PubMed<a class="anchor" aria-label="anchor" href="#pubmed"></a>
@@ -187,14 +188,14 @@ PMC5897730.</p>
 <ol style="list-style-type: decimal">
 <li>Make your Entrez Utilities API key available (see <a href="#api_key">Setup and API keys</a> for how to set it).</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/set_entrez_key.html" class="external-link">set_entrez_key</a></span><span class="op">(</span><span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/keyring/man/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"ENTREZ_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Obtain records from PubMed using the resource publication PubMed IDs
 (<code>pmid</code>), optionally include which publication each record
 cites by specifying <code>by_id = TRUE</code>.</li>
 </ol>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cb_pm_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/citedby_pubmed.html">citedby_pubmed</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"26093607"</span>, <span class="st">"29590633"</span><span class="op">)</span>, by_id <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The full results are returned as a list and can be saved to disk as
 an R object (<code><a href="https://rdrr.io/r/base/save.html" class="external-link">?save</a></code>) for later analysis if desired.</p>
@@ -202,9 +203,23 @@ an R object (<code><a href="https://rdrr.io/r/base/save.html" class="external-li
 <li>Tidy records into a data.frame (limited information is
 retained).</li>
 </ol>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cb_pm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tidy_pub_records.html">tidy_pub_records</a></span><span class="op">(</span><span class="va">cb_pm_res</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Result:</strong></p>
+<pre><code><span><span class="co">#&gt; # A tibble: 58 × 10</span></span>
+<span><span class="co">#&gt;    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;   &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… PMC6… 2959… Journal…</span></span>
+<span><span class="co">#&gt;  2 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… PMC7… 2959… Journal…</span></span>
+<span><span class="co">#&gt;  3 Bello SM      Dise… Dis Mo… 2018-03-12 10.1… 2959… PMC5… 2609… Journal…</span></span>
+<span><span class="co">#&gt;  4 Bradford YM   Zebr… ILAR J  2017-07-01 10.1… 2883… PMC5… 2609… Journal…</span></span>
+<span><span class="co">#&gt;  5 Casaletto J   Fede… Cell G… 2022-03-09 10.1… 3537… PMC8… 2609… Journal…</span></span>
+<span><span class="co">#&gt;  6 El-Sappagh S  DMTO… J Biom… 2018-02-06 10.1… 2940… PMC5… 2609… Journal…</span></span>
+<span><span class="co">#&gt;  7 Elmore SA     A Re… ILAR J  2018-12-01 10.1… 3047… PMC6… 2959… Journal…</span></span>
+<span><span class="co">#&gt;  8 Eppig JT      Mous… ILAR J  2017-07-01 10.1… 2883… PMC5… 2609… Journal…</span></span>
+<span><span class="co">#&gt;  9 Fernández-To… Inte… Nat Co… 2022-09-09 10.1… 3608… PMC9… 2959… Journal…</span></span>
+<span><span class="co">#&gt; 10 Finke MT      Inte… J Am M… 2019-02-01 10.1… 3062… PMC7… 2609… Journal…</span></span>
+<span><span class="co">#&gt; # … with 48 more rows, and 1 more variable: added_dt &lt;dttm&gt;</span></span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="scopus-1">Scopus<a class="anchor" aria-label="anchor" href="#scopus-1"></a>
@@ -224,12 +239,9 @@ optionally include which publication each record cites by specifying
 <code>by_id = TRUE</code> and providing identifiers (<code>id</code>;
 titles are too long to use as identifiers).</li>
 </ol>
-<p>Here, the PubMed IDs serve as identifiers (but only titles are used
-to identify “cited by” records).</p>
-<blockquote>
-<p>NOTE: Currently, Scopus keys must be provided to
-<code><a href="../reference/citedby_scopus.html">citedby_scopus()</a></code> each time it is used.</p>
-</blockquote>
+<p>Here, the PubMed IDs serve only as user-provided identifiers while
+the titles are used to actually obtain “cited by” records from the
+Scopus search API.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cb_scopus_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/citedby_scopus.html">citedby_scopus</a></span><span class="op">(</span></span>
 <span>  title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -248,6 +260,21 @@ retained).</li>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cb_scopus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tidy_pub_records.html">tidy_pub_records</a></span><span class="op">(</span><span class="va">cb_scopus_res</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Result:</strong></p>
+<pre><code><span><span class="co">#&gt; # A tibble: 92 × 10</span></span>
+<span><span class="co">#&gt;    first_author  title   journal   pub_date   doi   pmid  scopus_eid cites</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;</span></span>
+<span><span class="co">#&gt;  1 Abburu S      Ontolo… Internat… 2018-07-01 10.4… &lt;NA&gt;  2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt;  2 Abburu S      Ontolo… Geospati… 2019-01-01 10.4… &lt;NA&gt;  2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt;  3 Al-Mubaid H   Gene m… Journal … 2018-10-01 10.1… 3041… 2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt;  4 Amberger JS   OMIM.o… Nucleic … 2019-01-08 10.1… 3044… 2-s2.0-85… 2959…</span></span>
+<span><span class="co">#&gt;  5 Baldarelli RM The mo… Nucleic … 2021-01-08 10.1… 3310… 2-s2.0-85… 2959…</span></span>
+<span><span class="co">#&gt;  6 Barcellos Al… Ontolo… Journal … 2017-11-01 10.1… &lt;NA&gt;  2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt;  7 Bello SM      Diseas… DMM Dise… 2018-03-01 10.1… 2959… 2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt;  8 Bradford Y    Zebraf… ILAR Jou… 2017-07-01 10.1… 2883… 2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt;  9 Chen F        Identi… Patholog… 2018-12-01 10.1… 3047… 2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt; 10 Chen F        Identi… Journal … 2019-06-01 10.1… 3053… 2-s2.0-85… 2609…</span></span>
+<span><span class="co">#&gt; # … with 82 more rows, and 2 more variables: pub_type &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   added_dt &lt;dttm&gt;</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -269,7 +296,7 @@ was already done for above for this tutorial and doesn’t need to be done
 again).</p></li>
 <li><p>Search PubMed (<code><a href="../reference/search_pubmed.html">search_pubmed()</a></code>), PubMed Central
 (<code><a href="../reference/search_pmc.html">search_pmc()</a></code>), and/or Europe PMC (use
-<code>epmc_search</code> function of <code>europepmc</code> package)
+<code>europepmc::epmc_search()</code> function of europepmc package)
 with desired search terms.</p></li>
 </ol>
 <ul>
@@ -277,12 +304,16 @@ with desired search terms.</p></li>
 terms; the second primarily to show how quoted terms should be
 entered.</em></li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pm_doid</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">"doid"</span><span class="op">)</span></span>
 <span><span class="va">pm_full_nm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/search_pubmed.html">search_pubmed</a></span><span class="op">(</span><span class="st">"\"human disease ontology\""</span><span class="op">)</span></span></code></pre></div>
 <p>Search results from PubMed &amp; PubMed Central only include
 publication identifiers currently.</p>
 <p><strong>Results for <code>doid</code> search:</strong></p>
+<pre><code><span><span class="co">#&gt; Entrez search result with 7 hits (object contains 7 IDs and no web_history object)</span></span>
+<span><span class="co">#&gt;  Search term (as translated):  "doid"[All Fields]</span></span>
+<span><span class="co">#&gt; [1] "36509991" "35599774" "30441083" "27638616" "27577487" "25841438"</span></span>
+<span><span class="co">#&gt; [7] "22080554"</span></span></code></pre>
 <p>If a large number of results are expected, considering creating a
 <code>web_history</code> object and using that instead (documented in
 <code><a href="https://docs.ropensci.org/rentrez/articles/rentrez_tutorial.html" class="external-link">vignette("rentrez_tutorial", package = "rentrez")</a></code>).</p>
@@ -291,7 +322,7 @@ publication identifiers currently.</p>
 the searches as input (search results are combined in this
 example).</li>
 </ol>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_pmids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">pm_doid</span><span class="op">$</span><span class="va">ids</span>, <span class="va">pm_full_nm</span><span class="op">$</span><span class="va">ids</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pm_doid_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pubmed_summary.html">pubmed_summary</a></span><span class="op">(</span><span class="va">search_pmids</span><span class="op">)</span></span></code></pre></div>
 <p>The full results are returned as a list and can be saved to disk as
@@ -300,9 +331,23 @@ an R object (<code><a href="https://rdrr.io/r/base/save.html" class="external-li
 <li>Tidy records into a data.frame (limited information is
 retained).</li>
 </ol>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">search_pm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tidy_pub_records.html">tidy_pub_records</a></span><span class="op">(</span><span class="va">pm_doid_res</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Result:</strong></p>
+<pre><code><span><span class="co">#&gt; # A tibble: 22 × 9</span></span>
+<span><span class="co">#&gt;    first_author title     journal   pub_date   doi    pmid  pmcid pub_type</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;        &lt;chr&gt;     &lt;chr&gt;     &lt;date&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 Althubaiti S Combinin… J Biomed… 2020-01-13 10.11… 3193… PMC6… Journal…</span></span>
+<span><span class="co">#&gt;  2 Fang H       DcGO: da… Nucleic … 2013-01-01 10.10… 2316… PMC3… Journal…</span></span>
+<span><span class="co">#&gt;  3 Good BM      Mining t… BMC Geno… 2011-12-13 10.11… 2216… PMC3… Journal…</span></span>
+<span><span class="co">#&gt;  4 Hoehndorf R  Identify… Bioinfor… 2012-08-15 10.10… 2271… PMC3… Journal…</span></span>
+<span><span class="co">#&gt;  5 Hofer P      Semi-Aut… Stud Hea… 2016-01-01 &lt;NA&gt;   2757… &lt;NA&gt;  Journal…</span></span>
+<span><span class="co">#&gt;  6 Jupp S       Logical … J Biomed… 2012-04-24 10.11… 2254… PMC3… Journal…</span></span>
+<span><span class="co">#&gt;  7 Kibbe WA     Disease … Nucleic … 2015-01-01 10.10… 2534… PMC4… Journal…</span></span>
+<span><span class="co">#&gt;  8 LePendu P    Enabling… J Biomed… 2011-12-01 10.10… 2155… PMC3… Journal…</span></span>
+<span><span class="co">#&gt;  9 Maes M       Aberrati… Front Ps… 2022-05-06 10.33… 3559… PMC9… Journal…</span></span>
+<span><span class="co">#&gt; 10 Marquet G    Aligning… Stud Hea… 2006-01-01 &lt;NA&gt;   1710… &lt;NA&gt;  Journal…</span></span>
+<span><span class="co">#&gt; # … with 12 more rows, and 1 more variable: added_dt &lt;dttm&gt;</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="myncbi-collection">MyNCBI Collection<a class="anchor" aria-label="anchor" href="#myncbi-collection"></a>
@@ -326,17 +371,25 @@ tutorial a few records from DO’s collection have been saved to
 <code><a href="../reference/read_pubmed_txt.html">read_pubmed_txt()</a></code> of DO.utils to read &amp; parse
 records.</li>
 </ol>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myncbi_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_pubmed_txt.html">read_pubmed_txt</a></span><span class="op">(</span><span class="st">"collection.txt"</span><span class="op">)</span></span></code></pre></div>
 <p>Currently, publication identifiers and the full citation are returned
 as a data.frame. While this is sufficient for merging with “cited by” or
 search results, it does come with some downsides.</p>
 <p><strong>Result:</strong></p>
+<pre><code><span><span class="co">#&gt; # A tibble: 5 × 5</span></span>
+<span><span class="co">#&gt;       n pmid     pmcid      doi                        citation           </span></span>
+<span><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                      &lt;chr&gt;              </span></span>
+<span><span class="co">#&gt; 1     1 26609498 PMC4655879 &lt;NA&gt;                       1. Guha R, Nguyen …</span></span>
+<span><span class="co">#&gt; 2     2 26507285 PMC4622021 10.1093/database/bav104.   2. Collier N, Groz…</span></span>
+<span><span class="co">#&gt; 3     3 26507230 PMC4626853 10.1128/mBio.01263-15.     3. Ni Y, Li J, Pan…</span></span>
+<span><span class="co">#&gt; 4     4 26413258 PMC4582726 10.1186/s13326-015-0034-0. 4. Rabattu PY, Mas…</span></span>
+<span><span class="co">#&gt; 5     5 26320941 PMC4553261 10.3402/jev.v4.27497.      5. Subramanian SL,…</span></span></code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li>Optionally, use <code><a href="../reference/pubmed_summary.html">pubmed_summary()</a></code> with the PubMed IDs to
 get data in the same format as “cited by” and search.</li>
 </ol>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myncbi_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pubmed_summary.html">pubmed_summary</a></span><span class="op">(</span><span class="va">myncbi_col</span><span class="op">$</span><span class="va">pmid</span><span class="op">)</span></span></code></pre></div>
 <p>The full results are returned as a list and can be saved to disk as
 an R object (<code><a href="https://rdrr.io/r/base/save.html" class="external-link">?save</a></code>) for later analysis if desired.</p>
@@ -344,9 +397,18 @@ an R object (<code><a href="https://rdrr.io/r/base/save.html" class="external-li
 <li>Tidy records into a data.frame (limited information is
 retained).</li>
 </ol>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">myncbi_pm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tidy_pub_records.html">tidy_pub_records</a></span><span class="op">(</span><span class="va">myncbi_res</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Result:</strong></p>
+<pre><code><span><span class="co">#&gt; # A tibble: 5 × 9</span></span>
+<span><span class="co">#&gt;   first_author   title     journal  pub_date   doi    pmid  pmcid pub_type</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;     &lt;chr&gt;    &lt;date&gt;     &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt; 1 Collier N      PhenoMin… Databas… 2015-10-27 10.10… 2650… PMC4… Journal…</span></span>
+<span><span class="co">#&gt; 2 Guha R         Dealing … Curr Pr… 2012-09-01 10.10… 2660… PMC4… Journal…</span></span>
+<span><span class="co">#&gt; 3 Ni Y           A Molecu… mBio     2015-10-27 10.11… 2650… PMC4… Journal…</span></span>
+<span><span class="co">#&gt; 4 Rabattu PY     My Corpo… J Biome… 2015-09-24 10.11… 2641… PMC4… Journal…</span></span>
+<span><span class="co">#&gt; 5 Subramanian SL Integrat… J Extra… 2015-08-28 10.34… 2632… PMC4… Journal…</span></span>
+<span><span class="co">#&gt; # … with 1 more variable: added_dt &lt;dttm&gt;</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="matching-and-merging-records">Matching and Merging Records<a class="anchor" aria-label="anchor" href="#matching-and-merging-records"></a>
@@ -373,20 +435,23 @@ recursively (as shown in step #4 below).</p>
 <ol style="list-style-type: decimal">
 <li>Choose a starting record set and number all records.</li>
 </ol>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cb_pm</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">cb_pm</span>, record_n <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Use <code><a href="../reference/match_citations.html">match_citations()</a></code> to add matching record numbers
 from the first set to another set. The identifiers used for matching are
 listed in the order used.</li>
 </ol>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cb_scopus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_citations.html">match_citations</a></span><span class="op">(</span><span class="va">cb_scopus</span>, <span class="va">cb_pm</span>, add_col <span class="op">=</span> <span class="st">"record_n"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cb_scopus</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_citations.html">match_citations</a></span><span class="op">(</span><span class="va">cb_scopus</span>, <span class="va">cb_pm</span>, add_col <span class="op">=</span> <span class="st">"record_n"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Matching by types:</span></span>
+<span><span class="co">#&gt; * pmid</span></span>
+<span><span class="co">#&gt; * doi</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>Number the records in the second set <em>without matches</em> in the
 first.</li>
 </ol>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cb_scopus</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
 <span>    <span class="va">cb_scopus</span>,</span>
 <span>    record_n <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span></span>
@@ -399,7 +464,7 @@ first.</li>
 <li>Repeat steps 2 &amp; 3 to identify matches in each record set to the
 previously matched set.</li>
 </ol>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># matching search</span></span>
 <span><span class="va">search_pm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_citations.html">match_citations</a></span><span class="op">(</span><span class="va">search_pm</span>, <span class="va">cb_scopus</span>, add_col <span class="op">=</span> <span class="st">"record_n"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -409,6 +474,9 @@ previously matched set.</li>
 <span>            <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">record_n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">cb_scopus</span><span class="op">$</span><span class="va">record_n</span><span class="op">)</span></span>
 <span>        <span class="op">)</span></span>
 <span>    <span class="op">)</span></span>
+<span><span class="co">#&gt; Matching by types:</span></span>
+<span><span class="co">#&gt; * pmid</span></span>
+<span><span class="co">#&gt; * doi</span></span>
 <span></span>
 <span><span class="co"># merging myncbi_collection</span></span>
 <span><span class="va">myncbi_pm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/match_citations.html">match_citations</a></span><span class="op">(</span><span class="va">myncbi_pm</span>, <span class="va">search_pm</span>, add_col <span class="op">=</span> <span class="st">"record_n"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -418,7 +486,11 @@ previously matched set.</li>
 <span>            <span class="va">record_n</span>,</span>
 <span>            <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">record_n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">search_pm</span><span class="op">$</span><span class="va">record_n</span><span class="op">)</span></span>
 <span>        <span class="op">)</span></span>
-<span>    <span class="op">)</span></span></code></pre></div>
+<span>    <span class="op">)</span></span>
+<span><span class="co">#&gt; Matching by types:</span></span>
+<span><span class="co">#&gt; * pmid</span></span>
+<span><span class="co">#&gt; * pmcid</span></span>
+<span><span class="co">#&gt; * doi</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="merging">Merging<a class="anchor" aria-label="anchor" href="#merging"></a>
@@ -436,7 +508,7 @@ it.</li>
 </ul>
 </li>
 </ol>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># cited by record sets</span></span>
 <span><span class="va">cb_pm</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">cb_pm</span>, source <span class="op">=</span> <span class="st">"citedby-pubmed"</span><span class="op">)</span></span>
 <span><span class="va">cb_scopus</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">cb_scopus</span>, source <span class="op">=</span> <span class="st">"citedby-scopus"</span><span class="op">)</span></span>
@@ -461,7 +533,7 @@ team to merge record sets for later review.</em></p>
 <blockquote>
 <p>NOTE: Records added earlier are preferentially retained.</p>
 </blockquote>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">uniq_records</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">cb_pm</span>, <span class="va">cb_scopus</span>, <span class="va">search_pm</span>, <span class="va">myncbi_pm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co"># concatenate source info</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">record_n</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -470,8 +542,23 @@ team to merge record sets for later review.</em></p>
 <span>    <span class="co"># drop duplicates</span></span>
 <span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/duplicated.html" class="external-link">duplicated</a></span><span class="op">(</span><span class="va">record_n</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Result:</strong></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">uniq_records</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">uniq_records</span></span>
+<span><span class="co">#&gt; # A tibble: 56 × 13</span></span>
+<span><span class="co">#&gt;    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;   &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt;  2 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt;  3 Bello SM      Dise… DMM Di… 2018-03-01 10.1… 2959… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  4 Bradford Y    Zebr… ILAR J… 2017-07-01 10.1… 2883… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  5 De Evsikova … The … Journa… 2019-06-01 10.3… &lt;NA&gt;  &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt;  6 El-Sappagh S  DMTO… Journa… 2018-02-06 10.1… 2940… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  7 Elmore SA     A Re… ILAR J… 2018-12-01 10.1… 3047… &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt;  8 Eppig JT      Mous… ILAR J… 2017-07-01 10.1… 2883… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  9 Fernández-To… Inte… Nature… 2022-12-01 10.1… 3608… &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt; 10 Finke MT      Inte… Journa… 2019-02-01 10.1… 3062… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt; # … with 46 more rows, and 4 more variables: added_dt &lt;dttm&gt;,</span></span>
+<span><span class="co">#&gt; #   record_n &lt;int&gt;, source &lt;chr&gt;, scopus_eid &lt;chr&gt;</span></span></code></pre></div>
 <p>For matches between PubMed and Scopus “cited by” results, additional
 information for a record obtained from Scopus may be lost.</p>
 <p><strong>2B. No data loss, possible duplication:</strong> Combine
@@ -488,12 +575,27 @@ preserving information. Records will be increasingly de-duplicated as
 more columns are specified for collapse but care should be taken to
 avoid merging truly distinct records.</p>
 </blockquote>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">complete_records</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">cb_pm</span>, <span class="va">cb_scopus</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="../reference/collapse_col.html">collapse_col</a></span><span class="op">(</span>.cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">record_n</span>, <span class="va">source</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Result:</strong></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">complete_records</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">complete_records</span></span>
+<span><span class="co">#&gt; # A tibble: 150 × 13</span></span>
+<span><span class="co">#&gt;    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;   &lt;date&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 Abburu S      Onto… Intern… 2018-07-01 10.4… &lt;NA&gt;  &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  2 Abburu S      Onto… Geospa… 2019-01-01 10.4… &lt;NA&gt;  &lt;NA&gt;  2609… Book|Bo…</span></span>
+<span><span class="co">#&gt;  3 Al-Mubaid H   Gene… Journa… 2018-10-01 10.1… 3041… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  4 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt;  5 Amberger JS   OMIM… Nuclei… 2019-01-08 10.1… 3044… PMC6… 2959… Journal…</span></span>
+<span><span class="co">#&gt;  6 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… &lt;NA&gt;  2959… Journal…</span></span>
+<span><span class="co">#&gt;  7 Baldarelli RM The … Nuclei… 2021-01-08 10.1… 3310… PMC7… 2959… Journal…</span></span>
+<span><span class="co">#&gt;  8 Barcellos Al… Onto… Journa… 2017-11-01 10.1… &lt;NA&gt;  &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt;  9 Bello SM      Dise… DMM Di… 2018-03-01 10.1… 2959… &lt;NA&gt;  2609… Journal…</span></span>
+<span><span class="co">#&gt; 10 Bello SM      Dise… Dis Mo… 2018-03-12 10.1… 2959… PMC5… 2609… Journal…</span></span>
+<span><span class="co">#&gt; # … with 140 more rows, and 4 more variables: added_dt &lt;dttm&gt;,</span></span>
+<span><span class="co">#&gt; #   record_n &lt;chr&gt;, source &lt;chr&gt;, scopus_eid &lt;chr&gt;</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -511,13 +613,13 @@ an .xlsx file.</p>
 preference):</p>
 <ol style="list-style-type: decimal">
 <li>Copy the URL to the Google Sheet where data will be saved.</li>
-<li>Save data with <code>googlesheets4</code> optionally specifying the
+<li>Save data with the googlesheets4 package, optionally specifying the
 sheet within the Google Sheet to save data to.</li>
 </ol>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://googlesheets4.tidyverse.org" class="external-link">googlesheets4</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">gs_url</span> <span class="op">&lt;-</span> </span>
+<span><span class="va">gs_url</span> <span class="op">&lt;-</span></span>
 <span><span class="fu">googlesheets4</span><span class="fu">::</span><span class="fu"><a href="https://googlesheets4.tidyverse.org/reference/sheet_write.html" class="external-link">write_sheet</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">uniq_records</span>,</span>
 <span>    ss <span class="op">=</span> <span class="st">"https://docs.google.com/spreadsheets/d/1soEnbGY2uVVDEC_xKOpjs9WQg-wQcLiXqmh_iJ-2qsM/"</span>,</span>
