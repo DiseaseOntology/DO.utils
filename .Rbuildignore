@@ -5,15 +5,11 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\.Rprofile$
-
-# extra working dirs
 ^TMP$
 ^scripts$
 ^data-raw$
 ^exploration$
-^docs$
-
-# PyCharm
+^setup_docs$
 ^.idea$
 ^\.github$
 ^codecov\.yml$

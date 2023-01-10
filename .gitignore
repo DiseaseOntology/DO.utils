@@ -4,16 +4,10 @@
 .Ruserdata
 .Rprofile
 renv/
-
-# temporary working dirs/files
 /TMP/
 inst/doc
-/docs/benchmarks/*reprex*
-
-# python/PyCharm
+docs
+setup_docs/*pseudocode*
+setup_docs/benchmarks/*reprex*
 __pycache__
 /.idea
-
-# files to understand non-DO.utils fxns
-docs/*pseudocode*
-docs
