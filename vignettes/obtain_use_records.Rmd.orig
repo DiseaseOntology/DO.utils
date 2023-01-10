@@ -34,14 +34,14 @@ The first step in the **Assessing Resource Use** workflow is to obtain use recor
 2. Via search.
 3. By parsing and loading a MyNCBI collection.
 
-DO.utils can obtain records via "cited by" from the PubMed or Scopus databases and via search from the PubMed or PubMed Central (PMC) databases. Additionally, the `europepmc` R package can be used for search against the Europe PMC database. Any of these can be used singly or in combination to obtain records of published literature that _likely_ use a resource.
+DO.utils can obtain records via "cited by" from the PubMed or Scopus databases and via search from the PubMed or PubMed Central (PMC) databases. Additionally, the europepmc R package can be used for search against the Europe PMC database. Any of these can be used singly or in combination to obtain records of published literature that _likely_ use a resource.
 
 
 # Setup and API keys {#api_key}
 
 API keys are generally needed to access publication record databases. The specific keys needed are listed by database below.
 
-The DO team's preferred method for storing and retrieving API keys with R is to save them once to the system credential store using the `keyring` package and retrieve them as needed.
+The DO team's preferred method for storing and retrieving API keys with R is to save them once to the system credential store using the keyring package and retrieve them as needed.
 
 To save a key, use `keyring::key_set(<key_name>)`, replacing `<key_name>` with the default key name specified in the relevant section below, then paste/enter the key in the prompt.
 
@@ -61,17 +61,17 @@ Alternate methods of saving and using an Entrez Utilities API key are documented
 
 An institutional subscription and user API key are required to access any Scopus API. In addition, Scopus requires an "institutional token" for "cited by" access (refer to the Scopus developer [FAQ](https://dev.elsevier.com/support.html), question "Q: How can I obtain a list of articles (cited-by list) that cite the articles of interest to me?"). An API key can be obtained from Elsevier at https://dev.elsevier.com/. To obtain an institutional token, your institution's librarian or information specialist must email an Elsevier account manager or customer consultant, describe your use case, and request an institutional token.
 
-**Default key names:** 
+**Default key names:**
 
   - API key = `Elsevier_API`
-  - Insitutional token = `Elsevier_insttoken`
+  - Institutional token = `Elsevier_insttoken`
 
 For additional, but limited, documentation see `vignette("api_key", package = "rscopus")` (the rscopus package is used by DO.utils under the hood).
 
 
 ## Europe PMC
 
-Europe PMC can be accessed with the `europepmc` R package and does not require an API key (at the time of writing).
+Europe PMC can be accessed with the europepmc R package and does not require an API key (at the time of writing).
 
 
 # Tutorial: Obtaining Use Records
@@ -85,6 +85,8 @@ suppressPackageStartupMessages(library(dplyr))
 In this tutorial, the citations for two of the official publications describing the Human Disease Ontology were copied from PubMed (below). The information from these citations that will be used by DO.utils to identify publications these are "cited by" have been bolded (titles and PubMed IDs).
 
 > Schriml LM, Mitraka E. **The Disease Ontology: fostering interoperability between biological and clinical human disease-related data**. Mamm Genome. 2015 Oct;26(9-10):584-9. doi: 10.1007/s00335-015-9576-9. Epub 2015 Jun 21. PMID: **26093607**; PMCID: PMC4602048.
+
+
 > Bello SM, Shimoyama M, Mitraka E, Laulederkind SJF, Smith CL, Eppig JT, Schriml LM. **Disease Ontology: improving and unifying disease annotations across species**. Dis Model Mech. 2018 Mar 12;11(3):dmm032839. doi: 10.1242/dmm.032839. PMID: **29590633**; PMCID: PMC5897730.
 
 
@@ -132,9 +134,8 @@ set_scopus_keys(
 
 2. Obtain records from Scopus using the resource publication titles, optionally include which publication each record cites by specifying `by_id = TRUE` and providing identifiers (`id`; titles are too long to use as identifiers).
 
-Here, the PubMed IDs serve as identifiers (but only titles are used to identify "cited by" records).
+Here, the PubMed IDs serve only as user-provided identifiers while the titles are used to actually obtain "cited by" records from the Scopus search API.
 
-> NOTE: Currently, Scopus keys must be provided to `citedby_scopus()` each time it is used.
 
 ```{r cb_scopus}
 cb_scopus_res <- citedby_scopus(
@@ -169,7 +170,7 @@ For example, some publications that use the Disease Ontology can be found with `
 
 1. Make your Entrez Utilities API key available, if necessary (this was already done for above for this tutorial and doesn't need to be done again).
 
-2. Search PubMed (`search_pubmed()`), PubMed Central (`search_pmc()`), and/or Europe PMC (use `epmc_search` function of `europepmc` package) with desired search terms.
+2. Search PubMed (`search_pubmed()`), PubMed Central (`search_pmc()`), and/or Europe PMC (use `europepmc::epmc_search()` function of europepmc package) with desired search terms.
 - _In this tutorial PubMed is searched with two different search terms; the second primarily to show how quoted terms should be entered._
 
 ```{r pm_search}
@@ -185,7 +186,7 @@ pm_doid
 pm_doid$ids
 ```
 
-If a large number of results are expected, considering creating a `web_history` object and using that instead (documented in `vignette("rentrez_tutorial", package = "rentrez")`). 
+If a large number of results are expected, considering creating a `web_history` object and using that instead (documented in `vignette("rentrez_tutorial", package = "rentrez")`).
 
 
 3. Obtain publication details using the unique PubMed IDs identified in the searches as input (search results are combined in this example).
@@ -274,13 +275,13 @@ cb_pm <- dplyr::mutate(cb_pm, record_n = dplyr::row_number())
 ```
 
 2. Use `match_citations()` to add matching record numbers from the first set to another set. The identifiers used for matching are listed in the order used.
-    
+
 ```{r match2}
 cb_scopus <- match_citations(cb_scopus, cb_pm, add_col = "record_n")
 ```
-    
+
 3. Number the records in the second set _without matches_ in the first.
-    
+
 ```{r match3}
 cb_scopus <- dplyr::mutate(
     cb_scopus,
@@ -291,7 +292,7 @@ cb_scopus <- dplyr::mutate(
     )
 )
 ```
-    
+
 4. Repeat steps 2 & 3 to identify matches in each record set to the previously matched set.
 
 ```{r match4}
@@ -315,14 +316,14 @@ myncbi_pm <- match_citations(myncbi_pm, search_pm, add_col = "record_n") |>
         )
     )
 ```
-  
+
 
 ### Merging
 
 Prior to merging datasets we recommend adding information to indicate how each record was obtained. This can be done with `mutate` from the `dplyr` package.
 
 1. Add record set identifiers to each record. _Be sure to use the same column name(s) across all record sets._
-    - Here a compound identifier column (`source`) is added to each record set to indicate the approach and database used to obtain it. 
+    - Here a compound identifier column (`source`) is added to each record set to indicate the approach and database used to obtain it.
 
 ```{r merge_prep}
 # cited by record sets
@@ -364,7 +365,7 @@ uniq_records
 For matches between PubMed and Scopus "cited by" results, additional information for a record obtained from Scopus may be lost.
 
 
-**2B. No data loss, possible duplication:** Combine record sets by specifying columns to concatenate unique values with `collapse_col()` (see `?collapse_col` for details). If values in these columns are the same, only one will be retained. If they differ, they will be concatenated. At a minimum, record number and record set identifier columns should be collapsed. 
+**2B. No data loss, possible duplication:** Combine record sets by specifying columns to concatenate unique values with `collapse_col()` (see `?collapse_col` for details). If values in these columns are the same, only one will be retained. If they differ, they will be concatenated. At a minimum, record number and record set identifier columns should be collapsed.
 
 > NOTE: `collapse_col()` will _only_ collapse records that have identical non-collapsing columns. Even small differences in punctuation or case will prevent record de-duplication in favor of preserving information. Records will be increasingly de-duplicated as more columns are specified for collapse but care should be taken to avoid merging truly distinct records.
 
@@ -388,12 +389,12 @@ Merged records can be saved to a Google Sheet (shown) or to a file (csv/Excel).
 To save data to an existing Google Sheet (the DO team's preference):
 
 1. Copy the URL to the Google Sheet where data will be saved.
-2. Save data with `googlesheets4` optionally specifying the sheet within the Google Sheet to save data to.
+2. Save data with the googlesheets4 package, optionally specifying the sheet within the Google Sheet to save data to.
 
 ```{r save_gs, eval = FALSE}
 library(googlesheets4)
 
-gs_url <- 
+gs_url <-
 googlesheets4::write_sheet(
     data = uniq_records,
     ss = "https://docs.google.com/spreadsheets/d/1soEnbGY2uVVDEC_xKOpjs9WQg-wQcLiXqmh_iJ-2qsM/",
