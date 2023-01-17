@@ -5,6 +5,7 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^\.Rprofile$
+^docs$
 ^TMP$
 ^scripts$
 ^data-raw$
