@@ -33,7 +33,7 @@ the end of a base url.
 }
 \examples{
 build_hyperlink(
-    x = "allenbaron",
+    x = "DiseaseOntology",
     url = "github",
     as = "html",
     txt = "A hyperlink!"

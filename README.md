@@ -1,8 +1,8 @@
 # DO.utils
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/allenbaron/DO.utils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/allenbaron/DO.utils/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/allenbaron/DO.utils/branch/main/graph/badge.svg)](https://app.codecov.io/gh/allenbaron/DO.utils?branch=main)
+[![R-CMD-check](https://github.com/DiseaseOntology/DO.utils/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/DiseaseOntology/DO.utils/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/DiseaseOntology/DO.utils/branch/main/graph/badge.svg)](https://app.codecov.io/gh/DiseaseOntology/DO.utils?branch=main)
 <!-- badges: end -->
 
 
@@ -29,7 +29,7 @@ Installing [RStudio]() can also be useful but is not required. The `devtools` pa
 
 DO.utils can be installed from Github or from a persistent, open-access repository hosted by Zenodo.
 
-To install from Github, run `devtools::install_github("allenbaron/DO.utils")` within R.
+To install from Github, run `devtools::install_github("DiseaseOntology/DO.utils")` within R.
 
 To install from Zenodo, first download DO.utils (DOI: [10.5281/zenodo.7467668](https://www.doi.org/10.5281/zenodo.7467668)) to your local machine. Then, within R run `devtools::install_git(<local_path_to_DO.utils>)`, replacing `<local_path_to_DO.utils>` with the local path to DO.utils.
 

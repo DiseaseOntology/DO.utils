@@ -78,7 +78,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'
 #' @examples
 #' build_hyperlink(
-#'     x = "allenbaron",
+#'     x = "DiseaseOntology",
 #'     url = "github",
 #'     as = "html",
 #'     txt = "A hyperlink!"

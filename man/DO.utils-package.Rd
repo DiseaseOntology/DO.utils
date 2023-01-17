@@ -8,4 +8,11 @@
 \description{
 Generally useful tools to assess use of public resources in scientific literature ("cited by", search, etc.) and to simplify common R tasks, along with tools specifically designed for analysis and improvement of the Human Disease Ontology (DO; https://disease-ontology.org).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://diseaseontology.github.io/DO.utils/}
+}
+
+}
 \keyword{internal}

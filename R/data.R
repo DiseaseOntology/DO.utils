@@ -4,7 +4,7 @@ utils::globalVariables(
 )
 
 #' @keywords internal
-pkg_user_agent <- "DO.utils (github.com/allenbaron/DO.utils)"
+pkg_user_agent <- "DO.utils (github.com/DiseaseOntology/DO.utils)"
 
 
 #' Prioritized List of Publication IDs & Regex's for Matching
