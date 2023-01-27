@@ -71,14 +71,26 @@ read_pubmed_txt <- function(file) {
 #' Reads an ontology import *_terms.txt file used to define the (lower) terms to
 #' include in a given import.
 #'
+#' @details
+#' The terms import file should contain one line per term and begin with the
+#' IRI or CURIE of each term, optionally followed by a manual label
+#' (usually this label is the actual label for the term but this is not a
+#' requirement). If a manual label is included, it _MUST_ be separated from
+#' the identifier by one or more spaces (or tab) and a `#`.
+#'
+#' Spaces at the start and end of lines are stripped.
+#'
+#' Example: `HP:0000023	# Inguinal hernia`
+#'
 #' @param term_file The path to the desired *_terms.txt file.
+#' @returns A 2-column tibble with `id` and `manual_label` columns.
 #'
 #' @noRd
 read_term_file <- function(term_file) {
     term_raw <- readr::read_lines(term_file)
     term_parsed <- stringr::str_match(
         term_raw,
-        "^([^:]+:[0-9A-Za-z_]+)[[:space:]#]*(.*)$"
+        "^[:space:]*([^[:space:]]+)[[:space:]#]*(.*)$"
     )
     term_tbl <- tibble::as_tibble(
         term_parsed[, 2:3],
