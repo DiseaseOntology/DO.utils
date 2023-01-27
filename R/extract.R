@@ -401,6 +401,33 @@ extract_class_axiom <- function(ofn = NULL, entire = NA,
 }
 
 
+extract_obo_class <- function(ofn, as_chr = TRUE, .sort = FALSE) {
+    class_list <- stringr::str_extract_all(
+        ofn,
+        paste0(
+            "(", vctr_to_string(names(obo_prefix), delim = "|"), ")",
+            "[:_#][A-Za-z0-9_]+"
+        )
+
+    )
+    if (as_chr) {
+        out <- unique(unlist(class_list))
+    } else {
+        out <- purrr::map(class_list, unique)
+    }
+
+    if (.sort) {
+        if (class(out)[1] == "list") {
+            out <- purrr::map(out, sort)
+        } else {
+            out <- sort(out)
+        }
+    }
+
+    out
+}
+
+
 #' Extract Equivalent Class Axioms (DEPRECATED)
 #'
 #' Extract `owl:equivalentClass` axioms from the doid-edit.owl file.
