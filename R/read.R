@@ -64,3 +64,27 @@ read_pubmed_txt <- function(file) {
 
     citation_df
 }
+
+
+#' Read an Import *_terms.txt File (INTERNAL)
+#'
+#' Reads an ontology import *_terms.txt file used to define the (lower) terms to
+#' include in a given import.
+#'
+#' @param term_file The path to the desired *_terms.txt file.
+#'
+#' @noRd
+read_term_file <- function(term_file) {
+    term_raw <- readr::read_lines(term_file)
+    term_parsed <- stringr::str_match(
+        term_raw,
+        "^([^:]+:[0-9A-Za-z_]+)[[:space:]#]*(.*)$"
+    )
+    term_tbl <- tibble::as_tibble(
+        term_parsed[, 2:3],
+        .name_repair = ~ c("id", "manual_label")
+    ) %>%
+        dplyr::mutate(dplyr::across(dplyr::everything(), stringr::str_trim))
+
+    term_tbl
+}

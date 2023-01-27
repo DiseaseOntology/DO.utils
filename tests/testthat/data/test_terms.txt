@@ -1,0 +1,5 @@
+HP:0000023	# Inguinal hernia
+ HP:0000037	# Male pseudohermaphroditism
+HP:0000083	 # Renal insufficiency
+HP:0000090	#  Nephronophthisis
+HP:0000219	# Thin upper lip vermilion  
