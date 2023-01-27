@@ -38,3 +38,23 @@ test_that("extract_pmid.elink_list does NOT produce condition when all elements 
         extract_pmid(elink_list_full, no_result = "error")
     )
 })
+
+
+# extract_class_axiom() ---------------------------------------------------
+
+test_that("extract_class_axiom() errors appropriately", {
+    expect_error(
+        extract_class_axiom('blah', NA, NA),
+        regexp = "At least one"
+    )
+    expect_error(
+        extract_class_axiom('blah', entire = 'fake_class', NA),
+        regexp = "entire.*fake_class"
+    )
+    expect_error(
+        extract_class_axiom('blah', NA, anon_only = 'fake_class'),
+        regexp = "anon_only.*fake_class"
+    )
+    expect_error(extract_class_axiom('blah'), regexp = "ofn.*file")
+})
+

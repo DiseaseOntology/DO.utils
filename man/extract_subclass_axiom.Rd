@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract.R
 \name{extract_subclass_axiom}
 \alias{extract_subclass_axiom}
-\title{Extract 'Subclass Of' Axioms}
+\title{Extract 'Subclass Of' Axioms (DEPRECATED)}
 \usage{
 extract_subclass_axiom(DO_repo)
 }
@@ -18,7 +18,6 @@ Extract \code{owl:subClassOf} axioms from the doid-edit.owl file.
 }
 \seealso{
 Other \verb{extract_*_axiom} functions: 
-\code{\link{extract_class_axiom}()},
 \code{\link{extract_eq_axiom}()}
 }
 \concept{\verb{extract_*_axiom} functions}

@@ -4,23 +4,33 @@
 \alias{extract_class_axiom}
 \title{Extract Class Axioms}
 \usage{
-extract_class_axiom(DO_repo)
+extract_class_axiom(
+  ofn = NULL,
+  entire = NA,
+  anon_only = c("equivalent", "subclass")
+)
 }
 \arguments{
-\item{DO_repo}{The local path to the \code{HumanDiseaseOntology} repo, as a
-string.}
+\item{ofn}{The path to an OWL functional syntax file, as a string, or a
+character vector created previously by providing that path to
+\code{\link[readr:read_lines]{readr::read_lines()}}.}
+
+\item{entire}{The type(s) of classes whose results should include all axioms,
+as a character vector with one or more of "equivalent", "subclass", or
+"disjoint". Use \code{NA} to skip.}
+
+\item{anon_only}{The type(s) of classes whose results should include \emph{only}
+axioms with \emph{at least one} anonymous class, as a character vector with
+one or more of "equivalent", "subclass", or "disjoint". Use \code{NA} to
+skip.}
 }
 \value{
-A list of two character vectors (\code{eq} and \code{subclass}) containing axioms in
-OWL functional format.
+The class axioms in OWL functional format, as a named list of character
+vectors. Output in order of \code{entire}, followed by \code{anon_only}.
 }
 \description{
-Extract \code{owl:equivalentClass} and \code{owl:subClassOf} axioms from the
-doid-edit.owl file.
+Extract class axioms (\code{rdfs:subClassOf}, \code{owl:equivalentClass}, and/or
+\code{owl:disjointWith}) from an OWL functional syntax file, optionally limited
+to only axioms including at least one anonymous class (\emph{aka}
+\code{owl:Restriction}, https://www.w3.org/TR/owl-ref/#Restriction).
 }
-\seealso{
-Other \verb{extract_*_axiom} functions: 
-\code{\link{extract_eq_axiom}()},
-\code{\link{extract_subclass_axiom}()}
-}
-\concept{\verb{extract_*_axiom} functions}

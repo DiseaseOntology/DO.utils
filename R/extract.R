@@ -313,26 +313,95 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 
 #' Extract Class Axioms
 #'
-#' Extract `owl:equivalentClass` and `owl:subClassOf` axioms from the
-#' doid-edit.owl file.
+#' Extract class axioms (`rdfs:subClassOf`, `owl:equivalentClass`, and/or
+#' `owl:disjointWith`) from an OWL functional syntax file, optionally limited
+#' to only axioms including at least one anonymous class (_aka_
+#' `owl:Restriction`, https://www.w3.org/TR/owl-ref/#Restriction).
 #'
-#' @inheritParams read_doid_edit
+#' @param ofn The path to an OWL functional syntax file, as a string, or a
+#'     character vector created previously by providing that path to
+#'     [readr::read_lines()].
+#' @param entire The type(s) of classes whose results should include all axioms,
+#'     as a character vector with one or more of "equivalent", "subclass", or
+#'     "disjoint". Use `NA` to skip.
+#' @param anon_only The type(s) of classes whose results should include _only_
+#'     axioms with _at least one_ anonymous class, as a character vector with
+#'     one or more of "equivalent", "subclass", or "disjoint". Use `NA` to
+#'     skip.
 #'
 #' @returns
-#' A list of two character vectors (`eq` and `subclass`) containing axioms in
-#' OWL functional format.
+#' The class axioms in OWL functional format, as a named list of character
+#' vectors. Output in order of `entire`, followed by `anon_only`.
 #'
-#' @family `extract_*_axiom` functions
 #' @export
-extract_class_axiom <- function(DO_repo) {
-    doid_edit <- read_doid_edit(DO_repo)
-    eq_raw <- grep("EquivalentClasses", doid_edit, value = TRUE)
-    subclass_raw <- grep("SubClassOf.*Object", doid_edit, value = TRUE)
-    list(eq = eq_raw, subclass = subclass_raw)
+extract_class_axiom <- function(ofn = NULL, entire = NA,
+                                anon_only = c("equivalent", "subclass")) {
+    classes <- c("equivalent", "subclass", "disjoint")
+
+    both <- intersect(entire, anon_only)
+    if (!length(both) == 0 && is.na(both)) {
+        rlang::abort("At least one class must be specified in `entire` or `anon_only`.")
+    }
+    if (length(both) > 0) {
+        rlang::abort("Each class type can only be specified in one of `all` or `anon_only`.")
+    }
+
+    entire_invalid <- !entire %in% classes
+    if (!is.na(entire) && any(entire_invalid)) {
+        rlang::abort(
+            paste0(
+                "`entire` must include only one or more of ",
+                collapse_to_string(classes, delim = ", "),
+                "; not ",
+                collapse_to_string(entire[entire_invalid], delim = ", ")
+            )
+        )
+    }
+    anon_invalid <- !anon_only %in% classes
+    if (!is.na(anon_only) && any(anon_invalid)) {
+        rlang::abort(
+            paste0(
+                "`anon_only` must include only one or more of ",
+                collapse_to_string(classes, delim = ", "),
+                "; not ",
+                collapse_to_string(anon_only[anon_invalid], delim = ", ")
+            )
+        )
+    }
+
+    ofn_class_stmts <- c(
+        "equivalent" = "EquivalentClasses", "subclass" = "SubClassOf",
+        "disjoint" = "DisjointClasses"
+    )
+
+    extractors <- c(
+        ofn_class_stmts[entire],
+        paste0(ofn_class_stmts[anon_only], ".*Object")
+    )
+
+    if (rlang::is_string(ofn)) {
+        if (!file.exists(ofn)) {
+            rlang::abort(
+                c(
+                    "`ofn` must be the full path to an OWL functional syntax file.",
+                    i = "Did you use the path to the HumanDiseaseOntology repo to access doid-edit.owl?",
+                    "This approach was removed in DO.utils 0.2.7. Provide the full path instead."
+                )
+            )
+        }
+        ofn <- readr::read_lines(ofn)
+    }
+
+    axioms <- purrr::set_names(
+        purrr::map(extractors, grep, x = ofn, value = TRUE),
+        nm = c(entire, anon_only)
+    )
+
+    axioms
 }
 
 
-#' Extract Equivalent Class Axioms
+#' Extract Equivalent Class Axioms (DEPRECATED)
 #'
 #' Extract `owl:equivalentClass` axioms from the doid-edit.owl file.
 #'
@@ -344,12 +413,13 @@ extract_class_axiom <- function(DO_repo) {
 #' @family `extract_*_axiom` functions
 #' @export
 extract_eq_axiom <- function(DO_repo) {
+    rlang::warn("This function is deprecated. Use `extract_class_axiom()` instead.")
     doid_edit <- read_doid_edit(DO_repo)
     grep("EquivalentClasses", doid_edit, value = TRUE)
 }
 
 
-#' Extract 'Subclass Of' Axioms
+#' Extract 'Subclass Of' Axioms (DEPRECATED)
 #'
 #' Extract `owl:subClassOf` axioms from the doid-edit.owl file.
 #'
@@ -361,6 +431,7 @@ extract_eq_axiom <- function(DO_repo) {
 #' @family `extract_*_axiom` functions
 #' @export
 extract_subclass_axiom <- function(DO_repo) {
+    rlang::warn("This function is deprecated. Use `extract_class_axiom()` instead.")
     doid_edit <- read_doid_edit(DO_repo)
     grep("SubClassOf.*Object", doid_edit, value = TRUE)
 }

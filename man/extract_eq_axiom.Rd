@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract.R
 \name{extract_eq_axiom}
 \alias{extract_eq_axiom}
-\title{Extract Equivalent Class Axioms}
+\title{Extract Equivalent Class Axioms (DEPRECATED)}
 \usage{
 extract_eq_axiom(DO_repo)
 }
@@ -18,7 +18,6 @@ Extract \code{owl:equivalentClass} axioms from the doid-edit.owl file.
 }
 \seealso{
 Other \verb{extract_*_axiom} functions: 
-\code{\link{extract_class_axiom}()},
 \code{\link{extract_subclass_axiom}()}
 }
 \concept{\verb{extract_*_axiom} functions}
