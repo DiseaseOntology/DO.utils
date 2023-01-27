@@ -190,7 +190,7 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
 
 #' Extract Publication Date from PubMed Citations
 #'
-#' Extracts most complete publication date possible from Pubmed citations.
+#' Extracts most complete publication date possible from PubMed citations.
 #'
 #' This function uses a step-wise approach, attempting first to extract a full
 #' date, subsequently a year & month and, if that is not available, just the
