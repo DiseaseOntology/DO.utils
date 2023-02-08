@@ -1,5 +1,9 @@
 # DO.utils (development version)
 
+## Updates
+* `collapse_col()` gained all the methods of `collapse_col_flex()`.
+
+
 # DO.utils 0.2.6
 
 Change license to CC0 1.0 Universal to match standard for the Human Disease

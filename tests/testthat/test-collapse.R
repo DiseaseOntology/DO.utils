@@ -107,6 +107,30 @@ expect_unique_rows <- function(object, n) {
     invisible(act$val)
 }
 
+# first method
+z_first <- tibble::tibble(
+    x = c(1, 2, 3, 4, 4),
+    y = c("a", "a", "b", "c", "e"),
+    z = c("Z", "Y", "X", "W", "U")
+)
+yz_first <- tibble::tibble(
+    x = c(1, 2, 3, 4),
+    y = c("a", "a", "b", "c"),
+    z = c("Z", "Y", "X", "W")
+)
+
+
+# last method
+z_last <- tibble::tibble(
+    x = c(1, 2, 3, 4, 4),
+    y = c("a", "a", "b", "c", "e"),
+    z = c("Z", "Y", "X", "V", "U")
+)
+yz_last <- tibble::tibble(
+    x = c(1, 2, 3, 4),
+    y = c("a", "a", "b", "e"),
+    z = c("Z", "Y", "X", "U")
+)
 
 #### collapse_col() ####
 
@@ -120,6 +144,16 @@ test_that("collapse_col() works", {
 
 test_that("collapse_col(): duplicated rows (3-4) are always collapsed", {
     expect_unique_rows(collapse_col(cc_df, y), nrow(cc_df) - 1)
+})
+
+test_that("collapse_col(method = 'first') works", {
+    expect_identical(collapse_col(cc_df, z, method = 'first'), z_first)
+    expect_identical(collapse_col(cc_df, c(y, z), method = 'first'), yz_first)
+})
+
+test_that("collapse_col(method = 'last') works", {
+    expect_identical(collapse_col(cc_df, z, method = 'last'), z_last)
+    expect_identical(collapse_col(cc_df, c(y, z), method = 'last'), yz_last)
 })
 
 
@@ -155,31 +189,9 @@ test_that("collapse_col_flex() methods work for character types", {
         yz_unique
     )
 
-    # first method
-    z_first <- tibble::tibble(
-        x = c(1, 2, 3, 4, 4),
-        y = c("a", "a", "b", "c", "e"),
-        z = c("Z", "Y", "X", "W", "U")
-    )
-    yz_first <- tibble::tibble(
-        x = c(1, 2, 3, 4),
-        y = c("a", "a", "b", "c"),
-        z = c("Z", "Y", "X", "W")
-    )
     expect_identical(collapse_col_flex(cc_df, z, method = "first"), z_first)
     expect_identical(collapse_col_flex(cc_df, y, z, method = "first"), yz_first)
 
-    # last method
-    z_last <- tibble::tibble(
-        x = c(1, 2, 3, 4, 4),
-        y = c("a", "a", "b", "c", "e"),
-        z = c("Z", "Y", "X", "V", "U")
-    )
-    yz_last <- tibble::tibble(
-        x = c(1, 2, 3, 4),
-        y = c("a", "a", "b", "e"),
-        z = c("Z", "Y", "X", "U")
-    )
     expect_identical(collapse_col_flex(cc_df, z, method = "last"), z_last)
     expect_identical(collapse_col_flex(cc_df, y, z, method = "last"), yz_last)
 })

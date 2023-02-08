@@ -4,7 +4,7 @@
 \alias{collapse_col}
 \title{Collapse Column(s)}
 \usage{
-collapse_col(df, .cols, delim = "|")
+collapse_col(df, .cols, delim = "|", method = "unique")
 }
 \arguments{
 \item{df}{a data.frame}

@@ -72,13 +72,20 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #' collapse_col(cc_df, c(x, z))
 #'
 #' @export
-collapse_col <- function(df, .cols, delim = "|") {
+collapse_col <- function(df, .cols, delim = "|", method = "unique") {
+    valid_methods <- c("unique", "first", "last")
+    method <- match.arg(method, choices = valid_methods)
+
     df %>%
         dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
         dplyr::summarize(
             dplyr::across(
                 .cols = {{ .cols }},
-                .fns = ~ unique_to_string(.x, delim = delim, na.rm = TRUE)
+                .fns = ~ collapse_method(
+                    .x,
+                    method = method,
+                    delim = delim
+                )
             )
         ) %>%
         dplyr::ungroup() %>%
