@@ -32,10 +32,14 @@ to_character.default <- function(x, ...) {
 
 # collapse_col_flex() helpers ---------------------------------------------
 
-collapse_method <- function(.col, method = "unique", delim = "|") {
+collapse_method <- function(.col, method = "unique", delim = "|", na.rm = FALSE) {
 
     if (method == "unique") {
-        return(unique_to_string(.col, delim = delim))
+        return(unique_to_string(.col, delim = delim, na.rm = na.rm))
+    }
+
+    if (na.rm) {
+        .col <- na.omit(.col)
     }
 
     method_fxn <- list(
