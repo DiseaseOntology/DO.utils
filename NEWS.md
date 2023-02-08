@@ -1,7 +1,8 @@
 # DO.utils (development version)
 
 ## Updates
-* `collapse_col()` gained all the methods of `collapse_col_flex()`.
+* `collapse_col()` gained all the methods of `collapse_col_flex()`, along with
+`na.rm` used by all methods.
 
 
 # DO.utils 0.2.6

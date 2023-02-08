@@ -4,7 +4,7 @@
 \alias{collapse_col}
 \title{Collapse Column(s)}
 \usage{
-collapse_col(df, .cols, delim = "|", method = "unique")
+collapse_col(df, .cols, delim = "|", method = "unique", na.rm = FALSE)
 }
 \arguments{
 \item{df}{a data.frame}
@@ -12,6 +12,9 @@ collapse_col(df, .cols, delim = "|", method = "unique")
 \item{.cols}{the name of the column in the data.frame to collapse}
 
 \item{delim}{A delimiter to place between vector elements (default: "|").}
+
+\item{na.rm}{A logical scalar indicating whether \code{NA} values should be
+removed (default: \code{FALSE}).}
 }
 \value{
 A data.frame with the specified columns collapsed. Also \strong{NOTE} the

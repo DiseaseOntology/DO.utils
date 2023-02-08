@@ -157,6 +157,79 @@ test_that("collapse_col(method = 'last') works", {
 })
 
 
+test_that("collapse_col(na.rm = TRUE) works with NA in collapsed cols", {
+    cc_na <- tibble::tibble(
+        x = c(1, 2, 3, 3, 4, 4, 4),
+        y = c("a", "a", "b", "b", "c", "c", NA_character_),
+        z = c("Z", "Y", "X", NA_character_, "W", "V", "U")
+    )
+    yz_na_uniq <- tibble::tibble(
+        x = c(1, 2, 3, 4),
+        y = c("a", "a", "b", "c"),
+        z = c("Z", "Y", "X", "W|V|U")
+    )
+    yz_na_first <- tibble::tibble(
+        x = c(1, 2, 3, 4),
+        y = c("a", "a", "b", "c"),
+        z = c("Z", "Y", "X", "W")
+    )
+    yz_na_last <- tibble::tibble(
+        x = c(1, 2, 3, 4),
+        y = c("a", "a", "b", "c"),
+        z = c("Z", "Y", "X", "U")
+    )
+
+    expect_identical(
+        collapse_col(cc_na, c(y, z), method = 'unique', na.rm = TRUE),
+        yz_na_uniq
+    )
+    expect_identical(
+        collapse_col(cc_na, c(y, z), method = 'first', na.rm = TRUE),
+        yz_na_first
+    )
+    expect_identical(
+        collapse_col(cc_na, c(y, z), method = 'last', na.rm = TRUE),
+        yz_na_last
+    )
+})
+
+test_that("collapse_col(na.rm = TRUE) works with NA in non-collapsed cols", {
+    cc_na <- tibble::tibble(
+        x = c(1, 2, 3, 3, 4, NA_character_, 4),
+        y = c("a", "a", "b", "b", "c", "c", "e"),
+        z = c("Z", "Y", "X", "X", "W", "V", "U")
+    )
+    yz_na_uniq <- tibble::tibble(
+        x = c(1, 2, 3, 4, NA_character_),
+        y = c("a", "a", "b", "c|e", "c"),
+        z = c("Z", "Y", "X", "W|U", "V")
+    )
+    yz_na_first <- tibble::tibble(
+        x = c(1, 2, 3, 4, NA_character_),
+        y = c("a", "a", "b", "c", "c"),
+        z = c("Z", "Y", "X", "W", "V")
+    )
+    yz_na_last <- tibble::tibble(
+        x = c(1, 2, 3, 4, NA_character_),
+        y = c("a", "a", "b", "e", "c"),
+        z = c("Z", "Y", "X", "U", "V")
+    )
+
+    expect_identical(
+        collapse_col(cc_na, c(y, z), method = 'unique', na.rm = TRUE),
+        yz_na_uniq
+    )
+    expect_identical(
+        collapse_col(cc_na, c(y, z), method = 'first', na.rm = TRUE),
+        yz_na_first
+    )
+    expect_identical(
+        collapse_col(cc_na, c(y, z), method = 'last', na.rm = TRUE),
+        yz_na_last
+    )
+})
+
+
 #### collapse_col_flex() ####
 
 test_that("collapse_col_flex(): duplicated rows (3-4) are always collapsed", {

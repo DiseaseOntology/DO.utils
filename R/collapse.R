@@ -72,7 +72,8 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #' collapse_col(cc_df, c(x, z))
 #'
 #' @export
-collapse_col <- function(df, .cols, delim = "|", method = "unique") {
+collapse_col <- function(df, .cols, delim = "|", method = "unique",
+                         na.rm = FALSE) {
     valid_methods <- c("unique", "first", "last")
     method <- match.arg(method, choices = valid_methods)
 
@@ -84,7 +85,8 @@ collapse_col <- function(df, .cols, delim = "|", method = "unique") {
                 .fns = ~ collapse_method(
                     .x,
                     method = method,
-                    delim = delim
+                    delim = delim,
+                    na.rm = na.rm
                 )
             )
         ) %>%
