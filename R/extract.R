@@ -364,3 +364,78 @@ extract_subclass_axiom <- function(DO_repo) {
     doid_edit <- read_doid_edit(DO_repo)
     grep("SubClassOf.*Object", doid_edit, value = TRUE)
 }
+
+
+#' Extract OWL/RDF as a tidygraph
+#'
+#' Extract 'nodes' and their 'parents' defined by a SPARQL `query` from OWL/RDF
+#' as a tidygraph.
+#'
+#' @inheritParams access_owl_xml
+#' @param query A SPARQL 1.1 query, as a string or the path to a .sparql/.rq
+#'     file. If `NULL`, input is assumed to be an OBO Foundry ontology and the
+#'     `oboInOwl:id` and `rdfs:label` of all OBO classes will be extracted. See
+#'     "Query Requirements" section for more information.
+#' @param collapse_method The method to use when collapsing extra data columns,
+#'     as a string. See "Query Requirements" section for  more information.
+#' @param debug _\[Intended for developers only\]_ Whether to debug execution.
+#'     Returns all intermediate objects as part of output.
+#'
+#' @section Query Requirements:
+#' [tidygraph](tidygraph::tidygraph-package) expects _unique_ child-parent
+#' relationships, so at a minimum the SPARQL `query` should include `?id` (some
+#' identifier for a 'child') and `?parent` (some identifier for each child's
+#' parent(s)). All additional output variables specified in the SPARQL query
+#' will be treated as 'node' annotations and collapsed using a method from
+#' [collapse_col_flex()] to prevent duplication of records.
+#'
+#' @export
+extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
+                                 debug = FALSE) {
+    owl_xml <- access_owl_xml(owl_xml)
+    if (debug) {
+        info <- list(owl_xml = owl_xml)
+        on.exit(return(owl_xml))
+    }
+
+    if (is.null(query)) {
+        query <- "
+            SELECT ?id ?label ?parent ?plabel
+            WHERE {
+                ?class a owl:Class ;
+                    oboInOwl:id ?id ;
+                    rdfs:label ?label ;
+                    rdfs:subClassOf ?p_iri .
+
+                ?p_iri oboInOwl:id ?parent ;
+                    rdfs:label ?plabel .
+            }"
+    }
+    if (debug) info["query"] <- query
+
+    qres <- owl_xml$query(query) %>%
+        tidy_sparql()
+    qres <- collapse_col_flex(
+        qres,
+        names(qres)[!names(qres) %in% c("id", "parent")],
+        method = collapse_method
+    )
+    if (debug) info["query_res"] <- qres
+
+    annotate <- dplyr::bind_rows(
+        dplyr::select(qres, -dplyr::one_of("parent", "plabel")),
+        dplyr::select(qres, id = parent, label = plabel)
+    ) %>%
+        dplyr::rename(name = id) %>%
+        unique()
+    if (debug) info["annotation_df"] <- annotate
+
+    tg <- tidygraph::as_tbl_graph(
+        dplyr::select(qres, id, parent)
+    ) %>%
+        tidygraph::activate(nodes) %>%
+        dplyr::left_join(annotate, by = "name")
+    if (debug) info["tidygraph"] <- tg
+
+    tg
+}

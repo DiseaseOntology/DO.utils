@@ -4,6 +4,12 @@
 * `collapse_col()` gained all the methods of `collapse_col_flex()`, along with
 `na.rm` used by all methods.
 
+## New
+* `extract_as_tidygraph()`: Extracts nodes and relationships identified by a
+    SPARQL query from RDF/XML file and returns it as a tidygraph.
+* `write_graphml()`: Writes a graph object (tidygraph/iGraph) to a .graphml
+    file.
+
 
 # DO.utils 0.2.6
 

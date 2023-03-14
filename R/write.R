@@ -16,3 +16,24 @@ write_access <- function(names) {
         TRUE ~ FALSE
     )
 }
+
+#' Write a Graph to .graphml File
+#'
+#' Writes a graph object (tidygraph/iGraph) to a file as
+#' [GraphML](https://en.wikipedia.org/wiki/GraphML).
+#'
+#' @param graph A [tidygraph](tidygraph::tidygraph-package) or
+#'     [igraph](igraph::igraph-package) object.
+#' @param file The file path to write to, as a string. If '.graphml' extension
+#'     is missing, it will be appended.
+#'
+#' @returns Absolute path of .graphml file written.
+#'
+#' @export
+write_graphml <- function(graph, file) {
+    if (tools::file_ext(file) != "graphml") {
+        file <- paste0(file, ".graphml")
+    }
+    igraph::write_graph(tidygraph, file, format = "graphml")
+    file.path(getwd(), file)
+}
