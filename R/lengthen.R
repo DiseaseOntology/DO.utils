@@ -63,7 +63,7 @@ lengthen_col <- function(data, cols, delim = "|", trim = TRUE, convert = FALSE) 
         data,
         dplyr::across(
             {{ .cols }},
-            .fns = ~ stringr::str_split(.x, stringr::coll(delim)),
+            .fns = ~ stringr::str_split(.x, stringr::coll(delim))
         )
     )
 
