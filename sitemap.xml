@@ -115,6 +115,9 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/extract_ScoredMatch.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/extract_as_tidygraph.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/extract_class_axiom.html</loc>
   </url>
   <url>
@@ -359,5 +362,8 @@
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/write_access.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/write_graphml.html</loc>
   </url>
 </urlset>
