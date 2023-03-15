@@ -35,24 +35,28 @@ more than one result in the case of ties.}
 a term.}
 
 \item{...}{
-  Arguments passed on to \code{\link[tidyr:nest]{tidyr::unnest}}
+  Arguments passed on to \code{\link[tidyr:unnest]{tidyr::unnest}}
   \describe{
     \item{\code{keep_empty}}{By default, you get one row of output for each element
-of the list your unchopping/unnesting. This means that if there's a
-size-0 element (like \code{NULL} or an empty data frame), that entire row
-will be dropped from the output. If you want to preserve all rows,
-use \code{keep_empty = TRUE} to replace size-0 elements with a single row
+of the list that you are unchopping/unnesting. This means that if there's a
+size-0 element (like \code{NULL} or an empty data frame or vector), then that
+entire row will be dropped from the output. If you want to preserve all
+rows, use \code{keep_empty = TRUE} to replace size-0 elements with a single row
 of missing values.}
     \item{\code{ptype}}{Optionally, a named list of column name-prototype pairs to
 coerce \code{cols} to, overriding the default that will be guessed from
-combining the individual values.}
+combining the individual values. Alternatively, a single empty ptype
+can be supplied, which will be applied to all \code{cols}.}
+    \item{\code{names_sep}}{If \code{NULL}, the default, the outer names will come from the
+inner names. If a string, the outer names will be formed by pasting
+together the outer and the inner column names, separated by \code{names_sep}.}
     \item{\code{names_repair}}{Used to check that output data frame has valid
 names. Must be one of the following options:
 \itemize{
-\item "minimal": no name repair or checks, beyond basic existence,
-\item "unique": make sure names are unique and not empty,
-\item "check_unique": (the default), no name repair, but check they are unique,
-\item "universal": make the names unique and syntactic
+\item \verb{"minimal}": no name repair or checks, beyond basic existence,
+\item \verb{"unique}": make sure names are unique and not empty,
+\item \verb{"check_unique}": (the default), no name repair, but check they are unique,
+\item \verb{"universal}": make the names unique and syntactic
 \item a function: apply custom name repair.
 \item \link[tidyr]{tidyr_legacy}: use the name repair from tidyr 0.8.
 \item a formula: a purrr-style anonymous function (see \code{\link[rlang:as_function]{rlang::as_function()}})
