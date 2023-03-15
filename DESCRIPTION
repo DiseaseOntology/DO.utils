@@ -34,7 +34,7 @@ Imports:
     rscopus,
     stats,
     stringdist,
-    stringr,
+    stringr (>= 1.5.0),
     tibble,
     tidyr,
     tidyselect,
