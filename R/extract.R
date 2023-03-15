@@ -392,10 +392,10 @@ extract_subclass_axiom <- function(DO_repo) {
 #' @export
 extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
                                  debug = FALSE) {
-    owl_xml <- access_owl_xml(owl_xml)
+    x <- access_owl_xml(x)
     if (debug) {
-        info <- list(owl_xml = owl_xml)
-        on.exit(return(owl_xml))
+        info <- list(x = x)
+        on.exit(return(x))
     }
 
     if (is.null(query)) {
@@ -413,9 +413,9 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
     }
     if (debug) info["query"] <- query
 
-    qres <- owl_xml$query(query) %>%
+    qres <- x$query(query) %>%
         tidy_sparql()
-    qres <- collapse_col_flex(
+    qres <- collapse_col(
         qres,
         names(qres)[!names(qres) %in% c("id", "parent")],
         method = collapse_method
