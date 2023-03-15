@@ -13,6 +13,9 @@ collapse_col(df, .cols, delim = "|", method = "unique", na.rm = FALSE)
 
 \item{delim}{A delimiter to place between vector elements (default: "|").}
 
+\item{method}{A string identifying a function to use; one of "unique",
+"first", or "last".}
+
 \item{na.rm}{A logical scalar indicating whether \code{NA} values should be
 removed (default: \code{FALSE}).}
 }

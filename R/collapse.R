@@ -46,6 +46,8 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #'
 #' @param df a data.frame
 #' @param .cols the name of the column in the data.frame to collapse
+#' @param method A string identifying a function to use; one of "unique",
+#'     "first", or "last".
 #' @inheritParams vctr_to_string
 #'
 #' @return
