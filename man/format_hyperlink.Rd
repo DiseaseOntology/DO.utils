@@ -12,10 +12,10 @@ format_hyperlink(url, as, ..., txt = NULL, preserve_NA = TRUE)
 \item{as}{What format to use for the hyperlink, as a string; one of "gs"
 (Google Sheet), "xlsx" (Excel), or "html".}
 
-\item{...}{One or more name-value pairs of html \verb{<a>}
-\href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
+\item{...}{\emph{(Only for \code{as = "html"})} One or more name-value pairs of html
+\verb{<a>} \href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
 
-\item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
+\item{txt}{\emph{(Optional)} The text to display for each link, as a character
 vector. If \code{NULL} (default), the URL itself will serve as the text. If a
 string, the value will be used for the text of each hyperlink.}
 

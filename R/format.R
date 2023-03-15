@@ -271,9 +271,9 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #' @param url One or more URLs, as a character vector.
 #' @param as What format to use for the hyperlink, as a string; one of "gs"
 #' (Google Sheet), "xlsx" (Excel), or "html".
-#' @param ... One or more name-value pairs of html `<a>`
-#' [attributes](https://www.w3schools.com/tags/tag_a.asp).
-#' @param txt _(OPTIONAL)_ The text to display for each link, as a character
+#' @param ... _(Only for `as = "html"`)_ One or more name-value pairs of html
+#' `<a>` [attributes](https://www.w3schools.com/tags/tag_a.asp).
+#' @param txt _(Optional)_ The text to display for each link, as a character
 #' vector. If `NULL` (default), the URL itself will serve as the text. If a
 #' string, the value will be used for the text of each hyperlink.
 #' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
