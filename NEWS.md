@@ -3,6 +3,9 @@
 ## Updates
 * `collapse_col()` gained all the methods of `collapse_col_flex()`, along with
 `na.rm` used by all methods.
+* `append_to_url()` and `build_hyperlink()` no longer add a trailing slash to
+the end of URLs when there is not one. Also, a new `sep` argument has been
+added to provide greater control.
 
 ## New
 * `extract_as_tidygraph()`: Extracts nodes and relationships identified by a

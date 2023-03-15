@@ -55,25 +55,24 @@ append_empty_col <- function(df, col, order = FALSE) {
 #' @param x Value(s) to append, as a character vector.
 #' @param url A URL or a URL name recognized by this package, as a string;
 #' see [get_url] for recognized names.
+#' @param sep The separator to use between `url` and `x`, as a string
+#' (default = ""). If `url` ends in `sep`, an additional `sep` will not be
+#' added.
 #' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
 #' will result in `NA` being appended to the end of `url` (almost certainly not
 #' desired).
 #'
 #' @export
-append_to_url <- function(x, url, preserve_NA = TRUE) {
-
+append_to_url <- function(x, url, sep = "", preserve_NA = TRUE) {
     url <- tryCatch(get_url(url), error = function(e) url)
 
-    # add '/' if no terminal '/' in URL
-    if (stringr::str_detect(url, "/$")) {
+    if (stringr::str_detect(url, paste0(stringr::str_escape(sep), "$"))) {
         new_url <- paste0(url, x)
     } else {
-        new_url <- paste0(url, "/", x)
+        new_url <- paste(url, x, sep = sep)
     }
 
-    if (preserve_NA) {
-        new_url[is.na(x)] <- NA
-    }
+    if (preserve_NA) new_url[is.na(x)] <- NA
 
     new_url
 }

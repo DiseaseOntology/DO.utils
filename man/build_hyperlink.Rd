@@ -4,7 +4,7 @@
 \alias{build_hyperlink}
 \title{Build Hyperlinks}
 \usage{
-build_hyperlink(x, url, as, ..., txt = x, preserve_NA = TRUE)
+build_hyperlink(x, url, as, ..., sep = "", txt = x, preserve_NA = TRUE)
 }
 \arguments{
 \item{x}{Value(s) to append, as a character vector.}
@@ -15,8 +15,12 @@ see \link{get_url} for recognized names.}
 \item{as}{What format to use for the hyperlink, as a string; one of "gs"
 (Google Sheet), "xlsx" (Excel), or "html".}
 
-\item{...}{One or more name-value pairs of html \verb{<a>}
-\href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
+\item{...}{\emph{(Only for \code{as = "html"})} One or more name-value pairs of html
+\verb{<a>} \href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
+
+\item{sep}{The separator to use between \code{url} and \code{x}, as a string
+(default = ""). If \code{url} ends in \code{sep}, an additional \code{sep} will not be
+added.}
 
 \item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
 vector. The default uses \code{x} as the text. If \code{NULL}, the full URL will serve

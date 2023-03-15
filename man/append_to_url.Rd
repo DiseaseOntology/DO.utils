@@ -4,13 +4,17 @@
 \alias{append_to_url}
 \title{Append to URL}
 \usage{
-append_to_url(x, url, preserve_NA = TRUE)
+append_to_url(x, url, sep = "", preserve_NA = TRUE)
 }
 \arguments{
 \item{x}{Value(s) to append, as a character vector.}
 
 \item{url}{A URL or a URL name recognized by this package, as a string;
 see \link{get_url} for recognized names.}
+
+\item{sep}{The separator to use between \code{url} and \code{x}, as a string
+(default = ""). If \code{url} ends in \code{sep}, an additional \code{sep} will not be
+added.}
 
 \item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
 will result in \code{NA} being appended to the end of \code{url} (almost certainly not
