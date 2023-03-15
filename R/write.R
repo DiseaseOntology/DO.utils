@@ -34,6 +34,6 @@ write_graphml <- function(graph, file) {
     if (tools::file_ext(file) != "graphml") {
         file <- paste0(file, ".graphml")
     }
-    igraph::write_graph(tidygraph, file, format = "graphml")
+    igraph::write_graph(graph, file, format = "graphml")
     file.path(getwd(), file)
 }
