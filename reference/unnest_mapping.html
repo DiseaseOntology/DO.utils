@@ -112,25 +112,31 @@ a term.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Arguments passed on to <code><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">tidyr::unnest</a></code></p><dl><dt><code>keep_empty</code></dt>
+<dd><p>Arguments passed on to <code><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">tidyr::unnest</a></code></p><dl><dt><code>keep_empty</code></dt>
 <dd><p>By default, you get one row of output for each element
-of the list your unchopping/unnesting. This means that if there's a
-size-0 element (like <code>NULL</code> or an empty data frame), that entire row
-will be dropped from the output. If you want to preserve all rows,
-use <code>keep_empty = TRUE</code> to replace size-0 elements with a single row
+of the list that you are unchopping/unnesting. This means that if there's a
+size-0 element (like <code>NULL</code> or an empty data frame or vector), then that
+entire row will be dropped from the output. If you want to preserve all
+rows, use <code>keep_empty = TRUE</code> to replace size-0 elements with a single row
 of missing values.</p></dd>
 
     <dt><code>ptype</code></dt>
 <dd><p>Optionally, a named list of column name-prototype pairs to
 coerce <code>cols</code> to, overriding the default that will be guessed from
-combining the individual values.</p></dd>
+combining the individual values. Alternatively, a single empty ptype
+can be supplied, which will be applied to all <code>cols</code>.</p></dd>
+
+    <dt><code>names_sep</code></dt>
+<dd><p>If <code>NULL</code>, the default, the outer names will come from the
+inner names. If a string, the outer names will be formed by pasting
+together the outer and the inner column names, separated by <code>names_sep</code>.</p></dd>
 
     <dt><code>names_repair</code></dt>
 <dd><p>Used to check that output data frame has valid
-names. Must be one of the following options:</p><ul><li><p>"minimal": no name repair or checks, beyond basic existence,</p></li>
-<li><p>"unique": make sure names are unique and not empty,</p></li>
-<li><p>"check_unique": (the default), no name repair, but check they are unique,</p></li>
-<li><p>"universal": make the names unique and syntactic</p></li>
+names. Must be one of the following options:</p><ul><li><p><code>"minimal</code>": no name repair or checks, beyond basic existence,</p></li>
+<li><p><code>"unique</code>": make sure names are unique and not empty,</p></li>
+<li><p><code>"check_unique</code>": (the default), no name repair, but check they are unique,</p></li>
+<li><p><code>"universal</code>": make the names unique and syntactic</p></li>
 <li><p>a function: apply custom name repair.</p></li>
 <li><p><a href="https://tidyr.tidyverse.org/reference/tidyr_legacy.html" class="external-link">tidyr_legacy</a>: use the name repair from tidyr 0.8.</p></li>
 <li><p>a formula: a purrr-style anonymous function (see <code><a href="https://rlang.r-lib.org/reference/as_function.html" class="external-link">rlang::as_function()</a></code>)</p></li>
