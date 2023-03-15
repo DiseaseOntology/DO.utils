@@ -35,5 +35,5 @@ write_graphml <- function(graph, file) {
         file <- paste0(file, ".graphml")
     }
     igraph::write_graph(graph, file, format = "graphml")
-    file.path(getwd(), file)
+    normalizePath(file)
 }
