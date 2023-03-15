@@ -20,6 +20,7 @@ Imports:
     glue,
     googlesheets4,
     httr,
+    igraph,
     jsonlite,
     lubridate,
     magrittr,

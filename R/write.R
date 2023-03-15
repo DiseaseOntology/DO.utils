@@ -23,7 +23,7 @@ write_access <- function(names) {
 #' [GraphML](https://en.wikipedia.org/wiki/GraphML).
 #'
 #' @param graph A [tidygraph](tidygraph::tidygraph-package) or
-#'     [igraph](https://cran.r-project.org/package=igraph) object.
+#'     [igraph](igraph::igraph-package) object.
 #' @param file The file path to write to, as a string. If '.graphml' extension
 #'     is missing, it will be appended.
 #'
