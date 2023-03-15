@@ -39,7 +39,7 @@ collapse_method <- function(.col, method = "unique", delim = "|", na.rm = FALSE)
     }
 
     if (na.rm) {
-        .col <- na.omit(.col)
+        .col <- stats::na.omit(.col)
     }
 
     method_fxn <- list(
