@@ -1,5 +1,9 @@
 # DO.utils (development version)
 
+## Dependencies
+* reticulate updated to >=v1.28 in an effort to resolve python package
+installation issues; see https://github.com/DiseaseOntology/DO.utils/issues/12.
+
 ## Updates
 * `collapse_col()` gained all the methods of `collapse_col_flex()`, along with
 `na.rm` used by all methods.
