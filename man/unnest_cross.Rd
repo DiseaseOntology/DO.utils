@@ -22,8 +22,7 @@ use \code{keep_empty = TRUE} to replace size-0 elements with a single row
 of missing values.}
     \item{\code{ptype}}{Optionally, a named list of column name-prototype pairs to
 coerce \code{cols} to, overriding the default that will be guessed from
-combining the individual values. Alternatively, a single empty ptype
-can be supplied, which will be applied to all \code{cols}.}
+combining the individual values.}
     \item{\code{names_repair}}{Used to check that output data frame has valid
 names. Must be one of the following options:
 \itemize{
