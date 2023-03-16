@@ -324,6 +324,7 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
     }
 
     if (as == "gs") {
+        warn_attr(...)
         if (is.null(txt)) {
             formula <- as.character(glue::glue('=HYPERLINK("{url}")'))
         } else {
@@ -333,6 +334,7 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
     }
 
     if (as == "xlsx") {
+        warn_attr(...)
         if (is.null(txt)) {
             formatted <- url
             class(formatted) <- "hyperlink"

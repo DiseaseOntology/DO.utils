@@ -203,6 +203,37 @@ test_that("format_hyperlink(as = 'html') works with attributes", {
     )
 })
 
+test_that("format_hyperlink() warns when attributes used and not as = 'html'", {
+    gs_expect <- '=HYPERLINK(\"https://www.google.com/\")'
+    class(gs_expect) <- c("googlesheets4_formula", "vctrs_vctr")
+
+    xlsx_expect <- "https://www.google.com/"
+    class(xlsx_expect) <- "hyperlink"
+
+    expect_warning(
+        expect_equal(
+            format_hyperlink(
+                "https://www.google.com/",
+                "gs",
+                target = "_blank",
+                rel = "external"
+            ),
+            gs_expect
+        )
+    )
+    expect_warning(
+        expect_equal(
+            format_hyperlink(
+                "https://www.google.com/",
+                "xlsx",
+                target = "_blank",
+                rel = "external"
+            ),
+            xlsx_expect
+        )
+    )
+})
+
 test_that("format_hyperlink(preserve = 'url') returns NA from url input", {
     url <- c("https://www.google.com/", NA)
 
