@@ -58,11 +58,28 @@ glueV <- function(..., .envir = parent.frame()) {
 
 # For producing messages --------------------------------------------------
 
-msg_dots <- function(.msg, ..., .bullet = NULL) {
+msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {
     dots <- rlang::exprs(...)
     arg <- msg_dots_(dots)
     if (!is.null(.bullet)) {
         arg <- purrr::set_names(arg, nm = rep(.bullet, length(arg)))
+    }
+    if (!is.null(.which)) {
+        if (is.logical(.which) && length(.which) != length(dots)) {
+            rlang::abort("Logical .which must be same length as `...`")
+        }
+        if (is.numeric(.which)) {
+            in_rng <- dplyr::between(.which, 1, length(dots))
+            if (!all(in_rng)) {
+                rlang::abort(
+                    c(
+                        "Numeric .which must all be <= length of `...`",
+                        i = paste0("Not: ", to_range(.which[!in_rng]))
+                    )
+                )
+            }
+        }
+        arg <- arg[.which]
     }
 
     c(.msg, arg)
