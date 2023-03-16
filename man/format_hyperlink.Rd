@@ -4,7 +4,7 @@
 \alias{format_hyperlink}
 \title{Format URLs as Hyperlinks}
 \usage{
-format_hyperlink(url, as, ..., txt = NULL, preserve_NA = TRUE)
+format_hyperlink(url, as, ..., txt = NULL, preserve = "url")
 }
 \arguments{
 \item{url}{One or more URLs, as a character vector.}
@@ -16,12 +16,11 @@ format_hyperlink(url, as, ..., txt = NULL, preserve_NA = TRUE)
 \verb{<a>} \href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
 
 \item{txt}{\emph{(Optional)} The text to display for each link, as a character
-vector. If \code{NULL} (default), the URL itself will serve as the text. If a
-string, the value will be used for the text of each hyperlink.}
+vector. If \code{NULL} (default), the URL itself will serve as the text. If only
+one value is provided, it will be recycled.}
 
-\item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
-will result in hyperlinks built from \code{NA} values in \code{url} (almost
-certainly not desired).}
+\item{preserve}{The value to return when \code{url} is \code{NA}, as a string. One of
+"url" (default) or "txt".}
 }
 \description{
 Formats URLs as hyperlinks for Google Sheets, Excel, or html.
@@ -36,12 +35,12 @@ format_hyperlink("https://www.google.com", "gs")
 format_hyperlink("https://www.google.com", "xlsx")
 format_hyperlink("https://www.google.com", "html")
 
-# with `txt` (argument must be named)
+# with 'txt' (argument must be named)
 format_hyperlink("https://www.google.com", "gs", txt = "Google")
 format_hyperlink("https://www.google.com", "xlsx", txt = "Google")
 format_hyperlink("https://www.google.com", "html", txt = "Google")
 
-# html with `<a>` attributes
+# html with <a> attributes
 format_hyperlink(
     "https://www.google.com",
     "html",
@@ -50,9 +49,13 @@ format_hyperlink(
     rel = "external"
 )
 
-# `NA` values are passed through without modification by default but can be
-# made into hyperlinks when preserve_NA = FALSE
+# NA values in 'url' are passed through without modification by default. If
+# 'txt' is provided and preferred when 'url' is NA use preserve = "txt".
 format_hyperlink(c("https://www.google.com", NA), "gs")
-format_hyperlink(c("https://www.google.com", NA), "gs", preserve_NA = FALSE)
+format_hyperlink(
+    c("https://www.google.com", NA),
+    "gs",
+    txt = c("Google", "placeholder")
+)
 
 }
