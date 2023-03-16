@@ -54,3 +54,29 @@ all_duplicated <- function (x, ...)
 glueV <- function(..., .envir = parent.frame()) {
     glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
 }
+
+
+# For producing messages --------------------------------------------------
+
+msg_dots <- function(.msg, ..., .bullet = NULL) {
+    dots <- rlang::exprs(...)
+    arg <- msg_dots_(dots)
+    if (!is.null(.bullet)) {
+        arg <- purrr::set_names(arg, nm = rep(.bullet, length(arg)))
+    }
+
+    c(.msg, arg)
+}
+
+msg_dots_ <- function(x) {
+    x_val <- dplyr::if_else(
+        purrr::map_lgl(x, rlang::is_string),
+        paste0('"', x, '"'),
+        as.character(x)
+    )
+    dplyr::if_else(
+        names(x) == "",
+        x_val,
+        paste(names(x), x_val, sep = " = ")
+    )
+}
