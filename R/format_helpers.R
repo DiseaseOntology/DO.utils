@@ -409,3 +409,18 @@ expand_join_phrase <- function(x, placeholders) {
 
     out
 }
+
+
+# format_hyperlink() helpers ----------------------------------------------
+
+warn_attr <- function(...) {
+    if (length(list(...)) > 0) {
+        msg <- msg_dots(
+            "Arguments have been passed with `...`. Did you mean to use as = 'html'?",
+            ...,
+            .bullet = "i"
+        )
+
+        rlang::warn(msg, class = "accidental_dots")
+    }
+}
