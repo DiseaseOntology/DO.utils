@@ -350,13 +350,15 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
             unnamed <- names(attr) == ""
             if (any(unnamed)) {
                 rlang::abort(
-                    c(
+                    msg_dots(
                         "All hyperlink attributes in `...` must be named.",
-                        purrr::set_names(attr[unnamed], nm = rep("x", sum(unnamed)))
+                        ...,
+                        .which = unnamed
                     )
                 )
             }
 
+            attr <- list(...)
             html_attr <- paste0(
                 " ", names(attr), "=", sandwich_text(attr, '"'),
                 collapse = ""

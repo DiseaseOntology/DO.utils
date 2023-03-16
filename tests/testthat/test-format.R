@@ -201,6 +201,17 @@ test_that("format_hyperlink(as = 'html') works with attributes", {
         ),
         "<a href=\"https://www.google.com/\" target=\"_blank\" rel=\"external\">google</a>"
     )
+
+    expect_error(
+        format_hyperlink(
+            "https://www.google.com/",
+            "html",
+            target = "_blank",
+            "external", #unnamed argument
+            txt = "google"
+        ),
+        regexp = '"external"'
+    )
 })
 
 test_that("format_hyperlink() warns when attributes used and not as = 'html'", {
