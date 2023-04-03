@@ -405,48 +405,70 @@ plot_term_def_counts <- function(
 #' Plots the count of _non-obsolete_ terms in each major branch of the Human
 #' Disease Ontology.
 #'
-#' @param data_file The path to the file containing the latest DO branch counts,
-#'     as a string.
+#' @param DO_repo The local path to the HumanDiseaseOntology repo, as a string,
+#'     or a [DOrepo] object.
 #' @param out_dir The directory where the plot `"DO_branch_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
 #' @inheritParams plot_citedby
 #'
-#' @section Data Preparation:
-#' To prepare data, manually copy and paste stats from the Google Sheet
-#' [DO_github_release_log](https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614)
-#' or from `build/reports/branch-count.tsv` in the local repo where the release
-#' was generated.
-#'
 #' @export
-plot_branch_counts <- function(
-    data_file = "data/DO_release/branch_counts.csv",
-    out_dir = "graphics/website", w = 8, h = 5.6) {
+plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
+                               w = 8, h = 5.6) {
+    DO_repo <- access_DOrepo(DO_repo)
+    branch_query <- system.file(
+        "sparql/branch-count.rq",
+        package = "DO.utils",
+        mustWork = FALSE
+    )
 
-    branch_order <- c(syndrome = "Syndrome",
-                      physicalDisorder = "Physical Disorder",
-                      genetic = "Genetic Disease",
-                      metabolism = "Metabolism",
-                      mentalHealth = "Mental Health",
-                      cellularProliferation = "Cellular Proliferation",
-                      anatomicalEntity = "Anatomical Location",
-                      infectiousAgent = "Infectious Disease")
-
-    df <- readr::read_csv(data_file) %>%
+    asserted <- DO_repo$doid_non_classified$query(branch_query) %>%
+        tidy_sparql() %>%
+        dplyr::rename(Asserted = count)
+    total <- DO_repo$doid$query(branch_query) %>%
+        tidy_sparql() %>%
+        dplyr::rename(Total = count)
+    df <- dplyr::left_join(asserted, total, by = "branch") %>%
         dplyr::mutate(
-            DO_branches = factor(
-                dplyr::recode(.data$DO_branches, !!!branch_order),
-                levels = branch_order
+            Inferred = Total - Asserted,
+            branch = stringr::str_to_title(
+                stringr::str_remove(branch, "disease (of|by) ")
+            )
+        ) %>%
+        tidyr::pivot_longer(
+            cols = c(Asserted, Inferred),
+            names_to = "class_type",
+            values_to = "Count"
+        ) %>%
+        dplyr::mutate(
+            branch = factor(
+                branch,
+                levels = rev(
+                    c("Infectious Agent", "Anatomical Entity",
+                      "Cellular Proliferation", "Mental Health","Metabolism",
+                      "Genetic Disease", "Physical Disorder", "Syndrome")
+                )
+            ),
+            class_type = factor(
+                class_type,
+                levels = c("Inferred", "Asserted")
             )
         )
 
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_col(
-            ggplot2::aes(x = .data$DO_branches, y = .data$Count),
-            width = 0.6, fill = DO_colors["sat_light"]
+            ggplot2::aes(x = .data$branch, y = .data$Count, fill = class_type),
+            width = 0.6,
+            position = "stack"
+        ) +
+        ggplot2::scale_fill_manual(
+            name = "Class",
+            values = unname(DO_colors[c("sat_light", "sat")])
         ) +
         ggplot2::scale_y_continuous(
             name = NULL,
-            breaks = seq(0, round_up(max(df$Count), -3), by = 1000)
+            breaks = seq(0, round_up(max(df$Total), -3), by = 1000),
+            limits = c(0, round_up(max(df$Total), -3)),
+            expand = ggplot2::expansion(0, 0)
         ) +
         ggplot2::coord_flip() +
         theme_DO(base_size = 13) +
