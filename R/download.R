@@ -21,31 +21,40 @@
 #' `dest_file`(s) and `failed` = `url`(s).
 #'
 #' @export
-download_file <- function(url, dest_file, on_failure = "warn", ...) {
-    assertthat::assert_that(length(dest_file) == length(url))
-    on_failure <- match.arg(
-        on_failure,
-        choices = c("warn", "abort", "list_failed", "warn-list_failed", "skip")
-    )
-
-    dl_status <- download_status$new()
-    purrr::map2(
-        .x = url,
-        .y = dest_file,
-        .f = function(.url, .file) {
-            utils::download.file(url = .url, destfile = .file, ...) %>%
-                dl_status$check(.url, .file, abort = on_failure == "abort")
-        }
-    )
-
-    if (stringr::str_detect(on_failure, "^warn")) {
-        dl_status$warn()
-    }
-
-    dl_status$return(
-        w_failed = stringr::str_detect(on_failure, "list_failed$")
-    )
-}
+# download_file <- function(url, dest_file, on_failure = "warn", ...) {
+#     assertthat::assert_that(length(dest_file) == length(url))
+#     on_failure <- match.arg(
+#         on_failure,
+#         choices = c("warn", "abort", "list_failed", "warn-list_failed", "skip")
+#     )
+#
+#     dl_status <- download_status$new()
+#     purrr::map2(
+#         .x = url,
+#         .y = dest_file,
+#         .f = function(.url, .file) {
+#             res <- tryCatch(
+#                 utils::download.file(url = .url, destfile = .file, ...),
+#                 error = function(e) e,
+#                 warning = function(w) w,
+#                 message = function(m) m
+#             )
+#
+#
+#         }
+#                 %>%
+#                 dl_status$check(.url, .file, abort = on_failure == "abort")
+#         }
+#     )
+#
+#     if (stringr::str_detect(on_failure, "^warn")) {
+#         dl_status$warn()
+#     }
+#
+#     dl_status$return(
+#         w_failed = stringr::str_detect(on_failure, "list_failed$")
+#     )
+# }
 
 
 #' Download OBO Foundry Ontology File
@@ -171,67 +180,60 @@ download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
     download_file(url, dest_file, on_failure = "abort", ...)
 }
 
-# Import 'new()' method for Ref Classes
-#' @importFrom methods new
-NULL
 
-#' File Download Status (RefClass)
-#'
-#' A reference class to track file download status.
-#'
-#' @field successful A character vector for paths of successfully downloaded
-#'      files.
-#' @field failed A character vector for paths of files that failed to download
-#' @field fail_status An integer vector with an exit code from
-#'     [utils::download.file()] for each file in `failed`.
-#'
-#' @noRd
-download_status <- methods::setRefClass(
-    "download_status",
-    fields = list(
-        successful = "character",
-        failed = "character",
-        fail_status = "numeric"
-    ),
-    methods = list(
-       check = function(status, url, dest_file, abort = FALSE) {
-           "Check download status of file with choice to abort on failure."
-            if (status == 0) {
-                successful <<- c(successful, dest_file)
-            } else {
-                failed <<- c(failed, url)
-                fail_status <<- c(fail_status, status)
-            }
+# download_file() helpers -------------------------------------------------
 
-            if (abort & length(failed) > 0) {
-                if (length(successful) > 0) {
-                    # rlang::inform(c("Successfully downloaded:", successful))
-                    successful
-                }
-                rlang::abort(
-                    message = c("Download failed (url - exit code):",
-                                paste(failed, fail_status, sep = " - ")
-                    )
-                )
-            }
-        },
-        warn = function() {
-            "Warn about failed downloads."
-            if (length(failed) > 0) {
-                rlang::warn(
-                    message = c("Failed to download (file - exit code):",
-                                paste(failed, fail_status, sep = " - ")
-                    )
-                )
-            }
-        },
-        return = function(w_failed = FALSE) {
-            "Return successful file paths and, optionally, failed URLs."
-            if (w_failed) {
-                list(successful = successful, failed = failed)
-            } else {
-                successful
-            }
-        }
-    )
-)
+#' download_file <- function(...
+#'
+#' #' File Download Status (RefClass)
+#' #'
+#' #' A reference class to track file download status.
+#' #'
+#' #' @field successful A character vector for paths of successfully downloaded
+#' #'      files.
+#' #' @field failed A character vector for paths of files that failed to download
+#' #' @field fail_status An integer vector with an exit code from
+#' #'     [utils::download.file()] for each file in `failed`.
+#' #'
+#' #' @noRd
+#' check_download <- function(status, url, dest_file, abort = FALSE) {
+#'            "Check download status of file with choice to abort on failure."
+#'             if (status == 0) {
+#'                 successful <<- c(successful, dest_file)
+#'             } else {
+#'                 failed <<- c(failed, url)
+#'                 fail_status <<- c(fail_status, status)
+#'             }
+#'
+#'             if (abort & length(failed) > 0) {
+#'                 if (length(successful) > 0) {
+#'                     # rlang::inform(c("Successfully downloaded:", successful))
+#'                     successful
+#'                 }
+#'                 rlang::abort(
+#'                     message = c("Download failed (url - exit code):",
+#'                                 paste(failed, fail_status, sep = " - ")
+#'                     )
+#'                 )
+#'             }
+#'         },
+#'         warn = function() {
+#'             "Warn about failed downloads."
+#'             if (length(failed) > 0) {
+#'                 rlang::warn(
+#'                     message = c("Failed to download (file - exit code):",
+#'                                 paste(failed, fail_status, sep = " - ")
+#'                     )
+#'                 )
+#'             }
+#'         },
+#'         return = function(w_failed = FALSE) {
+#'             "Return successful file paths and, optionally, failed URLs."
+#'             if (w_failed) {
+#'                 list(successful = successful, failed = failed)
+#'             } else {
+#'                 successful
+#'             }
+#'         }
+#'     )
+#' )
