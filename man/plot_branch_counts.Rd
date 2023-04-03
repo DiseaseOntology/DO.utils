@@ -4,18 +4,27 @@
 \alias{plot_branch_counts}
 \title{Plot Branch Counts}
 \usage{
-plot_branch_counts(DO_repo, out_dir = "graphics/website", w = 8, h = 5.6)
+plot_branch_counts(
+  DO_repo,
+  out_dir = "graphics/website",
+  w = 8,
+  h = 5.6,
+  aspect_ratio = 1
+)
 }
 \arguments{
 \item{DO_repo}{The local path to the HumanDiseaseOntology repo, as a string,
 or a \link{DOrepo} object.}
 
 \item{out_dir}{The directory where the plot \code{"DO_branch_count.png"}
-should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
+should be saved, as a string. If \code{NULL}, the plot is not saved to disk.}
 
 \item{w}{The width of the plot in inches, as numeric.}
 
 \item{h}{The height of the plot in inches, as numeric.}
+
+\item{aspect_ratio}{The aspect ratio of the panel (i.e. plot area), as
+numeric. If \code{NULL}, the aspect ratio will not be set.}
 }
 \description{
 Plots the count of \emph{non-obsolete} terms in each major branch of the Human

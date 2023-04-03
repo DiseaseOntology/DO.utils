@@ -6,13 +6,15 @@
 #' @param DO_repo The local path to the HumanDiseaseOntology repo, as a string,
 #'     or a [DOrepo] object.
 #' @param out_dir The directory where the plot `"DO_branch_count.png"`
-#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
+#'     should be saved, as a string. If `NULL`, the plot is not saved to disk.
 #' @param w The width of the plot in inches, as numeric.
 #' @param h The height of the plot in inches, as numeric.
+#' @param aspect_ratio The aspect ratio of the panel (i.e. plot area), as
+#'     numeric. If `NULL`, the aspect ratio will not be set.
 #'
 #' @export
 plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
-                               w = 8, h = 5.6) {
+                               w = 8, h = 5.6, aspect_ratio = 1) {
     DO_repo <- access_DOrepo(DO_repo)
     branch_query <- system.file(
         "sparql/branch-count.rq",
@@ -76,6 +78,11 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
         ggplot2::coord_flip() +
         theme_DO(base_size = 13) +
         ggplot2::theme(axis.title.y = ggplot2::element_blank())
+
+    if(!is.null(aspect_ratio)) {
+        g <- g +
+            ggplot2::theme(aspect.ratio = aspect_ratio)
+    }
 
     if (!is.null(out_dir)) {
         file_out <- file.path(out_dir, "DO_branch_count.png")
