@@ -17,7 +17,8 @@ count_delim(
 \arguments{
 \item{data}{A data.frame.}
 
-\item{...}{<\code{\link[dplyr:dplyr_data_masking]{data-masking}}> Variables to group by.}
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Variables to group
+by.}
 
 \item{delim}{A delimiter to split elements within specified columns by
 (default: "|").}

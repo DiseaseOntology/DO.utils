@@ -424,16 +424,16 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 
     annotate <- dplyr::bind_rows(
         dplyr::select(qres, -dplyr::one_of("parent", "plabel")),
-        dplyr::select(qres, id = parent, label = plabel)
+        dplyr::select(qres, "id" = "parent", "label" = "plabel")
     ) %>%
-        dplyr::rename(name = id) %>%
+        dplyr::rename("name" = "id") %>%
         unique()
     if (debug) info["annotation_df"] <- annotate
 
     tg <- tidygraph::as_tbl_graph(
-        dplyr::select(qres, id, parent)
+        dplyr::select(qres, "id", "parent")
     ) %>%
-        tidygraph::activate(nodes) %>%
+        tidygraph::activate("nodes") %>%
         dplyr::left_join(annotate, by = "name")
     if (debug) info["tidygraph"] <- tg
 

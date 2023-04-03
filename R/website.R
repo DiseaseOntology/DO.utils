@@ -423,25 +423,25 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 
     asserted <- DO_repo$doid_non_classified$query(branch_query) %>%
         tidy_sparql() %>%
-        dplyr::rename(Asserted = count)
+        dplyr::rename("Asserted" = "count")
     total <- DO_repo$doid$query(branch_query) %>%
         tidy_sparql() %>%
-        dplyr::rename(Total = count)
+        dplyr::rename("Total" = "count")
     df <- dplyr::left_join(asserted, total, by = "branch") %>%
         dplyr::mutate(
-            Inferred = Total - Asserted,
+            Inferred = .data$Total - .data$Asserted,
             branch = stringr::str_to_title(
-                stringr::str_remove(branch, "disease (of|by) ")
+                stringr::str_remove(.data$branch, "disease (of|by) ")
             )
         ) %>%
         tidyr::pivot_longer(
-            cols = c(Asserted, Inferred),
+            cols = c("Asserted", "Inferred"),
             names_to = "class_type",
             values_to = "Count"
         ) %>%
         dplyr::mutate(
             branch = factor(
-                branch,
+                .data$branch,
                 levels = rev(
                     c("Infectious Agent", "Anatomical Entity",
                       "Cellular Proliferation", "Mental Health","Metabolism",
@@ -449,14 +449,18 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
                 )
             ),
             class_type = factor(
-                class_type,
+                .data$class_type,
                 levels = c("Inferred", "Asserted")
             )
         )
 
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_col(
-            ggplot2::aes(x = .data$branch, y = .data$Count, fill = class_type),
+            ggplot2::aes(
+                x = .data$branch,
+                y = .data$Count,
+                fill = .data$class_type
+            ),
             width = 0.6,
             position = "stack"
         ) +
@@ -478,7 +482,8 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
         file_out <- file.path(out_dir, "DO_branch_count.png")
 
         ggplot2::ggsave(
-            filename = file_out, plot = g,
+            filename = file_out,
+            plot = g,
             width = w, height = h, units = "in",
             dpi = 600
         )
