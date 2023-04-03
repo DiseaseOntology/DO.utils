@@ -1,162 +1,3 @@
-#' Plot Publications Citing DO by Year
-#'
-#' Plots the count of publications that cite the Human Disease Ontology by
-#' year.
-#'
-#' @param data_file The path to the file containing the list of publications
-#'     citing the DO, as a string.
-#' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
-#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @param w The width of the plot in inches, as numeric.
-#' @param h The height of the plot in inches, as numeric.
-#'
-#' @section Data Preparation:
-#' To prepare data, execute `scripts/citedby_full_procedure.R`.
-#'
-#' @export
-plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
-                         out_dir = "graphics/website", w = 8, h = 5.6) {
-
-    df <- readr::read_csv(data_file) %>%
-        dplyr::mutate(
-            Year = lubridate::year(.data$pub_date),
-            pub_type = clean_pub_type(.data$pub_type)
-        )
-
-    # set color ramp
-    cb_colors <- grDevices::colorRampPalette(
-        DO_colors[c("sat", "sat_light")]
-    )(dplyr::n_distinct(df$pub_type))
-
-
-    g <- ggplot2::ggplot(data = df) +
-        ggplot2::geom_bar(
-            ggplot2::aes(x = .data$Year, fill = .data$pub_type),
-            width = 0.8,
-            position = "stack"
-        ) +
-        ggplot2::scale_fill_manual(
-            values = cb_colors,
-            name = "Publication Type",
-            guide = ggplot2::guide_legend(reverse = TRUE)
-        ) +
-        ggplot2::labs(x = "Year", y = NULL) +
-        theme_DO(base_size = 13)
-
-    if (!is.null(out_dir)) {
-        file_out <- file.path(out_dir, "DO_cited_by_count.png")
-
-        ggplot2::ggsave(
-            filename = file_out,
-            plot = g,
-            width = w,
-            height = h,
-            units = "in",
-            dpi = 600
-        )
-    }
-
-    g
-}
-
-
-#' Plot DO Term & Definition Counts
-#'
-#' Plots the count of _non-obsolete_ terms and definitions in the Human Disease
-#' Ontology over time (using data from each release).
-#'
-#' @param release_file The path to the file containing DO release details, as a
-#'     string.
-#' @param counts_file The path to the file containing the count of DO terms
-#'     and definitions by release, as a string.
-#' @param out_dir The directory where the plot `"DO_term_def_count.png"`
-#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @inheritParams plot_citedby
-#'
-#' @section Data Preparation:
-#' To prepare data, execute:
-#'
-#' 1. `scripts/DO_term_def_counts.R` - requires installation of a python virtual
-#'  environment using `scripts/install_reticulate_python.R`.
-#'
-#' 2. `scripts/DO_release_details.R`
-#'
-#' @export
-plot_term_def_counts <- function(
-    release_file = "data/DO_release/DO_release_details.csv",
-    counts_file = "data/DO_release/DO_term_def_counts.csv",
-    out_dir = "graphics/website", w = 8, h = 5.6) {
-
-    release_df <- readr::read_csv(release_file)
-    counts_df <- readr::read_csv(counts_file) %>%
-        dplyr::rename(release = .data$tag_name)
-    df <- dplyr::left_join(
-        release_df,
-        counts_df,
-        by = c("tag_name" = "release")
-    ) %>%
-        # add year
-        dplyr::mutate(date = lubridate::date(.data$created_at)) %>%
-        # drop bug fix releases that happen on same day (for plotting by date)
-        dplyr::group_by(.data$date) %>%
-        dplyr::arrange(dplyr::desc(.data$created_at)) %>%
-        dplyr::filter(!duplicated(.data$date)) %>%
-        dplyr::ungroup() %>%
-        # drop extra columns
-        dplyr::select(.data$date, .data$terms, .data$defs) %>%
-        dplyr::mutate(
-            n_terms = .data$terms - .data$defs,
-            n_defs = .data$defs
-        ) %>%
-        dplyr::select(-.data$terms, -.data$defs) %>%
-        tidyr::pivot_longer(
-            cols = c(.data$n_terms, .data$n_defs),
-            names_to = "variable",
-            values_to = "value"
-        ) %>%
-        dplyr::mutate(
-            variable = factor(
-                .data$variable,
-                levels = c("n_terms", "n_defs")
-            )
-        )
-
-    ## Create Area Plot - NEW version, 2021-08-11
-    g <- ggplot2::ggplot(df) +
-        ggplot2::geom_area(
-            ggplot2::aes(x = .data$date, y = .data$value, fill = .data$variable),
-            size = 1
-        ) +
-        ggplot2::scale_fill_manual(
-            name = "Total",
-            values = unname(DO_colors[c("sat_light", "sat")]),
-            labels = c("Terms", "Terms Defined")
-        ) +
-        ggplot2::scale_y_continuous(
-            name = NULL,
-            breaks = seq(0, 12000, by = 2000)
-        ) +
-        ggplot2::scale_x_date(
-            name = "Release Date",
-            date_breaks = "1 year",
-            date_labels = "%Y"
-        ) +
-        theme_DO(base_size = 13)
-
-    if (!is.null(out_dir)) {
-        file_out <- file.path(out_dir, "DO_term_def_count.png")
-
-        ggplot2::ggsave(
-            filename = file_out, plot = g,
-            width = w, height = h, units = "in",
-            dpi = 600
-        )
-    }
-
-    g
-}
-
-
 #' Plot Branch Counts
 #'
 #' Plots the count of _non-obsolete_ terms in each major branch of the Human
@@ -166,7 +7,8 @@ plot_term_def_counts <- function(
 #'     or a [DOrepo] object.
 #' @param out_dir The directory where the plot `"DO_branch_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @inheritParams plot_citedby
+#' @param w The width of the plot in inches, as numeric.
+#' @param h The height of the plot in inches, as numeric.
 #'
 #' @export
 plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
@@ -250,63 +92,59 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 }
 
 
-#' Plot Xref Counts
+#' Plot Publications Citing DO by Year
 #'
-#' Plots the count of cross-references by source in the Human Disease Ontology.
+#' Plots the count of publications that cite the Human Disease Ontology by
+#' year.
 #'
-#' @param data_file The path to the file containing the latest DO xref counts,
-#'     as a string.
-#' @param out_dir The directory where the plot `"DO_xref_count.png"`
+#' @param data_file The path to the file containing the list of publications
+#'     citing the DO, as a string.
+#' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @inheritParams plot_citedby
+#' @inheritParams plot_branch_counts
 #'
 #' @section Data Preparation:
-#' To prepare data, manually copy and paste stats from the Google Sheet
-#' [DO_github_release_log](https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614)
-#' OR manually copy & paste stats from xref.tsv produced by executing:
-#'
-#' ```
-#' robot query --input {DO_repo}/src/ontology/doid.owl \
-#'             --query {DO_repo}/src/sparql/build/all-xref-report.rq xref.tsv
-#'```
+#' To prepare data, execute `scripts/citedby_full_procedure.R`.
 #'
 #' @export
-plot_xref_counts <- function(
-    data_file = "data/DO_release/cross_references.csv",
-    out_dir = "graphics/website", w = 8, h = 5.6) {
+plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
+                         out_dir = "graphics/website", w = 8, h = 5.6) {
 
     df <- readr::read_csv(data_file) %>%
-        dplyr::filter(!is.na(.data$Curation)) %>%
         dplyr::mutate(
-            Curation = factor(
-                .data$Curation,
-                levels = c("Manual", "Mixed", "Automated")
-            )
+            Year = lubridate::year(.data$pub_date),
+            pub_type = clean_pub_type(.data$pub_type)
         )
 
+    # set color ramp
+    cb_colors <- grDevices::colorRampPalette(
+        DO_colors[c("sat", "sat_light")]
+    )(dplyr::n_distinct(df$pub_type))
+
+
     g <- ggplot2::ggplot(data = df) +
-        ggplot2::geom_col(
-            ggplot2::aes(x = .data$Cross_References, y = .data$Count,
-                         fill = .data$Curation),
-            width = 0.6
+        ggplot2::geom_bar(
+            ggplot2::aes(x = .data$Year, fill = .data$pub_type),
+            width = 0.8,
+            position = "stack"
         ) +
-        ggplot2::scale_y_continuous(
-            name = NULL,
-            breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
-        ) +
-        ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
-            values = unname(DO_colors[c("sat_light", "sat_mid", "sat")])
+            values = cb_colors,
+            name = "Publication Type",
+            guide = ggplot2::guide_legend(reverse = TRUE)
         ) +
-        ggplot2::labs(x ="Cross References") +
+        ggplot2::labs(x = "Year", y = NULL) +
         theme_DO(base_size = 13)
 
     if (!is.null(out_dir)) {
-        file_out <- file.path(out_dir, "DO_xref_count.png")
+        file_out <- file.path(out_dir, "DO_cited_by_count.png")
 
         ggplot2::ggsave(
-            filename = file_out, plot = g,
-            width = w, height = h, units = "in",
+            filename = file_out,
+            plot = g,
+            width = w,
+            height = h,
+            units = "in",
             dpi = 600
         )
     }
@@ -323,7 +161,7 @@ plot_xref_counts <- function(
 #' @inheritParams read_doid_edit
 #' @param out_dir The directory where the plot "DO_def_src.png" should be saved,
 #'     as a string. If `NULL` the plot is not saved to disk.
-#' @inheritParams plot_citedby
+#' @inheritParams plot_branch_counts
 #'
 #' @section Data Preparation:
 #' If this plot will be added to disease-ontology.org, the latest release of the
@@ -332,7 +170,7 @@ plot_xref_counts <- function(
 #'
 #' @export
 plot_def_src <- function(DO_repo, out_dir = "graphics/website",
-                               w = 8, h = 5.6) {
+                         w = 8, h = 5.6) {
     df <- read_doid_edit(DO_repo) %>%
         extract_doid_url() %>%
         dplyr::mutate(domain = extract_url_domain(.data$url, drop_www = TRUE)) %>%
@@ -422,6 +260,168 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
 
     if (!is.null(out_dir)) {
         file_out <- file.path(out_dir, "DO_def_src.png")
+
+        ggplot2::ggsave(
+            filename = file_out, plot = g,
+            width = w, height = h, units = "in",
+            dpi = 600
+        )
+    }
+
+    g
+}
+
+
+#' Plot DO Term & Definition Counts
+#'
+#' Plots the count of _non-obsolete_ terms and definitions in the Human Disease
+#' Ontology over time (using data from each release).
+#'
+#' @param release_file The path to the file containing DO release details, as a
+#'     string.
+#' @param counts_file The path to the file containing the count of DO terms
+#'     and definitions by release, as a string.
+#' @param out_dir The directory where the plot `"DO_term_def_count.png"`
+#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
+#' @inheritParams plot_branch_counts
+#'
+#' @section Data Preparation:
+#' To prepare data, execute:
+#'
+#' 1. `scripts/DO_term_def_counts.R` - requires installation of a python virtual
+#'  environment using `scripts/install_reticulate_python.R`.
+#'
+#' 2. `scripts/DO_release_details.R`
+#'
+#' @export
+plot_term_def_counts <- function(
+    release_file = "data/DO_release/DO_release_details.csv",
+    counts_file = "data/DO_release/DO_term_def_counts.csv",
+    out_dir = "graphics/website", w = 8, h = 5.6) {
+
+    release_df <- readr::read_csv(release_file)
+    counts_df <- readr::read_csv(counts_file) %>%
+        dplyr::rename(release = .data$tag_name)
+    df <- dplyr::left_join(
+        release_df,
+        counts_df,
+        by = c("tag_name" = "release")
+    ) %>%
+        # add year
+        dplyr::mutate(date = lubridate::date(.data$created_at)) %>%
+        # drop bug fix releases that happen on same day (for plotting by date)
+        dplyr::group_by(.data$date) %>%
+        dplyr::arrange(dplyr::desc(.data$created_at)) %>%
+        dplyr::filter(!duplicated(.data$date)) %>%
+        dplyr::ungroup() %>%
+        # drop extra columns
+        dplyr::select(.data$date, .data$terms, .data$defs) %>%
+        dplyr::mutate(
+            n_terms = .data$terms - .data$defs,
+            n_defs = .data$defs
+        ) %>%
+        dplyr::select(-.data$terms, -.data$defs) %>%
+        tidyr::pivot_longer(
+            cols = c(.data$n_terms, .data$n_defs),
+            names_to = "variable",
+            values_to = "value"
+        ) %>%
+        dplyr::mutate(
+            variable = factor(
+                .data$variable,
+                levels = c("n_terms", "n_defs")
+            )
+        )
+
+    ## Create Area Plot - NEW version, 2021-08-11
+    g <- ggplot2::ggplot(df) +
+        ggplot2::geom_area(
+            ggplot2::aes(x = .data$date, y = .data$value, fill = .data$variable),
+            size = 1
+        ) +
+        ggplot2::scale_fill_manual(
+            name = "Total",
+            values = unname(DO_colors[c("sat_light", "sat")]),
+            labels = c("Terms", "Terms Defined")
+        ) +
+        ggplot2::scale_y_continuous(
+            name = NULL,
+            breaks = seq(0, 12000, by = 2000)
+        ) +
+        ggplot2::scale_x_date(
+            name = "Release Date",
+            date_breaks = "1 year",
+            date_labels = "%Y"
+        ) +
+        theme_DO(base_size = 13)
+
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_term_def_count.png")
+
+        ggplot2::ggsave(
+            filename = file_out, plot = g,
+            width = w, height = h, units = "in",
+            dpi = 600
+        )
+    }
+
+    g
+}
+
+
+#' Plot Xref Counts
+#'
+#' Plots the count of cross-references by source in the Human Disease Ontology.
+#'
+#' @param data_file The path to the file containing the latest DO xref counts,
+#'     as a string.
+#' @param out_dir The directory where the plot `"DO_xref_count.png"`
+#'     should be saved, as a string. If `NULL` the plot is not saved to disk.
+#' @inheritParams plot_branch_counts
+#'
+#' @section Data Preparation:
+#' To prepare data, manually copy and paste stats from the Google Sheet
+#' [DO_github_release_log](https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614)
+#' OR manually copy & paste stats from xref.tsv produced by executing:
+#'
+#' ```
+#' robot query --input {DO_repo}/src/ontology/doid.owl \
+#'             --query {DO_repo}/src/sparql/build/all-xref-report.rq xref.tsv
+#'```
+#'
+#' @export
+plot_xref_counts <- function(
+    data_file = "data/DO_release/cross_references.csv",
+    out_dir = "graphics/website", w = 8, h = 5.6) {
+
+    df <- readr::read_csv(data_file) %>%
+        dplyr::filter(!is.na(.data$Curation)) %>%
+        dplyr::mutate(
+            Curation = factor(
+                .data$Curation,
+                levels = c("Manual", "Mixed", "Automated")
+            )
+        )
+
+    g <- ggplot2::ggplot(data = df) +
+        ggplot2::geom_col(
+            ggplot2::aes(x = .data$Cross_References, y = .data$Count,
+                         fill = .data$Curation),
+            width = 0.6
+        ) +
+        ggplot2::scale_y_continuous(
+            name = NULL,
+            breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
+        ) +
+        ggplot2::coord_flip() +
+        ggplot2::scale_fill_manual(
+            values = unname(DO_colors[c("sat_light", "sat_mid", "sat")])
+        ) +
+        ggplot2::labs(x ="Cross References") +
+        theme_DO(base_size = 13)
+
+    if (!is.null(out_dir)) {
+        file_out <- file.path(out_dir, "DO_xref_count.png")
 
         ggplot2::ggsave(
             filename = file_out, plot = g,
