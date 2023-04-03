@@ -250,8 +250,8 @@ make_contributor_html <- function(contrib_df) {
 #'     citing the DO, as a string.
 #' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @param w The width of the plot in inches, as an integer.
-#' @param h The height of the plot in inches, as an integer.
+#' @param w The width of the plot in inches, as numeric.
+#' @param h The height of the plot in inches, as numeric.
 #'
 #' @section Data Preparation:
 #' To prepare data, execute `scripts/citedby_full_procedure.R`.

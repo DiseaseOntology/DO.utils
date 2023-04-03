@@ -13,9 +13,9 @@ or a \link{DOrepo} object.}
 \item{out_dir}{The directory where the plot \code{"DO_branch_count.png"}
 should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 
-\item{w}{The width of the plot in inches, as an integer.}
+\item{w}{The width of the plot in inches, as numeric.}
 
-\item{h}{The height of the plot in inches, as an integer.}
+\item{h}{The height of the plot in inches, as numeric.}
 }
 \description{
 Plots the count of \emph{non-obsolete} terms in each major branch of the Human

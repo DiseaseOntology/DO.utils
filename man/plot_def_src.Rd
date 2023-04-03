@@ -13,9 +13,9 @@ string.}
 \item{out_dir}{The directory where the plot "DO_def_src.png" should be saved,
 as a string. If \code{NULL} the plot is not saved to disk.}
 
-\item{w}{The width of the plot in inches, as an integer.}
+\item{w}{The width of the plot in inches, as numeric.}
 
-\item{h}{The height of the plot in inches, as an integer.}
+\item{h}{The height of the plot in inches, as numeric.}
 }
 \description{
 Plots the count of definition sources for \emph{non-obsolete} terms the Human
