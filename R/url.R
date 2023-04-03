@@ -53,6 +53,17 @@ trim_url <- function(url_no_domain) {
 #' @keywords internal
 get_url <- function(.name) {
     base_url <- c(
+        MESH = "https://meshb.nlm.nih.gov/record/ui?ui=",
+        NCI = "https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=",
+        UMLS_CUI = "https://uts.nlm.nih.gov/uts/umls/concept/",
+        ICD10 = "http://www.icd10data.com/Search.aspx?search=",
+        ICD9 = "http://icd9cm.chrisendres.com/index.php?action=search&srchtext=",
+        SNOMEDCT_US = "https://browser.ihtsdotools.org/?perspective=full&conceptId1=",
+        ORDO = "https://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=en&Expert=",
+        GARD = "https://rarediseases.info.nih.gov/diseases/{id}/index",
+        OMIM = "https://omim.org/MIM:",
+        EFO = "http://www.ebi.ac.uk/efo/",
+        # ICDO, KEGG, ICD11, MEDDRA
         doi = "https://www.doi.org/",
         github = "https://github.com/",
         orcid = "https://orcid.org/",

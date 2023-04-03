@@ -85,21 +85,25 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #' )
 #'
 #' @export
-build_hyperlink <- function(x, url, as, ..., sep = "", txt = x,
-                            preserve_NA = TRUE) {
-    full_url <- append_to_url(x, url, sep, preserve_NA)
-    hyperlink <- format_hyperlink(
-        full_url,
-        as = as,
-        ...,
-        txt = txt,
-        preserve_NA = preserve_NA
-    )
-
-    hyperlink
-}
-
-
+# build_hyperlink <- function(x, url, as, ..., sep = "", txt = x,
+#                             preserve_NA = TRUE) {
+#     if (is.null(url)) {
+#
+#     full_url <- append_to_url(x, url, sep, preserve_NA)
+#     hyperlink <- format_hyperlink(
+#         full_url,
+#         as = as,
+#         ...,
+#         txt = txt,
+#         preserve_NA = preserve_NA
+#     )
+#
+#     hyperlink
+# }
+#
+# build_hyperlink_from_curie <- function(curie) {
+#     prefix <- stringr::str_remove(curie, ":.*")
+# }
 
 # html_in_rows() helpers --------------------------------------------------
 
