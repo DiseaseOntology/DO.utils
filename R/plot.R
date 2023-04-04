@@ -380,45 +380,60 @@ plot_term_def_counts <- function(
 #'
 #' Plots the count of cross-references by source in the Human Disease Ontology.
 #'
-#' @param data_file The path to the file containing the latest DO xref counts,
-#'     as a string.
+#' @inheritParams plot_branch_counts
 #' @param out_dir The directory where the plot `"DO_xref_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @inheritParams plot_branch_counts
-#'
-#' @section Data Preparation:
-#' To prepare data, manually copy and paste stats from the Google Sheet
-#' [DO_github_release_log](https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614)
-#' OR manually copy & paste stats from xref.tsv produced by executing:
-#'
-#' ```
-#' robot query --input {DO_repo}/src/ontology/doid.owl \
-#'             --query {DO_repo}/src/sparql/build/all-xref-report.rq xref.tsv
-#'```
 #'
 #' @export
-plot_xref_counts <- function(
-    data_file = "data/DO_release/cross_references.csv",
-    out_dir = "graphics/website", w = 8, h = 5.6) {
+plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
+                             w = 8, h = 5.6) {
+    DO_repo <- access_DOrepo(DO_repo)
+    xref_query <- system.file(
+        "sparql/all-xref-report.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    )
 
-    df <- readr::read_csv(data_file) %>%
-        dplyr::filter(!is.na(.data$Curation)) %>%
+    df <- DO_repo$doid$query(xref_query) %>%
+        tidy_sparql() %>%
+        dplyr::mutate(
+            prefix = stringr::str_remove(prefix, "_[0-9]{4}_[0-9]{2}_[0-9]{2}")
+        ) %>%
+        dplyr::count(prefix, wt = count, name = "count")
+
+    curation_type <- c(
+        ORDO = "Manual", OMIM = "Manual", MEDDRA = "Manual", KEGG = "Manual",
+        ICDO = "Manual", GARD = "Manual", EFO = "Manual", ICD11 = "Manual",
+        NCI = "Mixed", MESH = "Mixed",
+        UMLS_CUI = "Automated", SNOMEDCT_US = "Automated", ICD9CM = "Automated",
+        ICD10CM = "Automated"
+    )
+
+    df <- df %>%
         dplyr::mutate(
             Curation = factor(
-                .data$Curation,
+                dplyr::recode(.data$prefix, !!!curation_type),
                 levels = c("Manual", "Mixed", "Automated")
+            ),
+            prefix = dplyr::recode(
+                .data$prefix,
+                MESH = "MeSH", NCI = "NCIt", MEDDRA = "MedDRA",
+                ORDO = "Orphanet", UMLS_CUI = "UMLS"
             )
         )
 
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_col(
-            ggplot2::aes(x = .data$Cross_References, y = .data$Count,
-                         fill = .data$Curation),
+            ggplot2::aes(
+                x = .data$prefix,
+                y = .data$count,
+                fill = .data$Curation
+            ),
             width = 0.6
         ) +
         ggplot2::scale_y_continuous(
             name = NULL,
-            breaks = seq(0, round_up(max(df$Count), -3), by = 2000)
+            breaks = seq(0, round_up(max(df$count), -3), by = 2000)
         ) +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(

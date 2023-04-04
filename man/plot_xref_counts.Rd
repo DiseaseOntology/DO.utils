@@ -4,16 +4,11 @@
 \alias{plot_xref_counts}
 \title{Plot Xref Counts}
 \usage{
-plot_xref_counts(
-  data_file = "data/DO_release/cross_references.csv",
-  out_dir = "graphics/website",
-  w = 8,
-  h = 5.6
-)
+plot_xref_counts(DO_repo, out_dir = "graphics/website", w = 8, h = 5.6)
 }
 \arguments{
-\item{data_file}{The path to the file containing the latest DO xref counts,
-as a string.}
+\item{DO_repo}{The local path to the HumanDiseaseOntology repo, as a string,
+or a \link{DOrepo} object.}
 
 \item{out_dir}{The directory where the plot \code{"DO_xref_count.png"}
 should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
@@ -25,14 +20,3 @@ should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 \description{
 Plots the count of cross-references by source in the Human Disease Ontology.
 }
-\section{Data Preparation}{
-
-To prepare data, manually copy and paste stats from the Google Sheet
-\href{https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614}{DO_github_release_log}
-OR manually copy & paste stats from xref.tsv produced by executing:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{robot query --input \{DO_repo\}/src/ontology/doid.owl \\
-            --query \{DO_repo\}/src/sparql/build/all-xref-report.rq xref.tsv
-}\if{html}{\out{</div>}}
-}
-
