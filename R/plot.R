@@ -19,7 +19,7 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
     branch_query <- system.file(
         "sparql/branch-count.rq",
         package = "DO.utils",
-        mustWork = FALSE
+        mustWork = TRUE
     )
 
     asserted <- DO_repo$doid_non_classified$query(branch_query) %>%
