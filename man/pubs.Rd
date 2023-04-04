@@ -22,7 +22,7 @@ Scopus ID}
 \item{citation_nlm}{Full NLM-formatted citation}
 }
 
-\code{DO_pubs} includes 9 publications.
+\code{DO_pubs} includes 10 publications.
 
 \code{ST_pubs} includes 1 publications.
 }
