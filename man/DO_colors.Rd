@@ -5,12 +5,18 @@
 \alias{DO_colors}
 \title{Human Disease Ontology Official Colors}
 \format{
-A named, vector of colors in hexadecimal format, including most
-recognizable teal-ish colors (default, mid, light, website, & websafe) and
-less used oranges (orange, orange_mid, orange_light).
+A named, vector of 17 colors in hexadecimal
+format, including:
+\itemize{
+\item main teal-ish colors: \code{default}, \code{mid}, \code{light}, \code{website}, \code{websafe}
+\item saturated versions (better for plotting): \code{sat}, \code{sat_mid}, \code{sat_light}
+\item older, infrequently used orange colors: \code{orange}, \code{orange_mid}, \code{orange_light}
+\item \emph{NEW} lavender-ish accent colors: \code{accent1}, \code{accent1_mid}, \code{accent1_light}
+\item \emph{NEW} yellow-ish accent colors: \code{accent2}, \code{accent2_mid}, \code{accent2_light}
+}
 }
 \source{
-Updated by J. Allen Baron on 2021-11-23.
+Updated by J. Allen Baron on 2023-04-05.
 }
 \usage{
 DO_colors

@@ -24,11 +24,15 @@ pub_id_match <- c(
 #'
 #' Named, hexadecimal colors for official DO use.
 #'
-#' @format A named, vector of colors in hexadecimal format, including most
-#' recognizable teal-ish colors (default, mid, light, website, & websafe) and
-#' less used oranges (orange, orange_mid, orange_light).
+#' @format A named, vector of `r length(DO_colors)` colors in hexadecimal
+#' format, including:
+#' - main teal-ish colors: `r vctr_to_mancode(names(DO_colors)[1:5])`
+#' - saturated versions (better for plotting): `r vctr_to_mancode(DO_colors, regex = "^sat", use_names = TRUE)`
+#' - older, infrequently used orange colors: `r vctr_to_mancode(DO_colors, regex = "orange", use_names = TRUE)`
+#' - _NEW_ lavender-ish accent colors: `r vctr_to_mancode(DO_colors, regex = "accent1", use_names = TRUE)`
+#' - _NEW_ yellow-ish accent colors: `r vctr_to_mancode(DO_colors, regex = "accent2", use_names = TRUE)`
 #'
-#' @source Updated by J. Allen Baron on 2021-11-23.
+#' @source Updated by J. Allen Baron on 2023-04-05.
 "DO_colors"
 
 
