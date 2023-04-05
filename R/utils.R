@@ -97,3 +97,13 @@ msg_dots_ <- function(x) {
         paste(names(x), x_val, sep = " = ")
     )
 }
+
+
+# For creating code-formatted text in manuals programmatically ------------
+
+vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
+    if (use_names) x <- names(x)
+    if (!is.null(regex)) x <- x[stringr::str_detect(x, regex)]
+    # vctr_to_string(
+        sandwich_text(x, c('\\code{', '}'))#, ", ")
+}
