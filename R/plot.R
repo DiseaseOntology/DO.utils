@@ -71,7 +71,6 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
         ) +
         ggplot2::scale_y_continuous(
             name = NULL,
-            breaks = seq(0, round_up(max(df$Total), -3), by = 1000),
             limits = c(0, round_up(max(df$Total), -3)),
             expand = ggplot2::expansion(0, 0)
         ) +
@@ -248,7 +247,6 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
         )
     plot_df <- dplyr::bind_rows(top_10, other)
 
-    y_axis_max <- round_up(max(plot_df$Count), -3)
     g <- ggplot2::ggplot(data = plot_df) +
         ggplot2::geom_col(
             ggplot2::aes(
@@ -259,7 +257,8 @@ plot_def_src <- function(DO_repo, out_dir = "graphics/website",
         ) +
         ggplot2::scale_y_continuous(
             name = NULL,
-            breaks = seq(0, y_axis_max, by = 1000),
+            limits = c(0, round_up(max(plot_df$Count), -3)),
+            expand = ggplot2::expansion(0, 0)
         ) +
         ggplot2::coord_flip() +
         theme_DO(base_size = 13) +
@@ -327,7 +326,7 @@ plot_term_def_counts <- function(
             n_terms = .data$terms - .data$defs,
             n_defs = .data$defs
         ) %>%
-        dplyr::select(-.data$terms, -.data$defs) %>%
+        dplyr::select(-.data$defs) %>%
         tidyr::pivot_longer(
             cols = c(.data$n_terms, .data$n_defs),
             names_to = "variable",
@@ -341,7 +340,9 @@ plot_term_def_counts <- function(
         )
 
     ## Create Area Plot - NEW version, 2021-08-11
-    g <- ggplot2::ggplot(df) +
+    g <- df %>%
+        dplyr::select(-"terms") %>%
+        ggplot2::ggplot() +
         ggplot2::geom_area(
             ggplot2::aes(x = .data$date, y = .data$value, fill = .data$variable),
             size = 1
@@ -353,11 +354,11 @@ plot_term_def_counts <- function(
         ) +
         ggplot2::scale_y_continuous(
             name = NULL,
-            breaks = seq(0, 12000, by = 2000)
+            limits = c(0, round_up(max(df$terms), -3)),
+            expand = ggplot2::expansion(0, 0)
         ) +
         ggplot2::scale_x_date(
             name = "Release Date",
-            date_breaks = "1 year",
             date_labels = "%Y"
         ) +
         theme_DO(base_size = 13)
@@ -433,7 +434,8 @@ plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
         ) +
         ggplot2::scale_y_continuous(
             name = NULL,
-            breaks = seq(0, round_up(max(df$count), -3), by = 2000)
+            limits = c(0, round_up(max(df$count), -3)),
+            expand = ggplot2::expansion(0, 0)
         ) +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
