@@ -107,6 +107,10 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #'     citing the DO, as a string.
 #' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
+#' @param color_set The prefix of the color set to use from [DO_colors].
+#'     Available sets include: "sat", "accent1" (default), "accent2", and
+#'     "orange".  The default and light versions of the specified color set will
+#'     be used.
 #' @inheritParams plot_branch_counts
 #'
 #' @section Data Preparation:
@@ -114,7 +118,8 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #'
 #' @export
 plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
-                         out_dir = "graphics/website", w = 8, h = 5.6) {
+                         out_dir = "graphics/website", color_set = "accent1",
+                         w = 8, h = 5.6) {
 
     df <- readr::read_csv(data_file) %>%
         dplyr::mutate(
@@ -124,9 +129,8 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
 
     # set color ramp
     cb_colors <- grDevices::colorRampPalette(
-        DO_colors[c("sat", "sat_light")]
+        DO_colors[paste0(color_set, c("_light", ""))]
     )(dplyr::n_distinct(df$pub_type))
-
 
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_bar(
