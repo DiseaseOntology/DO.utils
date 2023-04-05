@@ -44,6 +44,7 @@ html_col_sort.default <- function(x, cols) {
 #' @noRd
 create_row_index <- function(len, cols) {
     in_last_row <- len %% cols
+    if (in_last_row == 0) in_last_row <- cols
     rows <- round_up(len / cols, 0)
     row_idx <- c(
         rep(1:rows, times = in_last_row),
