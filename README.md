@@ -9,11 +9,14 @@
 DO.utils is an R package _primarily_ designed to support the operations of the Human Disease Ontology (DO; [disease-ontology.org](https://disease-ontology.org/)) but with **a number of capabilities that will be useful to the broader scientific community** for:
 
 1. **Assessing Resource Use & Impact** (Bibliometrics/Scientometrics)
-    - A brief summary can be found below: [Assessing Resource Use (Bibliometrics/Scientometrics)](#assess_use).
-    - A more detailed description can be found in the peer-reviewed article "Assessing Resource Use: A Case Study with the Human Disease Ontology", soon to be published by the journal DATABASE, and in the "Assessing Resource Use: Obtaining Use Records" tutorial included with this package (`vignette("obtain_use_records", package = "DO.utils")`). 
-2. Simplifying common R tasks ([General Utilities](#general)).
+    - A brief summary can be found under [Assessing Resource Use (Bibliometrics/Scientometrics)](#assess_use).
+    - For a detailed description refer to the "Assessing Resource Use: Obtaining Use Records" tutorial included with this package (`vignette("obtain_use_records", package = "DO.utils")`) or the peer-reviewed article:
+    
+    > J. Allen Baron, Lynn M Schriml, _Assessing resource use: a case study with the Human Disease Ontology_, Database, Volume 2023, 2023, baad007. PMID:36856688, https://doi.org/10.1093/database/baad007.
+    
+2. Simplifying common R tasks (see [General Utilities](#general) section).
 
-Operations specific to the use, analysis, maintenance, and improvement of the ontology itself are described briefly in [DO Improvement & Analysis](#do_specific).
+Operations specific to the use, analysis, maintenance, and improvement of the ontology itself are described briefly in the [DO Improvement & Analysis](#do_specific) section.
 
 DO.utils is _work in progress_. If you are interested in contributing, please reach out. Note that our goal is to work collaboratively to make functions as broadly useful as possible.
 
