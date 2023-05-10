@@ -1,28 +1,78 @@
 #' Execute Robot Commands
 #'
-#' Light wrapper for system ROBOT program (OBO Foundry). See
+#' Light wrapper for OBO Foundry ROBOT program (OBO Foundry). See
 #' [ROBOT documentation](http://robot.obolibrary.org/) for information about
 #' subcommands and arguments.
 #'
-#' @section NOTE:
-#' Requires installation of the OBO Foundry ROBOT tool in the system path. This
-#' can be achieved with [install_robot()].
+#' @section ROBOT Setup:
+#' - Requires installation of Java (supported versions are listed under the
+#' "Getting Started" section at http://robot.obolibrary.org/).
+#' - Can use OBO Foundry ROBOT tool installed on the system path. This
+#' may be achieved with [install_robot()] or as described at
+#' http://robot.obolibrary.org/.
+#' - Can also use a standalone robot.jar file (`.path` must be specified) in
+#' which case it is executed with `java -Xmx10G -jar` (10 GB memory).
+#' - Once per R session (or when `.recheck = TRUE`), execution of ROBOT will be
+#' tested. It must succeed prior to any command execution, with success
+#' indicated by an announcement of the version & path of ROBOT being used.
 #'
 #' @section Citation:
 #' R.C. Jackson, J.P. Balhoff, E. Douglass, N.L. Harris, C.J. Mungall, and
 #' J.A. Overton. ROBOT: A tool for automating ontology workflows.
 #' BMC Bioinformatics, vol. 20, July 2019.
 #'
-#' @param params string specifying subcommand and all arguments
-#' @param ... arguments passed on to [base::system2]
+#' @param ... Command(s) passed on to ROBOT, including subcommand(s), either as
+#'     a single string or named strings, where the name corresponds to the long
+#'     or short form of the option and the value being the option value. Where
+#'     options do not use a value, use "". Subcommands should be unnamed.
+#'
+#' **Examples:**
+#'
+#' * Subcommands: `"query"`, `"export"`
+#' * Common options:
+#'     * `"--input doid.owl"` or `input = "doid.owl"` (named argument).
+#'     * `"-o result.owl"` (i.e. `--output`) or `o = "result.owl"` (named argument).
+#'     * `"--remove-annotations"` (option of `annotate`) or
+#'         `"remove-annotations" = ""` (named argument form).
+#'
+#' @param .path The path to the ROBOT executable or a robot.jar file.
+#'     If `NULL` (default), it will attempt to identify ROBOT on the system path.
+#'     See the "ROBOT Setup" section for necessary details. Ignored if a
+#'     functional ROBOT executable has been identified during an R session
+#'     unless `.recheck = TRUE`.
+#' @param .exec Whether to execute the command or not, as boolean (default:
+#'     `TRUE`); included primarily for debugging.
+#' @param .recheck Whether to re-validate the ROBOT executable, as boolean
+#'     (default: `FALSE`).
 #'
 #' @export
-robot <- function(params, ...) {
-    system2(
-        # use system robot command
-        command = "robot",
-        args = params
-    )
+robot <- function(..., .path = NULL, .exec = TRUE, .recheck = FALSE) {
+    if (is.null(.path)) {
+        robot_cmd <- check_robot(retest = .recheck)
+    } else {
+        robot_cmd <- check_robot(path = .path, retest = .recheck)
+    }
+    dots <- list(...)
+    args <- stringr::str_trim(names(dots))
+
+    if (length(args) == 0) {
+        robot_args <- unlist(dots)
+    } else {
+        args <- dplyr::case_when(
+            stringr::str_length(args) < 1 ~ args,
+            stringr::str_length(args) == 1 ~ paste0("-", args),
+            stringr::str_length(args) > 1 ~ paste0("--", args)
+        )
+        robot_args <- purrr::map2_chr(
+            args,
+            unlist(dots, use.names = FALSE),
+            ~ paste(.x, .y)
+        )
+    }
+
+    if (!.exec) return(cmd)
+
+    robot_cmd(args = robot_args)
 }
 
 

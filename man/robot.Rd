@@ -4,22 +4,57 @@
 \alias{robot}
 \title{Execute Robot Commands}
 \usage{
-robot(params, ...)
+robot(..., .path = NULL, .exec = TRUE, .recheck = FALSE)
 }
 \arguments{
-\item{params}{string specifying subcommand and all arguments}
+\item{...}{Command(s) passed on to ROBOT, including subcommand(s), either as
+a single string or named strings, where the name corresponds to the long
+or short form of the option and the value being the option value. Where
+options do not use a value, use "". Subcommands should be unnamed.
 
-\item{...}{arguments passed on to \link[base:system2]{base::system2}}
+\strong{Examples:}
+\itemize{
+\item Subcommands: \code{"query"}, \code{"export"}
+\item Common options:
+\itemize{
+\item \code{"--input doid.owl"} or \code{input = "doid.owl"} (named argument).
+\item \code{"-o result.owl"} (i.e. \code{--output}) or \code{o = "result.owl"} (named argument).
+\item \code{"--remove-annotations"} (option of \code{annotate}) or
+\code{"remove-annotations" = ""} (named argument form).
+}
+}}
+
+\item{.path}{The path to the ROBOT executable or a robot.jar file.
+If \code{NULL} (default), it will attempt to identify ROBOT on the system path.
+See the "ROBOT Setup" section for necessary details. Ignored if a
+functional ROBOT executable has been identified during an R session
+unless \code{.recheck = TRUE}.}
+
+\item{.exec}{Whether to execute the command or not, as boolean (default:
+\code{TRUE}); included primarily for debugging.}
+
+\item{.recheck}{Whether to re-validate the ROBOT executable, as boolean
+(default: \code{FALSE}).}
 }
 \description{
-Light wrapper for system ROBOT program (OBO Foundry). See
+Light wrapper for OBO Foundry ROBOT program (OBO Foundry). See
 \href{http://robot.obolibrary.org/}{ROBOT documentation} for information about
 subcommands and arguments.
 }
-\section{NOTE}{
+\section{ROBOT Setup}{
 
-Requires installation of the OBO Foundry ROBOT tool in the system path. This
-can be achieved with \code{\link[=install_robot]{install_robot()}}.
+\itemize{
+\item Requires installation of Java (supported versions are listed under the
+"Getting Started" section at http://robot.obolibrary.org/).
+\item Can use OBO Foundry ROBOT tool installed on the system path. This
+may be achieved with \code{\link[=install_robot]{install_robot()}} or as described at
+http://robot.obolibrary.org/.
+\item Can also use a standalone robot.jar file (\code{.path} must be specified) in
+which case it is executed with \code{java -Xmx10G -jar} (10 GB memory).
+\item Once per R session (or when \code{.recheck = TRUE}), execution of ROBOT will be
+tested. It must succeed prior to any command execution, with success
+indicated by an announcement of the version & path of ROBOT being used.
+}
 }
 
 \section{Citation}{
