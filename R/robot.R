@@ -63,6 +63,7 @@ robot_query <- function(input, rq, save) {
     )
 }
 
+
 #' Install OBO Foundry ROBOT Tool (Mac/Linux ONLY)
 #'
 #' Installs latest ROBOT and robot.jar files to default system path
@@ -110,7 +111,7 @@ install_robot <- function(...) {
     )
 
     if (all(exit == 0)) {
-        system2("robot", args = "--version")
+        invisible(check_robot())
     } else {
         non_zero_codes <- exit != 0
         non_zero_fxn <- dplyr::recode(
@@ -124,4 +125,51 @@ install_robot <- function(...) {
             paste0(non_zero_fxn, ": ", exit[non_zero_codes], "\n")
         )
     }
+}
+
+# Test if ROBOT is available at path or system (default) & functional.
+# On success, cache & return path
+check_robot <- function(path = NULL, retest = FALSE) {
+    if (retest || is.null(DO_env$robot)) {
+        if (is.null(path)) {
+            robot_path <- Sys.which("robot")
+        } else {
+            robot_path <- normalizePath(path, mustWork = TRUE)
+        }
+
+        if (tools::file_ext(robot_path) == "jar") {
+            cmd <- function(args, ...) {
+                system2("java", c("-Xmx10G -jar", robot_path, args), ...)
+            }
+        } else {
+            cmd <- function(args, ...) system2(robot_path, args, ...)
+        }
+
+        version <- try(
+            cmd("--version", stdout = TRUE, stderr = FALSE),
+            silent = TRUE
+        )
+
+        if (stringr::str_detect(version, "ROBOT version ")) {
+            DO_env$robot_path <- robot_path
+            names(DO_env$robot_path) <- version
+            DO_env$robot <- cmd
+        } else {
+            DO_env$robot_path <- NULL
+            DO_env$robot <- NULL
+        }
+    }
+
+    if (is.null(DO_env$robot)) {
+        msg <- paste0("ROBOT at ", robot_path, " is not available or working.")
+        rlang::abort(msg, class = "robot_fail")
+    }
+
+    if (exists("robot_path")) {
+        rlang::inform(
+            paste0("Using ", names(DO_env$robot_path), " at ", DO_env$robot_path)
+        )
+    }
+
+    DO_env$robot
 }
