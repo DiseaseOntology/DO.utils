@@ -1,21 +1,90 @@
-# DO.utils (development version)
+# DO.utils 0.2.7
 
 ## Dependencies
 * reticulate updated to >=v1.28 in an effort to resolve python package
 installation issues; see https://github.com/DiseaseOntology/DO.utils/issues/12.
+* stringr updated to >= 1.5.0, for access to new `str_escape()` function.
+* igraph added for new tidygraph/graphml functions. This change doesn't affect
+much since tidygraph is already a dependency that itself depends on igraph.
+* Now SUGGESTS the keyring package for API key management.
 
-## Updates
+
+## Announcements
+* Migrated DO.utils repository to the DiseaseOntology organization.
+* DO.utils documentation is now available on the web at
+https://diseaseontology.github.io/DO.utils/ with significant updates supporting
+citation-based assessment of use workflow.
+
+
+## DO Management & Analysis
+
+### New
+* `extract_as_tidygraph()`: Extracts nodes and relationships identified in a
+SPARQL query from RDF/XML file and returns it as a tidygraph.
+* `write_graphml()`: Writes a graph object (tidygraph/iGraph) to a .graphml
+file.
+
+### Updated
+* _[BREAKING CHANGE]_ `robot()` wrapper function updated to make it easier to
+use when programming.
+* `plot_branch_counts()` now:
+    1. Identifies the count of classes in each branch that are asserted or
+    inferred.
+    2. Uses data directly from a local copy of the HumanDiseaseOntology repo
+    instead of manually copied release notes.
+    3. Gained the `aspect_ratio` argument.
+* `plot_xref_counts()` now uses data directly from a local copy of the
+HumanDiseaseOntology repo instead of manually copied release notes.
+* `plot_citedby()` gained the `color_set` argument to permit more flexible color
+choice.
+* `DO_pubs` updated with 2023 complex disease paper.
+    * NOTE: The 2023 Database paper describing the 'Assessing Resource Use'
+    workflow was _NOT_ added because it is not a publication describing use of
+    the DO).
+* `DO_colors` now include accent colors generated as part of the DO-KB addition
+to the website. These colors are available in standard, "_mid", and "_light"
+versions.
+
+
+## Assessing Resource Use
+
+### New
+* 'Assessing Resource Use: Obtaining Use Records' tutorial/vignette added.
+Describes how to set up DO.utils and execute functions to support the 'Assessing
+Resource Use' workflow.
+* `tidy_pub_records()`: creates a tibble with more limited information from
+Scopus and PubMed references; includes only the columns: `first_author`,
+`title`, `journal`, `pub_date`, `doi`, `pmid`, `scopus_eid`, `pub_type`, and
+`added_dt`.
+* `set_scopus_keys()`: makes Scopus API key and/or insttoken available for use
+during an R session.
+* `set_entrez_key()`: makes Entrez Utils API key available for use during an R
+session; imported from rentrez package.
+
+### Updated
+* `as_tibble()` methods for publication results now include the `added_dt`
+column in output that standardizes how record timestamps are created.
+* `tidy_pubmed_summary()` is now _soft deprecated_ in favor of
+`tidy_pub_records()`.
+
+
+## General Utilities
+
+### Updated
+* `to_range()` now returns `NA` when passed empty vectors.
+* `citedby_scopus()` has a new `insttoken` argument.
 * `collapse_col()` gained all the methods of `collapse_col_flex()`, along with
-`na.rm` used by all methods.
+`na.rm` argument that can be used by all methods.
 * `append_to_url()` and `build_hyperlink()` no longer add a trailing slash to
 the end of URLs when there is not one. Also, a new `sep` argument has been
 added to provide greater control.
+* _[BREAKING CHANGE]_ `format_hyperlink()` `preserve_NA` argument removed and
+replaced with `preserve` argument. With this change, the output value when a URL
+is missing will be either the URL (i.e. `NA`) or the text passed to `txt`. This
+allows more flexibility in the output to support more use cases.
+* `format_hyperlink()` now warns when values are passed to `...` when `as` does
+not equal "html" to reduce the likelihood of losing arguments silently.
 
-## New
-* `extract_as_tidygraph()`: Extracts nodes and relationships identified by a
-    SPARQL query from RDF/XML file and returns it as a tidygraph.
-* `write_graphml()`: Writes a graph object (tidygraph/iGraph) to a .graphml
-    file.
 
 
 # DO.utils 0.2.6
