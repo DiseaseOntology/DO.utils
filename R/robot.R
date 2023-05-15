@@ -12,9 +12,11 @@
 #' http://robot.obolibrary.org/.
 #' - Can also use a standalone robot.jar file (`.path` must be specified) in
 #' which case it is executed with `java -Xmx10G -jar` (10 GB memory).
-#' - Once per R session (or when `.recheck = TRUE`), execution of ROBOT will be
-#' tested. It must succeed prior to any command execution, with success
-#' indicated by an announcement of the version & path of ROBOT being used.
+#' - On the first use of each R session, the ROBOT executable/.jar specified
+#' will be tested. It must succeed prior to any command execution. On success,
+#' `robot()` will announce the version & path being used. If at any time a new
+#' `.path` is specified, this previous version will be replaced with a new
+#' announcement.
 #'
 #' @section Citation:
 #' R.C. Jackson, J.P. Balhoff, E. Douglass, N.L. Harris, C.J. Mungall, and
@@ -35,23 +37,13 @@
 #'     * `"--remove-annotations"` (option of `annotate`) or
 #'         `"remove-annotations" = ""` (named argument form).
 #'
-#' @param .path The path to the ROBOT executable or a robot.jar file.
-#'     If `NULL` (default), it will attempt to identify ROBOT on the system path.
-#'     See the "ROBOT Setup" section for necessary details. Ignored if a
-#'     functional ROBOT executable has been identified during an R session
-#'     unless `.recheck = TRUE`.
-#' @param .exec Whether to execute the command or not, as boolean (default:
-#'     `TRUE`); included primarily for debugging.
-#' @param .recheck Whether to re-validate the ROBOT executable, as boolean
-#'     (default: `FALSE`).
+#' @param .path The path to a ROBOT executable or .jar file, as a string.
+#'     If `NULL` (default), the system path will be searched for the ROBOT
+#'     executable. See the "ROBOT Setup" section for installation details.
 #'
 #' @export
-robot <- function(..., .path = NULL, .exec = TRUE, .recheck = FALSE) {
-    if (is.null(.path)) {
-        robot_cmd <- check_robot(retest = .recheck)
-    } else {
-        robot_cmd <- check_robot(path = .path, retest = .recheck)
-    }
+robot <- function(..., .path = NULL) {
+    check_robot(.path)
     dots <- list(...)
     args <- stringr::str_trim(names(dots))
 
@@ -70,9 +62,7 @@ robot <- function(..., .path = NULL, .exec = TRUE, .recheck = FALSE) {
         )
     }
 
-    if (!.exec) return(cmd)
-
-    robot_cmd(args = robot_args)
+    DO_env$robot(args = robot_args)
 }
 
 
@@ -177,49 +167,57 @@ install_robot <- function(...) {
     }
 }
 
-# Test if ROBOT is available at path or system (default) & functional.
-# On success, cache & return path
-check_robot <- function(path = NULL, retest = FALSE) {
-    if (retest || is.null(DO_env$robot)) {
-        if (is.null(path)) {
-            robot_path <- Sys.which("robot")
+#' Check for ROBOT
+#'
+#' Check if ROBOT is functional and cache it for future use.
+#'
+#' @inheritParams robot
+#'
+#' @returns Path and version of functional ROBOT. Use [robot()] for execution.
+#'
+#' @noRd
+check_robot <- function(.path = NULL) {
+    if (is.null(.path) && !is.null(DO_env$robot)) return(DO_env$robot_path)
+    if (is.null(.path)) {
+        DO_env$robot_path <- Sys.which("robot")
+    } else {
+        .path <- normalizePath(.path, mustWork = TRUE)
+        if (!is.null(DO_env$robot_path) && .path == DO_env$robot_path) {
+            rlang::inform("ROBOT path unchanged.")
+            return(DO_env$robot_path)
         } else {
-            robot_path <- normalizePath(path, mustWork = TRUE)
+            DO_env$robot_path <- .path
         }
+    }
 
-        if (tools::file_ext(robot_path) == "jar") {
-            cmd <- function(args, ...) {
-                system2("java", c("-Xmx10G -jar", robot_path, args), ...)
-            }
-        } else {
-            cmd <- function(args, ...) system2(robot_path, args, ...)
+    if (tools::file_ext(DO_env$robot_path) == "jar") {
+        DO_env$robot <- function(args, ...) {
+            system2("java", c("-Xmx10G -jar", DO_env$robot_path, args), ...)
         }
+    } else {
+        DO_env$robot <- function(args, ...) system2(DO_env$robot_path, args, ...)
+    }
 
-        version <- try(
-            cmd("--version", stdout = TRUE, stderr = FALSE),
-            silent = TRUE
-        )
+    version <- try(
+        DO_env$robot("--version", stdout = TRUE, stderr = FALSE),
+        silent = TRUE
+    )
 
-        if (stringr::str_detect(version, "ROBOT version ")) {
-            DO_env$robot_path <- robot_path
-            names(DO_env$robot_path) <- version
-            DO_env$robot <- cmd
-        } else {
-            DO_env$robot_path <- NULL
-            DO_env$robot <- NULL
-        }
+    if (stringr::str_detect(version, "ROBOT version ")) {
+        names(DO_env$robot_path) <- version
+    } else {
+        DO_env$robot <- NULL
+        DO_env$robot_path <- NULL
     }
 
     if (is.null(DO_env$robot)) {
-        msg <- paste0("ROBOT at ", robot_path, " is not available or working.")
+        msg <- paste0("ROBOT at ", .path, " is not available or working.")
         rlang::abort(msg, class = "robot_fail")
     }
 
-    if (exists("robot_path")) {
-        rlang::inform(
-            paste0("Using ", names(DO_env$robot_path), " at ", DO_env$robot_path)
-        )
-    }
+    rlang::inform(
+        paste0("Using ", version, " at ", DO_env$robot_path)
+    )
 
-    DO_env$robot
+    invisible(DO_env$robot_path)
 }

@@ -4,7 +4,7 @@
 \alias{robot}
 \title{Execute Robot Commands}
 \usage{
-robot(..., .path = NULL, .exec = TRUE, .recheck = FALSE)
+robot(..., .path = NULL)
 }
 \arguments{
 \item{...}{Command(s) passed on to ROBOT, including subcommand(s), either as
@@ -24,17 +24,9 @@ options do not use a value, use "". Subcommands should be unnamed.
 }
 }}
 
-\item{.path}{The path to the ROBOT executable or a robot.jar file.
-If \code{NULL} (default), it will attempt to identify ROBOT on the system path.
-See the "ROBOT Setup" section for necessary details. Ignored if a
-functional ROBOT executable has been identified during an R session
-unless \code{.recheck = TRUE}.}
-
-\item{.exec}{Whether to execute the command or not, as boolean (default:
-\code{TRUE}); included primarily for debugging.}
-
-\item{.recheck}{Whether to re-validate the ROBOT executable, as boolean
-(default: \code{FALSE}).}
+\item{.path}{The path to a ROBOT executable or .jar file, as a string.
+If \code{NULL} (default), the system path will be searched for the ROBOT
+executable. See the "ROBOT Setup" section for installation details.}
 }
 \description{
 Light wrapper for OBO Foundry ROBOT program (OBO Foundry). See
@@ -51,9 +43,11 @@ may be achieved with \code{\link[=install_robot]{install_robot()}} or as describ
 http://robot.obolibrary.org/.
 \item Can also use a standalone robot.jar file (\code{.path} must be specified) in
 which case it is executed with \code{java -Xmx10G -jar} (10 GB memory).
-\item Once per R session (or when \code{.recheck = TRUE}), execution of ROBOT will be
-tested. It must succeed prior to any command execution, with success
-indicated by an announcement of the version & path of ROBOT being used.
+\item On the first use of each R session, the ROBOT executable/.jar specified
+will be tested. It must succeed prior to any command execution. On success,
+\code{robot()} will announce the version & path being used. If at any time a new
+\code{.path} is specified, this previous version will be replaced with a new
+announcement.
 }
 }
 
