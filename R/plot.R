@@ -402,9 +402,12 @@ plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
     df <- DO_repo$doid$query(xref_query) %>%
         tidy_sparql() %>%
         dplyr::mutate(
-            prefix = stringr::str_remove(prefix, "_[0-9]{4}_[0-9]{2}_[0-9]{2}")
+            prefix = stringr::str_remove(
+                .data$prefix,
+                "_[0-9]{4}_[0-9]{2}_[0-9]{2}"
+            )
         ) %>%
-        dplyr::count(prefix, wt = count, name = "count")
+        dplyr::count(.data$prefix, wt = .data$count, name = "count")
 
     curation_type <- c(
         ORDO = "Manual", OMIM = "Manual", MEDDRA = "Manual", KEGG = "Manual",
