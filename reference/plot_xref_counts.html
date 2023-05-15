@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,19 +52,14 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_xref_counts</span><span class="op">(</span></span>
-<span>  data_file <span class="op">=</span> <span class="st">"data/DO_release/cross_references.csv"</span>,</span>
-<span>  out_dir <span class="op">=</span> <span class="st">"graphics/website"</span>,</span>
-<span>  w <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  h <span class="op">=</span> <span class="fl">5.6</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_xref_counts</span><span class="op">(</span><span class="va">DO_repo</span>, out_dir <span class="op">=</span> <span class="st">"graphics/website"</span>, w <span class="op">=</span> <span class="fl">8</span>, h <span class="op">=</span> <span class="fl">5.6</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>data_file</dt>
-<dd><p>The path to the file containing the latest DO xref counts,
-as a string.</p></dd>
+    <dl><dt>DO_repo</dt>
+<dd><p>The local path to the HumanDiseaseOntology repo, as a string,
+or a <a href="DOrepo.html">DOrepo</a> object.</p></dd>
 
 
 <dt>out_dir</dt>
@@ -80,16 +75,6 @@ should be saved, as a string. If <code>NULL</code> the plot is not saved to disk
 <dd><p>The height of the plot in inches, as numeric.</p></dd>
 
 </dl></div>
-    <div class="section level2">
-    <h2 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a></h2>
-    
-
-<p>To prepare data, manually copy and paste stats from the Google Sheet
-<a href="https://docs.google.com/spreadsheets/d/1-ZSUH43MJloR2EsBqHpGeY6IfKG7Gt8KBcU5remnoGI/edit#gid=269344614" class="external-link">DO_github_release_log</a>
-OR manually copy &amp; paste stats from xref.tsv produced by executing:</p>
-<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>robot query <span class="sc">--</span>input {DO_repo}<span class="sc">/</span>src<span class="sc">/</span>ontology<span class="sc">/</span>doid.owl \</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>            <span class="sc">--</span>query {DO_repo}<span class="sc">/</span>src<span class="sc">/</span>sparql<span class="sc">/</span>build<span class="sc">/</span>all<span class="sc">-</span>xref<span class="sc">-</span>report.rq xref.tsv</span></code></pre><p></p></div>
-    </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

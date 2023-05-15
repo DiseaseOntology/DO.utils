@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.6.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,25 +46,88 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.7" id="doutils-027">DO.utils 0.2.7<a class="anchor" aria-label="anchor" href="#doutils-027"></a></h2>
 <div class="section level3">
-<h3 id="dependencies-development-version">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-development-version"></a></h3>
+<h3 id="dependencies-0-2-7">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-0-2-7"></a></h3>
 <ul><li>reticulate updated to &gt;=v1.28 in an effort to resolve python package installation issues; see <a href="https://github.com/DiseaseOntology/DO.utils/issues/12" class="external-link uri">https://github.com/DiseaseOntology/DO.utils/issues/12</a>.</li>
+<li>stringr updated to &gt;= 1.5.0, for access to new <code>str_escape()</code> function.</li>
+<li>igraph added for new tidygraph/graphml functions. This change doesn’t affect much since tidygraph is already a dependency that itself depends on igraph.</li>
+<li>Now SUGGESTS the keyring package for API key management.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/collapse_col.html">collapse_col()</a></code> gained all the methods of <code><a href="../reference/collapse_col_flex.html">collapse_col_flex()</a></code>, along with <code>na.rm</code> used by all methods.</li>
-<li>
-<code><a href="../reference/append_to_url.html">append_to_url()</a></code> and <code><a href="../reference/build_hyperlink.html">build_hyperlink()</a></code> no longer add a trailing slash to the end of URLs when there is not one. Also, a new <code>sep</code> argument has been added to provide greater control.</li>
+<h3 id="announcements-0-2-7">Announcements<a class="anchor" aria-label="anchor" href="#announcements-0-2-7"></a></h3>
+<ul><li>Migrated DO.utils repository to the DiseaseOntology organization.</li>
+<li>DO.utils documentation is now available on the web at <a href="https://diseaseontology.github.io/DO.utils/" class="external-link uri">https://diseaseontology.github.io/DO.utils/</a> with significant updates supporting citation-based assessment of use workflow.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h3>
+<h3 id="do-management--analysis-0-2-7">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-2-7"></a></h3>
+<div class="section level4">
+<h4 id="new-0-2-7">New<a class="anchor" aria-label="anchor" href="#new-0-2-7"></a></h4>
 <ul><li>
-<code><a href="../reference/extract_as_tidygraph.html">extract_as_tidygraph()</a></code>: Extracts nodes and relationships identified by a SPARQL query from RDF/XML file and returns it as a tidygraph.</li>
+<code><a href="../reference/extract_as_tidygraph.html">extract_as_tidygraph()</a></code>: Extracts nodes and relationships identified in a SPARQL query from RDF/XML file and returns it as a tidygraph.</li>
 <li>
 <code><a href="../reference/write_graphml.html">write_graphml()</a></code>: Writes a graph object (tidygraph/iGraph) to a .graphml file.</li>
 </ul></div>
+<div class="section level4">
+<h4 id="updated-0-2-7">Updated<a class="anchor" aria-label="anchor" href="#updated-0-2-7"></a></h4>
+<ul><li>
+<em>[BREAKING CHANGE]</em> <code><a href="../reference/robot.html">robot()</a></code> wrapper function updated to make it easier to use when programming.</li>
+<li>
+<code><a href="../reference/plot_branch_counts.html">plot_branch_counts()</a></code> now:
+<ol style="list-style-type: decimal"><li>Identifies the count of classes in each branch that are asserted or inferred.</li>
+<li>Uses data directly from a local copy of the HumanDiseaseOntology repo instead of manually copied release notes.</li>
+<li>Gained the <code>aspect_ratio</code> argument.</li>
+</ol></li>
+<li>
+<code><a href="../reference/plot_xref_counts.html">plot_xref_counts()</a></code> now uses data directly from a local copy of the HumanDiseaseOntology repo instead of manually copied release notes.</li>
+<li>
+<code><a href="../reference/plot_citedby.html">plot_citedby()</a></code> gained the <code>color_set</code> argument to permit more flexible color choice.</li>
+<li>
+<code>DO_pubs</code> updated with 2023 complex disease paper.
+<ul><li>NOTE: The 2023 Database paper describing the ‘Assessing Resource Use’ workflow was <em>NOT</em> added because it is not a publication describing use of the DO).</li>
+</ul></li>
+<li>
+<code>DO_colors</code> now include accent colors generated as part of the DO-KB addition to the website. These colors are available in standard, “_mid”, and “_light” versions.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="assessing-resource-use-0-2-7">Assessing Resource Use<a class="anchor" aria-label="anchor" href="#assessing-resource-use-0-2-7"></a></h3>
+<div class="section level4">
+<h4 id="new-0-2-7-1">New<a class="anchor" aria-label="anchor" href="#new-0-2-7-1"></a></h4>
+<ul><li>‘Assessing Resource Use: Obtaining Use Records’ tutorial/vignette added. Describes how to set up DO.utils and execute functions to support the ‘Assessing Resource Use’ workflow.</li>
+<li>
+<code><a href="../reference/tidy_pub_records.html">tidy_pub_records()</a></code>: creates a tibble with more limited information from Scopus and PubMed references; includes only the columns: <code>first_author</code>, <code>title</code>, <code>journal</code>, <code>pub_date</code>, <code>doi</code>, <code>pmid</code>, <code>scopus_eid</code>, <code>pub_type</code>, and <code>added_dt</code>.</li>
+<li>
+<code><a href="../reference/set_scopus_keys.html">set_scopus_keys()</a></code>: makes Scopus API key and/or insttoken available for use during an R session.</li>
+<li>
+<code><a href="https://docs.ropensci.org/rentrez/reference/set_entrez_key.html" class="external-link">set_entrez_key()</a></code>: makes Entrez Utils API key available for use during an R session; imported from rentrez package.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="updated-0-2-7-1">Updated<a class="anchor" aria-label="anchor" href="#updated-0-2-7-1"></a></h4>
+<ul><li>
+<code><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble()</a></code> methods for publication results now include the <code>added_dt</code> column in output that standardizes how record timestamps are created.</li>
+<li>
+<code><a href="../reference/tidy_pubmed_summary.html">tidy_pubmed_summary()</a></code> is now <em>soft deprecated</em> in favor of <code><a href="../reference/tidy_pub_records.html">tidy_pub_records()</a></code>.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="general-utilities-0-2-7">General Utilities<a class="anchor" aria-label="anchor" href="#general-utilities-0-2-7"></a></h3>
+<div class="section level4">
+<h4 id="updated-0-2-7-2">Updated<a class="anchor" aria-label="anchor" href="#updated-0-2-7-2"></a></h4>
+<ul><li>
+<code><a href="../reference/to_range.html">to_range()</a></code> now returns <code>NA</code> when passed empty vectors.</li>
+<li>
+<code><a href="../reference/citedby_scopus.html">citedby_scopus()</a></code> has a new <code>insttoken</code> argument.</li>
+<li>
+<code><a href="../reference/collapse_col.html">collapse_col()</a></code> gained all the methods of <code><a href="../reference/collapse_col_flex.html">collapse_col_flex()</a></code>, along with <code>na.rm</code> argument that can be used by all methods.</li>
+<li>
+<code><a href="../reference/append_to_url.html">append_to_url()</a></code> and <code><a href="../reference/build_hyperlink.html">build_hyperlink()</a></code> no longer add a trailing slash to the end of URLs when there is not one. Also, a new <code>sep</code> argument has been added to provide greater control.</li>
+<li>
+<em>[BREAKING CHANGE]</em> <code><a href="../reference/format_hyperlink.html">format_hyperlink()</a></code> <code>preserve_NA</code> argument removed and replaced with <code>preserve</code> argument. With this change, the output value when a URL is missing will be either the URL (i.e. <code>NA</code>) or the text passed to <code>txt</code>. This allows more flexibility in the output to support more use cases.</li>
+<li>
+<code><a href="../reference/format_hyperlink.html">format_hyperlink()</a></code> now warns when values are passed to <code>...</code> when <code>as</code> does not equal “html” to reduce the likelihood of losing arguments silently.</li>
+</ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.6" id="doutils-026">DO.utils 0.2.6<a class="anchor" aria-label="anchor" href="#doutils-026"></a></h2>
