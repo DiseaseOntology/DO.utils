@@ -2,9 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{length_sort}
 \alias{length_sort}
+\alias{length_order}
 \title{Sort by Character Length}
 \usage{
 length_sort(x, ...)
+
+length_order(data, cols, ...)
 }
 \arguments{
 \item{x}{A vector.}
@@ -28,13 +31,19 @@ length_sort(x, ...)
     \code{"quick"}, and \code{"radix"},
     see the help for \code{\link[base]{sort}}.}
   }}
+
+\item{data}{A data.frame.}
+
+\item{cols}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> The columns of \code{data}
+to order by.}
 }
 \description{
-Sort the elements of a vector by character length. Multiple elements of the
-the same length in a vector are secondarily sorted by appearance in the
-original vector.
+Sort a vector (\code{length_sort()}) or data.frame (\code{length_order()}) by
+character length. Multiple elements of the the same length are secondarily
+sorted by order of appearance.
 }
 \examples{
+# Sorting vectors
 x <- c("ccc", "aaaa", "eee", "b", "DDD")
 length_sort(x)
 length_sort(x, decreasing = TRUE)
@@ -44,7 +53,16 @@ length_sort(x2)
 length_sort(x2, decreasing = TRUE)
 length_sort(x2, na.last = NA)
 
-}
-\seealso{
-\code{\link[=length_order]{length_order()}} for sorting data.frames by character length.
+# Ordering data.frames
+x <- tibble::tibble(
+    x = 1:3,
+    y = c("b", "aa", "c"),
+    z = c("bb", "a", "c")
+)
+
+length_order(x, "y")
+length_order(x, "z")
+length_order(x, c("y", "z"))
+length_order(x, c("y", "z"), decreasing = TRUE)
+
 }

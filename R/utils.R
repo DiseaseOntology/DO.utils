@@ -39,13 +39,17 @@ sandwich_text <- function(x, placeholder, ...) {
 
 #' Sort by Character Length
 #'
-#' Sort the elements of a vector by character length. Multiple elements of the
-#' the same length in a vector are secondarily sorted by appearance in the
-#' original vector.
+#' Sort a vector (`length_sort()`) or data.frame (`length_order()`) by
+#' character length. Multiple elements of the the same length are secondarily
+#' sorted by order of appearance.
 #'
 #' @param x A vector.
+#' @param data A data.frame.
+#' @param cols <[`tidy-select`][tidyr::tidyr_tidy_select]> The columns of `data`
+#' to order by.
 #' @inheritDotParams base::order decreasing na.last method
 #' @examples
+#' # Sorting vectors
 #' x <- c("ccc", "aaaa", "eee", "b", "DDD")
 #' length_sort(x)
 #' length_sort(x, decreasing = TRUE)
@@ -55,11 +59,43 @@ sandwich_text <- function(x, placeholder, ...) {
 #' length_sort(x2, decreasing = TRUE)
 #' length_sort(x2, na.last = NA)
 #'
+#' # Ordering data.frames
+#' x <- tibble::tibble(
+#'     x = 1:3,
+#'     y = c("b", "aa", "c"),
+#'     z = c("bb", "a", "c")
+#' )
+#'
+#' length_order(x, "y")
+#' length_order(x, "z")
+#' length_order(x, c("y", "z"))
+#' length_order(x, c("y", "z"), decreasing = TRUE)
+#'
 #' @export
 length_sort <- function(x, ...) {
     x[order(stringr::str_length(x), ...)]
 }
 
+#' @rdname length_sort
+#' @export
+length_order <- function(data, cols, ...) {
+    .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
+    if (length(.cols) > 1) {
+        index <- do.call(
+            "order",
+            c(
+                purrr::map(
+                    dplyr::select(data, dplyr::all_of(.cols)),
+                    stringr::str_length
+                ),
+                ...
+            )
+        )
+    } else {
+        index <- order(stringr::str_length(dplyr::pull(data, .cols)), ...)
+    }
+    data[index, ]
+}
 
 #' Identify all duplicates
 #'

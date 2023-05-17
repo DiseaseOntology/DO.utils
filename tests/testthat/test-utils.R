@@ -37,6 +37,21 @@ test_that("length_sort() args inherited from order work", {
 })
 
 
+# length_order() tests ----------------------------------------------------
+
+test_that("length_order() works", {
+    x <- tibble::tibble(
+        x = 1:3,
+        y = c("b", "aa", "c"),
+        z = c("bb", "a", "c")
+    )
+
+    expect_equal(length_order(x, y), x[c(1, 3, 2), ])
+    expect_equal(length_order(x, c(y, z)), x[c(3, 1, 2), ])
+    expect_equal(length_order(x, c(y, z), decreasing = TRUE), x[c(2, 1, 3), ])
+})
+
+
 # all_duplicated() tests --------------------------------------------------
 
 na_dup <- c(NA, 1, 1:7, NA)
