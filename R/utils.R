@@ -37,6 +37,30 @@ sandwich_text <- function(x, placeholder, ...) {
 }
 
 
+#' Sort by Character Length
+#'
+#' Sort the elements of a vector by character length. Multiple elements of the
+#' the same length in a vector are secondarily sorted by appearance in the
+#' original vector.
+#'
+#' @param x A vector.
+#' @inheritDotParams base::order decreasing na.last method
+#' @examples
+#' x <- c("ccc", "aaaa", "eee", "b", "DDD")
+#' length_sort(x)
+#' length_sort(x, decreasing = TRUE)
+#'
+#' x2 <- c(1:9, NA, 100, 10)
+#' length_sort(x2)
+#' length_sort(x2, decreasing = TRUE)
+#' length_sort(x2, na.last = NA)
+#'
+#' @export
+length_sort <- function(x, ...) {
+    x[order(stringr::str_length(x), ...)]
+}
+
+
 #' Identify all duplicates
 #'
 #' Built on [base::duplicated()] but, unlike `base::duplicated()`,

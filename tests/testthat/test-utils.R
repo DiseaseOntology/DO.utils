@@ -17,6 +17,26 @@ test_that("sandwich_text() works", {
 })
 
 
+# length_sort() tests -----------------------------------------------------
+
+test_that("length_sort() works", {
+    x <- c("ccc", "aaaa", "eee", "b", "DDD")
+    expect_equal(length_sort(x), c("b", "ccc", "eee", "DDD", "aaaa"))
+    expect_equal(
+        length_sort(x, decreasing = TRUE),
+        c("aaaa", "ccc", "eee", "DDD", "b")
+    )
+})
+
+test_that("length_sort() args inherited from order work", {
+    x <- c(1:9, NA, 100, 10)
+    expect_equal(length_sort(x), c(1:9, 10, 100, NA))
+    expect_equal(length_sort(x, decreasing = TRUE), c(100, 10, 1:9, NA))
+    expect_equal(length_sort(x, na.last = FALSE), c(NA, 1:9, 10, 100))
+    expect_equal(length_sort(x, na.last = NA), c(1:9, 10, 100))
+})
+
+
 # all_duplicated() tests --------------------------------------------------
 
 na_dup <- c(NA, 1, 1:7, NA)

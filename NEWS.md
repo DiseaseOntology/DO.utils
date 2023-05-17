@@ -1,5 +1,11 @@
 # DO.utils (development version)
 
+## General Utilities
+
+### New
+* length_sort(): Sorts vector elements by character length.
+
+
 # DO.utils 0.2.7
 
 ## Dependencies
