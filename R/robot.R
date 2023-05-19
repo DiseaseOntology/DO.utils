@@ -62,7 +62,9 @@ robot <- function(..., .path = NULL) {
         )
     }
 
-    DO_env$robot(args = robot_args)
+    status <- suppressWarnings(DO_env$robot(args = robot_args))
+    status <- check_robot_error(status)
+    if (length(status) > 0) rlang::inform(status)
 }
 
 

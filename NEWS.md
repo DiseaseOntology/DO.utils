@@ -8,6 +8,14 @@
 column(s).
 
 
+## DO Management & Analysis
+
+### Updated
+* robot() errors are now signaled in R and no longer specifies a max heap size
+when using a robot.jar file.
+
+
+
 # DO.utils 0.2.7
 
 ## Dependencies
