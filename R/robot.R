@@ -192,7 +192,7 @@ check_robot <- function(.path = NULL) {
 
     if (tools::file_ext(DO_env$robot_path) == "jar") {
         DO_env$robot <- function(args, ...) {
-            system2("java", c("-Xmx10G -jar", DO_env$robot_path, args), ...)
+            system2("java", c("-jar", DO_env$robot_path, args), ...)
         }
     } else {
         DO_env$robot <- function(args, ...) system2(DO_env$robot_path, args, ...)
