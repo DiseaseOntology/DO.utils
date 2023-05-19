@@ -234,6 +234,26 @@ check_robot <- function(.path = NULL) {
     invisible(DO_env$robot_path)
 }
 
+# check if status is indicative of error
+check_robot_error <- function(status) {
+    if (length(status) == 1 && is.numeric(status)) {
+        if (status == 0) {
+            return()
+        }
+    } else {
+        exit_status <- attr(status, "status")
+        if (is.null(exit_status) || exit_status == 0) {
+            return(status)
+        }
+    }
+
+    java_error <- any(
+        stringr::str_detect(status, stringr::coll("java", ignore_case = TRUE))
+    )
+    if (java_error) robot_error(status, "java_error")
+    robot_error(status)
+}
+
 # signal errors during execution of ROBOT program
 robot_error <- function(msg = NULL, class = NULL) {
     if (is.null(msg)) {
