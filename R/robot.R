@@ -91,14 +91,15 @@ robot_query <- function(input, rq, save) {
         # use system robot command
         "robot",
         # args - subcommand, input, query (rq & save)
-        c("query",
-          paste0("--input ", input),
-          paste(
-              "--query",
-              rq,
-              save,
-              sep = " "
-          )
+        c(
+            "query",
+            paste0("--input ", input),
+            paste(
+                "--query",
+                rq,
+                save,
+                sep = " "
+            )
         )
     )
 }
@@ -121,7 +122,6 @@ robot_query <- function(input, rq, save) {
 #'
 #' @export
 install_robot <- function(...) {
-
     robot_file <- "/usr/local/bin/robot"
     jar_file <- "/usr/local/bin/robot.jar"
 
@@ -156,8 +156,10 @@ install_robot <- function(...) {
         non_zero_codes <- exit != 0
         non_zero_fxn <- dplyr::recode(
             which(exit != 0),
-            c(`1` = "download robot", `2` = "chmod robot",
-              `3` = "download robot.jar")
+            c(
+                `1` = "download robot", `2` = "chmod robot",
+                `3` = "download robot.jar"
+            )
         )
 
         warning(
@@ -180,7 +182,9 @@ install_robot <- function(...) {
 #'
 #' @noRd
 check_robot <- function(.path = NULL) {
-    if (is.null(.path) && !is.null(DO_env$robot)) return(DO_env$robot_path)
+    if (is.null(.path) && !is.null(DO_env$robot)) {
+        return(DO_env$robot_path)
+    }
     if (is.null(.path)) {
         DO_env$robot_path <- Sys.which("robot")
     } else {
@@ -195,16 +199,21 @@ check_robot <- function(.path = NULL) {
 
     if (tools::file_ext(DO_env$robot_path) == "jar") {
         DO_env$robot <- function(args, ...) {
-            system2("java", c("-jar", DO_env$robot_path, args), ...)
+            system2(
+                "java", c("-jar", DO_env$robot_path, args),
+                stdout = TRUE, stderr = TRUE, ...
+            )
         }
     } else {
-        DO_env$robot <- function(args, ...) system2(DO_env$robot_path, args, ...)
+        DO_env$robot <- function(args, ...) {
+            system2(
+                DO_env$robot_path, args,
+                stdout = TRUE, stderr = TRUE, ...
+            )
+        }
     }
 
-    version <- try(
-        DO_env$robot("--version", stdout = TRUE, stderr = FALSE),
-        silent = TRUE
-    )
+    version <- try(DO_env$robot("--version"), silent = TRUE)
 
     if (stringr::str_detect(version, "ROBOT version ")) {
         names(DO_env$robot_path) <- version
