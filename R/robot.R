@@ -167,6 +167,9 @@ install_robot <- function(...) {
     }
 }
 
+
+# robot() helpers ---------------------------------------------------------
+
 #' Check for ROBOT
 #'
 #' Check if ROBOT is functional and cache it for future use.
@@ -220,4 +223,16 @@ check_robot <- function(.path = NULL) {
     )
 
     invisible(DO_env$robot_path)
+}
+
+# signal errors during execution of ROBOT program
+robot_error <- function(msg = NULL, class = NULL) {
+    if (is.null(msg)) {
+        msg <- paste0("Requested ROBOT program is not available or working.")
+    } else {
+        msg <- c(msg[1], vctr_to_string(msg[-1], delim = "\n  "))
+    }
+
+    class <- append(class, values = "robot_error")
+    rlang::abort(msg, class, .frame = parent.frame())
 }
