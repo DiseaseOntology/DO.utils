@@ -7,8 +7,23 @@
 drop_blank(x)
 }
 \arguments{
-\item{x}{character vector}
+\item{x}{A character vector or list.}
+}
+\value{
+An object of the same class and length as \code{x}.
 }
 \description{
-Drops "" values from a vector
+Drops blank values from a vector or list. See \code{\link[=is_blank]{is_blank()}} for what
+constitutes a blank value. \code{drop_blank()} is a generic function.
+}
+\examples{
+drop_blank(c("", "A")
+drop_blank(
+    list(
+        c("", "A"),
+        c("A", "B"),
+        c("C", "D", "", "E", "")
+    )
+)
+
 }

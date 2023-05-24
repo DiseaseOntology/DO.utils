@@ -6,6 +6,7 @@
 * length_sort(): Sorts vector elements by character length.
 * length_order(): Sorts data.frames by character length of elements in specified
 column(s).
+* drop_blank(): Now a generic with `character` and `list` methods.
 
 
 ## DO Management & Analysis
