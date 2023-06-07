@@ -86,3 +86,19 @@ test_that("is_curie(def = 'w3c') works", {
     # expect_true(is_curie("blah:1　2", "w3c")) # non-breaking space U+3000, should work but doesn't
     expect_false(is_curie("blah:1 2", "w3c")) # normal space in LUI
 })
+
+
+# iff_all_vals() tests ----------------------------------------------------
+
+test_that("iff_all_vals() works", {
+    expect_true(iff_all_vals(1:5, 5:1))
+    expect_true(iff_all_vals(letters[1:5], letters[5:1]))
+
+    res_missing <- FALSE
+    attr(res_missing, "missing") <- 5:2
+    expect_equal(iff_all_vals(1, 5:1), res_missing)
+
+    res_extra <- FALSE
+    attr(res_extra, "extra") <- 2:5
+    expect_false(iff_all_vals(1:5, 1))
+})

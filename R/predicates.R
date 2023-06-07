@@ -258,6 +258,29 @@ is_curie <- function(x, def = "obo_generic") {
     stringr::str_detect(x, pattern) & !stringr::str_detect(x, "^_:")
 }
 
+#' Test for All Values
+#'
+#' Returns `TRUE` if, and only if, all `values` are present in `x` and ONLY
+#' those `values` are present in `x`.
+#'
+#' @param x A vector.
+#' @param values The values to ensure exist in `x`.
+#'
+#' @returns
+#' `TRUE` or `FALSE`. When `FALSE`, `missing` and/or `extra` attributes will be
+#' included to assist in identifying non-conformity.
+#'
+#' @export
+iff_all_vals <- function(x, values) {
+    vals_present <- values %in% x
+    only_vals <- all(x %in% values)
+
+    out <- all(vals_present) && all(only_vals)
+    if (any(!vals_present)) attr(out, "missing") <- values[!vals_present]
+    if (any(!only_vals)) attr(out, "extra") <- x[!only_vals]
+
+    out
+}
 
 # Type tests for internal use only
 is_vctr_or_df <- function(x) {

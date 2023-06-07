@@ -8,6 +8,8 @@
 column(s).
 * is_curie(): Tests for CURIEs in character vectors, according to a specified
 definition that _always_ conforms to W3C CURIE Syntax 1.0.
+* iff_all_vals(): Tests if all values are present in a vector and ONLY those
+values are present.
 
 ### Updated
 * drop_blank(): Now a generic with `character` and `list` methods.
