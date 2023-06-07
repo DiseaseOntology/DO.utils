@@ -4,7 +4,7 @@
 #' _may_ be tested to ensure it matches a valid DOID format but no attempt is
 #' made to confirm bare numbers or DOIDs match actual diseases in the ontology.
 #'
-#' @inheritParams ID_predicates
+#' @inheritParams obo_ID_predicates
 #' @param as The format to convert the DOIDs to, as a string. All valid formats
 #'     are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".
 #' @param convert_bare Whether bare numbers should be converted to canonical
@@ -81,7 +81,7 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
 #' _may_ be tested to ensure it matches a valid OBO ID format but no attempt is
 #' made to confirm IDs match actual terms in any OBO Foundry ontology.
 #'
-#' @inheritParams ID_predicates
+#' @inheritParams obo_ID_predicates
 #' @param as The format to convert the OBO IDs to, as a string. The following
 #'     formats are possible options:
 #'

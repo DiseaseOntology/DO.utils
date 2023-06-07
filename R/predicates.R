@@ -8,7 +8,8 @@
 #' @param tol double, tolerance to use (for numeric vectors)
 #' @param ... unused; for extensibility
 #'
-#' @family type_predicates
+#' @family value predicates
+#' @family predicates
 #' @export
 is_invariant <- function(x, na.rm = FALSE, ...) {
     UseMethod("is_invariant")
@@ -39,7 +40,8 @@ is_invariant.numeric <- function(x, na.rm = FALSE,
 #'
 #' @param x vector to be tested
 #'
-#' @family type_predicates
+#' @family value predicates
+#' @family predicates
 #' @name char_val_predicates
 NULL
 
@@ -70,7 +72,8 @@ is_missing <- function(x) {
 #' @param tol value specifiying precision desired (see [.Machine] or [double]
 #' for more info)
 #'
-#' @family type_predicates
+#' @family value predicates
+#' @family predicates
 #' @name num_val_predicates
 NULL
 
@@ -110,6 +113,7 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 #' @inheritParams char_val_predicates
 #'
 #' @family type_predicates
+#' @family predicates
 #' @name lgl_predicates
 NULL
 
@@ -120,7 +124,7 @@ is_boolean <- function(x) {
 }
 
 
-#' ID predicates
+#' OBO ID predicates
 #'
 #' These predicates are designed to identify and validate common ID formats
 #' defined within OBO Foundry ontologies.
@@ -173,11 +177,12 @@ is_boolean <- function(x) {
 #'
 #' is_valid_doid(doid)
 #'
-#' @family type_predicates
-#' @name ID_predicates
+#' @family ID predicates
+#' @family predicates
+#' @name obo_ID_predicates
 NULL
 
-#' @rdname ID_predicates
+#' @rdname obo_ID_predicates
 #' @export
 is_valid_obo <- function(x) {
     assert_character(x)
@@ -185,7 +190,7 @@ is_valid_obo <- function(x) {
     stringr::str_detect(x, obo_regex)
 }
 
-#' @rdname ID_predicates
+#' @rdname obo_ID_predicates
 #' @export
 is_valid_doid <- function(x) {
     assert_character(x)
@@ -239,6 +244,8 @@ is_valid_doid <- function(x) {
 #'     "http://purl.obolibrary.org/obo/DOID_0001816" # URI
 #' )
 #'
+#' @family ID predicates
+#' @family predicates
 #' @export
 is_curie <- function(x, def = "obo_generic") {
     def <- match.arg(def, choices = c("obo", "obo_generic", "w3c", "w3c_safe"))
