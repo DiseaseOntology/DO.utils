@@ -64,3 +64,27 @@ read_pubmed_txt <- function(file) {
 
     citation_df
 }
+
+
+#' Automatically Identify & Read TSV/CSV files
+#'
+#' A light wrapper around [readr::read_delim()] that automatically identifies
+#' the delimiter based on file extension. Note that this function is primarily
+#' intended for internal use; therefore, messages about guessed column types are
+#' not generated.
+#'
+#' @inheritParams readr::read_delim
+#' @inheritDotParams readr::read_delim -delim -quoted_na
+#'
+#' @keywords internal
+read_delim_auto <- function(file, ..., show_col_types = FALSE) {
+    delim <- switch(tools::file_ext(file), tsv = "\t", csv = ",")
+    if (is.null(delim)) rlang::abort("`file` must have .tsv or .csv extension.")
+
+    readr::read_delim(
+        file = file,
+        delim = delim,
+        show_col_types = show_col_types,
+        ...
+    )
+}
