@@ -19,8 +19,10 @@ defined within OBO Foundry ontologies.
 }
 \details{
 \itemize{
-\item \code{is_valid_obo()} identifies NA's and blanks
-\item \code{is_valid_doid()} identifies "" or whitespace of any length
+\item \code{is_valid_obo()} to determine if identifiers match the OBO Foundry IRI
+pattern or are an obo:LUI CURIE.
+\item \code{is_valid_doid()} to determine if identifiers match DO's IRI or CURIE
+pattern.
 }
 }
 \section{Notes}{

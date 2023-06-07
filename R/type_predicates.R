@@ -125,9 +125,11 @@ is_boolean <- function(x) {
 #' These predicates are designed to identify and validate common ID formats
 #' defined within OBO Foundry ontologies.
 #'
-#' * `is_valid_obo()` identifies NA's and blanks
+#' * `is_valid_obo()` to determine if identifiers match the OBO Foundry IRI
+#' pattern or are an obo:LUI CURIE.
 #'
-#' * `is_valid_doid()` identifies "" or whitespace of any length
+#' * `is_valid_doid()` to determine if identifiers match DO's IRI or CURIE
+#' pattern.
 #'
 #' @section Notes:
 #' These predicates _do not_ attempt to confirm any ID actually exists in an
