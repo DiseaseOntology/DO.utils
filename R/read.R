@@ -88,3 +88,82 @@ read_delim_auto <- function(file, ..., show_col_types = FALSE) {
         ...
     )
 }
+
+
+#' Read Manually Copied OMIMPS data
+#'
+#' Properly formats OMIMPS data copied from OMIM and appends the following
+#' columns to enhance curation activities:
+#' * `omim`: properly formatted xref for the DO.
+#' * `geno_inheritance`: best guess at inheritance to add as logical subClassOf
+#' axiom.
+#' * `tidy_label`: phenotype name without question mark
+#' * `provisional`: the status of this phenotype as provisional, as indicated by
+#' the presence of a leading question mark.
+#'
+#' As part of formatting, column misarrangements are corrected and whitespace
+#' is trimmed.
+#'
+#' @param file The path to a .tsv or .csv file with OMIMPS data saved in it.
+#' @inheritDotParams readr::read_delim -delim -quoted_na -trim_ws -name_repair
+#'
+#' @keywords internal
+read_omim <- function(file, ...) {
+    df <- read_delim_auto(file, name_repair = "minimal", trim_ws = TRUE, ...)
+
+    # fix headers
+    header_in_df <- purrr::pmap_lgl(df, function(...) sum(is.na(c(...))) > 3)
+    if (sum(header_in_df) > 3) {
+        rlang::abort("OMIM file has higher than expected missing values.")
+    }
+    if (any(header_in_df)) {
+        headers <- purrr::map2_chr(
+            names(df),
+            unlist(df[1, ]),
+            ~ collapse_to_string(.x, .y, delim = " ", na.rm = TRUE)
+        )
+
+        missing_header <- headers == ""
+        if (any(missing_header)) {
+            new_header <- purrr::map2_chr(
+                unlist(df[2, ]),
+                unlist(df[3, ]),
+                ~ collapse_to_string(.x, .y, delim = " ", na.rm = TRUE)
+            )
+            new_header <- new_header[!is.na(new_header)]
+
+            if (sum(missing_header) != length(new_header)) {
+                rlang::abort("Problem fixing missing headers...")
+            }
+            headers[missing_header] <- new_header
+        }
+
+        headers <- headers %>%
+            make.names(unique = TRUE) %>%
+            stringr::str_replace_all("\\.", "_") %>%
+            stringr::str_to_lower()
+
+        names(df) <- headers
+        df <- df[!header_in_df, ]
+    }
+
+    df <- df %>%
+        dplyr::mutate(
+            omim = paste0("OMIM:", phenotype_mim_number),
+            geno_inheritance = dplyr::case_when(
+                inheritance == "AR" ~ 'autosomal recessive inheritance',
+                inheritance == "AD" ~ 'autosomal dominant inheritance',
+                inheritance == "XLR" ~ 'X-linked recessive inheritance',
+                inheritance == "XLD" ~ 'X-linked recessive inheritance',
+                stringr::str_detect(inheritance, stringr::coll("AR")) &
+                    stringr::str_detect(inheritance, stringr::coll("AD")) ~ 'autosomal inheritance',
+                stringr::str_detect(inheritance, stringr::coll("XLR")) &
+                    stringr::str_detect(inheritance, stringr::coll("XLD")) ~ 'X-linked inheritance',
+                .default = NA_character_
+            ),
+            tidy_label = stringr::str_remove(phenotype, "^\\?"),
+            provisional = stringr::str_detect(phenotype, "^\\?")
+        )
+
+    df
+}
