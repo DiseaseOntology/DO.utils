@@ -11,8 +11,11 @@ uri <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816",
     "http://purl.org/dc/terms/license",
     "http://www.w3.org/2000/01/rdf-schema#comment",
-    "not a URI",
-    "http://bio2rdf.org/"
+    "http://bio2rdf.org/",
+    # to ensure pass through of unrecognized URI/CURIEs
+    "not a URI or CURIE",
+    # multiple delimited (should be able to handle)
+    "http://purl.org/dc/elements/1.1/date|http://www.w3.org/2002/07/owl#deprecated"
 )
 curie <- c(
     "SYMP:0000000",
@@ -25,8 +28,11 @@ curie <- c(
     "DOID:0001816",
     "terms:license",
     "rdfs:comment",
-    "not a URI",
-    "http://bio2rdf.org/"
+    "http://bio2rdf.org/",
+    # to ensure pass through of unrecognized URI/CURIEs
+    "not a URI or CURIE",
+    # multiple delimited (should be able to handle)
+    "dc:date|owl:deprecated"
 )
 
 test_that("to_curie() works", {

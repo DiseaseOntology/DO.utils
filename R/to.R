@@ -37,9 +37,11 @@
 #' @family identifier converters
 #' @export
 to_curie <- function(x) {
+    # to avoid partial namespace-to-prefix conversion *hopefully*
+    prefixes <- length_sort(ns_prefix, decreasing = TRUE)
     stringr::str_replace_all(
         x,
-        stats::setNames(paste0(names(ns_prefix), ":"), ns_prefix)
+        stats::setNames(paste0(names(prefixes), ":"), prefixes)
     )
 }
 
@@ -69,9 +71,11 @@ to_curie <- function(x) {
 #' @family identifier converters
 #' @export
 to_uri <- function(x) {
+    # to avoid partial prefix-to-namespace conversion *hopefully*
+    prefixes <- length_sort(ns_prefix, by_name = TRUE, decreasing = TRUE)
     stringr::str_replace_all(
         x,
-        stats::setNames(ns_prefix, paste0("^", names(ns_prefix), ":"))
+        stats::setNames(prefixes, paste0(names(prefixes), ":"))
     )
 }
 
