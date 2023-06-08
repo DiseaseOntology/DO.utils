@@ -2,24 +2,37 @@
 #   will be in next version > 1.1.2
 utils::globalVariables("where")
 
+
 #' Tidy SPARQL Query
 #'
-#' Tidies SPARQL query results, unnesting list columns and returning results as
-#' a [tibble](tibble::tibble()) instead of a data.frame.
+#' Tidies SPARQL query results, unnesting list columns, returning results as
+#' a [tibble](tibble::tibble()) instead of a data.frame and, optionally,
+#' converting URIs to CURIEs.
 #'
 #' @param query_res The results of a SPARQL query, as a data.frame (usually
-#'     produced by [owl_xml()$query()](owl_xml()) or
-#'     [DOrepo()$doid{_merged}?$query()](DOrepo())).
+#'     produced by [owl_xml()]$query() or similar from [DOrepo()].
+#' @param as_curies Whether to convert IRIs to CURIEs, as a boolean
+#'     (default: `TRUE`).
+#' @inheritDotParams to_curie -x
 #'
 #' @section Note:
 #' This function exists because the results are not currently tidied by `pyDOID`
 #' (the python package that provides SPARQL query functionality to `DO.utils`).
 #'
 #' @export
-tidy_sparql <- function(query_res) {
-    query_res %>%
+tidy_sparql <- function(query_res, as_curies = TRUE, ...) {
+    res <- query_res %>%
         tibble::as_tibble() %>%
         DO.utils::unnest_cross(where(is.list), keep_empty = TRUE)
+
+    if (as_curies) {
+        res <- res %>%
+            dplyr::mutate(
+                dplyr::across(dplyr::everything(), ~ to_curie(.x, ...))
+            )
+    }
+
+    res
 }
 
 

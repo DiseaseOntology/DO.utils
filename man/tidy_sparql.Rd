@@ -4,16 +4,25 @@
 \alias{tidy_sparql}
 \title{Tidy SPARQL Query}
 \usage{
-tidy_sparql(query_res)
+tidy_sparql(query_res, as_curies = TRUE, ...)
 }
 \arguments{
 \item{query_res}{The results of a SPARQL query, as a data.frame (usually
-produced by \href{owl_xml()}{owl_xml()$query()} or
-\href{DOrepo()}{DOrepo()$doid{_merged}?$query()}).}
+produced by \code{\link[=owl_xml]{owl_xml()}}$query() or similar from \code{\link[=DOrepo]{DOrepo()}}.}
+
+\item{as_curies}{Whether to convert IRIs to CURIEs, as a boolean
+(default: \code{TRUE}).}
+
+\item{...}{
+  Arguments passed on to \code{\link[=to_curie]{to_curie}}
+  \describe{
+    \item{\code{}}{}
+  }}
 }
 \description{
-Tidies SPARQL query results, unnesting list columns and returning results as
-a \href{tibble::tibble()}{tibble} instead of a data.frame.
+Tidies SPARQL query results, unnesting list columns, returning results as
+a \href{tibble::tibble()}{tibble} instead of a data.frame and, optionally,
+converting URIs to CURIEs.
 }
 \section{Note}{
 
