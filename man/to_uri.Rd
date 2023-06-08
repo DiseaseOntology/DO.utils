@@ -10,7 +10,7 @@ to_uri(x)
 \item{x}{CURIE(s), as a character vector.}
 }
 \description{
-Converts CURIE(s) to URI(s).
+Converts CURIE(s) to URI(s). Angle brackets will not be added.
 }
 \section{Note}{
 

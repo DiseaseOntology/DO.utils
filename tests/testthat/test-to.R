@@ -15,7 +15,9 @@ uri <- c(
     # to ensure pass through of unrecognized URI/CURIEs
     "not a URI or CURIE",
     # multiple delimited (should be able to handle)
-    "http://purl.org/dc/elements/1.1/date|http://www.w3.org/2002/07/owl#deprecated"
+    "http://purl.org/dc/elements/1.1/date|http://www.w3.org/2002/07/owl#deprecated",
+    # handle angle brackets (URI to CURIE only)
+    "<http://www.geneontology.org/formats/oboInOwl#hasDbXref>"
 )
 curie <- c(
     "SYMP:0000000",
@@ -32,7 +34,9 @@ curie <- c(
     # to ensure pass through of unrecognized URI/CURIEs
     "not a URI or CURIE",
     # multiple delimited (should be able to handle)
-    "dc:date|owl:deprecated"
+    "dc:date|owl:deprecated",
+    # handle angle brackets (URI to CURIE only)
+    "oboInOwl:hasDbXref"
 )
 
 test_that("to_curie() works", {
@@ -40,7 +44,7 @@ test_that("to_curie() works", {
 })
 
 test_that("to_uri() works", {
-    expect_equal(to_uri(curie), uri)
+    expect_equal(to_uri(curie), stringr::str_remove_all(uri, "<|>"))
 })
 
 

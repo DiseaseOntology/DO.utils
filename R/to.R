@@ -3,6 +3,10 @@
 #' Converts URI(s) to CURIE(s).
 #'
 #' @param x URI(s), as a character vector.
+#' @param string_angle_brackets Whether to remove all `<` and `>` from the
+#' input, as a boolean (default: `TRUE`). Where this might have undesirable
+#' consequences, e.g. _some_ angle brackets need to be removed, perform the
+#' removal beforehand and use `strip_angle_brackets = FALSE`.
 #'
 #' @section Note:
 #' Performs no URI validation, relying on simple string matching of
@@ -19,6 +23,7 @@
 #'     "http://purl.obolibrary.org/obo/UBERON_0000002",
 #'     "http://purl.obolibrary.org/obo/DOID_0001816",
 #'     "http://purl.obolibrary.org/obo/doid#DO_AGR_slim"
+#'     "<http://www.geneontology.org/formats/oboInOwl#hasDbXref>"
 #' )
 #' to_curie(.uri)
 #'
@@ -36,19 +41,23 @@
 #'
 #' @family identifier converters
 #' @export
-to_curie <- function(x) {
+to_curie <- function(x, strip_angle_brackets = TRUE) {
     # to avoid partial namespace-to-prefix conversion *hopefully*
     prefixes <- length_sort(ns_prefix, decreasing = TRUE)
-    stringr::str_replace_all(
+    curie <- stringr::str_replace_all(
         x,
         stats::setNames(paste0(names(prefixes), ":"), prefixes)
     )
+
+    if (strip_angle_brackets) curie <- stringr::str_remove_all(curie, "<|>")
+
+    curie
 }
 
 
 #' Convert CURIE to URI
 #'
-#' Converts CURIE(s) to URI(s).
+#' Converts CURIE(s) to URI(s). Angle brackets will not be added.
 #'
 #' @param x CURIE(s), as a character vector.
 #'
