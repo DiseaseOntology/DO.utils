@@ -10,8 +10,15 @@ prefix <- jsonlite::fromJSON(prefix_json)[[1]] %>%
 not_obo_prefix <- prefix[!stringr::str_detect(prefix, "/obo")]
 not_obo_prefix <- not_obo_prefix %>%
     append(
-        c(up = "http://purl.uniprot.org/core/",
-          up_keywords = "http://purl.uniprot.org/keywords/")
+        c(
+            EFO = "http://www.ebi.ac.uk/efo/EFO_",
+            ORDO = "http://www.orpha.net/ORDO/Orphanet_",
+            mesh = "https://id.nlm.nih.gov/mesh/",
+            meshv = "http://id.nlm.nih.gov/mesh/vocab#",
+            up = "http://purl.uniprot.org/core/",
+            up_keywords = "http://purl.uniprot.org/keywords/",
+            up_disease = "http://purl.uniprot.org/diseases/"
+        )
     ) %>%
     sort()
 
@@ -21,7 +28,6 @@ names(not_obo_prefix) <- dplyr::recode(
     "dc" = "terms",
     "dc11" = "dc"
 )
-
 
 
 # Standard OBO prefixes ---------------------------------------------------

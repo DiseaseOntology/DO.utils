@@ -109,16 +109,18 @@ NULL
 
 #' Namespace Prefixes
 #'
-#' Prefixes for namespaces sourced from `robot` that cover most uses in
-#' OBO Foundry ontologies, with a few additional prefixes and slight
-#' modifications to match the prefixes as used in the Human Disease Ontology.
+#' Prefixes for namespaces, primarily sourced from
+#' [ROBOT](http://robot.obolibrary.org/), that cover most uses in OBO Foundry
+#' ontologies, with slight modification to match the prefixes as used in the
+#' Human Disease Ontology and a few additional prefixes for cross-references and
+#' DO-related SPARQL query support.
 #'
 #' @format
 #' Character vectors of namespaces named by their corresponding prefix:
 #'
 #' `ns_prefix`: Superset of all `r length(ns_prefix)` objects listed below.
 #'
-#' @source "`robot` (v1.8.3) via data-raw/ns_prefix.R; last updated 2022-10-07."
+#' @source `ROBOT` (v1.9.4) via data-raw/ns_prefix.R; last updated 2023-06-12.
 "ns_prefix"
 
 #' @format `obo_prefix`: `r length(obo_prefix)` _standard_ OBO Foundry
@@ -135,7 +137,10 @@ NULL
 
 #' @format `not_obo_prefix`: `r length(not_obo_prefix)` namespaces outside but
 #' commonly used in the OBO Foundry
-#' (e.g.`r paste0('\ua0', names(not_obo_prefix)[3], '\ua0=\ua0"', not_obo_prefix[3], '"')`)
+#' (e.g.`r paste0('\ua0', names(not_obo_prefix["dc"]), '\ua0=\ua0"', not_obo_prefix["dc"], '"')`),
+#' or in federated SPARQL queries with the DO
+#' (e.g.`r paste0('\ua0', names(not_obo_prefix["up"]), '\ua0=\ua0"', not_obo_prefix["up"], '"')`).
+#'
 #' @rdname ns_prefix
 "not_obo_prefix"
 
