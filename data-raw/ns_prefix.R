@@ -7,7 +7,12 @@ prefix <- jsonlite::fromJSON(prefix_json)[[1]] %>%
 
 
 # non-OBO prefixes --------------------------------------------------------
-not_obo_prefix <- prefix[!stringr::str_detect(prefix, "/obo")] %>%
+not_obo_prefix <- prefix[!stringr::str_detect(prefix, "/obo")]
+not_obo_prefix <- not_obo_prefix %>%
+    append(
+        c(up = "http://purl.uniprot.org/core/",
+          up_keywords = "http://purl.uniprot.org/keywords/")
+    ) %>%
     sort()
 
 # switch prefixes to match use in DO
