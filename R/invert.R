@@ -111,3 +111,15 @@ invert_sublists <- function(x, use_sublist_names = FALSE) {
 
     out
 }
+
+
+#' Invert Names and Values (INTERNAL)
+#'
+#' Currently only supports character vectors.
+#'
+#' @param x A named object.
+#'
+#' @keywords internal
+invert_nm <- function(x) {
+    setNames(names(x), x)
+}
