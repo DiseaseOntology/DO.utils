@@ -44,6 +44,8 @@ sandwich_text <- function(x, placeholder, ...) {
 #' sorted by order of appearance.
 #'
 #' @param x A vector.
+#' @param by_name Whether to sort a vector by name instead of value, as a
+#'     boolean.
 #' @param data A data.frame.
 #' @param cols <[`tidy-select`][tidyr::tidyr_tidy_select]> The columns of `data`
 #' to order by.
@@ -59,6 +61,9 @@ sandwich_text <- function(x, placeholder, ...) {
 #' length_sort(x2, decreasing = TRUE)
 #' length_sort(x2, na.last = NA)
 #'
+#' x3 <- c(bb = 333, ccc = 1, a = 22)
+#' length_sort(x3, by_name = TRUE)
+#'
 #' # Ordering data.frames
 #' x <- tibble::tibble(
 #'     x = 1:3,
@@ -72,8 +77,14 @@ sandwich_text <- function(x, placeholder, ...) {
 #' length_order(x, c("y", "z"), decreasing = TRUE)
 #'
 #' @export
-length_sort <- function(x, ...) {
-    x[order(stringr::str_length(x), ...)]
+length_sort <- function(x, by_name = FALSE, ...) {
+    if (by_name) {
+        len <- stringr::str_length(names(x))
+    } else {
+        len <- stringr::str_length(x)
+    }
+
+    x[order(len, ...)]
 }
 
 #' @rdname length_sort

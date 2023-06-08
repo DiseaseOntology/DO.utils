@@ -36,6 +36,19 @@ test_that("length_sort() args inherited from order work", {
     expect_equal(length_sort(x, na.last = NA), c(1:9, 10, 100))
 })
 
+test_that("length_sort() by_name argument works", {
+    x <- c(bb = 333, ccc = 1, a = 22)
+    expect_equal(length_sort(x), c(ccc = 1, a = 22, bb = 333))
+    expect_equal(
+        length_sort(x, by_name = TRUE),
+        c(a = 22, bb = 333, ccc = 1)
+    )
+    expect_equal(
+        length_sort(x, by_name = TRUE, decreasing = TRUE),
+        c(ccc = 1, bb = 333, a = 22)
+    )
+})
+
 
 # length_order() tests ----------------------------------------------------
 

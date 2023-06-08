@@ -5,12 +5,15 @@
 \alias{length_order}
 \title{Sort by Character Length}
 \usage{
-length_sort(x, ...)
+length_sort(x, by_name = FALSE, ...)
 
 length_order(data, cols, ...)
 }
 \arguments{
 \item{x}{A vector.}
+
+\item{by_name}{Whether to sort a vector by name instead of value, as a
+boolean.}
 
 \item{...}{
   Arguments passed on to \code{\link[base:order]{base::order}}
@@ -52,6 +55,9 @@ x2 <- c(1:9, NA, 100, 10)
 length_sort(x2)
 length_sort(x2, decreasing = TRUE)
 length_sort(x2, na.last = NA)
+
+x3 <- c(bb = 333, ccc = 1, a = 22)
+length_sort(x3, by_name = TRUE)
 
 # Ordering data.frames
 x <- tibble::tibble(
