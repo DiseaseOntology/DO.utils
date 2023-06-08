@@ -1,0 +1,27 @@
+# SPARQL query: List all mappings
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT ?id ?label ?dep ?mapping_type ?mapping
+WHERE {
+    ?class oboInOwl:id ?id_raw ;
+        rdfs:label ?label_raw ;
+        ?mapping_type ?mapping_raw .
+
+    VALUES ?mapping_type {
+        oboInOwl:hasDbXref skos:exactMatch skos:closeMatch skos:broadMatch
+        skos:narrowMatch skos:relatedMatch
+    }
+
+    OPTIONAL { ?class owl:deprecated ?dep_untidy . }
+
+    # clean up output: F where missing and no language tags
+    BIND( if( BOUND( ?dep_untidy ), ?dep_untidy, false) AS ?dep)
+    BIND( str(?id_raw) AS ?id )
+    BIND( str(?label_raw) AS ?label )
+    BIND( str(?mapping_raw) AS ?mapping )
+}
