@@ -94,15 +94,20 @@ onto_missing <- function(onto_path, input, what = "OMIM",
     }
 
     in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by)
+    class(in_onto) <- c("in_onto_df", class(in_onto))
     missing <- dplyr::anti_join(
         from_input,
         from_onto,
         by = invert_nm(compare_by)
     )
+    class(missing) <- c("onto_missing_df", class(missing))
 
     if (report_present) {
-        list(in_onto = in_onto, missing = missing)
+        out <- list(in_onto = in_onto, missing = missing)
+        class(out) <- c("onto_missing_list", class(out))
     } else {
-        missing
+        out <- missing
     }
+
+    out
 }
