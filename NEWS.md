@@ -3,24 +3,39 @@
 ## General Utilities
 
 ### New
-* length_sort(): Sorts vector elements by character length.
-* length_order(): Sorts data.frames by character length of elements in specified
+* `length_sort()`: Sorts vector elements by character length.
+* `length_order()`: Sorts data.frames by character length of elements in specified
 column(s).
-* is_curie(): Tests for CURIEs in character vectors, according to a specified
-definition that _always_ conforms to W3C CURIE Syntax 1.0.
-* iff_all_vals(): Tests if all values are present in a vector and ONLY those
+* `iff_all_vals()`: Tests if all values are present in a vector and ONLY those
 values are present.
 
 ### Updated
-* drop_blank(): Now a generic with `character` and `list` methods.
+* `drop_blank()`: Now a generic with `character` and `list` methods.
 
 
 ## DO Management & Analysis
 
-### Updated
-* robot() errors are now signaled in R and no longer specifies a max heap size
-when using a robot.jar file.
+### New
+* `is_curie()`: Tests for CURIEs in character vectors, according to a specified
+definition that _always_ conforms to W3C CURIE Syntax 1.0.
+* `onto_missing()`: Compares tsv/csv data with data in the ontology to identify
+data that may be missing. Optionally returns data that is present.
 
+### Updated
+* `robot()` errors are now signaled in R and no longer specifies a max heap size
+when using a robot.jar file.
+* `to_curie()`/`to_uri()` now appropriately remove brackets from URIs and handle
+delimited input.
+* `tidy_sparql()` has the new `as_curies` argument and converts IRIs to CURIEs
+by default.
+* `ns_prefix` now includes more namespace prefixes, including those for
+MeSH and UniProt.
+* `append_to_url()` is now vectorized and can append to additional prefixes,
+including anything in `ns_prefix` and URLs commonly used on disease-ontology.org
+for cross-references.
+* `format_url()` no longer uses `NA` in the `txt` argument as text input.
+* `build_hyperlink()` takes advantage of the updates to `append_to_url()` and
+`format_url()`.
 
 
 # DO.utils 0.2.7
