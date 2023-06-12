@@ -4,13 +4,15 @@
 \alias{build_hyperlink}
 \title{Build Hyperlinks}
 \usage{
-build_hyperlink(x, url, as, ..., sep = "", txt = x, preserve_NA = TRUE)
+build_hyperlink(x, url, as, ..., sep = "", txt = x, preserve = "txt")
 }
 \arguments{
 \item{x}{Value(s) to append, as a character vector.}
 
-\item{url}{A URL or a URL name recognized by this package, as a string;
-see \link{get_url} for recognized names.}
+\item{url}{One or more URLs or URL names recognized by this package, as a
+character vector. If only one value is provided, it will be recycled;
+otherwise the length of \code{url} and \code{x} must match. See \code{\link[=get_url]{get_url()}} for
+recognized base URL names.}
 
 \item{as}{What format to use for the hyperlink, as a string; one of "gs"
 (Google Sheet), "xlsx" (Excel), or "html".}
@@ -18,18 +20,21 @@ see \link{get_url} for recognized names.}
 \item{...}{\emph{(Only for \code{as = "html"})} One or more name-value pairs of html
 \verb{<a>} \href{https://www.w3schools.com/tags/tag_a.asp}{attributes}.}
 
-\item{sep}{The separator to use between \code{url} and \code{x}, as a string
-(default = ""). If \code{url} ends in \code{sep}, an additional \code{sep} will not be
-added.}
+\item{sep}{One or more separators to use between \code{url} and \code{x}, as a
+character vector. If only one value is provided (e.g. default = ""), it
+will be recycled; otherwise the length of \code{sep} and \code{x} must match.
+If any \code{url} ends in the corresponding \code{sep}, an additional \code{sep} will
+not be added.}
 
 \item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
 vector. The default uses \code{x} as the text. If \code{NULL}, the full URL will serve
 as the text.  If a string, the value will be used for the text of each
 hyperlink.}
 
-\item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
-will result in \code{NA} being appended to the end of \code{url} (almost certainly not
-desired).}
+\item{preserve}{The value to return when \code{url} is \code{NA}, as a string. One of
+"url" or "txt" (default). Note that the default for \code{build_hyperlink()}
+is opposite the default of \code{\link[=format_hyperlink]{format_hyperlink()}} because \code{txt} is provided by
+default.}
 }
 \description{
 Builds hyperlinks for Google Sheets, Excel, or HTML by appending a value to
@@ -43,4 +48,27 @@ build_hyperlink(
     txt = "A hyperlink!"
 )
 
+# create CURIE links by passing local identifiers as `x` and prefixes as `url`
+build_hyperlink(
+    x = c("4", "D004194"),
+    url = c("DOID", "MESH"),
+    as = "gs",
+    txt = c("DOID:4", "MESH:D004194")
+)
+
+# provide internal URL names or direct URLs to append to
+# BE SURE to use `preserve = 'url'` when text is `NA`.
+build_hyperlink(
+    x = c("4", "fakeID"),
+    url = c("DOID", "https://madeup.url.com"),
+    as = "gs",
+    txt = c("DOID:4", NA),
+    sep = c("_", "/"),
+    preserve = "url"
+)
+
+}
+\seealso{
+Functions used internally: \code{\link[=append_to_url]{append_to_url()}} and
+\code{\link[=format_hyperlink]{format_hyperlink()}}.
 }
