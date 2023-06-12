@@ -7,11 +7,25 @@
 get_url(.name)
 }
 \arguments{
-\item{.name}{internal name of desired URL}
+\item{.name}{Internal name of desired URL.}
 }
 \description{
-Get a URL used within this package. Available URLs: "doi", "github", "orcid",
-"pubmed", "pmc", "pmc_article" (append as prefix to article pmcid for direct
-navigation), or "alliance_disease_tsv".
+Get a URL used within this package. To see all possible names, organized by
+type use \code{get_url("names")}.
 }
+\section{NOTE}{
+
+\code{get_url()} provides prefixes for disease-ontology.org style link support.
+The prefixes are primarily for cross-references (\code{xrefs}) and are generally
+better for creating URLs to look up information about a particular entity
+online but they \emph{may} overlap with official namespaces in \link{ns_prefix}, which
+can also be accessed by \code{get_url()}. Where this occurs, the prefixes can
+generally be distinguished by capitalization, with xref prefixes in
+uppercase, e.g. "MESH" = "https://meshb.nlm.nih.gov/record/ui?ui=",
+and the official namespace in lowercase,
+e.g. "mesh" = "https://id.nlm.nih.gov/mesh/". As this
+distinction cannot always be guaranteed, care should be taken for any prefix
+related to xrefs in the DO.
+}
+
 \keyword{internal}

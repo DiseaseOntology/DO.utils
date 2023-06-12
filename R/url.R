@@ -45,26 +45,68 @@ trim_url <- function(url_no_domain) {
 
 #' Get URL (internal)
 #'
-#' Get a URL used within this package. Available URLs: "doi", "github", "orcid",
-#' "pubmed", "pmc", "pmc_article" (append as prefix to article pmcid for direct
-#' navigation), or "alliance_disease_tsv".
+#' Get a URL used within this package. To see all possible names, organized by
+#' type use `get_url("names")`.
 #'
-#' @param .name internal name of desired URL
+#' @section NOTE:
+#' `get_url()` provides prefixes for disease-ontology.org style link support.
+#' The prefixes are primarily for cross-references (`xrefs`) and are generally
+#' better for creating URLs to look up information about a particular entity
+#' online but they _may_ overlap with official namespaces in [ns_prefix], which
+#' can also be accessed by `get_url()`. Where this occurs, the prefixes can
+#' generally be distinguished by capitalization, with xref prefixes in
+#' uppercase, e.g.`r paste0('\ua0', '"MESH"', '\ua0=\ua0"', get_url("MESH"), '"')`,
+#' and the official namespace in lowercase,
+#' e.g.`r paste0('\ua0', '"mesh"', '\ua0=\ua0"', get_url("mesh"), '"')`. As this
+#' distinction cannot always be guaranteed, care should be taken for any prefix
+#' related to xrefs in the DO.
+#'
+#' @param .name Internal name of desired URL.
 #' @keywords internal
 get_url <- function(.name) {
-    base_url <- c(
-        doi = "https://www.doi.org/",
-        github = "https://github.com/",
-        orcid = "https://orcid.org/",
-        pubmed = "https://pubmed.ncbi.nlm.nih.gov/",
-        pmc = "https://www.ncbi.nlm.nih.gov/pmc/",
-        pmc_article = "https://www.ncbi.nlm.nih.gov/pmc/articles/",
-        alliance_disease_tsv = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
+    if (is.na(.name)) return(.name)
+    base_url <- list(
+        pub_urls = c(
+            doi = "https://www.doi.org/",
+            github = "https://github.com/",
+            orcid = "https://orcid.org/",
+            pubmed = "https://pubmed.ncbi.nlm.nih.gov/",
+            pmc = "https://www.ncbi.nlm.nih.gov/pmc/"
+        ),
+        xref_urls = c(
+            # GARD = "https://rarediseases.info.nih.gov/diseases/{LUI}/index", # requires glue spec, exclude for now
+            ICD9CM = "http://icd9cm.chrisendres.com/index.php?action=search&srchtext=",
+            ICD10CM = "http://www.icd10data.com/Search.aspx?search=",
+            # ICD11 = "http://id.who.int/icd/entity/", # uses numerical identifier, e.g. 1711526170, not code
+            # ICDO, # no browser
+            KEGG = "https://www.kegg.jp/pathway/hsa", # to disease pathway (consistent w/DO), not disease itself (H# -> disease)
+            # MEDDRA, # no browser
+            MESH = "https://meshb.nlm.nih.gov/record/ui?ui=",
+            NCI = "https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=",
+            ORDO = "https://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=en&Expert=",
+            OMIM = "http://www.omim.org/MIM:",
+            SNOMEDCT_US = "https://browser.ihtsdotools.org/?perspective=full&conceptId1=",
+            UMLS_CUI = "https://uts.nlm.nih.gov/uts/umls/concept/"
+        ),
+        data_urls = c(
+            alliance_disease_tsv = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
+        ),
+        ns_prefix = ns_prefix
     )
 
     if (.name == "names") {
-        names(base_url)
+        out <- purrr::map(base_url, names)
+        class(out) <- c("get_url_names", class(out))
     } else {
-        base_url[[.name]]
+        out <- unlist(unname(base_url))[[.name]]
     }
+    out
+}
+
+
+#' @export
+print.get_url_names <- function(x, ...) {
+    x$ns_prefix <- "...includes common OBO Foundry and SPARQL prefixes; use `ns_prefix` to see the complete list."
+    class(x) <- class(x)[-1]
+    print(x, ...)
 }
