@@ -58,4 +58,12 @@ format_hyperlink(
     txt = c("Google", "placeholder")
 )
 
+# 'url' is always preserved when 'txt' is NA but 'url' is not
+format_hyperlink(
+    c("https://www.google.com/", "https://madeup.url.com/fakeID"),
+    "html",
+    txt = c("google", NA),
+    preserve = "txt"
+)
+
 }

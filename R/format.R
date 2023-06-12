@@ -310,6 +310,14 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #'     txt = c("Google", "placeholder")
 #' )
 #'
+#' # 'url' is always preserved when 'txt' is NA but 'url' is not
+#' format_hyperlink(
+#'     c("https://www.google.com/", "https://madeup.url.com/fakeID"),
+#'     "html",
+#'     txt = c("google", NA),
+#'     preserve = "txt"
+#' )
+#'
 #' @export
 format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
     as <- match.arg(as, c("gs", "xlsx", "html"))
@@ -328,7 +336,11 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
         if (is.null(txt)) {
             formula <- as.character(glue::glue('=HYPERLINK("{url}")'))
         } else {
-            formula <- as.character(glue::glue('=HYPERLINK("{url}", "{txt}")'))
+            formula <- dplyr::if_else(
+                !is.na(txt),
+                as.character(glue::glue('=HYPERLINK("{url}", "{txt}")')),
+                as.character(glue::glue('=HYPERLINK("{url}")'))
+            )
         }
         formatted <- googlesheets4::gs4_formula(formula)
     }
@@ -339,7 +351,11 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
             formatted <- url
             class(formatted) <- "hyperlink"
         } else {
-            formatted <- as.character(glue::glue('=HYPERLINK("{url}", "{txt}")'))
+            formatted <- dplyr::if_else(
+                !is.na(txt),
+                as.character(glue::glue('=HYPERLINK("{url}", "{txt}")')),
+                as.character(glue::glue('=HYPERLINK("{url}")'))
+            )
             class(formatted) <- "formula"
         }
     }
@@ -369,6 +385,8 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
 
         if (is.null(txt)) {
             txt <- url
+        } else {
+            txt <- dplyr::if_else(!is.na(txt), txt, url)
         }
 
         formatted <- glue::glue(

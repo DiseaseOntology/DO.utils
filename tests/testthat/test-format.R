@@ -317,3 +317,36 @@ test_that("format_hyperlink(preserve = 'txt') returns txt NA input", {
         c("<a href=\"https://www.google.com/\">google</a>", NA)
     )
 })
+
+test_that("format_hyperlink(preserve = 'txt') returns url when ONLY txt is NA", {
+    url <- c("https://www.google.com/", "https://madeup.url.com/fakeID")
+    txt <- c("google", NA)
+
+    gs_expect <- c(
+        '=HYPERLINK(\"https://www.google.com/\", \"google\")',
+        '=HYPERLINK(\"https://madeup.url.com/fakeID\")'
+    )
+    class(gs_expect) <- c("googlesheets4_formula", "vctrs_vctr")
+
+    xlsx_expect <- c(
+        '=HYPERLINK(\"https://www.google.com/\", \"google\")',
+        '=HYPERLINK(\"https://madeup.url.com/fakeID\")'
+    )
+    class(xlsx_expect) <- "formula"
+
+    expect_equal(
+        format_hyperlink(url, "gs", txt = txt, preserve = "txt"),
+        gs_expect
+    )
+    expect_equal(
+        format_hyperlink(url, "xlsx", txt = txt, preserve = "txt"),
+        xlsx_expect
+    )
+    expect_equal(
+        format_hyperlink(url, "html", txt = txt, preserve = "txt"),
+        c(
+            "<a href=\"https://www.google.com/\">google</a>",
+            "<a href=\"https://madeup.url.com/fakeID\">https://madeup.url.com/fakeID</a>"
+        )
+    )
+})
