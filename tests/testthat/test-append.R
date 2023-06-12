@@ -67,14 +67,6 @@ test_that("append_to_url() works", {
     )
 })
 
-test_that("append_to_url() preserve_NA argument works", {
-    x <- c("blah", NA)
-    expect_equal(
-        append_to_url(x, "http://fake.url.com/", preserve_NA = FALSE),
-        c("http://fake.url.com/blah", "http://fake.url.com/NA")
-    )
-})
-
 test_that("append_to_url() sep argument works", {
     expect_equal(
         append_to_url("blah", "http://fake.url.com", sep = "="),
@@ -91,5 +83,69 @@ test_that("append_to_url() sep argument works", {
     expect_equal(
         append_to_url("blah", "http://fake.url.com/?q=", sep = "?q="),
         "http://fake.url.com/?q=blah"
+    )
+})
+
+test_that("append_to_url() works with vectorized input", {
+    expect_equal(
+        append_to_url(
+            c("blah", "uhhh"),
+            c("http://fake.url.com", "https://this.is.it.com"),
+            c("=", "/")
+        ),
+        c("http://fake.url.com=blah", "https://this.is.it.com/uhhh")
+    )
+})
+
+test_that("append_to_url() with mixed-length inputs works", {
+    expect_equal(
+        append_to_url(
+            c("blah", "uhhh"),
+            "http://fake.url.com",
+            sep = c("=", "/")
+        ),
+        c("http://fake.url.com=blah", "http://fake.url.com/uhhh")
+    )
+    expect_equal(
+        append_to_url(
+            c("blah", "uhhh"),
+            c("http://fake.url.com", "https://this.is.it.com/"),
+            sep = "/"
+        ),
+        c("http://fake.url.com/blah", "https://this.is.it.com/uhhh")
+    )
+})
+
+test_that("append_to_url() can handle missing values", {
+    expect_equal(
+        append_to_url(
+            c(NA_character_, "uhhh"),
+            c("http://fake.url.com", "https://this.is.it.com/"),
+            sep = "/"
+        ),
+        c(NA_character_, "https://this.is.it.com/uhhh")
+    )
+    expect_equal(
+        append_to_url(
+            c("blah", "uhhh"),
+            c("http://fake.url.com", NA_character_),
+            c("=", NA_character_)
+        ),
+        c("http://fake.url.com=blah", NA_character_)
+    )
+    expect_equal(
+        append_to_url(
+            c(NA_character_, "uhhh"),
+            c("http://fake.url.com", NA_character_),
+            c("=", NA_character_)
+        ),
+        c(NA_character_, NA_character_)
+    )
+    expect_error(
+        append_to_url(
+            c(NA_character_, "uhhh"),
+            c("http://fake.url.com", "https://this.is.it.com/"),
+            sep = c("/", NA_character_)
+        )
     )
 })

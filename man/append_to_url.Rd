@@ -4,27 +4,69 @@
 \alias{append_to_url}
 \title{Append to URL}
 \usage{
-append_to_url(x, url, sep = "", preserve_NA = TRUE)
+append_to_url(x, url, sep = "")
 }
 \arguments{
 \item{x}{Value(s) to append, as a character vector.}
 
-\item{url}{A URL or a URL name recognized by this package, as a string;
-see \link{get_url} for recognized names.}
+\item{url}{One or more URLs or URL names recognized by this package, as a
+character vector. If only one value is provided, it will be recycled;
+otherwise the length of \code{url} and \code{x} must match. See \code{\link[=get_url]{get_url()}} for
+recognized base URL names.}
 
-\item{sep}{The separator to use between \code{url} and \code{x}, as a string
-(default = ""). If \code{url} ends in \code{sep}, an additional \code{sep} will not be
-added.}
-
-\item{preserve_NA}{Whether to preserve \code{NA} in output, as a boolean. \code{FALSE}
-will result in \code{NA} being appended to the end of \code{url} (almost certainly not
-desired).}
+\item{sep}{One or more separators to use between \code{url} and \code{x}, as a
+character vector. If only one value is provided (e.g. default = ""), it
+will be recycled; otherwise the length of \code{sep} and \code{x} must match.
+If any \code{url} ends in the corresponding \code{sep}, an additional \code{sep} will
+not be added.}
 }
 \description{
-Append a value to a URL.
+Append one or more value(s) to a corresponding URL.
 }
 \section{Note}{
 
 No URL validation is performed.
 }
 
+\examples{
+append_to_url("blah", "http://fake.url.com/")
+
+# separator can be specified and will not be duplicated
+append_to_url("blah", "http://fake.url.com/", sep = "?q=")
+append_to_url("blah", "http://fake.url.com/", sep = "/")
+
+# vectorized w/recycling
+append_to_url(c("blah", "ugh"), "http://fake.url.com", sep = "/")
+append_to_url(
+    c("blah", "ugh"),
+    c("http://fake.url.com", "https://madeup.url.com/"),
+    sep = "/"
+)
+append_to_url(
+    c("blah", "ugh"),
+    c("http://fake.url.com", "https://madeup.url.com/"),
+    sep = c("/", "?q=")
+)
+
+# missing values in `x` or `url` are preserved
+append_to_url(
+    c(NA, "uhhh"),
+    c("http://fake.url.com", "https://this.is.it.com/"),
+    sep = "/"
+)
+append_to_url(
+    c(NA, "uhhh"),
+    c("http://fake.url.com", NA_character_),
+    c("=", NA)
+)
+
+# `sep` must not be missing for non-missing values of `x` and `url`
+try(
+    append_to_url(
+        c(NA, "uhhh"),
+        c("http://fake.url.com", "https://this.is.it.com/"),
+        sep = c("/", NA)
+    )
+)
+
+}

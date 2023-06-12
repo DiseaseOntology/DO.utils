@@ -47,32 +47,103 @@ append_empty_col <- function(df, col, order = FALSE) {
 
 #' Append to URL
 #'
-#' Append a value to a URL.
+#' Append one or more value(s) to a corresponding URL.
 #'
 #' @section Note:
 #' No URL validation is performed.
 #'
 #' @param x Value(s) to append, as a character vector.
-#' @param url A URL or a URL name recognized by this package, as a string;
-#' see [get_url] for recognized names.
-#' @param sep The separator to use between `url` and `x`, as a string
-#' (default = ""). If `url` ends in `sep`, an additional `sep` will not be
-#' added.
-#' @param preserve_NA Whether to preserve `NA` in output, as a boolean. `FALSE`
-#' will result in `NA` being appended to the end of `url` (almost certainly not
-#' desired).
+#' @param url One or more URLs or URL names recognized by this package, as a
+#'     character vector. If only one value is provided, it will be recycled;
+#'     otherwise the length of `url` and `x` must match. See [get_url()] for
+#'     recognized base URL names.
+#' @param sep One or more separators to use between `url` and `x`, as a
+#'     character vector. If only one value is provided (e.g. default = ""), it
+#'     will be recycled; otherwise the length of `sep` and `x` must match.
+#'     If any `url` ends in the corresponding `sep`, an additional `sep` will
+#'     not be added.
+#'
+#' @examples
+#' append_to_url("blah", "http://fake.url.com/")
+#'
+#' # separator can be specified and will not be duplicated
+#' append_to_url("blah", "http://fake.url.com/", sep = "?q=")
+#' append_to_url("blah", "http://fake.url.com/", sep = "/")
+#'
+#' # vectorized w/recycling
+#' append_to_url(c("blah", "ugh"), "http://fake.url.com", sep = "/")
+#' append_to_url(
+#'     c("blah", "ugh"),
+#'     c("http://fake.url.com", "https://madeup.url.com/"),
+#'     sep = "/"
+#' )
+#' append_to_url(
+#'     c("blah", "ugh"),
+#'     c("http://fake.url.com", "https://madeup.url.com/"),
+#'     sep = c("/", "?q=")
+#' )
+#'
+#' # missing values in `x` or `url` are preserved
+#' append_to_url(
+#'     c(NA, "uhhh"),
+#'     c("http://fake.url.com", "https://this.is.it.com/"),
+#'     sep = "/"
+#' )
+#' append_to_url(
+#'     c(NA, "uhhh"),
+#'     c("http://fake.url.com", NA_character_),
+#'     c("=", NA)
+#' )
+#'
+#' # `sep` must not be missing for non-missing values of `x` and `url`
+#' try(
+#'     append_to_url(
+#'         c(NA, "uhhh"),
+#'         c("http://fake.url.com", "https://this.is.it.com/"),
+#'         sep = c("/", NA)
+#'     )
+#' )
 #'
 #' @export
-append_to_url <- function(x, url, sep = "", preserve_NA = TRUE) {
-    url <- tryCatch(get_url(url), error = function(e) url)
-
-    if (stringr::str_detect(url, paste0(stringr::str_escape(sep), "$"))) {
-        new_url <- paste0(url, x)
+append_to_url <- function(x, url, sep = "") {
+    if (length(url) > 1) {
+        if (length(url) != length(x)) {
+            rlang::abort('`url` must be the same length as `x` or length == 1')
+        }
+        url <- purrr::map_chr(
+            url,
+            ~ tryCatch(get_url(.x), error = function(e) .x)
+        )
     } else {
-        new_url <- paste(url, x, sep = sep)
+        url <- tryCatch(get_url(url), error = function(e) url)
     }
 
-    if (preserve_NA) new_url[is.na(x)] <- NA
+    if (length(sep) > 1 && length(sep) != length(x)) {
+        rlang::abort('`sep` must be the same length as `x` or length == 1')
+    }
 
+    ignore_sep <- purrr::map2_lgl(
+        url,
+        sep,
+        ~ stringr::str_detect(.x, paste0(stringr::str_escape(.y), "$"))
+    ) %>%
+        tidyr::replace_na(TRUE)
+
+    if (all(ignore_sep)) {
+        new_url <- paste0(url, x)
+    } else {
+        new_url <- purrr::pmap_chr(
+            list(url, x, sep, ignore_sep),
+            function(.u, .x, .s, .i) {
+                if (.i) {
+                    paste0(.u, .x)
+                } else {
+                    paste(.u, .x, sep = .s)
+                }
+            }
+        )
+    }
+
+    new_url[is.na(x) | is.na(url)] <- NA
     new_url
 }
