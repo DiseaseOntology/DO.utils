@@ -55,7 +55,7 @@ the end of a base url.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_hyperlink</span><span class="op">(</span><span class="va">x</span>, <span class="va">url</span>, <span class="va">as</span>, <span class="va">...</span>, sep <span class="op">=</span> <span class="st">""</span>, txt <span class="op">=</span> <span class="va">x</span>, preserve_NA <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_hyperlink</span><span class="op">(</span><span class="va">x</span>, <span class="va">url</span>, <span class="va">as</span>, <span class="va">...</span>, sep <span class="op">=</span> <span class="st">""</span>, txt <span class="op">=</span> <span class="va">x</span>, preserve <span class="op">=</span> <span class="st">"txt"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -65,8 +65,10 @@ the end of a base url.</p>
 
 
 <dt>url</dt>
-<dd><p>A URL or a URL name recognized by this package, as a string;
-see <a href="get_url.html">get_url</a> for recognized names.</p></dd>
+<dd><p>One or more URLs or URL names recognized by this package, as a
+character vector. If only one value is provided, it will be recycled;
+otherwise the length of <code>url</code> and <code>x</code> must match. See <code><a href="get_url.html">get_url()</a></code> for
+recognized base URL names.</p></dd>
 
 
 <dt>as</dt>
@@ -80,9 +82,11 @@ see <a href="get_url.html">get_url</a> for recognized names.</p></dd>
 
 
 <dt>sep</dt>
-<dd><p>The separator to use between <code>url</code> and <code>x</code>, as a string
-(default = ""). If <code>url</code> ends in <code>sep</code>, an additional <code>sep</code> will not be
-added.</p></dd>
+<dd><p>One or more separators to use between <code>url</code> and <code>x</code>, as a
+character vector. If only one value is provided (e.g. default = ""), it
+will be recycled; otherwise the length of <code>sep</code> and <code>x</code> must match.
+If any <code>url</code> ends in the corresponding <code>sep</code>, an additional <code>sep</code> will
+not be added.</p></dd>
 
 
 <dt>txt</dt>
@@ -92,12 +96,18 @@ as the text.  If a string, the value will be used for the text of each
 hyperlink.</p></dd>
 
 
-<dt>preserve_NA</dt>
-<dd><p>Whether to preserve <code>NA</code> in output, as a boolean. <code>FALSE</code>
-will result in <code>NA</code> being appended to the end of <code>url</code> (almost certainly not
-desired).</p></dd>
+<dt>preserve</dt>
+<dd><p>The value to return when <code>url</code> is <code>NA</code>, as a string. One of
+"url" or "txt" (default). Note that the default for <code>build_hyperlink()</code>
+is opposite the default of <code><a href="format_hyperlink.html">format_hyperlink()</a></code> because <code>txt</code> is provided by
+default.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Functions used internally: <code><a href="append_to_url.html">append_to_url()</a></code> and
+<code><a href="format_hyperlink.html">format_hyperlink()</a></code>.</p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -107,7 +117,32 @@ desired).</p></dd>
 <span class="r-in"><span>    as <span class="op">=</span> <span class="st">"html"</span>,</span></span>
 <span class="r-in"><span>    txt <span class="op">=</span> <span class="st">"A hyperlink!"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "&lt;a href=\"https://github.com/DiseaseOntology\" preserve_NA=\"TRUE\"&gt;A hyperlink!&lt;/a&gt;"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "&lt;a href=\"https://github.com/DiseaseOntology\"&gt;A hyperlink!&lt;/a&gt;"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># create CURIE links by passing local identifiers as `x` and prefixes as `url`</span></span></span>
+<span class="r-in"><span><span class="fu">build_hyperlink</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4"</span>, <span class="st">"D004194"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID"</span>, <span class="st">"MESH"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    as <span class="op">=</span> <span class="st">"gs"</span>,</span></span>
+<span class="r-in"><span>    txt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID:4"</span>, <span class="st">"MESH:D004194"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;googlesheets4_formula[2]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] =HYPERLINK("http://purl.obolibrary.org/obo/DOID_4", "DOID:4")               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] =HYPERLINK("https://meshb.nlm.nih.gov/record/ui?ui=D004194", "MESH:D004194")</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># provide internal URL names or direct URLs to append to</span></span></span>
+<span class="r-in"><span><span class="co"># BE SURE to use `preserve = 'url'` when text is `NA`.</span></span></span>
+<span class="r-in"><span><span class="fu">build_hyperlink</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4"</span>, <span class="st">"fakeID"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID"</span>, <span class="st">"https://madeup.url.com"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    as <span class="op">=</span> <span class="st">"gs"</span>,</span></span>
+<span class="r-in"><span>    txt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID:4"</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    sep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"_"</span>, <span class="st">"/"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    preserve <span class="op">=</span> <span class="st">"url"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;googlesheets4_formula[2]&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] =HYPERLINK("http://purl.obolibrary.org/obo/DOID_4", "DOID:4")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] =HYPERLINK("https://madeup.url.com/fakeID")                  </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

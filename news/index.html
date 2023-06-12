@@ -51,15 +51,44 @@
 <h3 id="general-utilities-development-version">General Utilities<a class="anchor" aria-label="anchor" href="#general-utilities-development-version"></a></h3>
 <div class="section level4">
 <h4 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h4>
-<ul><li>length_sort(): Sorts vector elements by character length.</li>
-<li>length_order(): Sorts data.frames by character length of elements in specified column(s).</li>
+<ul><li>
+<code><a href="../reference/length_sort.html">length_sort()</a></code>: Sorts vector elements by character length.</li>
+<li>
+<code><a href="../reference/length_sort.html">length_order()</a></code>: Sorts data.frames by character length of elements in specified column(s).</li>
+<li>
+<code><a href="../reference/iff_all_vals.html">iff_all_vals()</a></code>: Tests if all values are present in a vector and ONLY those values are present.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="updated-development-version">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/drop_blank.html">drop_blank()</a></code>: Now a generic with <code>character</code> and <code>list</code> methods.</li>
 </ul></div>
 </div>
 <div class="section level3">
 <h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
 <div class="section level4">
-<h4 id="updated-development-version">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version"></a></h4>
-<ul><li>robot() errors are now signaled in R and no longer specifies a max heap size when using a robot.jar file.</li>
+<h4 id="new-development-version-1">New<a class="anchor" aria-label="anchor" href="#new-development-version-1"></a></h4>
+<ul><li>
+<code><a href="../reference/is_curie.html">is_curie()</a></code>: Tests for CURIEs in character vectors, according to a specified definition that <em>always</em> conforms to W3C CURIE Syntax 1.0.</li>
+<li>
+<code><a href="../reference/onto_missing.html">onto_missing()</a></code>: Compares tsv/csv data with data in the ontology to identify data that may be missing. Optionally returns data that is present.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="updated-development-version-1">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version-1"></a></h4>
+<ul><li>
+<code><a href="../reference/robot.html">robot()</a></code> errors are now signaled in R and no longer specifies a max heap size when using a robot.jar file.</li>
+<li>
+<code><a href="../reference/to_curie.html">to_curie()</a></code>/<code><a href="../reference/to_uri.html">to_uri()</a></code> now appropriately remove brackets from URIs and handle delimited input.</li>
+<li>
+<code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code> has the new <code>as_curies</code> argument and converts IRIs to CURIEs by default.</li>
+<li>
+<code>ns_prefix</code> now includes more namespace prefixes, including those for MeSH and UniProt.</li>
+<li>
+<code><a href="../reference/append_to_url.html">append_to_url()</a></code> is now vectorized and can append to additional prefixes, including anything in <code>ns_prefix</code> and URLs commonly used on disease-ontology.org for cross-references.</li>
+<li>
+<code>format_url()</code> no longer uses <code>NA</code> in the <code>txt</code> argument as text input.</li>
+<li>
+<code><a href="../reference/build_hyperlink.html">build_hyperlink()</a></code> takes advantage of the updates to <code><a href="../reference/append_to_url.html">append_to_url()</a></code> and <code>format_url()</code>.</li>
 </ul></div>
 </div>
 </div>
@@ -180,7 +209,7 @@
 <p><strong>URLs</strong> * <code><a href="../reference/format_hyperlink.html">format_hyperlink()</a></code>: Converts URLs into hyperlinks for Google Sheets, Excel, or HTML. * <code><a href="../reference/build_hyperlink.html">build_hyperlink()</a></code>: Shorthand for common <code><a href="../reference/append_to_url.html">append_to_url()</a></code> plus <code><a href="../reference/format_hyperlink.html">format_hyperlink()</a></code> combination.</p>
 <p><strong>Cited by / Search</strong> * <code>pub_id_match</code> (DATA): A named character vector of regex’s to identify/extract publication IDs (currently PMID, PMCID, DOI, &amp; Scopus EID).</p>
 <p><strong>General Utilities</strong> * <code><a href="../reference/sandwich_text.html">sandwich_text()</a></code>: Pastes text around strings. * <code><a href="../reference/wrap_onscreen.html">wrap_onscreen()</a></code>: Wraps messages to be printed on the screen. * <code><a href="../reference/invert_sublists.html">invert_sublists()</a></code>: Swaps the list elements between depths 2 &amp; 3, essentially inverting the grouping. * <code><a href="../reference/lengthen_col.html">lengthen_col()</a></code>: Splits column(s) by a delimiter and lengthens the data.frame so each value is in its own row. * <strong>NOTES:</strong> * This is the reverse of <code><a href="../reference/collapse_col.html">collapse_col()</a></code> but will not recreate the original data.frame after round trip <em>in most cases</em>. * Uses <code><a href="../reference/unnest_cross.html">unnest_cross()</a></code> internally so the results will always be the cartesian product of lengthened columns. * <code><a href="../reference/count_delim.html">count_delim()</a></code>: Counts the values in delimited columns; essentially the combination of <code><a href="../reference/lengthen_col.html">lengthen_col()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">dplyr::count()</a></code>.</p>
-<p><strong>Type Predicates</strong> * <code><a href="../reference/ID_predicates.html">is_valid_obo()</a></code>: Tests whether the elements of a character vector are ‘valid’ OBO Foundry IDs (based on formatting, not actual existence).</p>
+<p><strong>Type Predicates</strong> * <code><a href="../reference/obo_ID_predicates.html">is_valid_obo()</a></code>: Tests whether the elements of a character vector are ‘valid’ OBO Foundry IDs (based on formatting, not actual existence).</p>
 <p><strong>Formatters</strong> * <code><a href="../reference/format_obo.html">format_obo()</a></code>: Formats OBO Foundry IDs. * <code><a href="../reference/format_axiom.html">format_axiom()</a></code>: Formats OWL functional syntax EQ/SubClassOf axioms to be more human readable, similar to that of Protege.</p>
 </div>
 </div>
@@ -247,7 +276,7 @@
 </ul></li>
 <li>Manage DOIDs.
 <ul><li>
-<code><a href="../reference/ID_predicates.html">is_valid_doid()</a></code> tests whether inputs are valid DOIDs. Note that mutliple formats are considered valid.</li>
+<code><a href="../reference/obo_ID_predicates.html">is_valid_doid()</a></code> tests whether inputs are valid DOIDs. Note that mutliple formats are considered valid.</li>
 <li>
 <code><a href="../reference/format_doid.html">format_doid()</a></code> converts between valid DOID formats.</li>
 </ul></li>

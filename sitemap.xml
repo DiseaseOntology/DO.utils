@@ -34,9 +34,6 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/DOrepo.html</loc>
   </url>
   <url>
-    <loc>https://allenbaron.github.io/DO.utils/reference/ID_predicates.html</loc>
-  </url>
-  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/access_DOrepo.html</loc>
   </url>
   <url>
@@ -169,13 +166,22 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/identify_obsolete.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/iff_all_vals.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/index.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/install_robot.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/invert_nm.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/invert_sublists.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/is_curie.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/is_invariant.html</loc>
@@ -214,7 +220,13 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/num_val_predicates.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/obo_ID_predicates.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/obofoundry_metadata.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/onto_missing.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/owl_xml.html</loc>
@@ -274,7 +286,13 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/read_alliance.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/read_delim_auto.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/read_doid_edit.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/read_omim.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/read_pubmed_txt.html</loc>

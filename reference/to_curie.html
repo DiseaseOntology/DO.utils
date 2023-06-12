@@ -52,13 +52,20 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_curie</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">to_curie</span><span class="op">(</span><span class="va">x</span>, strip_angle_brackets <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>URI(s), as a character vector.</p></dd>
+
+
+<dt>strip_angle_brackets</dt>
+<dd><p>Whether to remove all <code>&lt;</code> and <code>&gt;</code> from the
+input, as a boolean (default: <code>TRUE</code>). Where this might have undesirable
+consequences, e.g. <em>some</em> angle brackets need to be removed, perform the
+removal beforehand and use <code>strip_angle_brackets = FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -85,11 +92,13 @@ matching one of these will be returned without modification.</p>
 <span class="r-in"><span>    <span class="st">"http://www.geneontology.org/formats/oboInOwl#id"</span>,</span></span>
 <span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/UBERON_0000002"</span>,</span></span>
 <span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/DOID_0001816"</span>,</span></span>
-<span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/doid#DO_AGR_slim"</span></span></span>
+<span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/doid#DO_AGR_slim"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"&lt;http://www.geneontology.org/formats/oboInOwl#hasDbXref&gt;"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">to_curie</span><span class="op">(</span><span class="va">.uri</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rdfs:comment"     "dc:date"          "terms:license"    "owl:deprecated"  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5] "oboInOwl:id"      "UBERON:0000002"   "DOID:0001816"     "doid:DO_AGR_slim"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "rdfs:comment"       "dc:date"            "terms:license"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "owl:deprecated"     "oboInOwl:id"        "UBERON:0000002"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7] "DOID:0001816"       "doid:DO_AGR_slim"   "oboInOwl:hasDbXref"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># uses 'obo' namespace when an OBO Foundry ontology namespace isn't available</span></span></span>
 <span class="r-in"><span><span class="fu">to_curie</span><span class="op">(</span></span></span>

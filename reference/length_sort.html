@@ -58,7 +58,7 @@ sorted by order of appearance.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">length_sort</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">length_sort</span><span class="op">(</span><span class="va">x</span>, by_name <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">length_order</span><span class="op">(</span><span class="va">data</span>, <span class="va">cols</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -67,6 +67,11 @@ sorted by order of appearance.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>x</dt>
 <dd><p>A vector.</p></dd>
+
+
+<dt>by_name</dt>
+<dd><p>Whether to sort a vector by name instead of value, as a
+boolean.</p></dd>
 
 
 <dt>...</dt>
@@ -121,6 +126,11 @@ to order by.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 100  10   1   2   3   4   5   6   7   8   9  NA</span>
 <span class="r-in"><span><span class="fu">length_sort</span><span class="op">(</span><span class="va">x2</span>, na.last <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1]   1   2   3   4   5   6   7   8   9  10 100</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>bb <span class="op">=</span> <span class="fl">333</span>, ccc <span class="op">=</span> <span class="fl">1</span>, a <span class="op">=</span> <span class="fl">22</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">length_sort</span><span class="op">(</span><span class="va">x3</span>, by_name <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   a  bb ccc </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  22 333   1 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Ordering data.frames</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span></span>
