@@ -2,6 +2,7 @@
 % Please edit documentation in R/identify.R
 \name{onto_missing}
 \alias{onto_missing}
+\alias{identify_missing}
 \title{Identify Data Missing from an Ontology}
 \usage{
 onto_missing(onto_path, input, what = "OMIM", report_present = TRUE)

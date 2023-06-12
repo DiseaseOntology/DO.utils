@@ -46,6 +46,7 @@ identify_obsolete.doid_edit <- function(x, ...) {
 #'     "OMIM"
 #' )
 #' }
+#' @aliases identify_missing
 #' @export
 onto_missing <- function(onto_path, input, what = "OMIM",
                          report_present = TRUE) {
@@ -57,7 +58,7 @@ onto_missing <- function(onto_path, input, what = "OMIM",
 
     xref <- c(
         "EFO", "GARD", "ICD10CM", "ICD11", "ICD9CM", "ICDO", "KEGG", "MEDDRA",
-        "MESH", "NCI", "OMIM", "ORDO", "SNOMEDCT", "UMLS_CUI"
+        "MESH", "NCI", "OMIM", "ORDO", "SNOMEDCT_US", "UMLS_CUI"
     )
     if (!what %in% xref) rlang::abort("Only xrefs currently supported.")
     if (!rlang::is_string(what)) rlang::abort("`what` must be a string.")
@@ -93,13 +94,15 @@ onto_missing <- function(onto_path, input, what = "OMIM",
         compare_by <- "mapping"
     }
 
-    in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by)
+    in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by) %>%
+        dplyr::arrange(label, id)
     class(in_onto) <- c("in_onto_df", class(in_onto))
     missing <- dplyr::anti_join(
         from_input,
         from_onto,
         by = invert_nm(compare_by)
-    )
+    ) %>%
+        dplyr::arrange(tidy_label, omim)
     class(missing) <- c("onto_missing_df", class(missing))
 
     if (report_present) {
