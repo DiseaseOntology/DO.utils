@@ -3,7 +3,7 @@
 #' Converts URI(s) to CURIE(s).
 #'
 #' @param x URI(s), as a character vector.
-#' @param string_angle_brackets Whether to remove all `<` and `>` from the
+#' @param strip_angle_brackets Whether to remove all `<` and `>` from the
 #' input, as a boolean (default: `TRUE`). Where this might have undesirable
 #' consequences, e.g. _some_ angle brackets need to be removed, perform the
 #' removal beforehand and use `strip_angle_brackets = FALSE`.
@@ -22,7 +22,7 @@
 #'     "http://www.geneontology.org/formats/oboInOwl#id",
 #'     "http://purl.obolibrary.org/obo/UBERON_0000002",
 #'     "http://purl.obolibrary.org/obo/DOID_0001816",
-#'     "http://purl.obolibrary.org/obo/doid#DO_AGR_slim"
+#'     "http://purl.obolibrary.org/obo/doid#DO_AGR_slim",
 #'     "<http://www.geneontology.org/formats/oboInOwl#hasDbXref>"
 #' )
 #' to_curie(.uri)

@@ -149,20 +149,20 @@ read_omim <- function(file, ...) {
 
     df <- df %>%
         dplyr::mutate(
-            omim = paste0("OMIM:", phenotype_mim_number),
+            omim = paste0("OMIM:", .data$phenotype_mim_number),
             geno_inheritance = dplyr::case_when(
-                inheritance == "AR" ~ 'autosomal recessive inheritance',
-                inheritance == "AD" ~ 'autosomal dominant inheritance',
-                inheritance == "XLR" ~ 'X-linked recessive inheritance',
-                inheritance == "XLD" ~ 'X-linked recessive inheritance',
-                stringr::str_detect(inheritance, stringr::coll("AR")) &
-                    stringr::str_detect(inheritance, stringr::coll("AD")) ~ 'autosomal inheritance',
-                stringr::str_detect(inheritance, stringr::coll("XLR")) &
-                    stringr::str_detect(inheritance, stringr::coll("XLD")) ~ 'X-linked inheritance',
+                .data$inheritance == "AR" ~ 'autosomal recessive inheritance',
+                .data$inheritance == "AD" ~ 'autosomal dominant inheritance',
+                .data$inheritance == "XLR" ~ 'X-linked recessive inheritance',
+                .data$inheritance == "XLD" ~ 'X-linked recessive inheritance',
+                stringr::str_detect(.data$inheritance, stringr::coll("AR")) &
+                    stringr::str_detect(.data$inheritance, stringr::coll("AD")) ~ 'autosomal inheritance',
+                stringr::str_detect(.data$inheritance, stringr::coll("XLR")) &
+                    stringr::str_detect(.data$inheritance, stringr::coll("XLD")) ~ 'X-linked inheritance',
                 .default = NA_character_
             ),
-            tidy_label = stringr::str_remove(phenotype, "^\\?"),
-            provisional = stringr::str_detect(phenotype, "^\\?")
+            tidy_label = stringr::str_remove(.data$phenotype, "^\\?"),
+            provisional = stringr::str_detect(.data$phenotype, "^\\?")
         )
 
     df

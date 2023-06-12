@@ -16,7 +16,10 @@ produced by \code{\link[=owl_xml]{owl_xml()}}$query() or similar from \code{\lin
 \item{...}{
   Arguments passed on to \code{\link[=to_curie]{to_curie}}
   \describe{
-    \item{\code{}}{}
+    \item{\code{strip_angle_brackets}}{Whether to remove all \code{<} and \code{>} from the
+input, as a boolean (default: \code{TRUE}). Where this might have undesirable
+consequences, e.g. \emph{some} angle brackets need to be removed, perform the
+removal beforehand and use \code{strip_angle_brackets = FALSE}.}
   }}
 }
 \description{

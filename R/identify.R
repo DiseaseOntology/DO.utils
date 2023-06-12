@@ -87,7 +87,7 @@ onto_missing <- function(onto_path, input, what = "OMIM",
         compare_by <- c("mapping" = "omim")
         from_input <- dplyr::select(
             from_input,
-            omim, phenotype, location, inheritance,
+            dplyr::all_of("omim", "phenotype", "location", "inheritance"),
             dplyr::everything()
         )
     } else {
@@ -95,14 +95,14 @@ onto_missing <- function(onto_path, input, what = "OMIM",
     }
 
     in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by) %>%
-        dplyr::arrange(label, id)
+        dplyr::arrange(.data$label, .data$id)
     class(in_onto) <- c("in_onto_df", class(in_onto))
     missing <- dplyr::anti_join(
         from_input,
         from_onto,
         by = invert_nm(compare_by)
     ) %>%
-        dplyr::arrange(tidy_label, omim)
+        dplyr::arrange(.data$tidy_label, .data$omim)
     class(missing) <- c("onto_missing_df", class(missing))
 
     if (report_present) {

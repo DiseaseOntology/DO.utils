@@ -7,7 +7,7 @@
 #'
 #' @returns An object of the same class and length as `x`.
 #' @examples
-#' drop_blank(c("", "A")
+#' drop_blank(c("", "A"))
 #' drop_blank(
 #'     list(
 #'         c("", "A"),

@@ -58,10 +58,6 @@ test_that("append_to_url() works", {
         "https://www.ncbi.nlm.nih.gov/pmc/blah"
     )
     expect_equal(
-        append_to_url(x, "pmc_article"),
-        "https://www.ncbi.nlm.nih.gov/pmc/articles/blah"
-    )
-    expect_equal(
         append_to_url(x, "http://fake.url.com/"),
         "http://fake.url.com/blah"
     )

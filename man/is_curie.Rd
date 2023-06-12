@@ -41,7 +41,7 @@ still restricting to CURIE patterns found in OBO Foundry ontologies, use
 \examples{
 id <- c(
     #### pass all ####
-    "DOID:0001816", "CL:0000066"
+    "DOID:0001816", "CL:0000066",
     #### pass "obo_generic" & "w3c" ####
     "obo:DOID_4", "obo:so#has_origin", # obo prefixed CURIEs
     "oboInOwl:hasDbXref", "skos:exactMatch", # obo object properties
@@ -50,7 +50,7 @@ id <- c(
     "4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
     #### always fail ####
     "0001816", # bare number without prefix
-    " obo:HP_0000001" # must have NO `[:space:]` characters
+    " obo:HP_0000001", # must have NO `[:space:]` characters
     "http://purl.obolibrary.org/obo/DOID_0001816" # URI
 )
 

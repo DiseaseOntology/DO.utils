@@ -9,7 +9,7 @@ to_curie(x, strip_angle_brackets = TRUE)
 \arguments{
 \item{x}{URI(s), as a character vector.}
 
-\item{string_angle_brackets}{Whether to remove all \code{<} and \code{>} from the
+\item{strip_angle_brackets}{Whether to remove all \code{<} and \code{>} from the
 input, as a boolean (default: \code{TRUE}). Where this might have undesirable
 consequences, e.g. \emph{some} angle brackets need to be removed, perform the
 removal beforehand and use \code{strip_angle_brackets = FALSE}.}
@@ -33,7 +33,7 @@ matching one of these will be returned without modification.
     "http://www.geneontology.org/formats/oboInOwl#id",
     "http://purl.obolibrary.org/obo/UBERON_0000002",
     "http://purl.obolibrary.org/obo/DOID_0001816",
-    "http://purl.obolibrary.org/obo/doid#DO_AGR_slim"
+    "http://purl.obolibrary.org/obo/doid#DO_AGR_slim",
     "<http://www.geneontology.org/formats/oboInOwl#hasDbXref>"
 )
 to_curie(.uri)

@@ -17,7 +17,7 @@ Drops blank values from a vector or list. See \code{\link[=is_blank]{is_blank()}
 constitutes a blank value. \code{drop_blank()} is a generic function.
 }
 \examples{
-drop_blank(c("", "A")
+drop_blank(c("", "A"))
 drop_blank(
     list(
         c("", "A"),

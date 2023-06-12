@@ -28,7 +28,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
 
     # create tidygraph
     tg <- df %>%
-        dplyr::select(.data$id, .data$parent_id) %>%
+        dplyr::select("id", "parent_id") %>%
         tidygraph::as_tbl_graph() %>%
         # fix needed for labels to match correctly
         tidygraph::activate("nodes") %>%
@@ -90,15 +90,15 @@ pivot_subtree <- function(subtree_tg, top_node) {
         dplyr::mutate(duplicated = all_duplicated(.data$name)) %>%
         # mv supporting info to left & tree to right
         dplyr::select(
-            .data$parent_id, .data$parent_label, id = .data$name,
+            "parent_id", "parent_label", id = "name",
             dplyr::everything()
         ) %>%
         tidyr::pivot_wider(
-            names_from = .data$insert,
-            values_from = .data$label
+            names_from = "insert",
+            values_from = "label"
         ) %>%
         # drop unnecessary info
-        dplyr::select(-.data$order, -.data$dist)
+        dplyr::select(-"order", -"dist")
 
     pivoted
 }
@@ -156,7 +156,7 @@ fill_subclass <- function(subtree_df) {
                 rev(dplyr::across(dplyr::starts_with("parent_id")))
             )
         ) %>%
-        dplyr::select(.data$id, .data$label, .data$parent_id, .data$parent_label)
+        dplyr::select("id", "label", "parent_id", "parent_label")
 
     filled_df
 }
