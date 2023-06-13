@@ -57,10 +57,8 @@ vctr_to_string <- function(x, delim = "|", na.rm = FALSE, sort = FALSE,
                            decreasing = FALSE, ...) {
     assert_scalar_logical(na.rm)
 
+    if (all(is.na(x))) return(NA_character_)
     if (na.rm) {
-        if (all(is.na(x))) {
-            return(NA_character_)
-        }
         x <- stats::na.omit(x)
     }
 
