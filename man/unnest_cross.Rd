@@ -9,7 +9,7 @@ unnest_cross(data, cols, ...)
 \arguments{
 \item{data}{A data.frame.}
 
-\item{cols}{<\code{\link[=tidyr_tidy_select]{tidy-select}}> Columns to unnest.}
+\item{cols}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> Columns to unnest.}
 
 \item{...}{
   Arguments passed on to \code{\link[tidyr:chop]{tidyr::unchop}}, \code{\link[tidyr:pack]{tidyr::unpack}}

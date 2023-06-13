@@ -28,6 +28,6 @@ incorporate DO's color scheme.
 \section{Background}{
 
 For more information refer to ggplot2's
-\href{ggplot2::theme_grey()}{theme documentation}.
+\link[ggplot2:ggtheme]{theme documentation}.
 }
 

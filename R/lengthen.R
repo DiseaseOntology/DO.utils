@@ -11,10 +11,9 @@
 #' (default: "|").
 #' @param trim Whether to trim start/end whitespace, as a boolean
 #' (default: `TRUE`).
-#' @param convert Whether to run [type.convert()](utils::type.convert) with
-#' `as.is = TRUE` on new columns. This is useful if the de-concatenated columns
-#' are integer, numeric or logical. NOTE: "NA" strings will _always_ be
-#' converted to `NA`s.
+#' @param convert Whether to run [utils::type.convert()] with `as.is = TRUE` on
+#' new columns. This is useful if the de-concatenated columns are integer,
+#' numeric or logical. NOTE: "NA" strings will _always_ be converted to `NA`s.
 #'
 #' @return
 #' A data.frame with the specified columns lengthened.

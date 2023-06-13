@@ -293,7 +293,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #'     (default).
 #'
 #' @returns
-#' A [tibble](tibble::tibble) with the columns: `id`, `label`, `parent_id`,
+#' A [tibble][tibble::tibble] with the columns: `id`, `label`, `parent_id`,
 #' and `parent_label`, with one row for each unique combination for each
 #' subclass below and including `top_node`.
 #'
@@ -382,7 +382,7 @@ extract_subclass_axiom <- function(DO_repo) {
 #'     Returns all intermediate objects as part of output.
 #'
 #' @section Query Requirements:
-#' [tidygraph](tidygraph::tidygraph-package) expects _unique_ child-parent
+#' [tidygraph][tidygraph::tidygraph-package] expects _unique_ child-parent
 #' relationships, so at a minimum the SPARQL `query` should include `?id` (some
 #' identifier for a 'child') and `?parent` (some identifier for each child's
 #' parent(s)). All additional output variables specified in the SPARQL query

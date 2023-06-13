@@ -6,7 +6,7 @@ utils::globalVariables("where")
 #' Tidy SPARQL Query
 #'
 #' Tidies SPARQL query results, unnesting list columns, returning results as
-#' a [tibble](tibble::tibble()) instead of a data.frame and, optionally,
+#' a [tibble][tibble::tibble()] instead of a data.frame and, optionally,
 #' converting URIs to CURIEs.
 #'
 #' @param query_res The results of a SPARQL query, as a data.frame (usually

@@ -15,7 +15,7 @@ Logical vector of length equal to \code{names}. \strong{NOTE} that this
 \emph{differs} from \code{\link[base:file.access]{base::file.access()}} which returns an integer vector.
 }
 \description{
-Acts as a minimal wrapper around \href{base::file.access}{file.access(mode = 2)}
+Acts as a minimal wrapper around \link[base:file.access]{file.access(mode = 2)}
 to test whether R has permission to write to files and/or directories.
 }
 \keyword{internal}

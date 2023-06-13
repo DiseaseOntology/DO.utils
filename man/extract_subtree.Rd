@@ -17,7 +17,7 @@ can be instantiated as such an object by \code{\link[=owl_xml]{owl_xml()}}.}
 (default).}
 }
 \value{
-A \href{tibble::tibble}{tibble} with the columns: \code{id}, \code{label}, \code{parent_id},
+A \link[tibble:tibble]{tibble} with the columns: \code{id}, \code{label}, \code{parent_id},
 and \code{parent_label}, with one row for each unique combination for each
 subclass below and including \code{top_node}.
 }

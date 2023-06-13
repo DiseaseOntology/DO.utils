@@ -475,7 +475,7 @@ plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
 #'
 #' @section Background:
 #' For more information refer to ggplot2's
-#' [theme documentation](ggplot2::theme_grey()).
+#' [theme documentation][ggplot2::theme_grey()].
 #'
 #' @export
 theme_DO <- function(base_size = 11, base_family = "",

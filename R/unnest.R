@@ -4,7 +4,7 @@
 #' requires that list columns be "parallel entries ... of compatible sizes".
 #'
 #' @param data A data.frame.
-#' @param cols <[`tidy-select`][tidyr_tidy_select]> Columns to unnest.
+#' @param cols <[`tidy-select`][tidyr::tidyr_tidy_select]> Columns to unnest.
 #' @inheritDotParams tidyr::unchop
 #' @inheritDotParams tidyr::unpack
 #'

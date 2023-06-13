@@ -27,7 +27,7 @@ as a tidygraph.
 }
 \section{Query Requirements}{
 
-\href{tidygraph::tidygraph-package}{tidygraph} expects \emph{unique} child-parent
+\link[tidygraph:tidygraph-package]{tidygraph} expects \emph{unique} child-parent
 relationships, so at a minimum the SPARQL \code{query} should include \code{?id} (some
 identifier for a 'child') and \code{?parent} (some identifier for each child's
 parent(s)). All additional output variables specified in the SPARQL query

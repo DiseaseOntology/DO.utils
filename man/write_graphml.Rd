@@ -7,8 +7,8 @@
 write_graphml(graph, file)
 }
 \arguments{
-\item{graph}{A \href{tidygraph::tidygraph-package}{tidygraph} or
-\href{igraph::igraph-package}{igraph} object.}
+\item{graph}{A \link[tidygraph:tidygraph-package]{tidygraph} or
+\link[igraph:aaa-igraph-package]{igraph} object.}
 
 \item{file}{The file path to write to, as a string. If '.graphml' extension
 is missing, it will be appended.}

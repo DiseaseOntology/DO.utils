@@ -17,10 +17,9 @@ lengthen_col(data, cols, delim = "|", trim = TRUE, convert = FALSE)
 \item{trim}{Whether to trim start/end whitespace, as a boolean
 (default: \code{TRUE}).}
 
-\item{convert}{Whether to run \href{utils::type.convert}{type.convert()} with
-\code{as.is = TRUE} on new columns. This is useful if the de-concatenated columns
-are integer, numeric or logical. NOTE: "NA" strings will \emph{always} be
-converted to \code{NA}s.}
+\item{convert}{Whether to run \code{\link[utils:type.convert]{utils::type.convert()}} with \code{as.is = TRUE} on
+new columns. This is useful if the de-concatenated columns are integer,
+numeric or logical. NOTE: "NA" strings will \emph{always} be converted to \code{NA}s.}
 }
 \value{
 A data.frame with the specified columns lengthened.

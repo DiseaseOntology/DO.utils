@@ -1,6 +1,6 @@
 #' Tests for Write Access
 #'
-#' Acts as a minimal wrapper around [file.access(mode = 2)](base::file.access)
+#' Acts as a minimal wrapper around [file.access(mode = 2)][base::file.access]
 #' to test whether R has permission to write to files and/or directories.
 #'
 #' @inheritParams base::file.access
@@ -22,8 +22,8 @@ write_access <- function(names) {
 #' Writes a graph object (tidygraph/iGraph) to a file as
 #' [GraphML](https://en.wikipedia.org/wiki/GraphML).
 #'
-#' @param graph A [tidygraph](tidygraph::tidygraph-package) or
-#'     [igraph](igraph::igraph-package) object.
+#' @param graph A [tidygraph][tidygraph::tidygraph-package] or
+#'     [igraph][igraph::igraph-package] object.
 #' @param file The file path to write to, as a string. If '.graphml' extension
 #'     is missing, it will be appended.
 #'

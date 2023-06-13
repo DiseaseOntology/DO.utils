@@ -24,7 +24,7 @@ removal beforehand and use \code{strip_angle_brackets = FALSE}.}
 }
 \description{
 Tidies SPARQL query results, unnesting list columns, returning results as
-a \href{tibble::tibble()}{tibble} instead of a data.frame and, optionally,
+a \link[tibble:tibble]{tibble} instead of a data.frame and, optionally,
 converting URIs to CURIEs.
 }
 \section{Note}{
