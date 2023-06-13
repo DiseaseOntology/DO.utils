@@ -9,7 +9,7 @@ df <- data.frame(
     fac = factor(c("a", "b")),
     dat = structure(c(18963, 18964), class = "Date"),
     tim = structure(
-        c(1638379919.66874, 1638379920.66874),
+        c(1638379919, 1638379920),
         class = c("POSIXct", "POSIXt"),
         tzone = "UTC"
     ),
