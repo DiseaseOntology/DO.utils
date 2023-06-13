@@ -60,7 +60,7 @@ unnest_cross <- function(data, cols, ...) {
 #'
 #' @param df A data.frame.
 #' @param col The column with `pyobo_map()` results, as a
-#'     [tidy-select specification](tidyr::tidyr_tidy_select).
+#'     [tidy-select specification][tidyr::tidyr_tidy_select].
 #' @inheritParams parse_term_mapping
 #' @inheritParams extract_ScoredMatch
 #' @inheritDotParams tidyr::unnest keep_empty:names_repair

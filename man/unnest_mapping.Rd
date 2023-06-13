@@ -18,7 +18,7 @@ unnest_mapping(
 \item{df}{A data.frame.}
 
 \item{col}{The column with \code{pyobo_map()} results, as a
-\href{tidyr::tidyr_tidy_select}{tidy-select specification}.}
+\link[tidyr:tidyr_tidy_select]{tidy-select specification}.}
 
 \item{prefix}{\emph{Optional} prefix to add to namespace local unique identifiers
 (LUI; e.g. 4, the LUI for "disease" in DO), as a string; preferably to
