@@ -1,4 +1,12 @@
-# DO.utils (development version)
+# DO.utils 0.2.8
+
+## Highlights
+
+* Adds `onto_missing()` and character length-sorting functions.
+* More support for creating links from CURIEs.
+* Includes fixes to eliminate warnings from use of tidyverse (#15) and errors
+due to updates in some tidyverse packages.
+
 
 ## General Utilities
 
@@ -11,6 +19,8 @@ values are present.
 
 ### Updated
 * `drop_blank()`: Now a generic with `character` and `list` methods.
+* `vctr_to_string()`: Now always returns `NA` when only input is `NA`, even when
+`na.rm = FALSE`; previously returned `"NA"`.
 
 
 ## DO Management & Analysis
