@@ -45,8 +45,11 @@ trim_url <- function(url_no_domain) {
 
 #' Get URL (internal)
 #'
-#' Get a URL used within this package. To see all possible names, organized by
-#' type use `get_url("names")`.
+#' Get a URL used within this package. List all possible names organized by
+#' type with `get_url("names")`.
+#'
+#' @section Possible Names (organized by type):
+#' `r list_to_man(print(get_url("names"), msg = FALSE))`
 #'
 #' @section NOTE:
 #' `get_url()` provides prefixes for disease-ontology.org style link support.

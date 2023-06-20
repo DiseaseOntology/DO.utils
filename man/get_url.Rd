@@ -10,9 +10,20 @@ get_url(.name)
 \item{.name}{Internal name of desired URL.}
 }
 \description{
-Get a URL used within this package. To see all possible names, organized by
-type use \code{get_url("names")}.
+Get a URL used within this package. List all possible names organized by
+type with \code{get_url("names")}.
 }
+\section{Possible Names (organized by type)}{
+
+\itemize{
+\item pub_urls: doi, github, orcid, pubmed, pmc
+\item xref_urls: ICD9CM, ICD10CM, KEGG, MESH, NCI, ORDO, OMIM, SNOMEDCT_US, UMLS_CUI
+\item web: DO_website
+\item data_urls: alliance_disease_tsv
+\item ns_prefix: ...includes common OBO Foundry and SPARQL prefixes; use \code{ns_prefix} to see the complete list.
+}
+}
+
 \section{NOTE}{
 
 \code{get_url()} provides prefixes for disease-ontology.org style link support.
