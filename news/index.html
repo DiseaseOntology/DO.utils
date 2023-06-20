@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.7.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.8</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,11 +46,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.8" id="doutils-028">DO.utils 0.2.8<a class="anchor" aria-label="anchor" href="#doutils-028"></a></h2>
 <div class="section level3">
-<h3 id="general-utilities-development-version">General Utilities<a class="anchor" aria-label="anchor" href="#general-utilities-development-version"></a></h3>
+<h3 id="highlights-0-2-8">Highlights<a class="anchor" aria-label="anchor" href="#highlights-0-2-8"></a></h3>
+<ul><li>Adds <code><a href="../reference/onto_missing.html">onto_missing()</a></code> and character length-sorting functions.</li>
+<li>More support for creating links from CURIEs.</li>
+<li>Includes fixes to eliminate warnings from use of tidyverse (#15) and errors due to updates in some tidyverse packages.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="general-utilities-0-2-8">General Utilities<a class="anchor" aria-label="anchor" href="#general-utilities-0-2-8"></a></h3>
 <div class="section level4">
-<h4 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h4>
+<h4 id="new-0-2-8">New<a class="anchor" aria-label="anchor" href="#new-0-2-8"></a></h4>
 <ul><li>
 <code><a href="../reference/length_sort.html">length_sort()</a></code>: Sorts vector elements by character length.</li>
 <li>
@@ -59,22 +65,24 @@
 <code><a href="../reference/iff_all_vals.html">iff_all_vals()</a></code>: Tests if all values are present in a vector and ONLY those values are present.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="updated-development-version">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version"></a></h4>
+<h4 id="updated-0-2-8">Updated<a class="anchor" aria-label="anchor" href="#updated-0-2-8"></a></h4>
 <ul><li>
 <code><a href="../reference/drop_blank.html">drop_blank()</a></code>: Now a generic with <code>character</code> and <code>list</code> methods.</li>
+<li>
+<code><a href="../reference/vctr_to_string.html">vctr_to_string()</a></code>: Now always returns <code>NA</code> when only input is <code>NA</code>, even when <code>na.rm = FALSE</code>; previously returned <code>"NA"</code>.</li>
 </ul></div>
 </div>
 <div class="section level3">
-<h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
+<h3 id="do-management--analysis-0-2-8">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-2-8"></a></h3>
 <div class="section level4">
-<h4 id="new-development-version-1">New<a class="anchor" aria-label="anchor" href="#new-development-version-1"></a></h4>
+<h4 id="new-0-2-8-1">New<a class="anchor" aria-label="anchor" href="#new-0-2-8-1"></a></h4>
 <ul><li>
 <code><a href="../reference/is_curie.html">is_curie()</a></code>: Tests for CURIEs in character vectors, according to a specified definition that <em>always</em> conforms to W3C CURIE Syntax 1.0.</li>
 <li>
 <code><a href="../reference/onto_missing.html">onto_missing()</a></code>: Compares tsv/csv data with data in the ontology to identify data that may be missing. Optionally returns data that is present.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="updated-development-version-1">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version-1"></a></h4>
+<h4 id="updated-0-2-8-1">Updated<a class="anchor" aria-label="anchor" href="#updated-0-2-8-1"></a></h4>
 <ul><li>
 <code><a href="../reference/robot.html">robot()</a></code> errors are now signaled in R and no longer specifies a max heap size when using a robot.jar file.</li>
 <li>
