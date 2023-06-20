@@ -3,7 +3,8 @@
 ## DO Management & Analysis
 * `onto_missing()` & `tidy_sparql()`: improved column types in output, no longer
 all character vectors.
-
+* `append_to_url()`: new named URL option, "DO_website", for direct link to
+disease info on disease-ontology.org.
 
 # DO.utils 0.2.9
 

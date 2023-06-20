@@ -88,6 +88,9 @@ get_url <- function(.name) {
             SNOMEDCT_US = "https://browser.ihtsdotools.org/?perspective=full&conceptId1=",
             UMLS_CUI = "https://uts.nlm.nih.gov/uts/umls/concept/"
         ),
+        web = c(
+            DO_website = "https://disease-ontology.org/?id="
+        ),
         data_urls = c(
             alliance_disease_tsv = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
         ),
