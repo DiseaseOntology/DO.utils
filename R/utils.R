@@ -178,3 +178,28 @@ vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
     # vctr_to_string(
         sandwich_text(x, c('\\code{', '}'))#, ", ")
 }
+
+# converts a named list to a list for R documentation, ordered controls whether
+# upper-level list items are bulleted or numbered, converts from
+# list(a = 1:2, b = letters[1:2]) to
+# * a: 1, 2
+# * b: "a", "b"
+# See get_url() for example
+list_to_man <- function(x, ordered = FALSE) {
+    if (any(!rlang::have_name(x))) {
+        rlang::abort("All elements in `x` must be named.")
+    }
+    list_item <- if (ordered) {
+        paste0(1:length(names(x)), ". ")
+    } else {
+        "* "
+    }
+
+    man_list <- paste0(
+        list_item,
+        names(x), ": ",
+        purrr::map_chr(x, ~ vctr_to_string(.x, delim = ", "))
+    )
+
+    vctr_to_string(man_list, delim = "\n")
+}
