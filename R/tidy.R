@@ -28,7 +28,7 @@ tidy_sparql <- function(query_res, as_curies = TRUE, ...) {
     if (as_curies) {
         res <- res %>%
             dplyr::mutate(
-                dplyr::across(dplyr::everything(), ~ to_curie(.x, ...))
+                dplyr::across(dplyr::where(is.character), ~ to_curie(.x, ...))
             )
     }
 

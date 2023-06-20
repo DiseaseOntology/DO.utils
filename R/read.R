@@ -163,6 +163,12 @@ read_omim <- function(file, ...) {
             ),
             tidy_label = stringr::str_remove(.data$phenotype, "^\\?"),
             provisional = stringr::str_detect(.data$phenotype, "^\\?")
+        ) %>%
+        dplyr::mutate(
+            dplyr::across(
+                dplyr::where(is.character),
+                ~ readr::parse_guess(.x, guess_integer = TRUE)
+            )
         )
 
     df
