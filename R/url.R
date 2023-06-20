@@ -108,8 +108,9 @@ get_url <- function(.name) {
 
 
 #' @export
-print.get_url_names <- function(x, ...) {
+print.get_url_names <- function(x, msg = TRUE, ...) {
     x$ns_prefix <- "...includes common OBO Foundry and SPARQL prefixes; use `ns_prefix` to see the complete list."
     class(x) <- class(x)[-1]
-    print(x, ...)
+    if (msg) print(x, ...)
+    invisible(x)
 }
