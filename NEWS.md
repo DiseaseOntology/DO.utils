@@ -1,3 +1,8 @@
+# DO.utils 0.2.9
+
+* Fix dplyr code error in `onto_missing()`.
+
+
 # DO.utils 0.2.8
 
 ## Highlights

@@ -87,7 +87,7 @@ onto_missing <- function(onto_path, input, what = "OMIM",
         compare_by <- c("mapping" = "omim")
         from_input <- dplyr::select(
             from_input,
-            dplyr::all_of("omim", "phenotype", "location", "inheritance"),
+            "omim", "phenotype", "location", "inheritance",
             dplyr::everything()
         )
     } else {
