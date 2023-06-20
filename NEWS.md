@@ -1,3 +1,10 @@
+# DO.utils (development version)
+
+## DO Management & Analysis
+* `onto_missing()` & `tidy_sparql()`: improved column types in output, no longer
+all character vectors.
+
+
 # DO.utils 0.2.9
 
 * Fix dplyr code error in `onto_missing()`.
