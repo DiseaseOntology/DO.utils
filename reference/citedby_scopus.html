@@ -61,6 +61,7 @@ by_id."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
 <span>  id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  api_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  insttoken <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  no_result <span class="op">=</span> <span class="st">"warning"</span>,</span>
 <span>  view <span class="op">=</span> <span class="st">"STANDARD"</span>,</span>
 <span>  start <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  count <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -99,6 +100,12 @@ ignored.</p></dd>
 <dt>insttoken</dt>
 <dd><p>Elsevier institutional token (<em>REQUIRED</em>). See
 <code><a href="../articles/obtain_use_records.html">vignette("obtain_use_records")</a></code> for more details.</p></dd>
+
+
+<dt>no_result</dt>
+<dd><p>The type of condition that should be signaled when no Scopus
+results exist in a response; one of "error", "warning" (default),
+"message" or "none".</p></dd>
 
 
 <dt>view</dt>
