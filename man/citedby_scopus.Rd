@@ -10,6 +10,7 @@ citedby_scopus(
   id = NULL,
   api_key = NULL,
   insttoken = NULL,
+  no_result = "warning",
   view = "STANDARD",
   start = 0,
   count = NULL,
@@ -37,6 +38,10 @@ ignored.}
 
 \item{insttoken}{Elsevier institutional token (\emph{REQUIRED}). See
 \code{vignette("obtain_use_records")} for more details.}
+
+\item{no_result}{The type of condition that should be signaled when no Scopus
+results exist in a response; one of "error", "warning" (default),
+"message" or "none".}
 
 \item{view}{type of view to give, see
 \url{https://api.elsevier.com/documentation/ScopusSearchAPI.wadl}}

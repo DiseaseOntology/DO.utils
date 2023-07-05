@@ -6,6 +6,13 @@ all character vectors.
 * `append_to_url()`: new named URL option, "DO_website", for direct link to
 disease info on disease-ontology.org.
 
+## Assessing Resource Use
+* `citedby_scopus()` will no longer retain responses with zero results and 
+gained a new argument `no_results` to control how these are signaled to the
+user, making it more consistent with `citedby_pubmed()`.
+
+
+
 # DO.utils 0.2.9
 
 * Fix dplyr code error in `onto_missing()`.

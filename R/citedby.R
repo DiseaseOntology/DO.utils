@@ -13,6 +13,9 @@
 #' @inheritParams rscopus::scopus_search
 #' @param insttoken Elsevier institutional token (_REQUIRED_). See
 #'     `vignette("obtain_use_records")` for more details.
+#' @param no_result The type of condition that should be signaled when no Scopus
+#'     results exist in a response; one of "error", "warning" (default),
+#'     "message" or "none".
 #' @param ... Named arguments to be passed to [httr::GET()]. Available arguments
 #'     are listed in the
 #'     [Scopus Search Documentation: API Specification](https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl).
@@ -25,12 +28,17 @@
 #' @family citedby_functions
 #' @export
 citedby_scopus <- function(title, by_id = FALSE, id = NULL, api_key = NULL,
-                           insttoken = NULL, view = "STANDARD", start = 0,
+                           insttoken = NULL, no_result = "warning",
+                           view = "STANDARD", start = 0,
                            count = NULL, max_count = 20000, headers = NULL,
                            wait_time = 0, verbose = FALSE, ...) {
     assert_character(title)
     assert_scalar_logical(by_id)
-
+    no_result <- match.arg(
+        no_result,
+        c("error", "warning", "message", "none")
+    )
+    no_res_msg <- "0 Scopus citedby results"
     # if count unspecified, set to max count allowed for specified view
     #   this is just pagination (not sure why it can be user-specified),
     #   max_count controls the max number of records returned
@@ -64,7 +72,30 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL, api_key = NULL,
             }
         )
         names(cited_by) <- id
-        class(cited_by) <- ss_list_class
+
+        no_res <- purrr::map_lgl(cited_by, ~ .x$total_results == 0)
+        if (any(no_res)) {
+            discard <- id[no_res]
+            # preserve Scopus API responses when discarded
+            tmp <- cited_by[!no_res]
+            attr(tmp, "discarded_response") <- purrr::map(
+                cited_by[discard],
+                ~ .x$get_statements
+            )
+            cited_by <- tmp
+
+            if (no_result != "none") {
+                rlang::signal(
+                    message = c(
+                        paste0("Discarded (", no_res_msg, ")"),
+                        purrr::set_names(discard, rep("i", length(discard)))
+                    ),
+                    class = c("no_result", no_result),
+                    use_cli_format = TRUE
+                )
+            }
+        }
+        if (length(cited_by) != 0) class(cited_by) <- ss_list_class
     } else {
         q <- scopus_title_query(title)
         cited_by <- rscopus::scopus_search(
@@ -80,6 +111,21 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL, api_key = NULL,
             ...
         )
         class(cited_by) <- ss_class
+
+        if (cited_by$total_results == 0) {
+            if (no_result != "none") {
+                rlang::signal(
+                    message = c(no_res_msg, i = title),
+                    class = c("no_result", no_result),
+                    use_cli_format = TRUE
+                )
+            }
+
+            # preserve Scopus API responses when discarded
+            tmp <- list()
+            attr(tmp, "discarded_response") <- cited_by$get_statements
+            cited_by <- tmp
+        }
     }
 
     cited_by
