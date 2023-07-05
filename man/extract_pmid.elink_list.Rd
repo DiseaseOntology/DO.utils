@@ -11,7 +11,7 @@
 derivatives (e.g. \link{citedby_pmid}) when \code{by_id = TRUE} .}
 
 \item{no_result}{The type of condition that should be signaled when no PubMed
-results exist in a response; one of "error" (default), "warning",
+results exist in a response; one of "error", "warning" (default),
 "message" or "none".}
 
 \item{...}{Additional arguments passed on to \code{\link[=extract_pmid.elink]{extract_pmid.elink()}}.}

@@ -17,7 +17,7 @@ only necessary if more than one \code{linkname} is returned from PubMed.}
 specified and multiple results exist in an \code{elink} object.}
 
 \item{no_result}{The type of condition that should be signaled when no PubMed
-results exist in a response; one of "error" (default), "warning",
+results exist in a response; one of "error", "warning" (default),
 "message" or "none".}
 
 \item{...}{Unused, included for generic consistency only.}
