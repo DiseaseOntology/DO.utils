@@ -1,9 +1,9 @@
-# DO.utils (development version)
+# DO.utils 0.2.10
 
 ## DO Management & Analysis
-* `onto_missing()` & `tidy_sparql()`: improved column types in output, no longer
-all character vectors.
-* `append_to_url()`: new named URL option, "DO_website", for direct link to
+* `onto_missing()` & `tidy_sparql()` output now has improved column types (no
+longer all character vectors).
+* `append_to_url()` has a new named URL option, "DO_website", for direct link to
 disease info on disease-ontology.org.
 
 ## Assessing Resource Use
