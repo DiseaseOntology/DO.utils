@@ -41,13 +41,14 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
         col_types = "lcccc"
     )
     use_case_df <- use_case_gs %>%
-        dplyr::filter(!is.na(.data$added))
+        dplyr::filter(!is.na(.data$added)) %>%
+        dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
 
     use_case_list <- purrr::map(
         group,
         ~ dplyr::filter(use_case_df, .data$type == .x) %>%
             # ensure use cases are alphabetical by column
-            dplyr::arrange(.data$name) %>%
+            dplyr::arrange(.data$sort_col) %>%
             html_col_sort(3)
     ) %>%
         purrr::set_names(nm = group)
