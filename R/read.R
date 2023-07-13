@@ -1,21 +1,3 @@
-#' Read doid-edit.owl (INTERNAL)
-#'
-#' Read the doid-edit.owl file from a local copy of the Human Disease Ontology
-#' Github repo.
-#'
-#' @param DO_repo The local path to the `HumanDiseaseOntology` repo, as a
-#'     string.
-#'
-#' @keywords internal
-read_doid_edit <- function(DO_repo) {
-    doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
-    doid_edit <- readr::read_lines(doid_edit_path)
-
-    class(doid_edit) <- c("doid_edit", class(doid_edit))
-    doid_edit
-}
-
-
 #' Read in PubMed Citations (from txt file)
 #'
 #' Reads PubMed text-format citations spanning multiple lines, usually
@@ -66,7 +48,9 @@ read_pubmed_txt <- function(file) {
 }
 
 
-#' Automatically Identify & Read TSV/CSV files
+# INTERNAL readers --------------------------------------------------------
+
+#' Automatically Identify & Read TSV/CSV files (INTERNAL)
 #'
 #' A light wrapper around [readr::read_delim()] that automatically identifies
 #' the delimiter based on file extension. Note that this function is primarily
@@ -87,6 +71,24 @@ read_delim_auto <- function(file, ..., show_col_types = FALSE) {
         show_col_types = show_col_types,
         ...
     )
+}
+
+
+#' Read doid-edit.owl (INTERNAL)
+#'
+#' Read the doid-edit.owl file from a local copy of the Human Disease Ontology
+#' Github repo.
+#'
+#' @param DO_repo The local path to the `HumanDiseaseOntology` repo, as a
+#'     string.
+#'
+#' @keywords internal
+read_doid_edit <- function(DO_repo) {
+    doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
+    doid_edit <- readr::read_lines(doid_edit_path)
+
+    class(doid_edit) <- c("doid_edit", class(doid_edit))
+    doid_edit
 }
 
 
