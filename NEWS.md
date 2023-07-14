@@ -1,3 +1,24 @@
+# DO.utils (development version)
+
+## General
+
+* Fix `read_delim_auto()` to handle compressed input.
+
+## DO Management & Analysis
+
+* Fix `make_use_case_html()` to have case-insensitive sorting.
+* `read_omim()`:
+    - Now also reads data downloaded from omim.org phenotypic series
+pages using the "Download as" button.
+    - No longer returns `tidy_label` and `provisional` columns, as these were
+    not particularly useful.
+* `plot_citedby()`:
+    - Now accepts manually-defined color sets, in addition to color sets
+    provided by `DO.utils`.
+    - Default plot size changed to better fit new position on
+    disease-ontology.org statistics page.
+
+
 # DO.utils 0.2.10
 
 ## DO Management & Analysis
