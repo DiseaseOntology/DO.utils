@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{read_delim_auto}
 \alias{read_delim_auto}
-\title{Automatically Identify & Read TSV/CSV files}
+\title{Automatically Identify & Read TSV/CSV files (INTERNAL)}
 \usage{
 read_delim_auto(file, ..., show_col_types = FALSE)
 }
@@ -14,14 +14,7 @@ Files ending in \code{.gz}, \code{.bz2}, \code{.xz}, or \code{.zip} will
 be automatically uncompressed. Files starting with \verb{http://},
 \verb{https://}, \verb{ftp://}, or \verb{ftps://} will be automatically
 downloaded. Remote gz files can also be automatically downloaded and
-decompressed.
-
-Literal data is most useful for examples and tests. To be recognised as
-literal data, the input must be either wrapped with \code{I()}, be a string
-containing at least one new line, or be a vector containing at least one
-string with a new line.
-
-Using a value of \code{\link[readr:clipboard]{clipboard()}} will read from the system clipboard.}
+decompressed.}
 
 \item{...}{
   Arguments passed on to \code{\link[readr:read_delim]{readr::read_delim}}
@@ -153,8 +146,10 @@ by the \code{col_types} argument.}
 }
 \description{
 A light wrapper around \code{\link[readr:read_delim]{readr::read_delim()}} that automatically identifies
-the delimiter based on file extension. Note that this function is primarily
-intended for internal use; therefore, messages about guessed column types are
-not generated.
+the delimiter based on file extension (can include compression extensions).
+}
+\details{
+Note that this function is primarily intended for internal use; therefore,
+messages about guessed column types are not generated.
 }
 \keyword{internal}

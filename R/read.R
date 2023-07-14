@@ -53,16 +53,26 @@ read_pubmed_txt <- function(file) {
 #' Automatically Identify & Read TSV/CSV files (INTERNAL)
 #'
 #' A light wrapper around [readr::read_delim()] that automatically identifies
-#' the delimiter based on file extension. Note that this function is primarily
-#' intended for internal use; therefore, messages about guessed column types are
-#' not generated.
+#' the delimiter based on file extension (can include compression extensions).
 #'
+#' Note that this function is primarily intended for internal use; therefore,
+#' messages about guessed column types are not generated.
+#'
+#' @param file Either a path to a file, a connection, or literal data
+#'    (either a single string or a raw vector).
+#'
+#'    Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will
+#'    be automatically uncompressed. Files starting with `http://`,
+#'    `https://`, `ftp://`, or `ftps://` will be automatically
+#'    downloaded. Remote gz files can also be automatically downloaded and
+#'    decompressed.
 #' @inheritParams readr::read_delim
 #' @inheritDotParams readr::read_delim -delim -quoted_na
 #'
 #' @keywords internal
 read_delim_auto <- function(file, ..., show_col_types = FALSE) {
-    delim <- switch(tools::file_ext(file), tsv = "\t", csv = ",")
+    ext <- stringr::str_detect(file, "\\.[tc]sv")
+    delim <- switch(ext, .tsv = "\t", .csv = ",")
     if (is.null(delim)) rlang::abort("`file` must have .tsv or .csv extension.")
 
     readr::read_delim(
