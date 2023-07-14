@@ -37,8 +37,7 @@ clean_pub_type <- function(pub_type, as_fctr = TRUE) {
         stringr::str_detect(pt_lc, "retract") ~ "Retracted",
         stringr::str_detect(pt_lc, "clinical trial") ~ "Clinical Trial",
         stringr::str_detect(pt_lc, "review") ~ "Review",
-        stringr::str_detect(pt_lc, "conference") &
-            pt_lc != "Journal|Conference Paper" ~ "Conference",
+        stringr::str_detect(pt_lc, "conference") ~ "Conference",
         stringr::str_detect(pt_lc, "book") ~ "Book",
         stringr::str_detect(pt_lc, "journal.*article") ~ "Article",
         TRUE ~ "Other"
