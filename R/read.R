@@ -104,8 +104,8 @@ read_doid_edit <- function(DO_repo) {
 
 #' Read Manually Copied OMIMPS data
 #'
-#' Properly formats OMIMPS data copied from OMIM and appends the following
-#' columns to enhance curation activities:
+#' Properly formats OMIMPS data copied or downloaded from https://omim.org/ and
+#' appends the following columns to speed up curation activities:
 #' * `omim`: properly formatted xref for the DO.
 #' * `geno_inheritance`: best guess at inheritance to add as logical subClassOf
 #' axiom.
@@ -116,49 +116,13 @@ read_doid_edit <- function(DO_repo) {
 #' As part of formatting, column misarrangements are corrected and whitespace
 #' is trimmed.
 #'
-#' @param file The path to a .tsv or .csv file with OMIMPS data saved in it.
-#' @inheritDotParams readr::read_delim -delim -quoted_na -trim_ws -name_repair
+#' @param file The path to a .tsv or .csv file (possibly compressed) with OMIMPS
+#'     data.
+#' @inheritDotParams preprocess_omim_dl
 #'
 #' @keywords internal
 read_omim <- function(file, ...) {
-    df <- read_delim_auto(file, name_repair = "minimal", trim_ws = TRUE, ...)
-
-    # fix headers
-    header_in_df <- purrr::pmap_lgl(df, function(...) sum(is.na(c(...))) > 3)
-    if (sum(header_in_df) > 3) {
-        rlang::abort("OMIM file has higher than expected missing values.")
-    }
-    if (any(header_in_df)) {
-        headers <- purrr::map2_chr(
-            names(df),
-            unlist(df[1, ]),
-            ~ collapse_to_string(.x, .y, delim = " ", na.rm = TRUE)
-        )
-
-        missing_header <- headers == ""
-        if (any(missing_header)) {
-            new_header <- purrr::map2_chr(
-                unlist(df[2, ]),
-                unlist(df[3, ]),
-                ~ collapse_to_string(.x, .y, delim = " ", na.rm = TRUE)
-            )
-            new_header <- new_header[!is.na(new_header)]
-
-            if (sum(missing_header) != length(new_header)) {
-                rlang::abort("Problem fixing missing headers...")
-            }
-            headers[missing_header] <- new_header
-        }
-
-        headers <- headers %>%
-            make.names(unique = TRUE) %>%
-            stringr::str_replace_all("\\.", "_") %>%
-            stringr::str_to_lower()
-
-        names(df) <- headers
-        df <- df[!header_in_df, ]
-    }
-
+    df <- preprocess_omim_dl(file, ...)
     df <- df %>%
         dplyr::mutate(
             omim = paste0("OMIM:", .data$phenotype_mim_number),
