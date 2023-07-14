@@ -102,7 +102,11 @@ onto_missing <- function(onto_path, input, what = "OMIM",
         from_onto,
         by = invert_nm(compare_by)
     ) %>%
-        dplyr::arrange(.data$tidy_label, .data$omim)
+        dplyr::mutate(
+            tidy_label = stringr::str_remove(.data$phenotype, "^\\?")
+        ) %>%
+        dplyr::arrange(.data$tidy_label, .data$omim) %>%
+        dplyr::select(-.data$tidy_label)
     class(missing) <- c("onto_missing_df", class(missing))
 
     if (report_present) {
