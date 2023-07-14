@@ -12,7 +12,7 @@ year."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathj
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.10.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,9 +58,9 @@ year.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_citedby</span><span class="op">(</span></span>
 <span>  data_file <span class="op">=</span> <span class="st">"data/citedby/DO_citedby.csv"</span>,</span>
 <span>  out_dir <span class="op">=</span> <span class="st">"graphics/website"</span>,</span>
-<span>  color_set <span class="op">=</span> <span class="st">"accent1"</span>,</span>
-<span>  w <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  h <span class="op">=</span> <span class="fl">5.6</span></span>
+<span>  color_set <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#C45055"</span>, <span class="st">"#934FBB"</span>, <span class="st">"#95B1BB"</span>, <span class="st">"#83C85F"</span>, <span class="st">"#B9964B"</span>, <span class="st">"#4C3E45"</span><span class="op">)</span>,</span>
+<span>  w <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  h <span class="op">=</span> <span class="fl">3.15</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -77,10 +77,10 @@ should be saved, as a string. If <code>NULL</code> the plot is not saved to disk
 
 
 <dt>color_set</dt>
-<dd><p>The prefix of the color set to use from <a href="DO_colors.html">DO_colors</a>.
-Available sets include: "sat", "accent1" (default), "accent2", and
-"orange".  The default and light versions of the specified color set will
-be used.</p></dd>
+<dd><p>A set of 6 colors or the prefix of the color set to use from
+<a href="DO_colors.html">DO_colors</a>. Available sets include: "sat", "accent1", "accent2",
+and "orange". The default and light versions of the specified color set
+will be used.</p></dd>
 
 
 <dt>w</dt>
