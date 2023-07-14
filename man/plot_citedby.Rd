@@ -8,8 +8,8 @@ plot_citedby(
   data_file = "data/citedby/DO_citedby.csv",
   out_dir = "graphics/website",
   color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
-  w = 8,
-  h = 5.6
+  w = 6,
+  h = 3.15
 )
 }
 \arguments{
