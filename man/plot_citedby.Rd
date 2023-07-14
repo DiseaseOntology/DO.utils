@@ -7,7 +7,7 @@
 plot_citedby(
   data_file = "data/citedby/DO_citedby.csv",
   out_dir = "graphics/website",
-  color_set = "accent1",
+  color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
   w = 8,
   h = 5.6
 )
@@ -19,10 +19,10 @@ citing the DO, as a string.}
 \item{out_dir}{The directory where the plot \code{"DO_cited_by_count.png"}
 should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 
-\item{color_set}{The prefix of the color set to use from \link{DO_colors}.
-Available sets include: "sat", "accent1" (default), "accent2", and
-"orange".  The default and light versions of the specified color set will
-be used.}
+\item{color_set}{A set of 6 colors or the prefix of the color set to use from
+\link{DO_colors}. Available sets include: "sat", "accent1", "accent2",
+and "orange". The default and light versions of the specified color set
+will be used.}
 
 \item{w}{The width of the plot in inches, as numeric.}
 

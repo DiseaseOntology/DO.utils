@@ -107,10 +107,10 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #'     citing the DO, as a string.
 #' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @param color_set The prefix of the color set to use from [DO_colors].
-#'     Available sets include: "sat", "accent1" (default), "accent2", and
-#'     "orange".  The default and light versions of the specified color set will
-#'     be used.
+#' @param color_set A set of 6 colors or the prefix of the color set to use from
+#'     [DO_colors]. Available sets include: "sat", "accent1", "accent2",
+#'     and "orange". The default and light versions of the specified color set
+#'     will be used.
 #' @inheritParams plot_branch_counts
 #'
 #' @section Data Preparation:
@@ -118,7 +118,8 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #'
 #' @export
 plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
-                         out_dir = "graphics/website", color_set = "accent1",
+                         out_dir = "graphics/website",
+                         color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
                          w = 8, h = 5.6) {
 
     df <- readr::read_csv(data_file) %>%
@@ -128,9 +129,13 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
         )
 
     # set color ramp
-    cb_colors <- grDevices::colorRampPalette(
-        DO_colors[paste0(color_set, c("_light", ""))]
-    )(dplyr::n_distinct(df$pub_type))
+    if (length(color_set) > 1) {
+        cb_colors <- color_set
+    } else {
+        cb_colors <- grDevices::colorRampPalette(
+            DO_colors[paste0(color_set, c("_light", ""))]
+        )(dplyr::n_distinct(df$pub_type))
+    }
 
     g <- ggplot2::ggplot(data = df) +
         ggplot2::geom_bar(
@@ -144,7 +149,10 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
             guide = ggplot2::guide_legend(reverse = TRUE)
         ) +
         ggplot2::labs(x = "Year", y = NULL) +
-        theme_DO(base_size = 13)
+        theme_DO(base_size = 13) +
+        ggplot2::theme(
+            panel.background = ggplot2::element_rect(fill = "grey90")
+        )
 
     if (!is.null(out_dir)) {
         file_out <- file.path(out_dir, "DO_cited_by_count.png")
