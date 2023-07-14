@@ -50,6 +50,36 @@ read_pubmed_txt <- function(file) {
 
 # INTERNAL readers --------------------------------------------------------
 
+#' Read 'Cited by' Data (INTERNAL)
+#'
+#' Reads in the 'cited by' data for the specified resource from the official
+#' [DO_uses](https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/)
+#' Google Sheet.
+#'
+#' @param resource The resource to get 'cited by' information for, as a string.
+#'     One of: `"DO"`, `"SYMP"`, or `"TRANS"`.
+#'
+#' @returns A `citedby_tbl` classed tibble.
+#'
+#' @keywords internal
+read_citedby <- function(resource = "DO") {
+    resource <- match.arg(resource, choices = c("DO", "SYMP", "TRANS"))
+    citedby_gs <- "1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY"
+
+    if (resource == "DO") {
+        tbl <- googlesheets4::read_sheet(ss = citedby_gs, sheet = "cited_by")
+    } else if (resource %in% c("SYMP", "TRANS")) {
+        tbl <- googlesheets4::read_sheet(
+            ss = citedby_gs,
+            sheet = "SYMP_TRANS_citedby"
+        )
+    }
+
+    class(tbl) <- c("citedby_tbl", class(tbl))
+    tbl
+}
+
+
 #' Automatically Identify & Read TSV/CSV files (INTERNAL)
 #'
 #' A light wrapper around [readr::read_delim()] that automatically identifies
