@@ -101,10 +101,10 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #' Plot Publications Citing DO by Year
 #'
 #' Plots the count of publications that cite the Human Disease Ontology by
-#' year.
+#' year. Data is read from the official
+#' [DO_uses](https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/edit#gid=1972219724)
+#' Google Sheet used for tracking 'cited by' information.
 #'
-#' @param data_file The path to the file containing the list of publications
-#'     citing the DO, as a string.
 #' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
 #' @param color_set A set of 6 colors or the prefix of the color set to use from
@@ -117,12 +117,10 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #' To prepare data, execute `scripts/citedby_full_procedure.R`.
 #'
 #' @export
-plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
-                         out_dir = "graphics/website",
+plot_citedby <- function(out_dir = "graphics/website",
                          color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
                          w = 6, h = 3.15) {
-
-    df <- readr::read_csv(data_file) %>%
+    df <- read_citedby() %>%
         dplyr::mutate(
             Year = lubridate::year(.data$pub_date),
             pub_type = clean_pub_type(.data$pub_type)

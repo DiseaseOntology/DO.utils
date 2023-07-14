@@ -5,7 +5,6 @@
 \title{Plot Publications Citing DO by Year}
 \usage{
 plot_citedby(
-  data_file = "data/citedby/DO_citedby.csv",
   out_dir = "graphics/website",
   color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
   w = 6,
@@ -13,9 +12,6 @@ plot_citedby(
 )
 }
 \arguments{
-\item{data_file}{The path to the file containing the list of publications
-citing the DO, as a string.}
-
 \item{out_dir}{The directory where the plot \code{"DO_cited_by_count.png"}
 should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 
@@ -30,7 +26,9 @@ will be used.}
 }
 \description{
 Plots the count of publications that cite the Human Disease Ontology by
-year.
+year. Data is read from the official
+\href{https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/edit#gid=1972219724}{DO_uses}
+Google Sheet used for tracking 'cited by' information.
 }
 \section{Data Preparation}{
 
