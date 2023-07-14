@@ -23,9 +23,6 @@ appends the following columns to speed up curation activities:
 \item \code{omim}: properly formatted xref for the DO.
 \item \code{geno_inheritance}: best guess at inheritance to add as logical subClassOf
 axiom.
-\item \code{tidy_label}: phenotype name without question mark
-\item \code{provisional}: the status of this phenotype as provisional, as indicated by
-the presence of a leading question mark.
 }
 }
 \details{

@@ -109,9 +109,6 @@ read_doid_edit <- function(DO_repo) {
 #' * `omim`: properly formatted xref for the DO.
 #' * `geno_inheritance`: best guess at inheritance to add as logical subClassOf
 #' axiom.
-#' * `tidy_label`: phenotype name without question mark
-#' * `provisional`: the status of this phenotype as provisional, as indicated by
-#' the presence of a leading question mark.
 #'
 #' As part of formatting, column misarrangements are corrected and whitespace
 #' is trimmed.
@@ -136,9 +133,7 @@ read_omim <- function(file, ...) {
                 stringr::str_detect(.data$inheritance, stringr::coll("XLR")) &
                     stringr::str_detect(.data$inheritance, stringr::coll("XLD")) ~ 'X-linked inheritance',
                 .default = NA_character_
-            ),
-            tidy_label = stringr::str_remove(.data$phenotype, "^\\?"),
-            provisional = stringr::str_detect(.data$phenotype, "^\\?")
+            )
         ) %>%
         dplyr::mutate(
             dplyr::across(
