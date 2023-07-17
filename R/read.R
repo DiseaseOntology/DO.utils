@@ -71,7 +71,7 @@ read_pubmed_txt <- function(file) {
 #'
 #' @keywords internal
 read_delim_auto <- function(file, ..., show_col_types = FALSE) {
-    ext <- stringr::str_detect(file, "\\.[tc]sv")
+    ext <- stringr::str_extract(file, "\\.[tc]sv")
     delim <- switch(ext, .tsv = "\t", .csv = ",")
     if (is.null(delim)) rlang::abort("`file` must have .tsv or .csv extension.")
 
