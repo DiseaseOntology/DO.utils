@@ -72,8 +72,8 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #' @inheritParams append_to_url
 #' @inheritParams format_hyperlink
 #' @param txt _(OPTIONAL)_ The text to display for each link, as a character
-#' vector. The default uses `x` as the text. If `NULL`, the full URL will serve
-#' as the text.  If a string, the value will be used for the text of each
+#' vector. The default uses `x` as the text. If `NULL`, the full URLs will serve
+#' as the text. If a string, the value will be used for the text of each
 #' hyperlink.
 #' @param preserve The value to return when `url` is `NA`, as a string. One of
 #' "url" or "txt" (default). Note that the default for `build_hyperlink()`
@@ -113,6 +113,22 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #' @export
 build_hyperlink <- function(x, url, as, ..., sep = "", txt = x,
                             preserve = "txt") {
+    # preprocess CURIEs
+    txt # to avoid lazy generation
+    if (length(url) == 1 && url == "from_curie") {
+        url <- stringr::str_remove(x, ":.*")
+        x <- stringr::str_remove(x,".*:")
+    } else {
+        url[url == "from_curie"] <- stringr::str_remove(
+            x[url == "from_curie"],
+            ":.*"
+        )
+        x[url == "from_curie"] <- stringr::str_remove(
+            x[url == "from_curie"],
+            ".*:"
+        )
+    }
+
     full_url <- append_to_url(x, url, sep)
     hyperlink <- format_hyperlink(
         full_url,
