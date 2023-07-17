@@ -13,34 +13,36 @@
 #'
 #' @keywords internal
 preprocess_omim_dl <- function(file, ...) {
-    raw <- readr::read_lines(file, n_max = 10)
+    .lines <- readr::read_lines(file)
     is_official <- any(
-        stringr::str_detect(raw, stringr::coll("copyright", ignore_case = TRUE))
+        stringr::str_detect(.lines, stringr::coll("copyright", ignore_case = TRUE))
     )
 
     if (is_official) {
-        # include PS header as first line
-        ps_line_num <- stringr::str_detect(raw, "PS[0-9]+") %>%
-            which() %>%
-            utils::tail(1)
-        blank_lines <- which(raw == "")
-        include <- blank_lines[blank_lines > ps_line_num][1] - ps_line_num - 2
+        # determine location of the table & PS info
+        header_n <- stringr::str_detect(
+            .lines,
+            "Location.+Phenotype"
+        ) %>%
+            which()
+        blank_.lines <- which(.lines == "")
+        include <- blank_.lines[blank_.lines > header_n][1] - header_n - 1
 
         ps <- purrr::set_names(
-            stringr::str_split(raw[ps_line_num], " +- +")[[1]][1:2],
+            stringr::str_split(.lines[header_n - 1], " +- +")[[1]][1:2],
             c("Phenotype", "Phenotype MIM number")
         )
 
         df <- read_delim_auto(
             file,
-            skip = ps_line_num,
+            skip = header_n - 1,
             n_max = include,
             name_repair = "minimal",
             trim_ws = TRUE,
             col_types = readr::cols(.default = readr::col_character()),
             ...
         ) %>%
-            dplyr::add_row(!!!ps)
+            dplyr::add_row(!!!ps, .before = 1)
     } else {
         df <- read_delim_auto(
             file,
