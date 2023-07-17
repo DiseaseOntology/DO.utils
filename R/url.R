@@ -64,10 +64,14 @@ trim_url <- function(url_no_domain) {
 #' distinction cannot always be guaranteed, care should be taken for any prefix
 #' related to xrefs in the DO.
 #'
-#' @param .name Internal name of desired URL.
+#' @param .name Internal name of a desired URL, as a string.
 #' @keywords internal
 get_url <- function(.name) {
     if (is.na(.name)) return(.name)
+    if (!rlang::is_string(.name)) {
+        rlang::abort(".name must be a string or NA")
+    }
+
     base_url <- list(
         pub_urls = c(
             doi = "https://www.doi.org/",

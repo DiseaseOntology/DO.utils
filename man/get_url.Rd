@@ -7,7 +7,7 @@
 get_url(.name)
 }
 \arguments{
-\item{.name}{Internal name of desired URL.}
+\item{.name}{Internal name of a desired URL, as a string.}
 }
 \description{
 Get a URL used within this package. List all possible names organized by
