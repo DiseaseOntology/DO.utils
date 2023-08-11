@@ -2,6 +2,7 @@
 
 ## General
 
+* `lexiclean()` _(new!!)_: processes text for improved text matching.
 * Fix `read_delim_auto()` to handle compressed input.
 
 ## DO Management & Analysis
