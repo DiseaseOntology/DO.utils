@@ -3,7 +3,11 @@
 ## General
 
 * `lexiclean()` _(new!!)_: processes text for improved text matching.
-* Fix `read_delim_auto()` to handle compressed input.
+* Fixed `read_delim_auto()` to handle compressed input.
+* Broadened `unique_if_invariant()` no longer uses it's own methods and instead
+relies on `base::unique()`. This may have some unintended consequences,
+particularly where custom methods of `unique()` are defined but it works for
+more inputs, better matching expectations.
 
 ## DO Management & Analysis
 

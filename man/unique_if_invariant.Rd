@@ -2,29 +2,50 @@
 % Please edit documentation in R/vctr_to_scalar.R
 \name{unique_if_invariant}
 \alias{unique_if_invariant}
-\alias{unique_if_invariant.character}
-\alias{unique_if_invariant.numeric}
 \title{Return Unique Value for Invariant Vectors}
 \usage{
-unique_if_invariant(x, na.rm = FALSE, ...)
-
-\method{unique_if_invariant}{character}(x, na.rm = FALSE, ...)
-
-\method{unique_if_invariant}{numeric}(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps), ...)
+unique_if_invariant(x, na.rm = FALSE, incl_nm = FALSE, ...)
 }
 \arguments{
-\item{x}{vector to be tested}
+\item{x}{An R object, except arrays which are not supported.}
 
-\item{na.rm}{logical indicating whether to exclude NA values}
+\item{na.rm}{A logical scalar indicating whether \code{NA} values should be
+removed (default: FALSE); powered by \code{\link[stats:na.fail]{stats::na.omit()}} and may be
+limited by its methods.}
 
-\item{...}{unused; for extensibility}
+\item{incl_nm}{A logic scalar indicating whether names should also be
+examined (default: FALSE).}
 
-\item{tol}{double, tolerance to use (for numeric vectors)}
+\item{...}{Arguments passed on to \code{\link[base:unique]{base::unique()}} methods.}
 }
 \description{
-Returns the unique value from a vector of any length, if and only if, only 1
-unique value exists (\emph{i.e.} the vector is invariant), otherwise returns the
-original vector.
+Returns the unique value from an input, if and only if, only 1 unique value
+exists (\emph{i.e.} the input is invariant), otherwise returns the original input.
+Uniqueness is determined by \code{\link[base:unique]{base::unique()}} for flexibility but
+\code{unique_if_invariant()} may fail for custom methods.
+}
+\examples{
+unique_if_invariant(c("a", "a"))
+unique_if_invariant(c("a", "b"))
+
+# `NA` can be ignored
+unique_if_invariant(c("a", NA))
+unique_if_invariant(c("a", NA), na.rm = TRUE)
+
+# names are ignored by default (and often dropped); to consider and preserve
+# them use `incl_nm = TRUE`
+unique_if_invariant(c(a = "A", b = "A"))
+unique_if_invariant(c(a = "A", b = "A"), incl_nm = TRUE)
+unique_if_invariant(c(a = "A", a = "A"), incl_nm = TRUE)
+
+# na.rm & incl_nm are ignored for matrices & data.frames due to undesirable
+# results; as with base::unique(), matrix comparison preserves columns
+m <- matrix(rep(1, 4), 2)
+unique_if_invariant(m)
+
+.df <- data.frame(m, check.names = TRUE)
+unique_if_invariant(.df)
+
 }
 \seealso{
 For \emph{unconditional} vector-to-string conversion methods, see the

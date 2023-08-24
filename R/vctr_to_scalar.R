@@ -1,36 +1,88 @@
 #' Return Unique Value for Invariant Vectors
 #'
-#' Returns the unique value from a vector of any length, if and only if, only 1
-#' unique value exists (_i.e._ the vector is invariant), otherwise returns the
-#' original vector.
+#' Returns the unique value from an input, if and only if, only 1 unique value
+#' exists (_i.e._ the input is invariant), otherwise returns the original input.
+#' Uniqueness is determined by [base::unique()] for flexibility but
+#' `unique_if_invariant()` may fail for custom methods.
 #'
-#' @inheritParams is_invariant
+#' @param x An R object, except arrays which are not supported.
+#' @param na.rm A logical scalar indicating whether `NA` values should be
+#'     removed (default: FALSE); powered by [stats::na.omit()] and may be
+#'     limited by its methods.
+#' @param incl_nm A logic scalar indicating whether names should also be
+#'     examined (default: FALSE).
+#' @param ... Arguments passed on to [base::unique()] methods.
 #'
 #' @seealso For _unconditional_ vector-to-string conversion methods, see the
 #'     [vctr_to_string()] family of functions.
 #'
+#' @examples
+#' unique_if_invariant(c("a", "a"))
+#' unique_if_invariant(c("a", "b"))
+#'
+#' # `NA` can be ignored
+#' unique_if_invariant(c("a", NA))
+#' unique_if_invariant(c("a", NA), na.rm = TRUE)
+#'
+#' # names are ignored by default (and often dropped); to consider and preserve
+#' # them use `incl_nm = TRUE`
+#' unique_if_invariant(c(a = "A", b = "A"))
+#' unique_if_invariant(c(a = "A", b = "A"), incl_nm = TRUE)
+#' unique_if_invariant(c(a = "A", a = "A"), incl_nm = TRUE)
+#'
+#' # na.rm & incl_nm are ignored for matrices & data.frames due to undesirable
+#' # results; as with base::unique(), matrix comparison preserves columns
+#' m <- matrix(rep(1, 4), 2)
+#' unique_if_invariant(m)
+#'
+#' .df <- data.frame(m, check.names = TRUE)
+#' unique_if_invariant(.df)
+#'
 #' @export
-unique_if_invariant <- function(x, na.rm = FALSE, ...) {
-    UseMethod("unique_if_invariant")
-}
+unique_if_invariant <- function(x, na.rm = FALSE, incl_nm = FALSE, ...) {
+    assert_scalar_logical(na.rm)
+    assert_scalar_logical(incl_nm)
 
-#' @export
-#' @rdname unique_if_invariant
-unique_if_invariant.character <- function(x, na.rm = FALSE, ...) {
-    if (is_invariant(x, na.rm = na.rm, ...)) {
-        return(unique(x))
+    ndim <- length(dim(x))
+    if (ndim > 2) {
+        rlang::abort(
+            c(
+                "unique_if_invariant() does not support objects with >2 dimensions.",
+                x = paste0("`dim(x)` = ", ndim)
+            )
+        )
     }
-    x
-}
 
-#' @export
-#' @rdname unique_if_invariant
-unique_if_invariant.numeric <- function(x, na.rm = FALSE,
-                                        tol = sqrt(.Machine$double.eps), ...) {
-    if (is_invariant(x, na.rm = na.rm, tol = tol, ...)) {
-        return(mean(x, na.rm = na.rm))
+    uniq <- x
+    if (na.rm & !all(is.na(x))) {
+        if (ndim == 0) {
+            uniq <- stats::na.omit(uniq)
+        } else {
+            rlang::warn("`na.rm` is ignored when `x` has 2 dimensions.")
+        }
     }
-    x
+    uniq <- unique(uniq, ...)
+
+
+    if (ndim == 2) {
+        if (incl_nm) {
+            rlang::warn("`incl_nm` is ignored when `x` has 2 dimensions.")
+        }
+        n_out <- nrow(uniq)
+    } else {
+        n_out <- length(uniq)
+        if (incl_nm) {
+            uniq_nm <- unique(names(x), ...)
+            n_out <- max(n_out, length(uniq_nm))
+        }
+    }
+
+    if (n_out == 1) {
+        if (incl_nm && ndim == 0) names(uniq) <- uniq_nm
+        uniq
+    } else {
+        x
+    }
 }
 
 
