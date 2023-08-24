@@ -51,7 +51,8 @@
 <h3 id="general-development-version">General<a class="anchor" aria-label="anchor" href="#general-development-version"></a></h3>
 <ul><li>
 <code><a href="../reference/lexiclean.html">lexiclean()</a></code> <em>(new!!)</em>: processes text for improved text matching.</li>
-<li>Fix <code><a href="../reference/read_delim_auto.html">read_delim_auto()</a></code> to handle compressed input.</li>
+<li>Fixed <code><a href="../reference/read_delim_auto.html">read_delim_auto()</a></code> to handle compressed input.</li>
+<li>Broadened <code><a href="../reference/unique_if_invariant.html">unique_if_invariant()</a></code> no longer uses it’s own methods and instead relies on <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">base::unique()</a></code>. This may have some unintended consequences, particularly where custom methods of <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code> are defined but it works for more inputs, better matching expectations.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
