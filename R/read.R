@@ -48,6 +48,74 @@ read_pubmed_txt <- function(file) {
 }
 
 
+#' Read Google Analytics Exports
+#'
+#' Read exported Google Analytics data saved as `.csv`.
+#'
+#' @param ga_file The path to a Google Analytics `.csv` file.
+#' @inheritParams readr::read_csv
+#' @param read_all Whether all tables in the exported file should be read, as a
+#'     logical scalar. If `FALSE` (default), only the first (main) table is
+#'     read.
+#' @param tidy Whether tables should be tidied with [tidy_ga_tbl()], as a
+#'     logical scalar.
+#' @inheritParams tidy_ga_tbl
+#' @inheritDotParams readr::read_csv -show_col_types
+#'
+#' @export
+read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
+                    ...) {
+    stopifnot(
+        rlang::is_bool(read_all),
+        rlang::is_bool(tidy)
+    )
+    rlang::check_installed(
+        pkg = c("readr", "stringr", "purrr", "utils"),
+        reason = "to use read_ga()"
+    )
+
+    .data <- readr::read_lines(file)
+    tbl_delim <- c(
+        which(stringr::str_detect(.data, "^$")), # empty lines delimit tbls
+        length(.data) + 1 # ensure last table has endpoint
+    )
+    if (read_all & length(tbl_delim) > 2) {
+        dot_args <- list(...)
+        tbl <- purrr::map2(
+            utils::head(tbl_delim + 1, -1),
+            utils::tail(tbl_delim - 1, -1),
+            function(.x, .y) {
+                out <- rlang::exec(
+                    readr::read_csv,
+                    file = paste(.data[.x:.y], "\n"),
+                    show_col_types = FALSE,
+                    !!!dot_args
+                )
+            }
+        )
+
+        if (tidy) {
+            tbl <- purrr::map(tbl, ~ tidy_ga_tbl(.x, keep_total = keep_total))
+        }
+    } else {
+        tbl <- readr::read_csv(
+            file = paste(
+                .data[(tbl_delim[1] + 1):(tbl_delim[2] - 1)],
+                "\n"
+            ),
+            show_col_types = FALSE,
+            ...
+        )
+
+        if (tidy) {
+            tbl <- tidy_ga_tbl(tbl, keep_total = keep_total)
+        }
+    }
+
+    tbl
+}
+
+
 # INTERNAL readers --------------------------------------------------------
 
 #' Automatically Identify & Read TSV/CSV files (INTERNAL)

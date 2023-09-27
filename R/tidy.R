@@ -128,3 +128,74 @@ tidy_pub_records.esummary_list <- function(x, ...) {
 
     pub_tidy
 }
+
+
+#' Tidy Google Analytics Tables (INTERNAL)
+#'
+#' Tidies Google Analytics tables loaded with [read_ga()].
+#'
+#' @param ga_tbl A Google analytics table loaded with [read_ga()], that needs
+#'     to be tidied.
+#' @param keep_total Whether to keep the row with totals that appears at the
+#'     bottom of the table, as a logical scalar (default: `FALSE`).
+#'
+#' @keywords internal
+tidy_ga_tbl <- function(ga_tbl, keep_total = FALSE) {
+    stopifnot(length(keep_total) == 1, is.logical(keep_total))
+    rlang::check_installed(
+        pkg = c("dplyr", "stringr", "tidyr", "lubridate"),
+        reason = "to use tidy_ga_tbl()"
+    )
+
+    out <- ga_tbl %>%
+        dplyr::rename_with(
+            .fn = ~ stringr::str_to_lower(.x) %>%
+                stringr::str_replace_all(
+                    c("/" = "per", "[. ]+" = "_")
+                )
+        )
+
+    if ("date_range" %in% names(out)) {
+        out <- out %>%
+            tidyr::separate_wider_delim(
+                cols = date_range,
+                delim = stringr::regex(" *- *"),
+                names = c("date_start", "date_end"),
+                cols_remove = TRUE
+            )
+    }
+
+    out <- out %>%
+        dplyr::rename_with(
+            .cols = dplyr::where(
+                ~ is.character(.x) && any(stringr::str_detect(.x, "%$"), na.rm = TRUE)
+            ),
+            .fn = ~ paste0(.x, "_pct", recycle0 = TRUE)
+        ) %>%
+        dplyr::mutate(
+            dplyr::across(
+                .cols = dplyr::matches("^(day|date)_"),
+                .fns = ~ lubridate::mdy(.x)
+            ),
+            dplyr::across(
+                .cols = dplyr::where(is.character) & dplyr::ends_with("_pct"),
+                .fns = ~ as.numeric(stringr::str_remove(.x, "%$"))
+            ),
+            dplyr::across(
+                .cols = dplyr::ends_with("_duration"),
+                .fns = ~ readr::parse_time(stringr::str_remove(.x, "^<"))
+            )
+        )
+
+    if (!keep_total) {
+        out <- out %>%
+            dplyr::filter(dplyr::if_all(.cols = 1, .fns = ~!is.na(.x)))
+    } else {
+        out <- out %>%
+            dplyr::mutate(
+                dplyr::across(.cols = 1, ~ dplyr::if_else(is.na(.x), "TOTAL", .x))
+            )
+    }
+
+    out
+}
