@@ -58,7 +58,7 @@ read_pubmed_txt <- function(file) {
 #'     logical scalar. If `FALSE` (default), only the first (main) table is
 #'     read.
 #' @param tidy Whether tables should be tidied with [tidy_ga_tbl()], as a
-#'     logical scalar.
+#'     logical scalar (default: `TRUE`).
 #' @inheritParams tidy_ga_tbl
 #' @inheritDotParams readr::read_csv -show_col_types
 #'
@@ -74,7 +74,7 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
         reason = "to use read_ga()"
     )
 
-    .data <- readr::read_lines(file)
+    .data <- readr::read_lines(ga_file)
     tbl_delim <- c(
         which(stringr::str_detect(.data, "^$")), # empty lines delimit tbls
         length(.data) + 1 # ensure last table has endpoint

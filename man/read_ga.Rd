@@ -14,7 +14,7 @@ logical scalar. If \code{FALSE} (default), only the first (main) table is
 read.}
 
 \item{tidy}{Whether tables should be tidied with \code{\link[=tidy_ga_tbl]{tidy_ga_tbl()}}, as a
-logical scalar.}
+logical scalar (default: \code{TRUE}).}
 
 \item{keep_total}{Whether to keep the row with totals that appears at the
 bottom of the table, as a logical scalar (default: \code{FALSE}).}
