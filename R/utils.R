@@ -127,6 +127,54 @@ glueV <- function(..., .envir = parent.frame()) {
 }
 
 
+#' Match Length-2+ Vector Arguments
+#'
+#' Matches arguments with several inputs allowed against a set of choices.
+#' Similar to [base::match.arg()] with `several.ok = TRUE` _EXCEPT_
+#' `match_arg_several()` will signal an error for unmatching values in `arg` instead
+#' of silently dropping them.
+#'
+#' @param arg Function argument, as a character vector, or `NULL`.
+#' @param choices Candidate values, as a character vector.
+#'
+#' @keywords internal
+match_arg_several <- function(arg, choices) {
+    arg_nm <- rlang::as_string(rlang::enexpr(arg))
+    arg_missing <- !arg %in% choices
+
+    if (any(arg_missing)) {
+        if (is.character(choices)) {
+            choices <- sandwich_text(choices, '"')
+        }
+
+        msg <- paste0(
+            "`", arg_nm, "` must be one of: ",
+            vctr_to_string(choices, ", ")
+        )
+        arg_err <- arg[arg_missing]
+        if (is.character(arg)) {
+            arg_err <- sandwich_text(arg[arg_missing], '"')
+        }
+        x_err <- wrap_onscreen(
+            paste0(
+                "Not ",
+                paste0(
+                    arg_err, " (pos: ", which(arg_missing), ")",
+                    collapse = ", "
+                )
+            ),
+            exdent = 0
+        )
+        rlang::abort(
+            c(msg, x = x_err),
+            call = parent.frame()
+        )
+    }
+
+    arg
+}
+
+
 # For producing messages --------------------------------------------------
 
 msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {

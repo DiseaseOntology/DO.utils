@@ -104,3 +104,38 @@ test_that("all_duplicated(incomparables = NA) works", {
     #     c(FALSE, rep(TRUE, 2), rep(FALSE, 6), FALSE)
     # )
 })
+
+
+# match_arg_several() tests ---------------------------------------------------
+
+test_that("match_arg_several() works for character vectors", {
+    .z <- function(x, y) { match_arg_several(x, y) }
+    expect_equal(.z("a", "a"), "a")
+    expect_equal(.z("a", letters[1:2]), "a")
+    expect_equal(.z(letters[1:2], letters[1:2]), letters[1:2])
+    expect_equal(.z(rep("a", 2), letters[1:2]), rep("a", 2))
+    expect_error(
+        .z("a", "b"),
+        regexp = '`x` must be one of: "b"\n.*Not "a" \\(pos: 1\\)'
+    )
+    expect_error(
+        .z(letters[1:3], letters[1:2]),
+        regexp = '`x` must be one of: "a", "b"\n.*Not "c" \\(pos: 3\\)'
+    )
+})
+
+test_that("match_arg_several() works for integer vectors", {
+    .z <- function(x, y) { match_arg_several(x, y) }
+    expect_equal(.z(1L, 1L), 1L)
+    expect_equal(.z(1L, 1:2), 1L)
+    expect_equal(.z(1:2, 1:2), 1:2)
+    expect_equal(.z(rep(1L, 2), 1:2), rep(1L, 2))
+    expect_error(
+        .z(1L, 2L),
+        regexp = '`x` must be one of: 2\n.*Not 1 \\(pos: 1\\)'
+    )
+    expect_error(
+        .z(1:3, 1:2),
+        regexp = '`x` must be one of: 1, 2\n.*Not 3 \\(pos: 3\\)'
+    )
+})
