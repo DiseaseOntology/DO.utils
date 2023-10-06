@@ -4,7 +4,7 @@
 \alias{robot}
 \title{Execute Robot Commands}
 \usage{
-robot(..., .path = NULL)
+robot(..., .robot_path = NULL)
 }
 \arguments{
 \item{...}{Command(s) passed on to ROBOT, including subcommand(s), either as
@@ -43,12 +43,12 @@ subcommands and arguments.
 \item Can use OBO Foundry ROBOT tool installed on the system path. This
 may be achieved with \code{\link[=install_robot]{install_robot()}} or as described at
 http://robot.obolibrary.org/.
-\item Can also use a standalone robot.jar file (\code{.path} must be specified) in
-which case it is executed with \code{java -Xmx10G -jar} (10 GB memory).
+\item Can also use a standalone robot.jar file (\code{.robot_path} must be specified)
+in which case it is executed with \code{java -Xmx10G -jar} (10 GB memory).
 \item On the first use of each R session, the ROBOT executable/.jar specified
 will be tested. It must succeed prior to any command execution. On success,
 \code{robot()} will announce the version & path being used. If at any time a new
-\code{.path} is specified, this previous version will be replaced with a new
+\code{.robot_path} is specified, this previous version will be replaced with a new
 announcement.
 }
 }

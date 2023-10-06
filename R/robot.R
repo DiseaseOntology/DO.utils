@@ -10,12 +10,12 @@
 #' - Can use OBO Foundry ROBOT tool installed on the system path. This
 #' may be achieved with [install_robot()] or as described at
 #' http://robot.obolibrary.org/.
-#' - Can also use a standalone robot.jar file (`.path` must be specified) in
-#' which case it is executed with `java -Xmx10G -jar` (10 GB memory).
+#' - Can also use a standalone robot.jar file (`.robot_path` must be specified)
+#' in which case it is executed with `java -Xmx10G -jar` (10 GB memory).
 #' - On the first use of each R session, the ROBOT executable/.jar specified
 #' will be tested. It must succeed prior to any command execution. On success,
 #' `robot()` will announce the version & path being used. If at any time a new
-#' `.path` is specified, this previous version will be replaced with a new
+#' `.robot_path` is specified, this previous version will be replaced with a new
 #' announcement.
 #'
 #' @section Citation:
@@ -44,8 +44,8 @@
 #' **NOTE:** `DO.utils` caches the last ROBOT used for future use.
 #'
 #' @export
-robot <- function(..., .path = NULL) {
-    check_robot(.path)
+robot <- function(..., .robot_path = NULL) {
+    check_robot(.robot_path)
     dots <- list(...)
     args <- stringr::str_trim(names(dots))
 
@@ -185,19 +185,19 @@ install_robot <- function(...) {
 #' @returns Path and version of functional ROBOT. Use [robot()] for execution.
 #'
 #' @noRd
-check_robot <- function(.path = NULL) {
-    if (is.null(.path) && !is.null(DO_env$robot)) {
+check_robot <- function(.robot_path = NULL) {
+    if (is.null(.robot_path) && !is.null(DO_env$robot)) {
         return(DO_env$robot_path)
     }
-    if (is.null(.path)) {
+    if (is.null(.robot_path)) {
         DO_env$robot_path <- Sys.which("robot")
     } else {
-        .path <- normalizePath(.path, mustWork = TRUE)
-        if (!is.null(DO_env$robot_path) && .path == DO_env$robot_path) {
+        .robot_path <- normalizePath(.robot_path, mustWork = TRUE)
+        if (!is.null(DO_env$robot_path) && .robot_path == DO_env$robot_path) {
             rlang::inform("ROBOT path unchanged.")
             return(DO_env$robot_path)
         } else {
-            DO_env$robot_path <- .path
+            DO_env$robot_path <- .robot_path
         }
     }
 
@@ -227,7 +227,7 @@ check_robot <- function(.path = NULL) {
     }
 
     if (is.null(DO_env$robot)) {
-        msg <- paste0("ROBOT at ", .path, " is not available or working.")
+        msg <- paste0("ROBOT at ", .robot_path, " is not available or working.")
         rlang::abort(msg, class = "robot_fail")
     }
 
