@@ -24,9 +24,11 @@ options do not use a value, use "". Subcommands should be unnamed.
 }
 }}
 
-\item{.path}{The path to a ROBOT executable or .jar file, as a string.
-If \code{NULL} (default), the system path will be searched for the ROBOT
-executable. See the "ROBOT Setup" section for installation details.}
+\item{.robot_path}{The path to a ROBOT executable or .jar file, as a string.
+When \code{NULL} (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.
+
+\strong{NOTE:} \code{DO.utils} caches the last ROBOT used for future use.}
 }
 \description{
 Light wrapper for OBO Foundry ROBOT program (OBO Foundry). See

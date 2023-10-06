@@ -37,9 +37,11 @@
 #'     * `"--remove-annotations"` (option of `annotate`) or
 #'         `"remove-annotations" = ""` (named argument form).
 #'
-#' @param .path The path to a ROBOT executable or .jar file, as a string.
-#'     If `NULL` (default), the system path will be searched for the ROBOT
-#'     executable. See the "ROBOT Setup" section for installation details.
+#' @param .robot_path The path to a ROBOT executable or .jar file, as a string.
+#'     When `NULL` (default), if a system ROBOT executable is available it will
+#'     be used, otherwise an error will be signaled.
+#'
+#' **NOTE:** `DO.utils` caches the last ROBOT used for future use.
 #'
 #' @export
 robot <- function(..., .path = NULL) {
@@ -230,7 +232,7 @@ check_robot <- function(.path = NULL) {
     }
 
     rlang::inform(
-        paste0("Using ", version, " at ", DO_env$robot_path)
+        paste0("Caching ", version, " at ", DO_env$robot_path, "for future use.")
     )
 
     invisible(DO_env$robot_path)
