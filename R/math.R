@@ -40,3 +40,22 @@ round_down <- function(x, digits = 0) {
     place <- 10^(-digits)
     x - x %% place
 }
+
+#' Round Number to Zero
+#'
+#' @details
+#' Rounding to a negative number of digits means rounding to a power of ten, so
+#' for example round_zero(x, digits = -2) rounds to the nearest hundred.
+#'
+#' @param x A numeric vector.
+#' @param digits The number of decimal places, as an integer. Negative
+#' values are allowed (see 'Details').
+#'
+#' @export
+round_zero <- function(x, digits) {
+    ifelse(
+        sign(x) > 0,
+        round_down(x, digits = digits),
+        round_up(x, digits = digits)
+    )
+}
