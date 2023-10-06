@@ -2,18 +2,18 @@
 % Please edit documentation in R/math.R
 \name{round_down}
 \alias{round_down}
-\title{Round a number down}
+\title{Round Number Down}
 \usage{
 round_down(x, digits = 0)
 }
 \arguments{
-\item{x}{a numeric vector.}
+\item{x}{A numeric vector.}
 
-\item{digits}{integer indicating the number of decimal places. Negative
+\item{digits}{The number of decimal places, as an integer. Negative
 values are allowed (see 'Details').}
 }
 \description{
-Round a number down
+Round Number Down
 }
 \details{
 Rounding to a negative number of digits means rounding to a power of ten, so
