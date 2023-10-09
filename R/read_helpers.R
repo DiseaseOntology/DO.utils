@@ -25,7 +25,7 @@ preprocess_omim_dl <- function(file, ...) {
             "Location.+Phenotype"
         ) %>%
             which()
-        blank_.lines <- which(.lines == "")
+        blank_.lines <- which(stringr::str_detect(.lines, "^[[:space:]]*$"))
         include <- blank_.lines[blank_.lines > header_n][1] - header_n - 1
 
         ps <- purrr::set_names(
