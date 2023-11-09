@@ -232,7 +232,7 @@ check_robot <- function(.robot_path = NULL) {
     }
 
     rlang::inform(
-        paste0("Caching ", version, " at ", DO_env$robot_path, "for future use.")
+        paste0("Caching ", version, " at ", DO_env$robot_path, " for future use.")
     )
 
     invisible(DO_env$robot_path)
