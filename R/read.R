@@ -198,7 +198,7 @@ read_doid_edit <- function(DO_repo) {
 #' NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
 #' entries but a different column order.
 #'
-#' @keywords internal
+#' @export
 read_omim <- function(file, ...) {
     df <- preprocess_omim_dl(file, ...)
     df <- df %>%

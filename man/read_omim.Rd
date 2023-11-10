@@ -44,4 +44,3 @@ correctly, as \code{read_omim()} will process and correct headers, which include
 fixing multi-line or misarranged column headers, and will trim whitespace.
 }
 
-\keyword{internal}
