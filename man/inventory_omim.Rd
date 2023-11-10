@@ -35,9 +35,10 @@ comparison.
 }
 \examples{
 \dontrun{
+# manually copy or download data from https://www.omim.org/phenotypicSeries/PS609060
 inventory_omim(
     onto_path = "~/Ontologies/HumanDiseaseOntology/src/ontology/doid-edit.owl",
-    omim_input = "omimps.csv", # e.g. manually copied from https://www.omim.org/phenotypicSeries/PS609060
+    omim_input = "omimps.csv",
 )
 }
 

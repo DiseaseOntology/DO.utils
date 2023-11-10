@@ -158,7 +158,7 @@ tidy_ga_tbl <- function(ga_tbl, keep_total = FALSE) {
     if ("date_range" %in% names(out)) {
         out <- out %>%
             tidyr::separate_wider_delim(
-                cols = date_range,
+                cols = .data$date_range,
                 delim = stringr::regex(" *- *"),
                 names = c("date_start", "date_end"),
                 cols_remove = TRUE

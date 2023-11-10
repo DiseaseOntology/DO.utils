@@ -24,9 +24,10 @@
 #'
 #' @examples
 #' \dontrun{
+#' # manually copy or download data from https://www.omim.org/phenotypicSeries/PS609060
 #' inventory_omim(
 #'     onto_path = "~/Ontologies/HumanDiseaseOntology/src/ontology/doid-edit.owl",
-#'     omim_input = "omimps.csv", # e.g. manually copied from https://www.omim.org/phenotypicSeries/PS609060
+#'     omim_input = "omimps.csv",
 #' )
 #' }
 #'
@@ -60,19 +61,23 @@ inventory_omim <- function(onto_path, omim_input) {
         tidy_sparql()
 
     do_omim <- do_mappings %>%
-        dplyr::filter(stringr::str_detect(mapping, "OMIM")) %>%
+        dplyr::filter(stringr::str_detect(.data$mapping, "OMIM")) %>%
         dplyr::rename(
-            doid = id, do_label = label, do_dep = dep, omim = mapping
+            doid = .data$id, do_label = .data$label, do_dep = .data$dep,
+            omim = .data$mapping
         ) %>%
-        collapse_col(mapping_type, na.rm = TRUE)
+        collapse_col(.data$mapping_type, na.rm = TRUE)
 
     out <- out %>%
         dplyr::left_join(do_omim, by = "omim") %>%
         append_empty_col(
             col = c("exists", "mapping_type", "doid", "do_label", "do_dep")
         ) %>%
-        dplyr::mutate(exists = !is.na(doid)) %>%
-        dplyr::relocate(c(mapping_type, exists), .before = doid)
+        dplyr::mutate(exists = !is.na(.data$doid)) %>%
+        dplyr::relocate(
+            c(.data$mapping_type, .data$exists),
+            .before = .data$doid
+        )
 
     class(out) <- c("omim_inventory", "mapping_inventory", class(out))
 
