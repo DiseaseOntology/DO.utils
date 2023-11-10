@@ -20,7 +20,7 @@ identify_obsolete.doid_edit <- function(x, ...) {
 }
 
 
-#' Identify Data Missing from an Ontology
+#' Identify Data Missing from an Ontology (DEPRECATED)
 #'
 #' Identifies data missing from an ontology. Currently only works for mappings,
 #' includes both xrefs and skos matches. Requires
@@ -50,6 +50,9 @@ identify_obsolete.doid_edit <- function(x, ...) {
 #' @export
 onto_missing <- function(onto_path, input, what = "OMIM",
                          report_present = TRUE) {
+    rlang::warn(
+        "`onto_missing` is deprecated. Use an inventory_*() function instead."
+    )
     if (!file.exists(onto_path)) rlang::abort("`onto_path` does not exist.")
     if (!file.exists(input)) rlang::abort("`input` does not exist.")
     if (!is_boolean(report_present)) {

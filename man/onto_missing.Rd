@@ -3,7 +3,7 @@
 \name{onto_missing}
 \alias{onto_missing}
 \alias{identify_missing}
-\title{Identify Data Missing from an Ontology}
+\title{Identify Data Missing from an Ontology (DEPRECATED)}
 \usage{
 onto_missing(onto_path, input, what = "OMIM", report_present = TRUE)
 }
