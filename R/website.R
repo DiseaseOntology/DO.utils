@@ -212,13 +212,13 @@ make_contributor_html <- function(contrib_df) {
                 x = .data$github,
                 url = "github",
                 as = "html",
-                txt = "Github"
+                text = "Github"
             ),
             orcid = build_hyperlink(
                 x = .data$orcid,
                 url = "orcid",
                 as = "html",
-                txt = "ORCID"
+                text = "ORCID"
             ),
             links = purrr::map2_chr(
                 .data$github,

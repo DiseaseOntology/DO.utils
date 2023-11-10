@@ -4,7 +4,7 @@
 \alias{build_hyperlink}
 \title{Build Hyperlinks}
 \usage{
-build_hyperlink(x, url, as, ..., sep = "", txt = x, preserve = "txt")
+build_hyperlink(x, url, as, ..., sep = "", text = x, preserve = "text")
 }
 \arguments{
 \item{x}{Value(s) to append, as a character vector.}
@@ -26,14 +26,14 @@ will be recycled; otherwise the length of \code{sep} and \code{x} must match.
 If any \code{url} ends in the corresponding \code{sep}, an additional \code{sep} will
 not be added.}
 
-\item{txt}{\emph{(OPTIONAL)} The text to display for each link, as a character
+\item{text}{\emph{(OPTIONAL)} The text to display for each link, as a character
 vector. The default uses \code{x} as the text. If \code{NULL}, the full URL will serve
 as the text.  If a string, the value will be used for the text of each
 hyperlink.}
 
 \item{preserve}{The value to return when \code{url} is \code{NA}, as a string. One of
-"url" or "txt" (default). Note that the default for \code{build_hyperlink()}
-is opposite the default of \code{\link[=format_hyperlink]{format_hyperlink()}} because \code{txt} is provided by
+"url" or "text" (default). Note that the default for \code{build_hyperlink()}
+is opposite the default of \code{\link[=format_hyperlink]{format_hyperlink()}} because \code{text} is provided by
 default.}
 }
 \description{
@@ -45,7 +45,7 @@ build_hyperlink(
     x = "DiseaseOntology",
     url = "github",
     as = "html",
-    txt = "A hyperlink!"
+    text = "A hyperlink!"
 )
 
 # create CURIE links by passing local identifiers as `x` and prefixes as `url`
@@ -53,7 +53,7 @@ build_hyperlink(
     x = c("4", "D004194"),
     url = c("DOID", "MESH"),
     as = "gs",
-    txt = c("DOID:4", "MESH:D004194")
+    text = c("DOID:4", "MESH:D004194")
 )
 
 # provide internal URL names or direct URLs to append to
@@ -62,7 +62,7 @@ build_hyperlink(
     x = c("4", "fakeID"),
     url = c("DOID", "https://madeup.url.com"),
     as = "gs",
-    txt = c("DOID:4", NA),
+    text = c("DOID:4", NA),
     sep = c("_", "/"),
     preserve = "url"
 )

@@ -4,7 +4,7 @@ test_that("build_hyperlink() example works", {
             x = "DiseaseOntology",
             url = "github",
             as = "html",
-            txt = "A hyperlink!"
+            text = "A hyperlink!"
         ),
         "<a href=\"https://github.com/DiseaseOntology\">A hyperlink!</a>"
     )
@@ -22,7 +22,7 @@ test_that("build_hyperlink() works with vectors", {
             x = c("4", "D004194"),
             url = c("DOID", "MESH"),
             as = "gs",
-            txt = c("DOID:4", "MESH:D004194")
+            text = c("DOID:4", "MESH:D004194")
         ),
         gs_expect
     )
@@ -32,7 +32,7 @@ test_that("build_hyperlink() works with vectors", {
             x = c("4", "D004194"),
             url = c("DOID", "https://meshb.nlm.nih.gov/record/ui"),
             as = "gs",
-            txt = c("DOID:4", "MESH:D004194"),
+            text = c("DOID:4", "MESH:D004194"),
             sep = c("_", "?ui=")
         ),
         gs_expect

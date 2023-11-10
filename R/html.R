@@ -71,13 +71,13 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'
 #' @inheritParams append_to_url
 #' @inheritParams format_hyperlink
-#' @param txt _(OPTIONAL)_ The text to display for each link, as a character
+#' @param text _(OPTIONAL)_ The text to display for each link, as a character
 #' vector. The default uses `x` as the text. If `NULL`, the full URL will serve
 #' as the text.  If a string, the value will be used for the text of each
 #' hyperlink.
 #' @param preserve The value to return when `url` is `NA`, as a string. One of
-#' "url" or "txt" (default). Note that the default for `build_hyperlink()`
-#' is opposite the default of [format_hyperlink()] because `txt` is provided by
+#' "url" or "text" (default). Note that the default for `build_hyperlink()`
+#' is opposite the default of [format_hyperlink()] because `text` is provided by
 #' default.
 #'
 #' @seealso Functions used internally: [append_to_url()] and
@@ -88,7 +88,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'     x = "DiseaseOntology",
 #'     url = "github",
 #'     as = "html",
-#'     txt = "A hyperlink!"
+#'     text = "A hyperlink!"
 #' )
 #'
 #' # create CURIE links by passing local identifiers as `x` and prefixes as `url`
@@ -96,7 +96,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'     x = c("4", "D004194"),
 #'     url = c("DOID", "MESH"),
 #'     as = "gs",
-#'     txt = c("DOID:4", "MESH:D004194")
+#'     text = c("DOID:4", "MESH:D004194")
 #' )
 #'
 #' # provide internal URL names or direct URLs to append to
@@ -105,20 +105,20 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'     x = c("4", "fakeID"),
 #'     url = c("DOID", "https://madeup.url.com"),
 #'     as = "gs",
-#'     txt = c("DOID:4", NA),
+#'     text = c("DOID:4", NA),
 #'     sep = c("_", "/"),
 #'     preserve = "url"
 #' )
 #'
 #' @export
-build_hyperlink <- function(x, url, as, ..., sep = "", txt = x,
-                            preserve = "txt") {
+build_hyperlink <- function(x, url, as, ..., sep = "", text = x,
+                            preserve = "text") {
     full_url <- append_to_url(x, url, sep)
     hyperlink <- format_hyperlink(
         full_url,
         as = as,
         ...,
-        txt = txt,
+        text = text,
         preserve = preserve
     )
 

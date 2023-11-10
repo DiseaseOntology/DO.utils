@@ -273,11 +273,11 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #' (Google Sheet), "xlsx" (Excel), or "html".
 #' @param ... _(Only for `as = "html"`)_ One or more name-value pairs of html
 #' `<a>` [attributes](https://www.w3schools.com/tags/tag_a.asp).
-#' @param txt _(Optional)_ The text to display for each link, as a character
+#' @param text _(Optional)_ The text to display for each link, as a character
 #' vector. If `NULL` (default), the URL itself will serve as the text. If only
 #' one value is provided, it will be recycled.
 #' @param preserve The value to return when `url` is `NA`, as a string. One of
-#' "url" (default) or "txt".
+#' "url" (default) or "text".
 #'
 #' @section Excel Note:
 #' Use the `openxlsx` pkg to write data with hyperlinks to Excel.
@@ -287,58 +287,58 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #' format_hyperlink("https://www.google.com", "xlsx")
 #' format_hyperlink("https://www.google.com", "html")
 #'
-#' # with 'txt' (argument must be named)
-#' format_hyperlink("https://www.google.com", "gs", txt = "Google")
-#' format_hyperlink("https://www.google.com", "xlsx", txt = "Google")
-#' format_hyperlink("https://www.google.com", "html", txt = "Google")
+#' # with 'text' (argument must be named)
+#' format_hyperlink("https://www.google.com", "gs", text = "Google")
+#' format_hyperlink("https://www.google.com", "xlsx", text = "Google")
+#' format_hyperlink("https://www.google.com", "html", text = "Google")
 #'
 #' # html with <a> attributes
 #' format_hyperlink(
 #'     "https://www.google.com",
 #'     "html",
-#'     txt = "Google",
+#'     text = "Google",
 #'     target = "_blank",
 #'     rel = "external"
 #' )
 #'
 #' # NA values in 'url' are passed through without modification by default. If
-#' # 'txt' is provided and preferred when 'url' is NA use preserve = "txt".
+#' # 'text' is provided and preferred when 'url' is NA use preserve = "text".
 #' format_hyperlink(c("https://www.google.com", NA), "gs")
 #' format_hyperlink(
 #'     c("https://www.google.com", NA),
 #'     "gs",
-#'     txt = c("Google", "placeholder")
+#'     text = c("Google", "placeholder")
 #' )
 #'
-#' # 'url' is always preserved when 'txt' is NA but 'url' is not
+#' # 'url' is always preserved when 'text' is NA but 'url' is not
 #' format_hyperlink(
 #'     c("https://www.google.com/", "https://madeup.url.com/fakeID"),
 #'     "html",
-#'     txt = c("google", NA),
-#'     preserve = "txt"
+#'     text = c("google", NA),
+#'     preserve = "text"
 #' )
 #'
 #' @export
-format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
+format_hyperlink <- function(url, as, ..., text = NULL, preserve = "url") {
     as <- match.arg(as, c("gs", "xlsx", "html"))
-    preserve <- match.arg(preserve, c("url", "txt"))
-    if (is.null(txt) && preserve == "txt") {
-        rlang::abort('`preserve` can not be set to "txt" when `txt` is NULL.')
+    preserve <- match.arg(preserve, c("url", "text"))
+    if (is.null(text) && preserve == "text") {
+        rlang::abort('`preserve` can not be set to "text" when `text` is NULL.')
     }
-    if (!is.null(txt) && length(txt) != 1 && length(txt) != length(url)) {
+    if (!is.null(text) && length(text) != 1 && length(text) != length(url)) {
         rlang::abort(
-            "`txt` must be a string or character vector of the same length as `url`"
+            "`text` must be a string or character vector of the same length as `url`"
         )
     }
 
     if (as == "gs") {
         warn_attr(...)
-        if (is.null(txt)) {
+        if (is.null(text)) {
             formula <- as.character(glue::glue('=HYPERLINK("{url}")'))
         } else {
             formula <- dplyr::if_else(
-                !is.na(txt),
-                as.character(glue::glue('=HYPERLINK("{url}", "{txt}")')),
+                !is.na(text),
+                as.character(glue::glue('=HYPERLINK("{url}", "{text}")')),
                 as.character(glue::glue('=HYPERLINK("{url}")'))
             )
         }
@@ -347,13 +347,13 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
 
     if (as == "xlsx") {
         warn_attr(...)
-        if (is.null(txt)) {
+        if (is.null(text)) {
             formatted <- url
             class(formatted) <- "hyperlink"
         } else {
             formatted <- dplyr::if_else(
-                !is.na(txt),
-                as.character(glue::glue('=HYPERLINK("{url}", "{txt}")')),
+                !is.na(text),
+                as.character(glue::glue('=HYPERLINK("{url}", "{text}")')),
                 as.character(glue::glue('=HYPERLINK("{url}")'))
             )
             class(formatted) <- "formula"
@@ -383,14 +383,14 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
             html_attr <- NULL
         }
 
-        if (is.null(txt)) {
-            txt <- url
+        if (is.null(text)) {
+            text <- url
         } else {
-            txt <- dplyr::if_else(!is.na(txt), txt, url)
+            text <- dplyr::if_else(!is.na(text), text, url)
         }
 
         formatted <- glue::glue(
-            '<a href="{url}"{html_attr}>{txt}</a>',
+            '<a href="{url}"{html_attr}>{text}</a>',
             .null = ""
         )
         formatted <- as.character(formatted)
@@ -399,10 +399,10 @@ format_hyperlink <- function(url, as, ..., txt = NULL, preserve = "url") {
     if (preserve == "url") {
         formatted[is.na(url)] <- NA
     } else {
-        if (length(txt) == 1) {
-            formatted[is.na(url)] <- txt
+        if (length(text) == 1) {
+            formatted[is.na(url)] <- text
         } else {
-            formatted[is.na(url)] <- txt[is.na(url)]
+            formatted[is.na(url)] <- text[is.na(url)]
         }
     }
 
