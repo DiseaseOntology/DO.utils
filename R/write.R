@@ -37,3 +37,50 @@ write_graphml <- function(graph, file) {
     igraph::write_graph(graph, file, format = "graphml")
     normalizePath(file)
 }
+
+
+#' Write Data to a Google Sheet
+#'
+#' Specialized methods for writing data created by `DO.utils` to a specified
+#' Google Sheet.
+#'
+#' @param data A specially-classed data.frame with a defined method.
+#' @inheritParams googlesheets4::write_sheet
+#' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
+#' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
+#'
+#' @returns The
+#' @export
+write_gs <- function(data, ss, hyperlink_curie = NULL) {
+    UseMethod("write_gs")
+}
+
+#' @rdname write_gs
+#' @export
+write_gs.omim_inventory <- function(data, ss,
+                                    hyperlink_curie = c("omim", "doid")) {
+    hyperlink_curie <- tidyselect::eval_select(
+        tidyselect::enquo(hyperlink_curie),
+        data
+    )
+    if (length(hyperlink_curie) > 0) {
+        data <- dplyr::mutate(
+            data,
+            dplyr::across(
+                .cols = {{ hyperlink_curie }},
+                .fns = ~ build_hyperlink(
+                    x = stringr::str_remove(.x, ".*:"),
+                    url = stringr::str_remove(.x, ":.*"),
+                    text = .x,
+                    as = "gs"
+                )
+            )
+        )
+    }
+
+    googlesheets4::write_sheet(
+        data = data,
+        ss = ss,
+        sheet = paste0("omim_inventory-", today_datestamp())
+    )
+}
