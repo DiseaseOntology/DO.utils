@@ -170,20 +170,33 @@ read_doid_edit <- function(DO_repo) {
 }
 
 
-#' Read Manually Copied OMIMPS data
+#' Read Data from omim.org
 #'
-#' Properly formats OMIMPS data copied or downloaded from https://omim.org/ and
-#' appends the following columns to speed up curation activities:
-#' * `omim`: properly formatted xref for the DO.
-#' * `geno_inheritance`: best guess at inheritance to add as logical subClassOf
-#' axiom.
+#' Reads and formats OMIM data copied or downloaded from https://omim.org/
+#' and appends columns to speed up subsequent curation activities.
 #'
-#' As part of formatting, column misarrangements are corrected and whitespace
-#' is trimmed.
+#' @section Input Requirements:
+#' The `file` with OMIM data copied or downloaded must include headers at the
+#' top. These data can be left _as pasted_ even if they are not formatted
+#' correctly, as `read_omim()` will process and correct headers, which includes
+#' fixing multi-line or misarranged column headers, and will trim whitespace.
 #'
-#' @param file The path to a .tsv or .csv file (possibly compressed) with OMIMPS
-#'     data.
-#' @inheritDotParams preprocess_omim_dl
+#' @param file The path to a .tsv or .csv file (possibly compressed) with data
+#'     from https://omim.org/. See "Input Requirements" for details.
+#' @inheritDotParams read_delim_auto -show_col_types
+#'
+#' @returns An `omim_tbl` (tibble) with OMIM data arranged as seen on omim.org
+#' for OMIM **entries** and 2 added columns to support curation:
+#' * `omim`: OMIM CURIE as formatted in DO xrefs, as first column.
+#' * `geno_inheritance`: Best guess at inheritance from the GENO ontology, as
+#' the last column. This simplifies adding inheritance as logical subClassOf
+#' axioms.
+#'
+#' OMIM phenotypic series will be included when a series is downloaded with the
+#' "Download as" button on https://omim.org/.
+#'
+#' NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
+#' entries but a different column order.
 #'
 #' @keywords internal
 read_omim <- function(file, ...) {
@@ -210,5 +223,18 @@ read_omim <- function(file, ...) {
             )
         )
 
+    # ensure output matches ordering of data columns at omim.org for entries
+    # (empty cols will be added if missing)
+    omim_col_ordered <- c(
+        "location", "phenotype", "phenotype_mim_number", "inheritance",
+        "phenotype_mapping_key", "gene_locus", "gene_locus_mim_number"
+    )
+    df <- append_empty_col(
+        df,
+        col = c("omim", omim_col_ordered, "geno_inheritance"),
+        order = TRUE
+    )
+
+    class(df) <- c("omim_tbl", class(df))
     df
 }

@@ -2,31 +2,46 @@
 % Please edit documentation in R/read.R
 \name{read_omim}
 \alias{read_omim}
-\title{Read Manually Copied OMIMPS data}
+\title{Read Data from omim.org}
 \usage{
 read_omim(file, ...)
 }
 \arguments{
-\item{file}{The path to a .tsv or .csv file (possibly compressed) with OMIMPS
-data.}
+\item{file}{The path to a .tsv or .csv file (possibly compressed) with data
+from https://omim.org/. See "Input Requirements" for details.}
 
 \item{...}{
-  Arguments passed on to \code{\link[=preprocess_omim_dl]{preprocess_omim_dl}}
+  Arguments passed on to \code{\link[=read_delim_auto]{read_delim_auto}}
   \describe{
     \item{\code{}}{}
   }}
 }
-\description{
-Properly formats OMIMPS data copied or downloaded from https://omim.org/ and
-appends the following columns to speed up curation activities:
+\value{
+An \code{omim_tbl} (tibble) with OMIM data arranged as seen on omim.org
+for OMIM \strong{entries} and 2 added columns to support curation:
 \itemize{
-\item \code{omim}: properly formatted xref for the DO.
-\item \code{geno_inheritance}: best guess at inheritance to add as logical subClassOf
-axiom.
+\item \code{omim}: OMIM CURIE as formatted in DO xrefs, as first column.
+\item \code{geno_inheritance}: Best guess at inheritance from the GENO ontology, as
+the last column. This simplifies adding inheritance as logical subClassOf
+axioms.
 }
+
+OMIM phenotypic series will be included when a series is downloaded with the
+"Download as" button on https://omim.org/.
+
+NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
+entries but a different column order.
 }
-\details{
-As part of formatting, column misarrangements are corrected and whitespace
-is trimmed.
+\description{
+Reads and formats OMIM data copied or downloaded from https://omim.org/
+and appends columns to speed up subsequent curation activities.
 }
+\section{Input Requirements}{
+
+The \code{file} with OMIM data copied or downloaded must include headers at the
+top. These data can be left \emph{as pasted} even if they are not formatted
+correctly, as \code{read_omim()} will process and correct headers, which includes
+fixing multi-line or misarranged column headers, and will trim whitespace.
+}
+
 \keyword{internal}

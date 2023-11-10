@@ -4,14 +4,9 @@
 #' site or copy-pasted, and pre-processes file to fix headers and retain only
 #' data.
 #'
-#' @inheritParams read_omim
 #' @inheritDotParams read_delim_auto -show_col_types
 #'
-#' @returns A tibble with data corresponding to the OMIM PS table, with the
-#' PS phenotype included _ONLY_ when source was the "Download as" button;
-#' copy and pasting the PS table with the PS header is not allowed.
-#'
-#' @keywords internal
+#' @noRd
 preprocess_omim_dl <- function(file, ...) {
     .lines <- readr::read_lines(file)
     is_official <- any(
