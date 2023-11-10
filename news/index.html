@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.10.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,28 +46,74 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.0" id="doutils-030">DO.utils 0.3.0<a class="anchor" aria-label="anchor" href="#doutils-030"></a></h2>
 <div class="section level3">
-<h3 id="general-development-version">General<a class="anchor" aria-label="anchor" href="#general-development-version"></a></h3>
-<ul><li>
-<code><a href="../reference/lexiclean.html">lexiclean()</a></code> <em>(new!!)</em>: processes text for improved text matching.</li>
-<li>Fixed <code><a href="../reference/read_delim_auto.html">read_delim_auto()</a></code> to handle compressed input.</li>
+<h3 id="general-0-3-0">General<a class="anchor" aria-label="anchor" href="#general-0-3-0"></a></h3>
+<div class="section level4">
+<h4 id="updated-0-3-0">Updated<a class="anchor" aria-label="anchor" href="#updated-0-3-0"></a></h4>
+<ul><li>Aligned <code><a href="../reference/read_delim_auto.html">read_delim_auto()</a></code> more closely with <code><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">readr::read_delim()</a></code> so it could handle compressed input.</li>
 <li>Broadened <code><a href="../reference/unique_if_invariant.html">unique_if_invariant()</a></code> no longer uses it’s own methods and instead relies on <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">base::unique()</a></code>. This may have some unintended consequences, particularly where custom methods of <code><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique()</a></code> are defined but it works for more inputs, better matching expectations.</li>
+<li>
+<code>format_html()</code> <code>txt</code> argument has been renamed to <code>text</code> to align it more fully with expectations.</li>
 </ul></div>
+<div class="section level4">
+<h4 id="new-0-3-0">New<a class="anchor" aria-label="anchor" href="#new-0-3-0"></a></h4>
+<ul><li>
+<code><a href="../reference/lexiclean.html">lexiclean()</a></code> processes text for improved text matching.</li>
+<li>
+<code><a href="../reference/round_zero.html">round_zero()</a></code> to round numbers toward zero.</li>
+<li>
+<code><a href="../reference/round_down.html">round_down()</a></code> to round numbers down; more flexible than <code><a href="https://rdrr.io/r/base/Round.html" class="external-link">base::floor()</a></code>.</li>
+</ul></div>
+</div>
 <div class="section level3">
-<h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
+<h3 id="do-management--analysis-0-3-0">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-0"></a></h3>
+<div class="section level4">
+<h4 id="website-supporting-updates-0-3-0">WEBSITE-Supporting Updates<a class="anchor" aria-label="anchor" href="#website-supporting-updates-0-3-0"></a></h4>
 <ul><li>Fix <code><a href="../reference/make_use_case_html.html">make_use_case_html()</a></code> to have case-insensitive sorting.</li>
 <li>
-<code><a href="../reference/read_omim.html">read_omim()</a></code>:
-<ul><li>Now also reads data downloaded from omim.org phenotypic series pages using the “Download as” button.</li>
-<li>No longer returns <code>tidy_label</code> and <code>provisional</code> columns, as these were not particularly useful.</li>
-</ul></li>
-<li>
-<code><a href="../reference/plot_citedby.html">plot_citedby()</a></code>:
+<code><a href="../reference/plot_citedby.html">plot_citedby()</a></code>
 <ul><li>Now accepts manually-defined color sets, in addition to color sets provided by <code>DO.utils</code>.</li>
 <li>Default plot size changed to better fit new position on disease-ontology.org statistics page.</li>
 </ul></li>
 </ul></div>
+<div class="section level4">
+<h4 id="other-updates-0-3-0">Other Updates<a class="anchor" aria-label="anchor" href="#other-updates-0-3-0"></a></h4>
+<ul><li>
+<code><a href="../reference/robot.html">robot()</a></code>
+<ul><li>
+<code>.path</code> argument renamed to <code>.robot_path</code> to avoid use in other functions without changing the name.</li>
+<li>Now informs when testing and caching a ROBOT executable for future use.</li>
+</ul></li>
+<li>
+<code><a href="../reference/onto_missing.html">onto_missing()</a></code> was poorly designed and has been <strong><em>deprecated</em></strong>. To determine which OMIM entries are present in the DO as mappings, use <code><a href="../reference/inventory_omim.html">inventory_omim()</a></code> instead.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-0-3-0-1">New<a class="anchor" aria-label="anchor" href="#new-0-3-0-1"></a></h4>
+<ul><li>
+<em><strong>NEW FUNCTIONALITY</strong> to speed up curation of OMIM mappings!!!</em>
+<ul><li>
+<code><a href="../reference/read_omim.html">read_omim()</a></code> reads data copied or downloaded from OMIM.
+<ul><li>Previously an internal function with limited capability to handle specific copy/paste operation from OMIM.</li>
+<li>Now expanded to read data downloaded from omim.org phenotypic series pages using the “Download as” button and to handle all copy paste of tabular data from omim.org without the need for manual corrections.</li>
+<li>No longer returns <code>tidy_label</code> and <code>provisional</code> columns, as these were not particularly useful, and instead includes <code>omim</code> and <code>geno_inheritance</code> columns to help with curation.</li>
+</ul></li>
+<li>
+<code><a href="../reference/inventory_omim.html">inventory_omim()</a></code> compares OMIM entry records against mappings in the DO and reports whether they exist, with accompanying DO class data when they do.</li>
+<li>
+<code><a href="../reference/write_gs.html">write_gs()</a></code> (generic) writes data from DO.utils created classes to Google Sheets.
+<ul><li>
+<code>omim_inventory</code> is the first method.</li>
+</ul></li>
+</ul></li>
+<li>
+<code><a href="../reference/read_ga.html">read_ga()</a></code> to read Google Analytics data exported to .csv file.
+<ul><li>Eliminates the need for time-consuming, corrections to get a GA exported file into a tidy format for further use</li>
+<li>Can optionally read multiple tables from a single file (most exports have two).</li>
+<li>Can <em>NOT</em> merge GA data that has been split over multiple files due to size. These must be merged manually but this should be trivial.</li>
+</ul></li>
+</ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.10" id="doutils-0210">DO.utils 0.2.10<a class="anchor" aria-label="anchor" href="#doutils-0210"></a></h2>

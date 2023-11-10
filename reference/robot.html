@@ -14,7 +14,7 @@ subcommands and arguments."><!-- mathjax --><script src="https://cdnjs.cloudflar
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.10.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@ subcommands and arguments.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">robot</span><span class="op">(</span><span class="va">...</span>, .path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">robot</span><span class="op">(</span><span class="va">...</span>, .robot_path <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -77,10 +77,11 @@ options do not use a value, use "". Subcommands should be unnamed.</p>
 </ul></dd>
 
 
-<dt>.path</dt>
+<dt>.robot_path</dt>
 <dd><p>The path to a ROBOT executable or .jar file, as a string.
-If <code>NULL</code> (default), the system path will be searched for the ROBOT
-executable. See the "ROBOT Setup" section for installation details.</p></dd>
+When <code>NULL</code> (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.</p>
+<p><strong>NOTE:</strong> <code>DO.utils</code> caches the last ROBOT used for future use.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -92,12 +93,12 @@ executable. See the "ROBOT Setup" section for installation details.</p></dd>
 <li><p>Can use OBO Foundry ROBOT tool installed on the system path. This
 may be achieved with <code><a href="install_robot.html">install_robot()</a></code> or as described at
 http://robot.obolibrary.org/.</p></li>
-<li><p>Can also use a standalone robot.jar file (<code>.path</code> must be specified) in
-which case it is executed with <code>java -Xmx10G -jar</code> (10 GB memory).</p></li>
+<li><p>Can also use a standalone robot.jar file (<code>.robot_path</code> must be specified)
+in which case it is executed with <code>java -Xmx10G -jar</code> (10 GB memory).</p></li>
 <li><p>On the first use of each R session, the ROBOT executable/.jar specified
 will be tested. It must succeed prior to any command execution. On success,
 <code>robot()</code> will announce the version &amp; path being used. If at any time a new
-<code>.path</code> is specified, this previous version will be replaced with a new
+<code>.robot_path</code> is specified, this previous version will be replaced with a new
 announcement.</p></li>
 </ul></div>
     <div class="section level2">

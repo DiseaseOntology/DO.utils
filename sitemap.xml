@@ -88,6 +88,9 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/confine_list.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/convert_to_ofn.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/count_alliance_records.html</loc>
   </url>
   <url>
@@ -175,6 +178,9 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/install_robot.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/inventory_omim.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/invert_nm.html</loc>
   </url>
   <url>
@@ -206,6 +212,9 @@
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/make_user_list_html.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/match_arg_several.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/match_carefully.html</loc>
@@ -262,9 +271,6 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/pmc_summary.html</loc>
   </url>
   <url>
-    <loc>https://allenbaron.github.io/DO.utils/reference/preprocess_omim_dl.html</loc>
-  </url>
-  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/priority_sort.html</loc>
   </url>
   <url>
@@ -298,6 +304,9 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/read_doid_edit.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/read_ga.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/read_omim.html</loc>
   </url>
   <url>
@@ -325,7 +334,13 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/robot_query.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/round_down.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/round_up.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/round_zero.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/sandwich_text.html</loc>
@@ -344,6 +359,9 @@
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/theme_DO.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/tidy_ga_tbl.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/tidy_pub_records.html</loc>
@@ -392,5 +410,8 @@
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/write_graphml.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/write_gs.html</loc>
   </url>
 </urlset>

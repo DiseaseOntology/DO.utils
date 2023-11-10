@@ -12,7 +12,7 @@ the end of a base url."><!-- mathjax --><script src="https://cdnjs.cloudflare.co
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.10.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@ the end of a base url.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_hyperlink</span><span class="op">(</span><span class="va">x</span>, <span class="va">url</span>, <span class="va">as</span>, <span class="va">...</span>, sep <span class="op">=</span> <span class="st">""</span>, txt <span class="op">=</span> <span class="va">x</span>, preserve <span class="op">=</span> <span class="st">"txt"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">build_hyperlink</span><span class="op">(</span><span class="va">x</span>, <span class="va">url</span>, <span class="va">as</span>, <span class="va">...</span>, sep <span class="op">=</span> <span class="st">""</span>, text <span class="op">=</span> <span class="va">x</span>, preserve <span class="op">=</span> <span class="st">"text"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,7 +89,7 @@ If any <code>url</code> ends in the corresponding <code>sep</code>, an additiona
 not be added.</p></dd>
 
 
-<dt>txt</dt>
+<dt>text</dt>
 <dd><p><em>(OPTIONAL)</em> The text to display for each link, as a character
 vector. The default uses <code>x</code> as the text. If <code>NULL</code>, the full URL will serve
 as the text.  If a string, the value will be used for the text of each
@@ -98,8 +98,8 @@ hyperlink.</p></dd>
 
 <dt>preserve</dt>
 <dd><p>The value to return when <code>url</code> is <code>NA</code>, as a string. One of
-"url" or "txt" (default). Note that the default for <code>build_hyperlink()</code>
-is opposite the default of <code><a href="format_hyperlink.html">format_hyperlink()</a></code> because <code>txt</code> is provided by
+"url" or "text" (default). Note that the default for <code>build_hyperlink()</code>
+is opposite the default of <code><a href="format_hyperlink.html">format_hyperlink()</a></code> because <code>text</code> is provided by
 default.</p></dd>
 
 </dl></div>
@@ -115,7 +115,7 @@ default.</p></dd>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="st">"DiseaseOntology"</span>,</span></span>
 <span class="r-in"><span>    url <span class="op">=</span> <span class="st">"github"</span>,</span></span>
 <span class="r-in"><span>    as <span class="op">=</span> <span class="st">"html"</span>,</span></span>
-<span class="r-in"><span>    txt <span class="op">=</span> <span class="st">"A hyperlink!"</span></span></span>
+<span class="r-in"><span>    text <span class="op">=</span> <span class="st">"A hyperlink!"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "&lt;a href=\"https://github.com/DiseaseOntology\"&gt;A hyperlink!&lt;/a&gt;"</span>
 <span class="r-in"><span></span></span>
@@ -124,7 +124,7 @@ default.</p></dd>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4"</span>, <span class="st">"D004194"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID"</span>, <span class="st">"MESH"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    as <span class="op">=</span> <span class="st">"gs"</span>,</span></span>
-<span class="r-in"><span>    txt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID:4"</span>, <span class="st">"MESH:D004194"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID:4"</span>, <span class="st">"MESH:D004194"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;googlesheets4_formula[2]&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] =HYPERLINK("http://purl.obolibrary.org/obo/DOID_4", "DOID:4")               </span>
@@ -136,7 +136,7 @@ default.</p></dd>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4"</span>, <span class="st">"fakeID"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    url <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID"</span>, <span class="st">"https://madeup.url.com"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    as <span class="op">=</span> <span class="st">"gs"</span>,</span></span>
-<span class="r-in"><span>    txt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID:4"</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DOID:4"</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    sep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"_"</span>, <span class="st">"/"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    preserve <span class="op">=</span> <span class="st">"url"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
