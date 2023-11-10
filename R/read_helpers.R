@@ -15,7 +15,10 @@
 preprocess_omim_dl <- function(file, ...) {
     .lines <- readr::read_lines(file)
     is_official <- any(
-        stringr::str_detect(.lines, stringr::coll("copyright", ignore_case = TRUE))
+        stringr::str_detect(
+            .lines,
+            stringr::regex("copyright.*omim", ignore_case = TRUE)
+        )
     )
 
     if (is_official) {
