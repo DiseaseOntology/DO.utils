@@ -1,28 +1,66 @@
-# DO.utils (development version)
+# DO.utils 0.3.0
 
 ## General
 
-* `lexiclean()` _(new!!)_: processes text for improved text matching.
-* Fixed `read_delim_auto()` to handle compressed input.
+### Updated
+* Aligned `read_delim_auto()` more closely with `readr::read_delim()` so it
+could handle compressed input.
 * Broadened `unique_if_invariant()` no longer uses it's own methods and instead
 relies on `base::unique()`. This may have some unintended consequences,
 particularly where custom methods of `unique()` are defined but it works for
 more inputs, better matching expectations.
+* `format_html()` `txt` argument has been renamed to `text` to align it more
+fully with expectations.
+
+### New
+* `lexiclean()` processes text for improved text matching.
+* `round_zero()` to round numbers toward zero.
+* `round_down()` to round numbers down; more flexible than `base::floor()`.
+
 
 ## DO Management & Analysis
 
+### WEBSITE-Supporting Updates
 * Fix `make_use_case_html()` to have case-insensitive sorting.
-* `read_omim()`:
-    - Now also reads data downloaded from omim.org phenotypic series
-pages using the "Download as" button.
-    - No longer returns `tidy_label` and `provisional` columns, as these were
-    not particularly useful.
-* `plot_citedby()`:
+* `plot_citedby()`
     - Now accepts manually-defined color sets, in addition to color sets
     provided by `DO.utils`.
     - Default plot size changed to better fit new position on
     disease-ontology.org statistics page.
 
+### Other Updates
+* `robot()`
+    - `.path` argument renamed to `.robot_path` to avoid use in other functions
+    without changing the name.
+    - Now informs when testing and caching a ROBOT executable for future use.
+* `onto_missing()` was poorly designed and has been **_deprecated_**. To
+determine which OMIM entries are present in the DO as mappings, use
+`inventory_omim()` instead.
+
+### New
+* _**NEW FUNCTIONALITY** to speed up curation of OMIM mappings!!!_
+    * `read_omim()` reads data copied or downloaded from OMIM.
+        - Previously an internal function with limited capability to handle specific
+        copy/paste operation from OMIM.
+        - Now expanded to read data downloaded from omim.org phenotypic series
+    pages using the "Download as" button and to handle all copy paste of tabular
+    data from omim.org without the need for manual corrections.
+        - No longer returns `tidy_label` and `provisional` columns, as these were
+        not particularly useful, and instead includes `omim` and `geno_inheritance`
+        columns to help with curation.
+    * `inventory_omim()` compares OMIM entry records against mappings in the DO and
+    reports whether they exist, with accompanying DO class data when they do.
+    * `write_gs()` (generic) writes data from DO.utils created classes to Google
+    Sheets.
+        - `omim_inventory` is the first method.
+* `read_ga()` to read Google Analytics data exported to .csv file.
+    - Eliminates the need for time-consuming, corrections to get a GA exported
+    file into a tidy format for further use
+    - Can optionally read multiple tables from a single file (most exports have
+    two).
+    - Can _NOT_ merge GA data that has been split over multiple files due to
+    size. These must be merged manually but this should be trivial.
+    
 
 # DO.utils 0.2.10
 
