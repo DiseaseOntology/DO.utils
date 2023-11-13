@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   obtain_use_records: obtain_use_records.html
   use-reticulate-python: use-reticulate-python.html
-last_built: 2023-11-10T21:49Z
+last_built: 2023-11-13T16:15Z
 urls:
   reference: https://allenbaron.github.io/DO.utils/reference
   article: https://allenbaron.github.io/DO.utils/articles
