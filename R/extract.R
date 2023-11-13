@@ -103,13 +103,15 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
     pm_n <- sum(pm_res)
 
     if (pm_n == 0) {
-        if (no_result != "none") {
-            rlang::signal(
-                class = c("no_result", no_result),
-                message = "0 PubMed citedby results"
-            )
-        }
-        return(NULL)
+        msg <- "No PubMed 'cited by' results"
+        switch(
+            no_result,
+            error = rlang::abort(msg, class = "no_result"),
+            warning = rlang::warn(msg, class = "no_result"),
+            message = rlang::inform(msg, class = "no_result"),
+            NULL
+        )
+        return(invisible(NULL))
     }
 
     if (pm_n > 1 && is.null(linkname)) {
@@ -120,7 +122,7 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
         )
     }
 
-    pmid <- if(!is.null(linkname)) {
+    pmid <- if (!is.null(linkname)) {
         x$links[[linkname]]
     } else {
         if (!quietly && length(nm) > 1) {
@@ -156,9 +158,9 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
                 no_result = function(cond) {
                     cond_type <- dplyr::nth(class(cond), -2)
                     if (cond_type == "error") {
-                        rlang::signal(
-                            message = paste0(nm, ": ", cond$message),
-                            class = c(class(cond)[1], cond_type)
+                        rlang::abort(
+                            class = class(cond)[1],
+                            parent = cond
                         )
                     } else {
                         cond_msg <<- cond$message
@@ -176,7 +178,7 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
     if (no_result != "none" & length(discard) > 0) {
         rlang::signal(
             message = c(
-                paste0("Discarded (", cond_msg, ")"),
+                paste0(cond_msg, ", discarded:"),
                 purrr::set_names(discard, rep("i", length(discard)))
             ),
             class = c("no_result", no_result),

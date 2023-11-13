@@ -2,7 +2,7 @@
 
     Code
       match_citations(df_all, df_NA)
-    Message <simpleMessage>
+    Message
       Matching by types: 
       * pmid
       * pmcid
@@ -15,7 +15,7 @@
 
     Code
       match_citations(df_all, rev(df_NA))
-    Message <simpleMessage>
+    Message
       Matching by types: 
       * pmid
       * pmcid
@@ -28,7 +28,7 @@
 
     Code
       match_citations(df_all[2], df_NA[2])
-    Message <simpleMessage>
+    Message
       Matching by type: pmcid
     Output
       [1] NA  2 NA NA
@@ -37,7 +37,7 @@
 
     Code
       match_citations(df_all[1:2], df_NA[2])
-    Message <simpleMessage>
+    Message
       Matching by type: pmcid
     Output
       [1] NA  2 NA NA
