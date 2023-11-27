@@ -124,9 +124,9 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE,
     )
     doid_to_many <- maps_to_many(
         inventory_df,
-        .data$omim,
+        .data$doid,
         .data$mapping_type,
-        .data$doid
+        .data$omim
     )
     stats <- tibble::tribble(
         ~ "report", ~ "n",
