@@ -15,7 +15,7 @@ RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 Imports:
     assertthat,
-    dplyr,
+    dplyr (>= 1.1.0),
     ggplot2,
     glue,
     googlesheets4,
