@@ -6,6 +6,40 @@
 \usage{
 \method{print}{oirs}(x, ...)
 }
+\arguments{
+\item{x}{An object of class \code{oirs}.}
+
+\item{...}{
+  Arguments passed on to \code{\link[base:print.default]{base::print.default}}
+  \describe{
+    \item{\code{digits}}{a non-null value for \code{digits} specifies the minimum
+    number of significant digits to be printed in values.  The default,
+    \code{NULL}, uses \code{\link[base]{getOption}("digits")}.  (For the
+    interpretation for complex numbers see \code{\link[base]{signif}}.)
+    Non-integer values will be rounded down, and only values
+    greater than or equal to 1 and no greater than 22 are accepted.
+  }
+    \item{\code{na.print}}{a character string which is used to indicate
+    \code{\link[base]{NA}} values in printed output, or \code{NULL}
+    (see \sQuote{Details}).}
+    \item{\code{print.gap}}{a non-negative integer \eqn{\le 1024},
+    or \code{NULL} (meaning 1), giving the spacing between adjacent
+    columns in printed vectors, matrices and arrays.}
+    \item{\code{right}}{logical, indicating whether or not strings should be
+    right aligned.  The default is left alignment.}
+    \item{\code{max}}{a non-null value for \code{max} specifies the approximate
+    maximum number of entries to be printed.  The default, \code{NULL},
+    uses \code{\link[base]{getOption}("max.print")}: see that help page for more
+    details.}
+    \item{\code{width}}{controls the maximum number of columns on a line used in
+    printing vectors, matrices, etc.  The default, \code{NULL}, uses
+    \code{\link[base]{getOption}("width")}: see that help page for more
+    details including allowed values.}
+    \item{\code{useSource}}{logical, indicating whether to use source
+    references or copies rather than deparsing \link[base]{language objects}.
+    The default is to use the original source if it is available.}
+  }}
+}
 \description{
 Prints OMIM inventory report statistics.
 }

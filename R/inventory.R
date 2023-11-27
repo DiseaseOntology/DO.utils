@@ -92,12 +92,13 @@ inventory_omim <- function(onto_path, omim_input) {
 #' @param inventory_df A `*_inventory` data.frame created by one of DO.utils'
 #'     `inventory_*()` functions.
 #' @param verbose Whether to report results on screen (default: `TRUE`).
+#' @param ... Additional arguments for methods. Currently unused.
 #'
 #' @returns A list of data.frames including statistical `counts` and results for
 #'     review, invisibly.
 #'
 #' @export
-inventory_report <- function(inventory_df, verbose = TRUE) {
+inventory_report <- function(inventory_df, verbose = TRUE, ...) {
     UseMethod("inventory_report")
 }
 
@@ -113,7 +114,7 @@ inventory_report <- function(inventory_df, verbose = TRUE) {
 #'
 #' @export
 inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE,
-                                            include_xrefs = TRUE) {
+                                            include_xrefs = TRUE, ...) {
     dep <- dplyr::filter(inventory_df, isTRUE(.data$do_dep))
     omim_to_many <- maps_to_many(
         inventory_df,
@@ -198,6 +199,9 @@ maps_to_many <- function(.df, .col1, .type, .col2, include_xrefs = TRUE) {
 #'
 #' Prints OMIM inventory report statistics.
 #'
+#' @param x An object of class `oirs`.
+#' @inheritDotParams base::print.default -quote
+#'
 #' @export
 print.oirs <- function(x, ...) {
     oirs_new <- x %>%
@@ -218,6 +222,6 @@ print.oirs <- function(x, ...) {
         list("DOID:", oirs_split$doid$stat)
     )
 
-    print(omim, quote = FALSE)
-    print(doid, quote = FALSE)
+    print(omim, quote = FALSE, ...)
+    print(doid, quote = FALSE, ...)
 }
