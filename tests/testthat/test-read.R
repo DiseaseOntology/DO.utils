@@ -59,9 +59,8 @@ test_that("read_omim() works for OFFICIAL download of SEARCH results", {
             )
         ),
         row.names = c(NA, -14L),
-        class = c("omim_tbl", "tbl_df", "tbl", "data.frame"),
-        omim_official = TRUE,
-        omim_type = "search"
+        class = c("omim_search", "omim_tbl", "tbl_df", "tbl", "data.frame"),
+        omim_official = TRUE
     )
 
     expect_equal(read_omim("data/omim/omim-search_dl.tsv"), expected)
@@ -82,9 +81,8 @@ test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES",
             )
         ),
         row.names = c(NA, -4L),
-        class = c("omim_tbl", "tbl_df", "tbl", "data.frame"),
-        omim_official = TRUE,
-        omim_type = "PS_titles"
+        class = c("omim_PS_titles", "omim_tbl", "tbl_df", "tbl", "data.frame"),
+        omim_official = TRUE
     )
 
     expect_equal(read_omim("data/omim/omim-ps_titles_dl.tsv"), expected)
@@ -111,12 +109,8 @@ ps_df <- structure(
         geno_inheritance = c(NA, rep("autosomal recessive inheritance", 3))
     ),
     row.names = c(NA, -4L),
-    class = c(
-        "omim_tbl", "tbl_df", "tbl",
-        "data.frame"
-    ),
-    omim_official = TRUE,
-    omim_type = "PS"
+    class = c("omim_PS", "omim_tbl", "tbl_df", "tbl", "data.frame"),
+    omim_official = TRUE
 )
 
 test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES", {
@@ -128,7 +122,7 @@ test_that("read_omim() works for COPIED data (PS or with entry info)", {
         dplyr::filter(!stringr::str_detect(.data$omim, "PS")) %>%
         dplyr::mutate(gene_locus = stringr::str_remove(.data$gene_locus, ",.*"))
     attr(ps_df_cp, "omim_official") <- FALSE
-    attr(ps_df_cp, "omim_type") <- "generic"
+    class(ps_df_cp) <- class(ps_df)[-1]
 
     expect_equal(read_omim("data/omim/omim-ps_cp-ps_page.csv"), ps_df_cp)
     # expect_snapshot(read_omim("data/omim/omim-ps_cp-ps_page_w_ps.csv")) # not supported

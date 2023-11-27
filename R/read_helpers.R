@@ -102,9 +102,9 @@ preprocess_omim_dl <- function(file, ...) {
         stringr::str_to_lower()
 
     if (!is.na(dl_type)) {
-        attr(df, "omim_type") <- dl_type
+        class(df) <- c(paste0("omim_", dl_type), "omim_tbl", class(df))
     } else {
-        attr(df, "omim_type") <- "generic"
+        class(df) <- c("omim_tbl", class(df))
     }
 
     df

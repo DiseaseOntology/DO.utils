@@ -147,13 +147,14 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' @export
 read_omim <- function(file, ...) {
     df <- preprocess_omim_dl(file, ...)
+    omim_type <- class(df)[1]
 
-    if (attr(df, "omim_type") == "search") {
+    if (omim_type == "omim_search") {
         df <- df %>%
             dplyr::mutate(
-                mim_symbol = stringr::str_extract(mim_number, "^ *[*+#%^]"),
+                mim_symbol = stringr::str_extract(.data$mim_number, "^ *[*+#%^]"),
                 mim_type = dplyr::case_match(
-                    mim_symbol,
+                    .data$mim_symbol,
                     "*" ~ "gene",
                     "+" ~ "gene, includes phenotype",
                     "#" ~ "phenotype",
@@ -161,17 +162,17 @@ read_omim <- function(file, ...) {
                     "^" ~ "deprecated",
                     .default = "phenotype, suspected/overlap"
                 ),
-                mim_number = stringr::str_remove(mim_number, "^ *[*+#%^]"),
-                omim = paste0("OMIM:", mim_number)
+                mim_number = stringr::str_remove(.data$mim_number, "^ *[*+#%^]"),
+                omim = paste0("OMIM:", .data$mim_number)
             ) %>%
-            dplyr::relocate(omim, mim_symbol, mim_type, .before = 1)
+            dplyr::relocate("omim", "mim_symbol", "mim_type", .before = 1)
     }
 
     entry_col_ordered <- c(
         "location", "phenotype", "phenotype_mim_number", "inheritance",
         "phenotype_mapping_key", "gene_locus", "gene_locus_mim_number"
     )
-    if (attr(df, "omim_type") == "PS" || all(entry_col_ordered %in% names(df))) {
+    if (omim_type == "omim_PS" || all(entry_col_ordered %in% names(df))) {
         df <- df %>%
             dplyr::mutate(
                 omim = paste0("OMIM:", .data$phenotype_mim_number),
@@ -201,13 +202,14 @@ read_omim <- function(file, ...) {
         )
     }
 
-    if (attr(df, "omim_type") == "PS_titles") {
+    if (omim_type == "omim_PS_titles") {
         df <- df %>%
-            dplyr::mutate(omim = paste0("OMIM:", phenotypic_series_number)) %>%
-            dplyr::relocate(omim, .before = 1)
+            dplyr::mutate(
+                omim = paste0("OMIM:", .data$phenotypic_series_number)
+            ) %>%
+            dplyr::relocate("omim", .before = 1)
     }
 
-    class(df) <- c("omim_tbl", class(df))
     df
 }
 

@@ -1,5 +1,13 @@
 # DO.utils (development version)
 
+## DO Management & Analysis
+* `read_omim()` now additionally parses official OMIM downloads of search
+results and [phenotypic series titles](https://www.omim.org/phenotypicSeriesTitles/all).
+    - Includes `omim_official` attribute to indicate if the source was an
+    official download.
+    - If input is an official source, the output class will indicate the type.
+
+
 # DO.utils 0.3.0
 
 ## General
