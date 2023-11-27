@@ -116,60 +116,6 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 }
 
 
-# INTERNAL readers --------------------------------------------------------
-
-#' Automatically Identify & Read TSV/CSV files (INTERNAL)
-#'
-#' A light wrapper around [readr::read_delim()] that automatically identifies
-#' the delimiter based on file extension (can include compression extensions).
-#'
-#' Note that this function is primarily intended for internal use; therefore,
-#' messages about guessed column types are not generated.
-#'
-#' @param file Either a path to a file, a connection, or literal data
-#'    (either a single string or a raw vector).
-#'
-#'    Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will
-#'    be automatically uncompressed. Files starting with `http://`,
-#'    `https://`, `ftp://`, or `ftps://` will be automatically
-#'    downloaded. Remote gz files can also be automatically downloaded and
-#'    decompressed.
-#' @inheritParams readr::read_delim
-#' @inheritDotParams readr::read_delim -delim -quoted_na
-#'
-#' @keywords internal
-read_delim_auto <- function(file, ..., show_col_types = FALSE) {
-    ext <- stringr::str_extract(file, "\\.[tc]sv")
-    delim <- switch(ext, .tsv = "\t", .csv = ",")
-    if (is.null(delim)) rlang::abort("`file` must have .tsv or .csv extension.")
-
-    readr::read_delim(
-        file = file,
-        delim = delim,
-        show_col_types = show_col_types,
-        ...
-    )
-}
-
-
-#' Read doid-edit.owl (INTERNAL)
-#'
-#' Read the doid-edit.owl file from a local copy of the Human Disease Ontology
-#' Github repo.
-#'
-#' @param DO_repo The local path to the `HumanDiseaseOntology` repo, as a
-#'     string.
-#'
-#' @keywords internal
-read_doid_edit <- function(DO_repo) {
-    doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
-    doid_edit <- readr::read_lines(doid_edit_path)
-
-    class(doid_edit) <- c("doid_edit", class(doid_edit))
-    doid_edit
-}
-
-
 #' Read Data from omim.org
 #'
 #' Reads and formats OMIM data copied or downloaded from https://omim.org/
@@ -237,4 +183,58 @@ read_omim <- function(file, ...) {
 
     class(df) <- c("omim_tbl", class(df))
     df
+}
+
+
+# INTERNAL readers --------------------------------------------------------
+
+#' Automatically Identify & Read TSV/CSV files (INTERNAL)
+#'
+#' A light wrapper around [readr::read_delim()] that automatically identifies
+#' the delimiter based on file extension (can include compression extensions).
+#'
+#' Note that this function is primarily intended for internal use; therefore,
+#' messages about guessed column types are not generated.
+#'
+#' @param file Either a path to a file, a connection, or literal data
+#'    (either a single string or a raw vector).
+#'
+#'    Files ending in `.gz`, `.bz2`, `.xz`, or `.zip` will
+#'    be automatically uncompressed. Files starting with `http://`,
+#'    `https://`, `ftp://`, or `ftps://` will be automatically
+#'    downloaded. Remote gz files can also be automatically downloaded and
+#'    decompressed.
+#' @inheritParams readr::read_delim
+#' @inheritDotParams readr::read_delim -delim -quoted_na
+#'
+#' @keywords internal
+read_delim_auto <- function(file, ..., show_col_types = FALSE) {
+    ext <- stringr::str_extract(file, "\\.[tc]sv")
+    delim <- switch(ext, .tsv = "\t", .csv = ",")
+    if (is.null(delim)) rlang::abort("`file` must have .tsv or .csv extension.")
+
+    readr::read_delim(
+        file = file,
+        delim = delim,
+        show_col_types = show_col_types,
+        ...
+    )
+}
+
+
+#' Read doid-edit.owl (INTERNAL)
+#'
+#' Read the doid-edit.owl file from a local copy of the Human Disease Ontology
+#' Github repo.
+#'
+#' @param DO_repo The local path to the `HumanDiseaseOntology` repo, as a
+#'     string.
+#'
+#' @keywords internal
+read_doid_edit <- function(DO_repo) {
+    doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
+    doid_edit <- readr::read_lines(doid_edit_path)
+
+    class(doid_edit) <- c("doid_edit", class(doid_edit))
+    doid_edit
 }
