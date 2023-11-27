@@ -17,19 +17,23 @@ preprocess_omim_dl <- function(file, ...) {
     )
 
     if (is_official) {
-        # determine location of the table & PS info
-        header_n <- stringr::str_detect(
-            .lines,
-            "Location.+Phenotype"
+        # determine official download type: search, PS, or PS_titles
+        dl_type <- stringr::str_extract(
+            .lines[1],
+            stringr::regex(
+                "search|phenotypic series( titles)?",
+                ignore_case = TRUE
+            )
         ) %>%
-            which()
+            stringr::str_to_lower() %>%
+            stringr::str_replace_all(
+                c("phenotypic series" = "PS", " " = "_")
+            )
+
+        # determine location of the table & read
+        header_n <- identify_omim_header_row(.lines)
         blank_.lines <- which(stringr::str_detect(.lines, "^[[:space:]]*$"))
         include <- blank_.lines[blank_.lines > header_n][1] - header_n - 1
-
-        ps <- purrr::set_names(
-            stringr::str_split(.lines[header_n - 1], " +- +")[[1]][1:2],
-            c("Phenotype", "Phenotype MIM number")
-        )
 
         df <- read_delim_auto(
             file,
@@ -39,9 +43,18 @@ preprocess_omim_dl <- function(file, ...) {
             trim_ws = TRUE,
             col_types = readr::cols(.default = readr::col_character()),
             ...
-        ) %>%
-            dplyr::add_row(!!!ps, .before = 1)
+        )
+        attr(df, "omim_official") <- TRUE
+
+        if (dl_type == "PS") {
+            ps <- purrr::set_names(
+                stringr::str_split(.lines[header_n - 1], " +- +")[[1]][1:2],
+                c("Phenotype", "Phenotype MIM number")
+            )
+            df <- dplyr::add_row(df, !!!ps, .before = 1)
+        }
     } else {
+        dl_type <- NA
         df <- read_delim_auto(
             file,
             name_repair = "minimal",
@@ -79,13 +92,28 @@ preprocess_omim_dl <- function(file, ...) {
 
             names(df) <- headers
             df <- df[!header_in_df, ]
+            attr(df, "omim_official") <- FALSE
         }
     }
 
     names(df) <- names(df) %>%
         make.names(unique = TRUE) %>%
-        stringr::str_replace_all("\\.", "_") %>%
+        stringr::str_replace_all(c("[._]+" = "_", "_$" = "")) %>%
         stringr::str_to_lower()
 
+    if (!is.na(dl_type)) {
+        attr(df, "omim_type") <- dl_type
+    } else {
+        attr(df, "omim_type") <- "generic"
+    }
+
     df
+}
+
+identify_omim_header_row <- function(.lines) {
+    dl_stmt <- stringr::str_detect(.lines, "Downloaded")
+    tab_separated <- stringr::str_count(.lines, "\t") > 0
+
+    header_n <- which(tab_separated & !dl_stmt)[1]
+    header_n
 }
