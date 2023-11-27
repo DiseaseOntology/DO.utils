@@ -49,12 +49,22 @@
 <h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
 <div class="section level3">
 <h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
+<div class="section level4">
+<h4 id="updated-development-version">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version"></a></h4>
 <ul><li>
 <code><a href="../reference/read_omim.html">read_omim()</a></code> now additionally parses official OMIM downloads of search results and <a href="https://www.omim.org/phenotypicSeriesTitles/all" class="external-link">phenotypic series titles</a>.
 <ul><li>Includes <code>omim_official</code> attribute to indicate if the source was an official download.</li>
 <li>If input is an official source, the output class will indicate the type.</li>
 </ul></li>
+<li>
+<code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code> now removes <code>?</code> from column names and has the new argument <code>lgl_NA_false</code> for specifying whether <code>NA</code> values should be replaced with <code>FALSE</code> in logical columns.</li>
 </ul></div>
+<div class="section level4">
+<h4 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h4>
+<ul><li>
+<code><a href="../reference/inventory_report.html">inventory_report()</a></code> (generic) creates a report on common issues based on the <code>inventory_*()</code> functions.</li>
+</ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="doutils-030">DO.utils 0.3.0<a class="anchor" aria-label="anchor" href="#doutils-030"></a></h2>
