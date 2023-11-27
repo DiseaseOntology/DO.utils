@@ -7,13 +7,17 @@
 \usage{
 inventory_report(inventory_df, verbose = TRUE)
 
-\method{inventory_report}{omim_inventory}(inventory_df, verbose = TRUE)
+\method{inventory_report}{omim_inventory}(inventory_df, verbose = TRUE, include_xrefs = TRUE)
 }
 \arguments{
 \item{inventory_df}{A \verb{*_inventory} data.frame created by one of DO.utils'
 \verb{inventory_*()} functions.}
 
 \item{verbose}{Whether to report results on screen (default: \code{TRUE}).}
+
+\item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
+tests for "one-to-many" mappings, as a boolean (default: \code{TRUE}).
+\code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }
 \value{
 A list of data.frames including statistical \code{counts} and results for

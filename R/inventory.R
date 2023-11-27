@@ -102,6 +102,7 @@ inventory_report <- function(inventory_df, verbose = TRUE) {
 }
 
 #' @rdname inventory_report
+#' @inheritParams maps_to_many
 #'
 #' @returns Specific `omim_inventory` method data.frames:
 #' - `doid_deprecated`,
@@ -111,7 +112,8 @@ inventory_report <- function(inventory_df, verbose = TRUE) {
 #' OMIM IDs, excluding skos broad/narrow/related matches.
 #'
 #' @export
-inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE) {
+inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE,
+                                            include_xrefs = TRUE) {
     dep <- dplyr::filter(inventory_df, isTRUE(.data$do_dep))
     omim_to_many <- maps_to_many(inventory_df, .data$omim, .data$doid)
     doid_to_many <- maps_to_many(inventory_df, .data$omim, .data$doid)
@@ -144,12 +146,33 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE) {
 
 # inventory_report() helpers ----------------------------------------------
 
-maps_to_many <- function(.df, .col1, .col2) {
+#' Identify One-to-Many Mappings
+#'
+#' Identifies one-to-many mappings between two columns of CURIEs in a
+#' data.frame.
+#'
+#' @param .df A data.frame with mappings.
+#' @param .col1 The column with `subject` mapping CURIEs (i.e. those being
+#'     tested; the "one" in the "one-to-many" test).
+#' @param .col2 The column with `subject` mapping CURIEs (i.e. those being
+#'     counted; the "many" in the "one-to-many" test).
+#' @param include_xrefs Whether `oboInOwl:hasDbXrefs` should be included in
+#'     tests for "one-to-many" mappings, as a boolean (default: `TRUE`).
+#'     `skos:exactMatch` & `skos:closeMatch` mappings are always included.
+#'
+#' @keywords internal
+maps_to_many <- function(.df, .col1, .col2, include_xrefs = TRUE) {
+    if (include_xrefs) {
+        mapping_pattern <- "skos:(exact|close)|hasDbXref"
+    } else {
+        mapping_pattern <- "skos:(exact|close)"
+    }
+
     many_lgl <- .df %>%
         dplyr::group_by({{ .col1 }}) %>%
         dplyr::mutate(
             many = sum(
-                stringr::str_detect(.data$mapping_type, "skos:(exact|close)")
+                stringr::str_detect(.data$mapping_type, mapping_pattern)
             ) > 1
         ) %>%
         dplyr::ungroup()
