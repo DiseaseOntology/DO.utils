@@ -5,30 +5,39 @@ utils::globalVariables("where")
 
 #' Tidy SPARQL Query
 #'
-#' Tidies SPARQL query results, unnesting list columns, returning results as
-#' a [tibble][tibble::tibble()] instead of a data.frame and, optionally,
-#' converting URIs to CURIEs.
+#' Tidies SPARQL query results, unnesting list columns, removing `?` from column
+#' names, and returning results as a [tibble][tibble::tibble()] instead of a
+#' data.frame. Also optionally converts URIs to CURIEs and replaces `NA` in
+#' logical outputs with `FALSE`.
 #'
 #' @param query_res The results of a SPARQL query, as a data.frame (usually
-#'     produced by [owl_xml()]$query() or similar from [DOrepo()].
+#'     produced by [owl_xml()]$query() or similar from [DOrepo()], but can also
+#'     be used to tidy results of [robot("query", ...)][robot] loaded with
+#'     `readr`).
 #' @param as_curies Whether to convert IRIs to CURIEs, as a boolean
 #'     (default: `TRUE`).
+#' @param lgl_NA_false Whether to replace `NA` values with `FALSE` in logical
+#'     outputs, as a boolean (default: `TRUE`).
 #' @inheritDotParams to_curie -x
 #'
-#' @section Note:
-#' This function exists because the results are not currently tidied by `pyDOID`
-#' (the python package that provides SPARQL query functionality to `DO.utils`).
-#'
 #' @export
-tidy_sparql <- function(query_res, as_curies = TRUE, ...) {
+tidy_sparql <- function(query_res, as_curies = TRUE, lgl_NA_false = TRUE, ...) {
     res <- query_res %>%
         tibble::as_tibble() %>%
         DO.utils::unnest_cross(where(is.list), keep_empty = TRUE)
+    names(res) <- stringr::str_remove(names(res), "^\\?")
 
     if (as_curies) {
         res <- res %>%
             dplyr::mutate(
                 dplyr::across(dplyr::where(is.character), ~ to_curie(.x, ...))
+            )
+    }
+
+    if (lgl_NA_false) {
+        res <- res %>%
+            dplyr::mutate(
+                dplyr::across(dplyr::where(is.logical), ~ replace_na(.x, FALSE))
             )
     }
 

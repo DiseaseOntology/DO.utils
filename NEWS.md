@@ -6,6 +6,9 @@ results and [phenotypic series titles](https://www.omim.org/phenotypicSeriesTitl
     - Includes `omim_official` attribute to indicate if the source was an
     official download.
     - If input is an official source, the output class will indicate the type.
+* `tidy_sparql()` now removes `?` from column names and has the new argument
+`lgl_NA_false` for specifying whether `NA` values should be replaced with
+`FALSE` in logical columns.
 
 
 # DO.utils 0.3.0

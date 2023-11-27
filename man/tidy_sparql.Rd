@@ -4,14 +4,19 @@
 \alias{tidy_sparql}
 \title{Tidy SPARQL Query}
 \usage{
-tidy_sparql(query_res, as_curies = TRUE, ...)
+tidy_sparql(query_res, as_curies = TRUE, lgl_NA_false = TRUE, ...)
 }
 \arguments{
 \item{query_res}{The results of a SPARQL query, as a data.frame (usually
-produced by \code{\link[=owl_xml]{owl_xml()}}$query() or similar from \code{\link[=DOrepo]{DOrepo()}}.}
+produced by \code{\link[=owl_xml]{owl_xml()}}$query() or similar from \code{\link[=DOrepo]{DOrepo()}}, but can also
+be used to tidy results of \link[=robot]{robot("query", ...)} loaded with
+\code{readr}).}
 
 \item{as_curies}{Whether to convert IRIs to CURIEs, as a boolean
 (default: \code{TRUE}).}
+
+\item{lgl_NA_false}{Whether to replace \code{NA} values with \code{FALSE} in logical
+outputs, as a boolean (default: \code{TRUE}).}
 
 \item{...}{
   Arguments passed on to \code{\link[=to_curie]{to_curie}}
@@ -23,13 +28,8 @@ removal beforehand and use \code{strip_angle_brackets = FALSE}.}
   }}
 }
 \description{
-Tidies SPARQL query results, unnesting list columns, returning results as
-a \link[tibble:tibble]{tibble} instead of a data.frame and, optionally,
-converting URIs to CURIEs.
+Tidies SPARQL query results, unnesting list columns, removing \verb{?} from column
+names, and returning results as a \link[tibble:tibble]{tibble} instead of a
+data.frame. Also optionally converts URIs to CURIEs and replaces \code{NA} in
+logical outputs with \code{FALSE}.
 }
-\section{Note}{
-
-This function exists because the results are not currently tidied by \code{pyDOID}
-(the python package that provides SPARQL query functionality to \code{DO.utils}).
-}
-
