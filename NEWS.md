@@ -1,6 +1,8 @@
 # DO.utils (development version)
 
 ## DO Management & Analysis
+
+### Updated
 * `read_omim()` now additionally parses official OMIM downloads of search
 results and [phenotypic series titles](https://www.omim.org/phenotypicSeriesTitles/all).
     - Includes `omim_official` attribute to indicate if the source was an
@@ -9,6 +11,10 @@ results and [phenotypic series titles](https://www.omim.org/phenotypicSeriesTitl
 * `tidy_sparql()` now removes `?` from column names and has the new argument
 `lgl_NA_false` for specifying whether `NA` values should be replaced with
 `FALSE` in logical columns.
+
+### New
+* `inventory_report()` (generic) creates a report on common issues based on the
+`inventory_*()` functions.
 
 
 # DO.utils 0.3.0

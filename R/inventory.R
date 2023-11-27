@@ -83,3 +83,107 @@ inventory_omim <- function(onto_path, omim_input) {
 
     out
 }
+
+
+#' Report Inventory Results
+#'
+#' Reports on results of an `inventory_*()` run.
+#'
+#' @param inventory_df A `*_inventory` data.frame created by one of DO.utils'
+#'     `inventory_*()` functions.
+#' @param verbose Whether to report results on screen (default: `TRUE`).
+#'
+#' @returns A list of data.frames including statistical `counts` and results for
+#'     review, invisibly.
+#'
+#' @export
+inventory_report <- function(inventory_df, verbose = TRUE) {
+    UseMethod("inventory_report")
+}
+
+#' @rdname inventory_report
+#'
+#' @returns Specific `omim_inventory` method data.frames:
+#' - `doid_deprecated`,
+#' - `omim_to_many`: Results where an OMIM ID corresponds to multiple
+#' DOIDs, excluding skos broad/narrow/related matches.
+#' - `doid_to_many`): Results where a DOID corresponds to multiple
+#' OMIM IDs, excluding skos broad/narrow/related matches.
+#'
+#' @export
+inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE) {
+    dep <- dplyr::filter(inventory_df, isTRUE(.data$do_dep))
+    omim_to_many <- maps_to_many(inventory_df, .data$omim, .data$doid)
+    doid_to_many <- maps_to_many(inventory_df, .data$omim, .data$doid)
+    stats <- tibble::tribble(
+        ~ "report", ~ "n",
+        "omim_total", dplyr::n_distinct(inventory_df$omim, na.rm = TRUE),
+        "omim_absent", dplyr::n_distinct(inventory_df$omim[is.na(inventory_df$doid)]),
+        "omim_present", dplyr::n_distinct(inventory_df$omim[!is.na(inventory_df$doid)]),
+        "omim_to_many", dplyr::n_distinct(omim_to_many$omim),
+        "doid_total", dplyr::n_distinct(inventory_df$doid, na.rm = TRUE),
+        "doid_deprecated", dplyr::n_distinct(dep$doid),
+        "doid_to_many", dplyr::n_distinct(doid_to_many$doid)
+    )
+    class(stats) <- c("oirs", class(stats))
+
+    if (verbose) {
+        print(stats)
+    }
+
+    out <- list(
+        stats = stats,
+        doid_deprecated = dep,
+        omim_to_many = omim_to_many,
+        doid_to_many = doid_to_many
+    )
+
+    invisible(out)
+}
+
+
+# inventory_report() helpers ----------------------------------------------
+
+maps_to_many <- function(.df, .col1, .col2) {
+    many_lgl <- .df %>%
+        dplyr::group_by({{ .col1 }}) %>%
+        dplyr::mutate(
+            many = sum(
+                stringr::str_detect(.data$mapping_type, "skos:(exact|close)")
+            ) > 1
+        ) %>%
+        dplyr::ungroup()
+
+    out <- dplyr::filter(many_lgl, .data$many) %>%
+        dplyr::select(-"many")
+
+    out
+}
+
+#' Print OMIM inventory report statistics
+#'
+#' Prints OMIM inventory report statistics.
+#'
+#' @export
+print.oirs <- function(x, ...) {
+    oirs_new <- x %>%
+        dplyr::mutate(
+            id_type = stringr::str_remove(.data$report, "_.+"),
+            stat = stringr::str_remove(.data$report, "[^_]+_"),
+            report = NULL
+        )
+    oirs_split <- split(oirs_new, oirs_new$id_type)
+    omim <- array(
+        oirs_split$omim$n,
+        dim = c(1, 4),
+        list("OMIM:", oirs_split$omim$stat)
+    )
+    doid <- array(
+        oirs_split$doid$n,
+        dim = c(1, 3),
+        list("DOID:", oirs_split$doid$stat)
+    )
+
+    print(omim, quote = FALSE)
+    print(doid, quote = FALSE)
+}
