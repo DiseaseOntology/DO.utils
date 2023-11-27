@@ -4,7 +4,7 @@
 \alias{maps_to_many}
 \title{Identify One-to-Many Mappings}
 \usage{
-maps_to_many(.df, .col1, .col2, include_xrefs = TRUE)
+maps_to_many(.df, .col1, .type, .col2, include_xrefs = TRUE)
 }
 \arguments{
 \item{.df}{A data.frame with mappings.}
@@ -12,7 +12,10 @@ maps_to_many(.df, .col1, .col2, include_xrefs = TRUE)
 \item{.col1}{The column with \code{subject} mapping CURIEs (i.e. those being
 tested; the "one" in the "one-to-many" test).}
 
-\item{.col2}{The column with \code{subject} mapping CURIEs (i.e. those being
+\item{.type}{The column with the mapping predicate(s). This column should
+be formatted as CURIEs but can include multiple delimited predicates.}
+
+\item{.col2}{The column with \code{object} mapping CURIEs (i.e. those being
 counted; the "many" in the "one-to-many" test).}
 
 \item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
