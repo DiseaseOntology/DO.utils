@@ -157,24 +157,24 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE,
 
 # inventory_report() helpers ----------------------------------------------
 
-#' Identify One-to-Many Mappings
+#' Identify One-to-Multiple Mappings
 #'
-#' Identifies one-to-many mappings between two columns of CURIEs in a
+#' Identifies one-to-multiple mappings between two columns of CURIEs in a
 #' data.frame.
 #'
 #' @param .df A data.frame with mappings.
 #' @param .col1 The column with `subject` mapping CURIEs (i.e. those being
-#'     tested; the "one" in the "one-to-many" test).
+#'     tested; the "one" in the "one-to-multiple" test).
 #' @param .type The column with the mapping predicate(s). This column should
 #'     be formatted as CURIEs but can include multiple delimited predicates.
 #' @param .col2 The column with `object` mapping CURIEs (i.e. those being
-#'     counted; the "many" in the "one-to-many" test).
+#'     counted; the "multiple" in the "one-to-multiple" test).
 #' @param include_xrefs Whether `oboInOwl:hasDbXrefs` should be included in
-#'     tests for "one-to-many" mappings, as a boolean (default: `TRUE`).
+#'     tests for "one-to-multiple" mappings, as a boolean (default: `TRUE`).
 #'     `skos:exactMatch` & `skos:closeMatch` mappings are always included.
 #'
 #' @keywords internal
-maps_to_many <- function(.df, .col1, .type, .col2, include_xrefs = TRUE) {
+multimaps <- function(.df, .col1, .type, .col2, include_xrefs = TRUE) {
     if (include_xrefs) {
         mapping_pattern <- "skos:(exact|close)|hasDbXref"
     } else {
@@ -182,15 +182,16 @@ maps_to_many <- function(.df, .col1, .type, .col2, include_xrefs = TRUE) {
     }
 
     .col1_nm <- rlang::as_label(rlang::enquo(.col1))
-    many_lgl <- .df %>%
-        dplyr::filter(stringr::str_detect({{ .type }}, mapping_pattern)) %>%
-        dplyr::group_by({{ .col1 }}) %>%
-        dplyr::mutate(many = dplyr::n_distinct({{ .col2 }}) > 1) %>%
-        dplyr::ungroup() %>%
-        dplyr::filter(.data$many) %>%
-        dplyr::select({{ .col1_nm }})
+    pred_df <- dplyr::filter(
+        .df,
+        stringr::str_detect({{ .type }}, mapping_pattern)
+    )
+    multi_df <- dplyr::filter(pred_df, dplyr::n_distinct({{ .col2 }}) > 1)
 
-    out <- dplyr::filter(.df, {{ .col1 }} %in% many_lgl[[.col1_nm]])
+    out <- .df %>%
+        dplyr::mutate(
+            "{{ .col1 }}_multi-{{ .col2 }}" := {{ .col1 }} %in% multi_df[[.col1_nm]]
+        )
 
     out
 }
