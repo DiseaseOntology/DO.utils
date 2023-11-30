@@ -4,7 +4,7 @@
 \alias{inventory_omim}
 \title{Assess whether OMIM Data is in DO}
 \usage{
-inventory_omim(onto_path, omim_input)
+inventory_omim(onto_path, omim_input, include_xrefs = TRUE)
 }
 \arguments{
 \item{onto_path}{The path to an ontology file, as a string.}
@@ -12,17 +12,25 @@ inventory_omim(onto_path, omim_input)
 \item{omim_input}{An \code{omim_tbl} created by \code{\link[=read_omim]{read_omim()}} or the path to a
 .tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}} and
 includes OMIM data to compare against the mappings in the ontology.}
+
+\item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
+tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
+\code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }
 \value{
-The \code{omim_input} with 4 columns added:
+The \code{omim_input} with 5 additional columns:
 \itemize{
-\item \code{exists}: Boolean indicating whether an OMIM ID is present in the DO.
+\item \code{exists}: Logical indicating whether an OMIM ID is present in the DO.
 \item \code{mapping_type}: The mapping predicate(s) of this OMIM ID to a disease, if
-present. Multiple predicate(s) will be pipe delimited.
+present. Multiple predicate(s) between the same OMIM and DOID will be pipe
+delimited.
 \item \code{doid}: The DOID of the disease mapped to this OMIM ID, if present.
 \item \code{do_label}: The label of the disease mapped to this OMIM ID, if present.
-\item \code{do_dep}: Boolean indicating whether a disease is deprecated or not, if
+\item \code{do_dep}: Logical indicating whether a disease is deprecated or not, if
 present.
+\item \code{multimaps}: The direction in which an OMIM or DO term maps to multiple
+terms in the other resource, as "omim_to_doid", "doid_to_omim", "both_ways"
+or \code{NA}.
 }
 
 Output will have the class \code{omim_inventory}, a type of class

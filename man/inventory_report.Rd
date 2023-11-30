@@ -7,7 +7,7 @@
 \usage{
 inventory_report(inventory_df, verbose = TRUE, ...)
 
-\method{inventory_report}{omim_inventory}(inventory_df, verbose = TRUE, include_xrefs = TRUE, ...)
+\method{inventory_report}{omim_inventory}(inventory_df, verbose = TRUE, ...)
 }
 \arguments{
 \item{inventory_df}{A \verb{*_inventory} data.frame created by one of DO.utils'
@@ -16,13 +16,9 @@ inventory_report(inventory_df, verbose = TRUE, ...)
 \item{verbose}{Whether to report results on screen (default: \code{TRUE}).}
 
 \item{...}{Additional arguments for methods. Currently unused.}
-
-\item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
-tests for "one-to-many" mappings, as a boolean (default: \code{TRUE}).
-\code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }
 \value{
-A list of data.frames including statistical \code{counts} and results for
+A list of data.frames including statistical counts and results for
 review, invisibly.
 
 Specific \code{omim_inventory} method data.frames:

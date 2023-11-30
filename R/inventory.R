@@ -8,16 +8,21 @@
 #' @param omim_input An `omim_tbl` created by [read_omim()] or the path to a
 #' .tsv or .csv file (possibly compressed) that can be read by [read_omim()] and
 #' includes OMIM data to compare against the mappings in the ontology.
+#' @inheritParams multimaps
 #'
 #' @returns
-#' The `omim_input` with 4 columns added:
-#' - `exists`: Boolean indicating whether an OMIM ID is present in the DO.
+#' The `omim_input` with 5 additional columns:
+#' - `exists`: Logical indicating whether an OMIM ID is present in the DO.
 #' - `mapping_type`: The mapping predicate(s) of this OMIM ID to a disease, if
-#' present. Multiple predicate(s) will be pipe delimited.
+#' present. Multiple predicate(s) between the same OMIM and DOID will be pipe
+#' delimited.
 #' - `doid`: The DOID of the disease mapped to this OMIM ID, if present.
 #' - `do_label`: The label of the disease mapped to this OMIM ID, if present.
-#' - `do_dep`: Boolean indicating whether a disease is deprecated or not, if
+#' - `do_dep`: Logical indicating whether a disease is deprecated or not, if
 #' present.
+#' - `multimaps`: The direction in which an OMIM or DO term maps to multiple
+#' terms in the other resource, as "omim_to_doid", "doid_to_omim", "both_ways"
+#' or `NA`.
 #'
 #' Output will have the class `omim_inventory`, a type of class
 #' `mapping_inventory`.
@@ -32,7 +37,7 @@
 #' }
 #'
 #' @export
-inventory_omim <- function(onto_path, omim_input) {
+inventory_omim <- function(onto_path, omim_input, include_xrefs = TRUE) {
     stopifnot("`onto_path` does not exist." = file.exists(onto_path))
 
     if ("omim_tbl" %in% class(omim_input)) {
@@ -79,6 +84,29 @@ inventory_omim <- function(onto_path, omim_input) {
             .before = .data$doid
         )
 
+    # identify terms that multimap
+    omim_mm <- multimaps(
+        out$omim,
+        out$mapping_type,
+        out$doid,
+        include_xrefs = include_xrefs
+    )
+    doid_mm <- multimaps(
+        out$doid,
+        out$mapping_type,
+        out$omim,
+        include_xrefs = include_xrefs
+    )
+    out <- dplyr::mutate(
+        out,
+        multimaps = dplyr::case_when(
+            omim_mm & doid_mm ~ "both_ways",
+            omim_mm ~ "omim_to_doid",
+            doid_mm ~ "doid_to_omim",
+            TRUE ~ NA_character_
+        )
+    )
+
     class(out) <- c("omim_inventory", "mapping_inventory", class(out))
 
     out
@@ -94,7 +122,7 @@ inventory_omim <- function(onto_path, omim_input) {
 #' @param verbose Whether to report results on screen (default: `TRUE`).
 #' @param ... Additional arguments for methods. Currently unused.
 #'
-#' @returns A list of data.frames including statistical `counts` and results for
+#' @returns A list of data.frames including statistical counts and results for
 #'     review, invisibly.
 #'
 #' @export
@@ -103,7 +131,6 @@ inventory_report <- function(inventory_df, verbose = TRUE, ...) {
 }
 
 #' @rdname inventory_report
-#' @inheritParams maps_to_many
 #'
 #' @returns Specific `omim_inventory` method data.frames:
 #' - `doid_deprecated`,
@@ -113,20 +140,15 @@ inventory_report <- function(inventory_df, verbose = TRUE, ...) {
 #' OMIM IDs, excluding skos broad/narrow/related matches.
 #'
 #' @export
-inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE,
-                                            include_xrefs = TRUE, ...) {
+inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE, ...) {
     dep <- dplyr::filter(inventory_df, isTRUE(.data$do_dep))
-    omim_to_many <- maps_to_many(
+    omim_to_many <- dplyr::filter(
         inventory_df,
-        .data$omim,
-        .data$mapping_type,
-        .data$doid
+        .data$multimaps %in% c("omim_to_doid", "both_ways")
     )
-    doid_to_many <- maps_to_many(
+    doid_to_many <- dplyr::filter(
         inventory_df,
-        .data$doid,
-        .data$mapping_type,
-        .data$omim
+        .data$multimaps %in% c("doid_to_omim", "both_ways")
     )
     stats <- tibble::tribble(
         ~ "report", ~ "n",
