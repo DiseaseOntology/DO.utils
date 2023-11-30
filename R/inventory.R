@@ -159,40 +159,47 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE,
 
 #' Identify One-to-Multiple Mappings
 #'
-#' Identifies one-to-multiple mappings between two columns of CURIEs in a
-#' data.frame.
+#' Identifies values in `x` that map to multiple values in `y` for
+#' `skos:exactMatch` or `skos:closeMatch` (and optionally also
+#' `oboInOwl:hasDbXref`) mapping predicates.
 #'
-#' @param .df A data.frame with mappings.
-#' @param .col1 The column with `subject` mapping CURIEs (i.e. those being
-#'     tested; the "one" in the "one-to-multiple" test).
-#' @param .type The column with the mapping predicate(s). This column should
+#' @param x Vector with `subject` of mappings (i.e. those being tested; the
+#'     "one" in the "one-to-multiple" test).
+#' @param pred Vector with predicate(s) of mappings. Predicate(s) should
 #'     be formatted as CURIEs but can include multiple delimited predicates.
-#' @param .col2 The column with `object` mapping CURIEs (i.e. those being
-#'     counted; the "multiple" in the "one-to-multiple" test).
+#' @param y Vector with `object` of mappings (i.e. those being counted; the
+#'     "multiple" in the "one-to-multiple" test).
 #' @param include_xrefs Whether `oboInOwl:hasDbXrefs` should be included in
 #'     tests for "one-to-multiple" mappings, as a boolean (default: `TRUE`).
 #'     `skos:exactMatch` & `skos:closeMatch` mappings are always included.
 #'
+#' @returns A logical vector specifying the positions in `x` that map to
+#' multiple values in `y`.
+#'
 #' @keywords internal
-multimaps <- function(.df, .col1, .type, .col2, include_xrefs = TRUE) {
+multimaps <- function(x, pred, y, include_xrefs = TRUE) {
+    stopifnot(
+        "`x`, `pred`, & `y` must be the same length" =
+            dplyr::n_distinct(c(length(x), length(pred), length(y))) == 1
+    )
     if (include_xrefs) {
         mapping_pattern <- "skos:(exact|close)|hasDbXref"
     } else {
         mapping_pattern <- "skos:(exact|close)"
     }
 
-    .col1_nm <- rlang::as_label(rlang::enquo(.col1))
-    pred_df <- dplyr::filter(
-        .df,
-        stringr::str_detect({{ .type }}, mapping_pattern)
+    p_incl <- stringr::str_detect(pred, mapping_pattern) & !is.na(pred)
+    pi_split <- split(p_incl, x)
+    y_split <- split(y, x)
+    multimaps <- vapply(
+        1:length(y_split),
+        function(i) {
+            y_in <- y_split[[i]][pi_split[[i]]]
+            dplyr::n_distinct(y_in, na.rm = TRUE) > 1
+        },
+        FUN.VALUE = FALSE
     )
-    multi_df <- dplyr::filter(pred_df, dplyr::n_distinct({{ .col2 }}) > 1)
-
-    out <- .df %>%
-        dplyr::mutate(
-            "{{ .col1 }}_multi-{{ .col2 }}" := {{ .col1 }} %in% multi_df[[.col1_nm]]
-        )
-
+    out <- x %in% names(y_split)[multimaps]
     out
 }
 

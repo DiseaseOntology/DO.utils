@@ -4,26 +4,29 @@
 \alias{multimaps}
 \title{Identify One-to-Multiple Mappings}
 \usage{
-multimaps(.df, .col1, .type, .col2, include_xrefs = TRUE)
+multimaps(x, pred, y, include_xrefs = TRUE)
 }
 \arguments{
-\item{.df}{A data.frame with mappings.}
+\item{x}{Vector with \code{subject} of mappings (i.e. those being tested; the
+"one" in the "one-to-multiple" test).}
 
-\item{.col1}{The column with \code{subject} mapping CURIEs (i.e. those being
-tested; the "one" in the "one-to-multiple" test).}
-
-\item{.type}{The column with the mapping predicate(s). This column should
+\item{pred}{Vector with predicate(s) of mappings. Predicate(s) should
 be formatted as CURIEs but can include multiple delimited predicates.}
 
-\item{.col2}{The column with \code{object} mapping CURIEs (i.e. those being
-counted; the "multiple" in the "one-to-multiple" test).}
+\item{y}{Vector with \code{object} of mappings (i.e. those being counted; the
+"multiple" in the "one-to-multiple" test).}
 
 \item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
 tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
 \code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }
+\value{
+A logical vector specifying the positions in \code{x} that map to
+multiple values in \code{y}.
+}
 \description{
-Identifies one-to-multiple mappings between two columns of CURIEs in a
-data.frame.
+Identifies values in \code{x} that map to multiple values in \code{y} for
+\code{skos:exactMatch} or \code{skos:closeMatch} (and optionally also
+\code{oboInOwl:hasDbXref}) mapping predicates.
 }
 \keyword{internal}
