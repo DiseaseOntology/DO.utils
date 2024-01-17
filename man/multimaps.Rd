@@ -4,7 +4,7 @@
 \alias{multimaps}
 \title{Identify One-to-Multiple Mappings}
 \usage{
-multimaps(x, pred, y, include_xrefs = TRUE)
+multimaps(x, pred, y, include_hasDbXref = TRUE)
 }
 \arguments{
 \item{x}{Vector with \code{subject} of mappings (i.e. those being tested; the
@@ -16,7 +16,7 @@ be formatted as CURIEs but can include multiple delimited predicates.}
 \item{y}{Vector with \code{object} of mappings (i.e. those being counted; the
 "multiple" in the "one-to-multiple" test).}
 
-\item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
+\item{include_hasDbXref}{Whether \code{oboInOwl:hasDbXrefs} should be included in
 tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
 \code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }

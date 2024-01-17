@@ -37,7 +37,7 @@
 #' }
 #'
 #' @export
-inventory_omim <- function(onto_path, omim_input, include_xrefs = TRUE) {
+inventory_omim <- function(onto_path, omim_input, include_hasDbXref = TRUE) {
     stopifnot("`onto_path` does not exist." = file.exists(onto_path))
 
     if ("omim_tbl" %in% class(omim_input)) {
@@ -89,13 +89,13 @@ inventory_omim <- function(onto_path, omim_input, include_xrefs = TRUE) {
         out$omim,
         out$mapping_type,
         out$doid,
-        include_xrefs = include_xrefs
+        include_hasDbXref = include_hasDbXref
     )
     doid_mm <- multimaps(
         out$doid,
         out$mapping_type,
         out$omim,
-        include_xrefs = include_xrefs
+        include_hasDbXref = include_hasDbXref
     )
     out <- dplyr::mutate(
         out,
@@ -191,7 +191,7 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE, ...) {
 #'     be formatted as CURIEs but can include multiple delimited predicates.
 #' @param y Vector with `object` of mappings (i.e. those being counted; the
 #'     "multiple" in the "one-to-multiple" test).
-#' @param include_xrefs Whether `oboInOwl:hasDbXrefs` should be included in
+#' @param include_hasDbXref Whether `oboInOwl:hasDbXrefs` should be included in
 #'     tests for "one-to-multiple" mappings, as a boolean (default: `TRUE`).
 #'     `skos:exactMatch` & `skos:closeMatch` mappings are always included.
 #'
@@ -199,12 +199,12 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE, ...) {
 #' multiple values in `y`.
 #'
 #' @keywords internal
-multimaps <- function(x, pred, y, include_xrefs = TRUE) {
+multimaps <- function(x, pred, y, include_hasDbXref = TRUE) {
     stopifnot(
         "`x`, `pred`, & `y` must be the same length" =
             dplyr::n_distinct(c(length(x), length(pred), length(y))) == 1
     )
-    if (include_xrefs) {
+    if (include_hasDbXref) {
         mapping_pattern <- "skos:(exact|close)|hasDbXref"
     } else {
         mapping_pattern <- "skos:(exact|close)"

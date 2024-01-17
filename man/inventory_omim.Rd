@@ -4,7 +4,7 @@
 \alias{inventory_omim}
 \title{Assess whether OMIM Data is in DO}
 \usage{
-inventory_omim(onto_path, omim_input, include_xrefs = TRUE)
+inventory_omim(onto_path, omim_input, include_hasDbXref = TRUE)
 }
 \arguments{
 \item{onto_path}{The path to an ontology file, as a string.}
@@ -13,7 +13,7 @@ inventory_omim(onto_path, omim_input, include_xrefs = TRUE)
 .tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}} and
 includes OMIM data to compare against the mappings in the ontology.}
 
-\item{include_xrefs}{Whether \code{oboInOwl:hasDbXrefs} should be included in
+\item{include_hasDbXref}{Whether \code{oboInOwl:hasDbXrefs} should be included in
 tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
 \code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }
