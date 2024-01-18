@@ -1,5 +1,15 @@
 # DO.utils (development version)
 
+## Dependency Update
+* dplyr > v1.1.0 now required.
+
+## General
+
+### New
+* `elucidate()` (generic) describes the data in a given object. Currently, only
+`omim_inventory` has a defined method.
+
+
 ## DO Management & Analysis
 
 ### Updated
@@ -8,13 +18,12 @@ results and [phenotypic series titles](https://www.omim.org/phenotypicSeriesTitl
     - Includes `omim_official` attribute to indicate if the source was an
     official download.
     - If input is an official source, the output class will indicate the type.
+    - `keep_mim` arg can be used to filter OMIM search results.
 * `tidy_sparql()` now removes `?` from column names and has the new argument
 `lgl_NA_false` for specifying whether `NA` values should be replaced with
 `FALSE` in logical columns.
+* `write_gs.omim_inventory()` now has a `datestamp` method.
 
-### New
-* `inventory_report()` (generic) creates a report on common issues based on the
-`inventory_*()` functions.
 
 
 # DO.utils 0.3.0
