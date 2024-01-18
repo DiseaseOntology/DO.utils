@@ -191,7 +191,7 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE, ...) {
 #'     be formatted as CURIEs but can include multiple delimited predicates.
 #' @param y Vector with `object` of mappings (i.e. those being counted; the
 #'     "multiple" in the "one-to-multiple" test).
-#' @param include_hasDbXref Whether `oboInOwl:hasDbXrefs` should be included in
+#' @param include_hasDbXref Whether `oboInOwl:hasDbXref`'s should be included in
 #'     tests for "one-to-multiple" mappings, as a boolean (default: `TRUE`).
 #'     `skos:exactMatch` & `skos:closeMatch` mappings are always included.
 #'
