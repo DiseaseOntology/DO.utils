@@ -12,7 +12,7 @@ Google Sheet."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,10 +55,16 @@ Google Sheet.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_gs</span><span class="op">(</span><span class="va">data</span>, <span class="va">ss</span>, hyperlink_curie <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_gs</span><span class="op">(</span><span class="va">data</span>, <span class="va">ss</span>, hyperlink_curie <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for omim_inventory</span></span>
-<span><span class="fu">write_gs</span><span class="op">(</span><span class="va">data</span>, <span class="va">ss</span>, hyperlink_curie <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"omim"</span>, <span class="st">"doid"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">write_gs</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">ss</span>,</span>
+<span>  hyperlink_curie <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"omim"</span>, <span class="st">"doid"</span><span class="op">)</span>,</span>
+<span>  datestamp <span class="op">=</span> <span class="st">"%Y%m%d"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -81,12 +87,22 @@ returns</p></li>
 <dd><p>&lt;<code><a href="https://tidyr.tidyverse.org/reference/tidyr_tidy_select.html" class="external-link">tidy-select</a></code>&gt; The
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.</p></dd>
 
+
+<dt>...</dt>
+<dd><p>Arguments passed on to methods.</p></dd>
+
+
+<dt>datestamp</dt>
+<dd><p><code>NULL</code> or <code>NA</code> to use the default sheet name
+('omim_inventory') or a format recognized by <code><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">format.Date()</a></code> to add a date
+stamp suffix, separated by '-', to the default sheet name.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>The</p>
+<p>The data as written to the Google Sheet, invisibly.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

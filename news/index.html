@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,23 +46,34 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.1" id="doutils-031">DO.utils 0.3.1<a class="anchor" aria-label="anchor" href="#doutils-031"></a></h2>
 <div class="section level3">
-<h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
+<h3 id="dependency-update-0-3-1">Dependency Update<a class="anchor" aria-label="anchor" href="#dependency-update-0-3-1"></a></h3>
+<ul><li>dplyr &gt; v1.1.0 now required.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="general-0-3-1">General<a class="anchor" aria-label="anchor" href="#general-0-3-1"></a></h3>
 <div class="section level4">
-<h4 id="updated-development-version">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version"></a></h4>
+<h4 id="new-0-3-1">New<a class="anchor" aria-label="anchor" href="#new-0-3-1"></a></h4>
+<ul><li>
+<code><a href="../reference/elucidate.html">elucidate()</a></code> (generic) describes the data in a given object. Currently, only <code>omim_inventory</code> has a defined method.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="do-management--analysis-0-3-1">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-1"></a></h3>
+<div class="section level4">
+<h4 id="updated-0-3-1">Updated<a class="anchor" aria-label="anchor" href="#updated-0-3-1"></a></h4>
 <ul><li>
 <code><a href="../reference/read_omim.html">read_omim()</a></code> now additionally parses official OMIM downloads of search results and <a href="https://www.omim.org/phenotypicSeriesTitles/all" class="external-link">phenotypic series titles</a>.
 <ul><li>Includes <code>omim_official</code> attribute to indicate if the source was an official download.</li>
 <li>If input is an official source, the output class will indicate the type.</li>
+<li>
+<code>keep_mim</code> arg can be used to filter OMIM search results.</li>
 </ul></li>
 <li>
 <code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code> now removes <code>?</code> from column names and has the new argument <code>lgl_NA_false</code> for specifying whether <code>NA</code> values should be replaced with <code>FALSE</code> in logical columns.</li>
-</ul></div>
-<div class="section level4">
-<h4 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h4>
-<ul><li>
-<code><a href="../reference/inventory_report.html">inventory_report()</a></code> (generic) creates a report on common issues based on the <code>inventory_*()</code> functions.</li>
+<li>
+<code><a href="../reference/write_gs.html">write_gs.omim_inventory()</a></code> now has a <code>datestamp</code> method.</li>
 </ul></div>
 </div>
 </div>

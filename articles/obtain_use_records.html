@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -189,7 +189,7 @@ annotations across species</strong>. Dis Model Mech. 2018 Mar
 <li>Make your Entrez Utilities API key available (see <a href="#api_key">Setup and API keys</a> for how to set it).</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/set_entrez_key.html" class="external-link">set_entrez_key</a></span><span class="op">(</span><span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/keyring/man/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"ENTREZ_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://docs.ropensci.org/rentrez/reference/set_entrez_key.html" class="external-link">set_entrez_key</a></span><span class="op">(</span><span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://keyring.r-lib.org/reference/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"ENTREZ_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Obtain records from PubMed using the resource publication PubMed IDs
 (<code>pmid</code>), optionally include which publication each record
@@ -230,8 +230,8 @@ retained).</li>
 </ol>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_scopus_keys.html">set_scopus_keys</a></span><span class="op">(</span></span>
-<span>    api_key <span class="op">=</span> <span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/keyring/man/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"Elsevier_API"</span><span class="op">)</span>,</span>
-<span>    insttoken <span class="op">=</span> <span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/keyring/man/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"Elsevier_insttoken"</span><span class="op">)</span></span>
+<span>    api_key <span class="op">=</span> <span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://keyring.r-lib.org/reference/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"Elsevier_API"</span><span class="op">)</span>,</span>
+<span>    insttoken <span class="op">=</span> <span class="fu">keyring</span><span class="fu">::</span><span class="fu"><a href="https://keyring.r-lib.org/reference/key_get.html" class="external-link">key_get</a></span><span class="op">(</span><span class="st">"Elsevier_insttoken"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal">
 <li>Obtain records from Scopus using the resource publication titles,

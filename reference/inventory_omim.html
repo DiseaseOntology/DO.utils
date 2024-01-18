@@ -14,7 +14,7 @@ comparison."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
     
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,12 @@ comparison.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">inventory_omim</span><span class="op">(</span><span class="va">onto_path</span>, <span class="va">omim_input</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">inventory_omim</span><span class="op">(</span></span>
+<span>  <span class="va">onto_path</span>,</span>
+<span>  <span class="va">omim_input</span>,</span>
+<span>  keep_mim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="st">"%"</span><span class="op">)</span>,</span>
+<span>  include_hasDbXref <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -70,20 +75,38 @@ comparison.</p>
 <dt>omim_input</dt>
 <dd><p>An <code>omim_tbl</code> created by <code><a href="read_omim.html">read_omim()</a></code> or the path to a
 .tsv or .csv file (possibly compressed) that can be read by <code><a href="read_omim.html">read_omim()</a></code> and
-includes OMIM data to compare against the mappings in the ontology.</p></dd>
+includes OMIM data to compare against the mappings in the ontology.</p>
+<p>NOTE: If an <code>omim_tbl</code> is provided, <code>keep_mim</code> will be ignored.</p></dd>
+
+
+<dt>keep_mim</dt>
+<dd><p>[<strong>OMIM search data only</strong>] The MIM symbols representing
+the data types to keep, as a character vector, or <code>NULL</code> to retain all
+(default: <code>"#"</code> and <code>"%"</code>).</p>
+<p>The <a href="https://www.omim.org/help/faq#1_3" class="external-link">OMIM</a> defined MIM symbols are:</p><table class="table table"><tr><td>MIM symbol</td><td>MIM type</td></tr><tr><td><code>*</code></td><td>gene</td></tr><tr><td><code>+</code></td><td>gene, includes phenotype</td></tr><tr><td><code>#</code></td><td>phenotype</td></tr><tr><td><code>%</code></td><td>phenotype, unknown molecular basis</td></tr><tr><td><code>^</code></td><td>deprecated</td></tr><tr><td><code>none</code></td><td>phenotype, suspected/overlap</td></tr></table></dd>
+
+
+<dt>include_hasDbXref</dt>
+<dd><p>Whether <code>oboInOwl:hasDbXref</code>'s should be included in
+tests for "one-to-multiple" mappings, as a boolean (default: <code>TRUE</code>).
+<code>skos:exactMatch</code> &amp; <code>skos:closeMatch</code> mappings are always included.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>The <code>omim_input</code> with 4 columns added:</p><ul><li><p><code>exists</code>: Boolean indicating whether an OMIM ID is present in the DO.</p></li>
+<p>The <code>omim_input</code> with 5 additional columns:</p><ul><li><p><code>exists</code>: Logical indicating whether an OMIM ID is present in the DO.</p></li>
 <li><p><code>mapping_type</code>: The mapping predicate(s) of this OMIM ID to a disease, if
-present. Multiple predicate(s) will be pipe delimited.</p></li>
+present. Multiple predicate(s) between the same OMIM and DOID will be pipe
+delimited.</p></li>
 <li><p><code>doid</code>: The DOID of the disease mapped to this OMIM ID, if present.</p></li>
 <li><p><code>do_label</code>: The label of the disease mapped to this OMIM ID, if present.</p></li>
-<li><p><code>do_dep</code>: Boolean indicating whether a disease is deprecated or not, if
+<li><p><code>do_dep</code>: Logical indicating whether a disease is deprecated or not, if
 present.</p></li>
+<li><p><code>multimaps</code>: The direction in which an OMIM or DO term maps to multiple
+terms in the other resource, as "omim_to_doid", "doid_to_omim", "both_ways"
+or <code>NA</code>.</p></li>
 </ul><p>Output will have the class <code>omim_inventory</code>, a type of class
 <code>mapping_inventory</code>.</p>
     </div>

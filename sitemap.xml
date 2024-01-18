@@ -112,6 +112,9 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/drop_blank.html</loc>
   </url>
   <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/elucidate.html</loc>
+  </url>
+  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/extract_ScoredMatch.html</loc>
   </url>
   <url>
@@ -181,9 +184,6 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/inventory_omim.html</loc>
   </url>
   <url>
-    <loc>https://allenbaron.github.io/DO.utils/reference/inventory_report.html</loc>
-  </url>
-  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/invert_nm.html</loc>
   </url>
   <url>
@@ -217,9 +217,6 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/make_user_list_html.html</loc>
   </url>
   <url>
-    <loc>https://allenbaron.github.io/DO.utils/reference/maps_to_many.html</loc>
-  </url>
-  <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/match_arg_several.html</loc>
   </url>
   <url>
@@ -230,6 +227,9 @@
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/match_fz.html</loc>
+  </url>
+  <url>
+    <loc>https://allenbaron.github.io/DO.utils/reference/multimaps.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/ns_prefix.html</loc>
@@ -277,7 +277,7 @@
     <loc>https://allenbaron.github.io/DO.utils/reference/pmc_summary.html</loc>
   </url>
   <url>
-    <loc>https://allenbaron.github.io/DO.utils/reference/print.oirs.html</loc>
+    <loc>https://allenbaron.github.io/DO.utils/reference/print.oieb.html</loc>
   </url>
   <url>
     <loc>https://allenbaron.github.io/DO.utils/reference/priority_sort.html</loc>
