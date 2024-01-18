@@ -4,16 +4,37 @@
 \alias{inventory_omim}
 \title{Assess whether OMIM Data is in DO}
 \usage{
-inventory_omim(onto_path, omim_input, include_hasDbXref = TRUE)
+inventory_omim(
+  onto_path,
+  omim_input,
+  keep_mim = c("#", "\%"),
+  include_hasDbXref = TRUE
+)
 }
 \arguments{
 \item{onto_path}{The path to an ontology file, as a string.}
 
 \item{omim_input}{An \code{omim_tbl} created by \code{\link[=read_omim]{read_omim()}} or the path to a
 .tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}} and
-includes OMIM data to compare against the mappings in the ontology.}
+includes OMIM data to compare against the mappings in the ontology.
 
-\item{include_hasDbXref}{Whether \code{oboInOwl:hasDbXrefs} should be included in
+NOTE: If an \code{omim_tbl} is provided, \code{keep_mim} will be ignored.}
+
+\item{keep_mim}{[\strong{OMIM search data only}] The MIM symbols representing
+the data types to keep, as a character vector, or \code{NULL} to retain all
+(default: \code{"#"} and \code{"\%"}).
+
+The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabular{ll}{
+   MIM symbol \tab MIM type \cr
+   \code{*} \tab gene \cr
+   \code{+} \tab gene, includes phenotype \cr
+   \verb{#} \tab phenotype \cr
+   \verb{\%} \tab phenotype, unknown molecular basis \cr
+   \code{^} \tab deprecated \cr
+   \code{none} \tab phenotype, suspected/overlap \cr
+}}
+
+\item{include_hasDbXref}{Whether \code{oboInOwl:hasDbXref}'s should be included in
 tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
 \code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
 }

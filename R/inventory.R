@@ -8,6 +8,9 @@
 #' @param omim_input An `omim_tbl` created by [read_omim()] or the path to a
 #' .tsv or .csv file (possibly compressed) that can be read by [read_omim()] and
 #' includes OMIM data to compare against the mappings in the ontology.
+#'
+#' NOTE: If an `omim_tbl` is provided, `keep_mim` will be ignored.
+#' @inheritParams read_omim
 #' @inheritParams multimaps
 #'
 #' @returns
@@ -37,13 +40,14 @@
 #' }
 #'
 #' @export
-inventory_omim <- function(onto_path, omim_input, include_hasDbXref = TRUE) {
+inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
+                           include_hasDbXref = TRUE) {
     stopifnot("`onto_path` does not exist." = file.exists(onto_path))
 
     if ("omim_tbl" %in% class(omim_input)) {
         out <- omim_input
     } else if (file.exists(omim_input)) {
-        out <- read_omim(omim_input)
+        out <- read_omim(omim_input, keep_mim = keep_mim)
     } else {
         rlang::abort(
             "`omim_input` must be an `omim_tbl` or the path to an existing file."
@@ -100,9 +104,9 @@ inventory_omim <- function(onto_path, omim_input, include_hasDbXref = TRUE) {
     out <- dplyr::mutate(
         out,
         multimaps = dplyr::case_when(
-            omim_mm & doid_mm ~ "both_ways",
-            omim_mm ~ "omim_to_doid",
-            doid_mm ~ "doid_to_omim",
+            .data$omim_mm & .data$doid_mm ~ "both_ways",
+            .data$omim_mm ~ "omim_to_doid",
+            .data$doid_mm ~ "doid_to_omim",
             TRUE ~ NA_character_
         )
     )
@@ -177,7 +181,7 @@ inventory_report.omim_inventory <- function(inventory_df, verbose = TRUE, ...) {
 }
 
 
-# inventory_report() helpers ----------------------------------------------
+# inventory_omim() helpers ----------------------------------------------
 
 #' Identify One-to-Multiple Mappings
 #'
