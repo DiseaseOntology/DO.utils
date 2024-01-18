@@ -1,4 +1,4 @@
-# DO.utils (development version)
+# DO.utils 0.3.1
 
 ## Dependency Update
 * dplyr > v1.1.0 now required.
