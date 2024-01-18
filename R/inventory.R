@@ -5,16 +5,17 @@
 #' comparison.
 #'
 #' @param onto_path The path to an ontology file, as a string.
-#' @param omim_input An `omim_tbl` created by [read_omim()] or the path to a
-#' .tsv or .csv file (possibly compressed) that can be read by [read_omim()] and
-#' includes OMIM data to compare against the mappings in the ontology.
+#' @param omim_input One or more `omim_tbl`(s) created by [read_omim()] or the
+#' path(s) to .tsv or .csv file(s) (possibly compressed) that can be read by
+#' [read_omim()] and include(s) OMIM data to compare against the mappings in the
+#' ontology.
 #'
-#' NOTE: If an `omim_tbl` is provided, `keep_mim` will be ignored.
+#' NOTE: For each `omim_input` that is an `omim_tbl`, `keep_mim` will be ignored.
 #' @inheritParams read_omim
 #' @inheritParams multimaps
 #'
 #' @returns
-#' The `omim_input` with 5 additional columns:
+#' The `omim_input` (in a list if more than one) with 5 additional columns:
 #' - `exists`: Logical indicating whether an OMIM ID is present in the DO.
 #' - `mapping_type`: The mapping predicate(s) of this OMIM ID to a disease, if
 #' present. Multiple predicate(s) between the same OMIM and DOID will be pipe
@@ -27,8 +28,8 @@
 #' terms in the other resource, as "omim_to_doid", "doid_to_omim", "both_ways"
 #' or `NA`.
 #'
-#' Output will have the class `omim_inventory`, a type of class
-#' `mapping_inventory`.
+#' Each `omim_input` will have the class `omim_inventory`, a type of class
+#' `mapping_inventory`. If multiple are provided the list will
 #'
 #' @examples
 #' \dontrun{
@@ -104,9 +105,9 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
     out <- dplyr::mutate(
         out,
         multimaps = dplyr::case_when(
-            .data$omim_mm & .data$doid_mm ~ "both_ways",
-            .data$omim_mm ~ "omim_to_doid",
-            .data$doid_mm ~ "doid_to_omim",
+            omim_mm & doid_mm ~ "both_ways",
+            omim_mm ~ "omim_to_doid",
+            doid_mm ~ "doid_to_omim",
             TRUE ~ NA_character_
         )
     )
