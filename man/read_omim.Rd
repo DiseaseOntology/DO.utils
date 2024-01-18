@@ -32,7 +32,18 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
 }
 \value{
 An \code{omim_tbl} (tibble) with OMIM data arranged as seen on omim.org
-for OMIM \strong{entries} and 2 added columns to support curation:
+for OMIM \strong{entries}. If the omim.org "Download as" button was used to
+download the data, the \code{omim_tbl} will be additionally classed based on the
+download type:
+\itemize{
+\item \code{omim_search} for a download of search results.
+\item \code{omim_PS_titles} for a download of OMIM phenotypic series titles.
+\item \code{omim_PS} for a download of diseases in an OMIM phenotypic series.
+}
+
+\code{omim_PS} will include a row representing the OMIM phenotypic series itself.
+Output with columns typical OMIM phenotype entries, including \code{omim_PS}, will
+have 2 additional columns to support curation:
 \itemize{
 \item \code{omim}: OMIM CURIE as formatted in DO xrefs, as first column.
 \item \code{geno_inheritance}: Best guess at inheritance from the GENO ontology, as
@@ -40,11 +51,8 @@ the last column. This simplifies adding inheritance as logical subClassOf
 axioms.
 }
 
-OMIM phenotypic series will be included when a series is downloaded with the
-"Download as" button on https://omim.org/.
-
 NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
-entries but a different column order.
+entries but column are ordered differently.
 }
 \description{
 Reads and formats OMIM data copied or downloaded from https://omim.org/

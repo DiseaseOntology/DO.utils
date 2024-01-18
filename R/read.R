@@ -145,17 +145,23 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' @inheritDotParams read_delim_auto -show_col_types
 #'
 #' @returns An `omim_tbl` (tibble) with OMIM data arranged as seen on omim.org
-#' for OMIM **entries** and 2 added columns to support curation:
+#' for OMIM **entries**. If the omim.org "Download as" button was used to
+#' download the data, the `omim_tbl` will be additionally classed based on the
+#' download type:
+#' * `omim_search` for a download of search results.
+#' * `omim_PS_titles` for a download of OMIM phenotypic series titles.
+#' * `omim_PS` for a download of diseases in an OMIM phenotypic series.
+#'
+#' `omim_PS` will include a row representing the OMIM phenotypic series itself.
+#' Output with columns typical OMIM phenotype entries, including `omim_PS`, will
+#' have 2 additional columns to support curation:
 #' * `omim`: OMIM CURIE as formatted in DO xrefs, as first column.
 #' * `geno_inheritance`: Best guess at inheritance from the GENO ontology, as
 #' the last column. This simplifies adding inheritance as logical subClassOf
 #' axioms.
 #'
-#' OMIM phenotypic series will be included when a series is downloaded with the
-#' "Download as" button on https://omim.org/.
-#'
 #' NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
-#' entries but a different column order.
+#' entries but column are ordered differently.
 #'
 #' @export
 read_omim <- function(file, keep_mim = c("#", "%"), ...) {
@@ -166,7 +172,7 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
         df <- df %>%
             dplyr::mutate(
                 mim_symbol = stringr::str_extract(.data$mim_number, "^[*+#%^]"),
-                mim_symbol = tidyr::replace_na(mim_symbol, "none"),
+                mim_symbol = tidyr::replace_na(.data$mim_symbol, "none"),
                 mim_type = dplyr::case_match(
                     .data$mim_symbol,
                     "*" ~ "gene",
@@ -188,7 +194,7 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
                 rlang::abort(
                     c(
                         '`keep_mim` must be one or more of "*", "+", "#", "%", "^", or "none"',
-                        setNames(
+                        stats::setNames(
                             sandwich_text(mim_mismatch, '"'),
                             rep("x", length(mim_mismatch))
                         )
@@ -196,15 +202,26 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
                 )
             }
 
-            df <- dplyr::filter(df, mim_symbol %in% keep_mim)
+            df <- dplyr::filter(df, .data$mim_symbol %in% keep_mim)
         }
     }
 
+    if (omim_type == "omim_PS_titles") {
+        df <- df %>%
+            dplyr::mutate(
+                omim = paste0("OMIM:", .data$phenotypic_series_number)
+            ) %>%
+            dplyr::relocate("omim", .before = 1)
+    }
+
+    # ensure output matches ordering of data columns at omim.org for entries
+    # (empty cols will be added if missing)
     entry_col_ordered <- c(
         "location", "phenotype", "phenotype_mim_number", "inheritance",
         "phenotype_mapping_key", "gene_locus", "gene_locus_mim_number"
     )
-    if (omim_type == "omim_PS" || all(entry_col_ordered %in% names(df))) {
+    omim_phenotype <- all(entry_col_ordered %in% names(df))
+    if (omim_type == "omim_PS" || omim_phenotype) {
         df <- df %>%
             dplyr::mutate(
                 omim = paste0("OMIM:", .data$phenotype_mim_number),
@@ -221,27 +238,12 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
                 )
             )
 
-        # ensure output matches ordering of data columns at omim.org for entries
-        # (empty cols will be added if missing)
-        omim_col_ordered <- c(
-            "location", "phenotype", "phenotype_mim_number", "inheritance",
-            "phenotype_mapping_key", "gene_locus", "gene_locus_mim_number"
-        )
         df <- append_empty_col(
             df,
-            col = c("omim", omim_col_ordered, "geno_inheritance"),
+            col = c("omim", entry_col_ordered, "geno_inheritance"),
             order = TRUE
         )
     }
-
-    if (omim_type == "omim_PS_titles") {
-        df <- df %>%
-            dplyr::mutate(
-                omim = paste0("OMIM:", .data$phenotypic_series_number)
-            ) %>%
-            dplyr::relocate("omim", .before = 1)
-    }
-
     df
 }
 
