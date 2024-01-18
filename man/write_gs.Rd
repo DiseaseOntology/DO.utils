@@ -5,9 +5,15 @@
 \alias{write_gs.omim_inventory}
 \title{Write Data to a Google Sheet}
 \usage{
-write_gs(data, ss, hyperlink_curie = NULL)
+write_gs(data, ss, hyperlink_curie = NULL, ...)
 
-\method{write_gs}{omim_inventory}(data, ss, hyperlink_curie = c("omim", "doid"))
+\method{write_gs}{omim_inventory}(
+  data,
+  ss,
+  hyperlink_curie = c("omim", "doid"),
+  datestamp = "\%Y\%m\%d",
+  ...
+)
 }
 \arguments{
 \item{data}{A specially-classed data.frame with a defined method.}
@@ -26,9 +32,15 @@ Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 
 \item{hyperlink_curie}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> The
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.}
+
+\item{...}{Arguments passed on to methods.}
+
+\item{datestamp}{\code{NULL} or \code{NA} to use the default sheet name
+('omim_inventory') or a format recognized by \code{\link[=format.Date]{format.Date()}} to add a date
+stamp suffix, separated by '-', to the default sheet name.}
 }
 \value{
-The
+The data as written to the Google Sheet, invisibly.
 }
 \description{
 Specialized methods for writing data created by \code{DO.utils} to a specified

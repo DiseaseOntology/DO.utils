@@ -48,17 +48,24 @@ write_graphml <- function(graph, file) {
 #' @inheritParams googlesheets4::write_sheet
 #' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
+#' @param ... Arguments passed on to methods.
 #'
-#' @returns The
+#' @returns The data as written to the Google Sheet, invisibly.
 #' @export
-write_gs <- function(data, ss, hyperlink_curie = NULL) {
+write_gs <- function(data, ss, hyperlink_curie = NULL, ...) {
     UseMethod("write_gs")
 }
 
 #' @rdname write_gs
+#'
+#' @param datestamp `NULL` or `NA` to use the default sheet name
+#' ('omim_inventory') or a format recognized by [format.Date()] to add a date
+#' stamp suffix, separated by '-', to the default sheet name.
+#'
 #' @export
 write_gs.omim_inventory <- function(data, ss,
-                                    hyperlink_curie = c("omim", "doid")) {
+                                    hyperlink_curie = c("omim", "doid"),
+                                    datestamp = "%Y%m%d", ...) {
     hyperlink_curie <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
@@ -78,9 +85,16 @@ write_gs.omim_inventory <- function(data, ss,
         )
     }
 
+    sheet_nm <- "omim_inventory"
+    if (!is.null(datestamp) && !is.na(datestamp)) {
+        sheet_nm <- paste(sheet_nm, format(Sys.Date(), datestamp), sep = "-")
+    }
+
     googlesheets4::write_sheet(
         data = data,
         ss = ss,
-        sheet = paste0("omim_inventory-", today_datestamp())
+        sheet = sheet_nm
     )
+
+    invisible(data)
 }
