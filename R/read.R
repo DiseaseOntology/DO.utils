@@ -129,6 +129,19 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #'
 #' @param file The path to a .tsv or .csv file (possibly compressed) with data
 #'     from https://omim.org/. See "Input Requirements" for details.
+#' @param keep_mim \[**OMIM search data only**\] The MIM symbols representing
+#' the data types to keep, as a character vector, or `NULL` to retain all
+#' (default: `"#"` and `"%"`).
+#'
+#' The [OMIM](https://www.omim.org/help/faq#1_3) defined MIM symbols are:
+#' | MIM symbol | MIM type                            |
+#' |------------|-------------------------------------|
+#' | `*`        |  gene                               |
+#' | `+`        |  gene, includes phenotype           |
+#' | `#`        |  phenotype                          |
+#' | `%`        |  phenotype, unknown molecular basis |
+#' | `^`        |  deprecated                         |
+#' | `none`     |  phenotype, suspected/overlap       |
 #' @inheritDotParams read_delim_auto -show_col_types
 #'
 #' @returns An `omim_tbl` (tibble) with OMIM data arranged as seen on omim.org
@@ -145,14 +158,15 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' entries but a different column order.
 #'
 #' @export
-read_omim <- function(file, ...) {
+read_omim <- function(file, keep_mim = c("#", "%"), ...) {
     df <- preprocess_omim_dl(file, ...)
     omim_type <- class(df)[1]
 
     if (omim_type == "omim_search") {
         df <- df %>%
             dplyr::mutate(
-                mim_symbol = stringr::str_extract(.data$mim_number, "^ *[*+#%^]"),
+                mim_symbol = stringr::str_extract(.data$mim_number, "^[*+#%^]"),
+                mim_symbol = tidyr::replace_na(mim_symbol, "none"),
                 mim_type = dplyr::case_match(
                     .data$mim_symbol,
                     "*" ~ "gene",
@@ -162,10 +176,28 @@ read_omim <- function(file, ...) {
                     "^" ~ "deprecated",
                     .default = "phenotype, suspected/overlap"
                 ),
-                mim_number = stringr::str_remove(.data$mim_number, "^ *[*+#%^]"),
+                mim_number = stringr::str_remove(.data$mim_number, "^[*+#%^]"),
                 omim = paste0("OMIM:", .data$mim_number)
             ) %>%
             dplyr::relocate("omim", "mim_symbol", "mim_type", .before = 1)
+
+        if (!is.null(keep_mim)) {
+            mim_sym <- c("*", "+", "#", "%", "^", "none")
+            mim_mismatch <- keep_mim[!keep_mim %in% mim_sym]
+            if (length(mim_mismatch) > 0) {
+                rlang::abort(
+                    c(
+                        '`keep_mim` must be one or more of "*", "+", "#", "%", "^", or "none"',
+                        setNames(
+                            sandwich_text(mim_mismatch, '"'),
+                            rep("x", length(mim_mismatch))
+                        )
+                    )
+                )
+            }
+
+            df <- dplyr::filter(df, mim_symbol %in% keep_mim)
+        }
     }
 
     entry_col_ordered <- c(

@@ -4,11 +4,25 @@
 \alias{read_omim}
 \title{Read Data from omim.org}
 \usage{
-read_omim(file, ...)
+read_omim(file, keep_mim = c("#", "\%"), ...)
 }
 \arguments{
 \item{file}{The path to a .tsv or .csv file (possibly compressed) with data
 from https://omim.org/. See "Input Requirements" for details.}
+
+\item{keep_mim}{[\strong{OMIM search data only}] The MIM symbols representing
+the data types to keep, as a character vector, or \code{NULL} to retain all
+(default: \code{"#"} and \code{"\%"}).
+
+The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabular{ll}{
+   MIM symbol \tab MIM type \cr
+   \code{*} \tab gene \cr
+   \code{+} \tab gene, includes phenotype \cr
+   \verb{#} \tab phenotype \cr
+   \verb{\%} \tab phenotype, unknown molecular basis \cr
+   \code{^} \tab deprecated \cr
+   \code{none} \tab phenotype, suspected/overlap \cr
+}}
 
 \item{...}{
   Arguments passed on to \code{\link[=read_delim_auto]{read_delim_auto}}
