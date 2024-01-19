@@ -144,21 +144,21 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' | `none`     |  phenotype, suspected/overlap       |
 #' @inheritDotParams read_delim_auto -show_col_types
 #'
-#' @returns An `omim_tbl` (tibble) with OMIM data arranged as seen on omim.org
-#' for OMIM **entries**. If the omim.org "Download as" button was used to
-#' download the data, the `omim_tbl` will be additionally classed based on the
-#' download type:
-#' * `omim_search` for a download of search results.
-#' * `omim_PS_titles` for a download of OMIM phenotypic series titles.
-#' * `omim_PS` for a download of diseases in an OMIM phenotypic series.
+#' @returns An `omim_tbl` (tibble) with an `omim` column containing OMIM CURIEs
+#' as formatted in DO xrefs, followed by complete OMIM data arranged as seen on
+#' omim.org for OMIM **entries** (where possible). If the omim.org "Download as"
+#' button was used to download the data, the `omim_tbl` will be additionally
+#' modified based on the download type:
+#' * Search list download: Additional `omim_search` class and `search` column
+#' containing the search used.
+#' * OMIM phenotypic series titles download: Additional `omim_PS_titles` class.
+#' * OMIM phenotypic series download: Additional `omim_PS` class and a row
+#' representing the OMIM phenotypic series itself.
 #'
-#' `omim_PS` will include a row representing the OMIM phenotypic series itself.
 #' Output with columns typical OMIM phenotype entries, including `omim_PS`, will
-#' have 2 additional columns to support curation:
-#' * `omim`: OMIM CURIE as formatted in DO xrefs, as first column.
-#' * `geno_inheritance`: Best guess at inheritance from the GENO ontology, as
-#' the last column. This simplifies adding inheritance as logical subClassOf
-#' axioms.
+#' have an additional `geno_inheritance` column containing a best guess at
+#' inheritance from the GENO ontology. This simplifies adding inheritance as
+#' logical subClassOf axioms supporting curation.
 #'
 #' NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
 #' entries but column are ordered differently.

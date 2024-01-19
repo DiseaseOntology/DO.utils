@@ -56,7 +56,8 @@ search_expected <- structure(
         entrez_gene_id = c(
             NA, "226", NA, "10986", "4018", "336", NA, "130068899", NA, "5179",
             "5444", "100188827", "390502", NA
-        )
+        ),
+        search = rep("a", 14)
     ),
     row.names = c(NA, -14L),
     class = c("omim_search", "omim_tbl", "tbl_df", "tbl", "data.frame"),

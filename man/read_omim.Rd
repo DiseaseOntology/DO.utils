@@ -31,25 +31,23 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
   }}
 }
 \value{
-An \code{omim_tbl} (tibble) with OMIM data arranged as seen on omim.org
-for OMIM \strong{entries}. If the omim.org "Download as" button was used to
-download the data, the \code{omim_tbl} will be additionally classed based on the
-download type:
+An \code{omim_tbl} (tibble) with an \code{omim} column containing OMIM CURIEs
+as formatted in DO xrefs, followed by complete OMIM data arranged as seen on
+omim.org for OMIM \strong{entries} (where possible). If the omim.org "Download as"
+button was used to download the data, the \code{omim_tbl} will be additionally
+modified based on the download type:
 \itemize{
-\item \code{omim_search} for a download of search results.
-\item \code{omim_PS_titles} for a download of OMIM phenotypic series titles.
-\item \code{omim_PS} for a download of diseases in an OMIM phenotypic series.
+\item Search list download: Additional \code{omim_search} class and \code{search} column
+containing the search used.
+\item OMIM phenotypic series titles download: Additional \code{omim_PS_titles} class.
+\item OMIM phenotypic series download: Additional \code{omim_PS} class and a row
+representing the OMIM phenotypic series itself.
 }
 
-\code{omim_PS} will include a row representing the OMIM phenotypic series itself.
 Output with columns typical OMIM phenotype entries, including \code{omim_PS}, will
-have 2 additional columns to support curation:
-\itemize{
-\item \code{omim}: OMIM CURIE as formatted in DO xrefs, as first column.
-\item \code{geno_inheritance}: Best guess at inheritance from the GENO ontology, as
-the last column. This simplifies adding inheritance as logical subClassOf
-axioms.
-}
+have an additional \code{geno_inheritance} column containing a best guess at
+inheritance from the GENO ontology. This simplifies adding inheritance as
+logical subClassOf axioms supporting curation.
 
 NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
 entries but column are ordered differently.

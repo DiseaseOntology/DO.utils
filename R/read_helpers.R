@@ -53,6 +53,14 @@ preprocess_omim_dl <- function(file, ...) {
             )
             df <- dplyr::add_row(df, !!!ps, .before = 1)
         }
+
+        if (dl_type == "search") {
+            df <- dplyr::mutate(
+                df,
+                search = stringr::str_match(.lines[1], "^[^']+'(.+)'.*")[, 2],
+                search = stringr::str_trim(search)
+            )
+        }
     } else {
         dl_type <- NA
         df <- read_delim_auto(

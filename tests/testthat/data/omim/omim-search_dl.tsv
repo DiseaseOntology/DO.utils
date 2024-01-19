@@ -1,4 +1,4 @@
-OMIM Search - 'a ' (modified)
+OMIM Search - 'a '
 Downloaded:	November 27, 2023
 Copyright (c) 1966-2023 Johns Hopkins University OMIM, data are provided for research purposes only.
 
@@ -24,6 +24,4 @@ MIM Number	Title	Included Titles	Cytogenetic Location	Genomic Coordinates (From 
 This search returned 28,206 entries which exceeded the maximum of 1,000 so the results were truncated
 You can register for downloads ( https://omim.org/downloads ) and/or the API ( https://omim.org/api ) for more search/download options
 
-
-
-
+FILE MODIFIED FOR TESTING WTIH DO.UTILS: Results hand-picked.
