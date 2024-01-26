@@ -8,33 +8,43 @@
     6L, "c", "oboInOwl:hasDbXref|skos:exactMatch", "C"
 )
 
-test_that("multimap() works with `include_hasDbXref = FALSE`", {
+test_that("multimap() works with default include & ignore predicates", {
+    expect_equal(multimaps(.tbl$x, .tbl$p, .tbl$y), c(T, T, F, F, T, T))
+    expect_equal(multimaps(.tbl$y, .tbl$p, .tbl$x), c(T, T, T, F, T, F))
+})
+
+test_that("multimap() works including only skos:(exact|close)Match, excludes oboInOwl:hasDbXref", {
     expect_equal(
-        multimaps(.tbl$x, .tbl$p, .tbl$y, include_hasDbXref = FALSE),
+        multimaps(
+            .tbl$x, .tbl$p, .tbl$y,
+            include_pred = c("skos:exactMatch", "skos:closeMatch"),
+            ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch", "oboInOwl:hasDbXref")
+        ),
         c(T, T, F, F, F, F)
     )
     expect_equal(
-        multimaps(.tbl$y, .tbl$p, .tbl$x, include_hasDbXref = FALSE),
+        multimaps(
+            .tbl$y, .tbl$p, .tbl$x,
+            include_pred = c("skos:exactMatch", "skos:closeMatch"),
+            ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch", "oboInOwl:hasDbXref")
+        ),
         c(F, F, F, F, F, F)
     )
 })
 
-test_that("multimap() works with `include_hasDbXref = TRUE`", {
-    expect_equal(
-        multimaps(.tbl$x, .tbl$p, .tbl$y, include_hasDbXref = T),
-        c(T, T, F, F, T, T)
-    )
-    expect_equal(
-        multimaps(.tbl$y, .tbl$p, .tbl$x, include_hasDbXref = T),
-        c(T, T, T, F, T, F)
-    )
+test_that("multimaps() returns all `FALSE` when either input has only `NA`", {
+    .tbl <- dplyr::filter(.tbl, dplyr::row_number() < 4) %>%
+        dplyr::mutate(y = NA)
+
+    expect_equal(multimaps(.tbl$x, .tbl$p, .tbl$y), rep(FALSE, 3))
+    expect_equal(multimaps(.tbl$x, .tbl$p, .tbl$y), rep(FALSE, 3))
 })
 
-test_that("multimaps() works when either input has only `NA`", {
-    x <- c("OMIM:PS136520", "OMIM:136520", "OMIM:609218")
-    pred <- c(NA_character_, NA_character_, NA_character_)
-    y <- c(NA_character_, NA_character_, NA_character_)
-
-    expect_equal(multimaps(x, pred, y), rep(FALSE, 3))
-    expect_equal(multimaps(y, pred, x), rep(FALSE, 3))
+test_that("multimaps() errors for unknown/missing predicates", {
+    .tbl$p[2] <- "random:mapping"
+    .tbl$p[c(1,3)] <- NA
+    expect_error(
+        multimaps(.tbl$x, .tbl$p, .tbl$y),
+        regexp = "NA.*1,3.*random:mapping.*2"
+    )
 })

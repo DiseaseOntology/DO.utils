@@ -41,7 +41,8 @@
 #'
 #' @export
 inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
-                           include_hasDbXref = TRUE) {
+                           include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+                           ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")) {
     stopifnot("`onto_path` does not exist." = file.exists(onto_path))
 
     if ("omim_tbl" %in% class(omim_input)) {
@@ -121,9 +122,8 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
 
 #' Identify One-to-Multiple Mappings
 #'
-#' Identifies values in `x` that map to multiple values in `y` for
-#' `skos:exactMatch` or `skos:closeMatch` (and optionally also
-#' `oboInOwl:hasDbXref`) mapping predicates.
+#' Identifies values in `x` that map to multiple values in `y` for specified
+#' mapping predicates.
 #'
 #' @param x Vector with `subject` of mappings (i.e. those being tested; the
 #'     "one" in the "one-to-multiple" test).
@@ -131,15 +131,21 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
 #'     be formatted as CURIEs but can include multiple delimited predicates.
 #' @param y Vector with `object` of mappings (i.e. those being counted; the
 #'     "multiple" in the "one-to-multiple" test).
-#' @param include_hasDbXref Whether `oboInOwl:hasDbXref`'s should be included in
-#'     tests for "one-to-multiple" mappings, as a boolean (default: `TRUE`).
-#'     `skos:exactMatch` & `skos:closeMatch` mappings are always included.
+#' @param include_pred The predicates to include when testing for one-to-multiple
+#'     mappings, as a character vector (default: `skos:exactMatch`,
+#'     `skos:closeMatch`, and `oboInOwl:hasDbXref`).
+#' @param ignore_pred The predicates to ignore when testing for one-to-multiple
+#'     mappings, as a character vector (default: `skos:narrowMatch`,
+#'     `skos:broadMatch`, and `skos:relatedMatch`). Any predicates not missing
+#'     or included in `test_pred` and `ignore_pred` will result in an error.
 #'
 #' @returns A logical vector specifying the positions in `x` that map to
 #' multiple values in `y`.
 #'
 #' @keywords internal
-multimaps <- function(x, pred, y, include_hasDbXref = TRUE) {
+multimaps <- function(x, pred, y,
+                      include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+                      ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")) {
     stopifnot(
         "`x`, `pred`, & `y` must be the same length" =
             dplyr::n_distinct(c(length(x), length(pred), length(y))) == 1
@@ -150,13 +156,37 @@ multimaps <- function(x, pred, y, include_hasDbXref = TRUE) {
         return(out)
     }
 
-    if (include_hasDbXref) {
-        mapping_pattern <- "skos:(exact|close)|hasDbXref"
-    } else {
-        mapping_pattern <- "skos:(exact|close)"
+    include_pattern <- unique_to_string(include_pred, delim = "|", na.rm = FALSE)
+    ignore_pattern <- unique_to_string(ignore_pred, delim = "|", na.rm = FALSE)
+
+    p_incl <- stringr::str_detect(pred, include_pattern)
+    p_ignore <- stringr::str_detect(pred, ignore_pattern)
+    p_missing <- is.na(pred) & !is.na(x) & !is.na(y)
+    p_unknown <- !(p_incl | p_ignore | is.na(pred))
+
+    if (any(p_missing | p_unknown)) {
+        pred_err <- unique(pred[p_missing | p_unknown])
+        err_details <- purrr::map_chr(
+            pred_err,
+            function(.x) {
+                if (is.na(.x)) {
+                    .loc <- which(p_missing)
+                } else {
+                    .loc <- which(pred == .x)
+                }
+                paste0(.x, " [pos: ", to_range(.loc), "]")
+            }
+        )
+        names(err_details) <- rep("x", length(err_details))
+
+        rlang::abort(
+            c(
+                "All predicates must be included in `include_pred` or `ignore_pred`",
+                err_details
+            )
+        )
     }
 
-    p_incl <- stringr::str_detect(pred, mapping_pattern) & !is.na(pred)
     pi_split <- split(p_incl, x)
     y_split <- split(y, x)
     multimaps <- vapply(

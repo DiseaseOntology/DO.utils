@@ -8,7 +8,8 @@ inventory_omim(
   onto_path,
   omim_input,
   keep_mim = c("#", "\%"),
-  include_hasDbXref = TRUE
+  include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+  ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")
 )
 }
 \arguments{
@@ -34,9 +35,14 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
    \code{none} \tab phenotype, suspected/overlap \cr
 }}
 
-\item{include_hasDbXref}{Whether \code{oboInOwl:hasDbXref}'s should be included in
-tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
-\code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
+\item{include_pred}{The predicates to include when testing for one-to-multiple
+mappings, as a character vector (default: \code{skos:exactMatch},
+\code{skos:closeMatch}, and \code{oboInOwl:hasDbXref}).}
+
+\item{ignore_pred}{The predicates to ignore when testing for one-to-multiple
+mappings, as a character vector (default: \code{skos:narrowMatch},
+\code{skos:broadMatch}, and \code{skos:relatedMatch}). Any predicates not missing
+or included in \code{test_pred} and \code{ignore_pred} will result in an error.}
 }
 \value{
 The \code{omim_input} with 5 additional columns:

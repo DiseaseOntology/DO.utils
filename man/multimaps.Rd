@@ -4,7 +4,13 @@
 \alias{multimaps}
 \title{Identify One-to-Multiple Mappings}
 \usage{
-multimaps(x, pred, y, include_hasDbXref = TRUE)
+multimaps(
+  x,
+  pred,
+  y,
+  include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+  ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")
+)
 }
 \arguments{
 \item{x}{Vector with \code{subject} of mappings (i.e. those being tested; the
@@ -16,17 +22,21 @@ be formatted as CURIEs but can include multiple delimited predicates.}
 \item{y}{Vector with \code{object} of mappings (i.e. those being counted; the
 "multiple" in the "one-to-multiple" test).}
 
-\item{include_hasDbXref}{Whether \code{oboInOwl:hasDbXref}'s should be included in
-tests for "one-to-multiple" mappings, as a boolean (default: \code{TRUE}).
-\code{skos:exactMatch} & \code{skos:closeMatch} mappings are always included.}
+\item{include_pred}{The predicates to include when testing for one-to-multiple
+mappings, as a character vector (default: \code{skos:exactMatch},
+\code{skos:closeMatch}, and \code{oboInOwl:hasDbXref}).}
+
+\item{ignore_pred}{The predicates to ignore when testing for one-to-multiple
+mappings, as a character vector (default: \code{skos:narrowMatch},
+\code{skos:broadMatch}, and \code{skos:relatedMatch}). Any predicates not missing
+or included in \code{test_pred} and \code{ignore_pred} will result in an error.}
 }
 \value{
 A logical vector specifying the positions in \code{x} that map to
 multiple values in \code{y}.
 }
 \description{
-Identifies values in \code{x} that map to multiple values in \code{y} for
-\code{skos:exactMatch} or \code{skos:closeMatch} (and optionally also
-\code{oboInOwl:hasDbXref}) mapping predicates.
+Identifies values in \code{x} that map to multiple values in \code{y} for specified
+mapping predicates.
 }
 \keyword{internal}
