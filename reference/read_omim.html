@@ -84,19 +84,22 @@ the data types to keep, as a character vector, or <code>NULL</code> to retain al
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>An <code>omim_tbl</code> (tibble) with OMIM data arranged as seen on omim.org
-for OMIM <strong>entries</strong>. If the omim.org "Download as" button was used to
-download the data, the <code>omim_tbl</code> will be additionally classed based on the
-download type:</p><ul><li><p><code>omim_search</code> for a download of search results.</p></li>
-<li><p><code>omim_PS_titles</code> for a download of OMIM phenotypic series titles.</p></li>
-<li><p><code>omim_PS</code> for a download of diseases in an OMIM phenotypic series.</p></li>
-</ul><p><code>omim_PS</code> will include a row representing the OMIM phenotypic series itself.
-Output with columns typical OMIM phenotype entries, including <code>omim_PS</code>, will
-have 2 additional columns to support curation:</p><ul><li><p><code>omim</code>: OMIM CURIE as formatted in DO xrefs, as first column.</p></li>
-<li><p><code>geno_inheritance</code>: Best guess at inheritance from the GENO ontology, as
-the last column. This simplifies adding inheritance as logical subClassOf
-axioms.</p></li>
-</ul><p>NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
+<p>An <code>omim_tbl</code> (tibble) with an <code>omim</code> column containing OMIM CURIEs
+as formatted in DO xrefs, followed by complete OMIM data arranged as seen on
+omim.org for OMIM <strong>entries</strong> (where possible). If the omim.org "Download as"
+button was used to download the data, the <code>omim_tbl</code> will be additionally
+modified based on the download type:</p><ul><li><p>Search list download: Additional <code>omim_search</code> class and <code>search</code> column
+containing the search used.</p></li>
+<li><p>OMIM phenotypic series titles download: Additional <code>omim_PS_titles</code> class.</p></li>
+<li><p>OMIM phenotypic series download: Additional <code>omim_PS</code> class and a row
+representing the OMIM phenotypic series itself.</p></li>
+</ul><p>Output with columns typical OMIM phenotype entries, including <code>omim_PS</code>, will
+have an additional <code>geno_inheritance</code> column containing a best guess at
+inheritance from the GENO ontology. This simplifies adding inheritance as
+logical subClassOf axioms supporting curation.</p>
+
+
+<p>NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
 entries but column are ordered differently.</p>
     </div>
     <div class="section level2">

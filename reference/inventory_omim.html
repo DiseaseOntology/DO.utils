@@ -62,7 +62,8 @@ comparison.</p>
 <span>  <span class="va">onto_path</span>,</span>
 <span>  <span class="va">omim_input</span>,</span>
 <span>  keep_mim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#"</span>, <span class="st">"%"</span><span class="op">)</span>,</span>
-<span>  include_hasDbXref <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  include_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"skos:exactMatch"</span>, <span class="st">"skos:closeMatch"</span>, <span class="st">"oboInOwl:hasDbXref"</span><span class="op">)</span>,</span>
+<span>  when_pred_NA <span class="op">=</span> <span class="st">"error"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,10 +87,18 @@ the data types to keep, as a character vector, or <code>NULL</code> to retain al
 <p>The <a href="https://www.omim.org/help/faq#1_3" class="external-link">OMIM</a> defined MIM symbols are:</p><table class="table table"><tr><td>MIM symbol</td><td>MIM type</td></tr><tr><td><code>*</code></td><td>gene</td></tr><tr><td><code>+</code></td><td>gene, includes phenotype</td></tr><tr><td><code>#</code></td><td>phenotype</td></tr><tr><td><code>%</code></td><td>phenotype, unknown molecular basis</td></tr><tr><td><code>^</code></td><td>deprecated</td></tr><tr><td><code>none</code></td><td>phenotype, suspected/overlap</td></tr></table></dd>
 
 
-<dt>include_hasDbXref</dt>
-<dd><p>Whether <code>oboInOwl:hasDbXref</code>'s should be included in
-tests for "one-to-multiple" mappings, as a boolean (default: <code>TRUE</code>).
-<code>skos:exactMatch</code> &amp; <code>skos:closeMatch</code> mappings are always included.</p></dd>
+<dt>include_pred</dt>
+<dd><p>The predicates to include when testing for one-to-multiple
+mappings, as a character vector (default: <code>skos:exactMatch</code>,
+<code>skos:closeMatch</code>, and <code>oboInOwl:hasDbXref</code>). All other predicates are
+ignored.</p></dd>
+
+
+<dt>when_pred_NA</dt>
+<dd><p>What to do when missing predicates are detected, as a
+string; one of "error" (default), "warn", or NULL (do nothing). <code>NA</code>
+predicates are <em>always</em> ignored when no mapping exists (i.e. one or both
+corresponding values of <code>x</code> or <code>y</code> is/are also <code>NA</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
