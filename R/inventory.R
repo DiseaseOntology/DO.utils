@@ -144,6 +144,12 @@ multimaps <- function(x, pred, y, include_hasDbXref = TRUE) {
         "`x`, `pred`, & `y` must be the same length" =
             dplyr::n_distinct(c(length(x), length(pred), length(y))) == 1
     )
+
+    if (all(is.na(x)) || all(is.na(y))) {
+        out <- rep(FALSE, length(x))
+        return(out)
+    }
+
     if (include_hasDbXref) {
         mapping_pattern <- "skos:(exact|close)|hasDbXref"
     } else {
