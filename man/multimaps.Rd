@@ -9,7 +9,7 @@ multimaps(
   pred,
   y,
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-  ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")
+  when_pred_NA = "error"
 )
 }
 \arguments{
@@ -24,16 +24,18 @@ be formatted as CURIEs but can include multiple delimited predicates.}
 
 \item{include_pred}{The predicates to include when testing for one-to-multiple
 mappings, as a character vector (default: \code{skos:exactMatch},
-\code{skos:closeMatch}, and \code{oboInOwl:hasDbXref}).}
+\code{skos:closeMatch}, and \code{oboInOwl:hasDbXref}). All other predicates are
+ignored.}
 
-\item{ignore_pred}{The predicates to ignore when testing for one-to-multiple
-mappings, as a character vector (default: \code{skos:narrowMatch},
-\code{skos:broadMatch}, and \code{skos:relatedMatch}). Any predicates not missing
-or included in \code{test_pred} and \code{ignore_pred} will result in an error.}
+\item{when_pred_NA}{What to do when missing predicates are detected, as a
+string; one of "error" (default), "warn", or NULL (do nothing). \code{NA}
+predicates are \emph{always} ignored when no mapping exists (i.e. one or both
+corresponding values of \code{x} or \code{y} is/are also \code{NA}).}
 }
 \value{
 A logical vector specifying the positions in \code{x} that map to
-multiple values in \code{y}.
+multiple values in \code{y}. Incomplete mappings, where values of \code{x}, \code{y}, or
+both are \code{NA}, are ignored and return \code{FALSE}.
 }
 \description{
 Identifies values in \code{x} that map to multiple values in \code{y} for specified

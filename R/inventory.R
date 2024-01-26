@@ -42,7 +42,7 @@
 #' @export
 inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
                            include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-                           ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")) {
+                           when_pred_NA = "error") {
     stopifnot("`onto_path` does not exist." = file.exists(onto_path))
 
     if ("omim_tbl" %in% class(omim_input)) {
@@ -133,19 +133,21 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
 #'     "multiple" in the "one-to-multiple" test).
 #' @param include_pred The predicates to include when testing for one-to-multiple
 #'     mappings, as a character vector (default: `skos:exactMatch`,
-#'     `skos:closeMatch`, and `oboInOwl:hasDbXref`).
-#' @param ignore_pred The predicates to ignore when testing for one-to-multiple
-#'     mappings, as a character vector (default: `skos:narrowMatch`,
-#'     `skos:broadMatch`, and `skos:relatedMatch`). Any predicates not missing
-#'     or included in `test_pred` and `ignore_pred` will result in an error.
+#'     `skos:closeMatch`, and `oboInOwl:hasDbXref`). All other predicates are
+#'     ignored.
+#' @param when_pred_NA What to do when missing predicates are detected, as a
+#'     string; one of "error" (default), "warn", or NULL (do nothing). `NA`
+#'     predicates are _always_ ignored when no mapping exists (i.e. one or both
+#'     corresponding values of `x` or `y` is/are also `NA`).
 #'
 #' @returns A logical vector specifying the positions in `x` that map to
-#' multiple values in `y`.
+#' multiple values in `y`. Incomplete mappings, where values of `x`, `y`, or
+#' both are `NA`, are ignored and return `FALSE`.
 #'
 #' @keywords internal
 multimaps <- function(x, pred, y,
                       include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-                      ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")) {
+                      when_pred_NA = "error") {
     stopifnot(
         "`x`, `pred`, & `y` must be the same length" =
             dplyr::n_distinct(c(length(x), length(pred), length(y))) == 1
@@ -156,37 +158,18 @@ multimaps <- function(x, pred, y,
         return(out)
     }
 
-    include_pattern <- unique_to_string(include_pred, delim = "|", na.rm = FALSE)
-    ignore_pattern <- unique_to_string(ignore_pred, delim = "|", na.rm = FALSE)
-
-    p_incl <- stringr::str_detect(pred, include_pattern)
-    p_ignore <- stringr::str_detect(pred, ignore_pattern)
     p_missing <- is.na(pred) & !is.na(x) & !is.na(y)
-    p_unknown <- !(p_incl | p_ignore | is.na(pred))
-
-    if (any(p_missing | p_unknown)) {
-        pred_err <- unique(pred[p_missing | p_unknown])
-        err_details <- purrr::map_chr(
-            pred_err,
-            function(.x) {
-                if (is.na(.x)) {
-                    .loc <- which(p_missing)
-                } else {
-                    .loc <- which(pred == .x)
-                }
-                paste0(.x, " [pos: ", to_range(.loc), "]")
-            }
-        )
-        names(err_details) <- rep("x", length(err_details))
-
+    if (any(p_missing)) {
         rlang::abort(
             c(
-                "All predicates must be included in `include_pred` or `ignore_pred`",
-                err_details
+                "Predicates must not be missing from mappings",
+                x = paste0("`pred` = `NA` [", to_range(which(p_missing)), "]")
             )
         )
     }
 
+    include_pattern <- unique_to_string(include_pred, delim = "|")
+    p_incl <- stringr::str_detect(pred, include_pattern)
     pi_split <- split(p_incl, x)
     y_split <- split(y, x)
     multimaps <- vapply(

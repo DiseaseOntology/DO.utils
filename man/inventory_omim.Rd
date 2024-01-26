@@ -9,7 +9,7 @@ inventory_omim(
   omim_input,
   keep_mim = c("#", "\%"),
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-  ignore_pred = c("skos:narrowMatch", "skos:broadMatch", "skos:relatedMatch")
+  when_pred_NA = "error"
 )
 }
 \arguments{
@@ -37,12 +37,13 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
 
 \item{include_pred}{The predicates to include when testing for one-to-multiple
 mappings, as a character vector (default: \code{skos:exactMatch},
-\code{skos:closeMatch}, and \code{oboInOwl:hasDbXref}).}
+\code{skos:closeMatch}, and \code{oboInOwl:hasDbXref}). All other predicates are
+ignored.}
 
-\item{ignore_pred}{The predicates to ignore when testing for one-to-multiple
-mappings, as a character vector (default: \code{skos:narrowMatch},
-\code{skos:broadMatch}, and \code{skos:relatedMatch}). Any predicates not missing
-or included in \code{test_pred} and \code{ignore_pred} will result in an error.}
+\item{when_pred_NA}{What to do when missing predicates are detected, as a
+string; one of "error" (default), "warn", or NULL (do nothing). \code{NA}
+predicates are \emph{always} ignored when no mapping exists (i.e. one or both
+corresponding values of \code{x} or \code{y} is/are also \code{NA}).}
 }
 \value{
 The \code{omim_input} with 5 additional columns:
