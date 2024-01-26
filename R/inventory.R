@@ -94,13 +94,13 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
         out$omim,
         out$mapping_type,
         out$doid,
-        include_hasDbXref = include_hasDbXref
+        when_pred_NA = when_pred_NA
     )
     doid_mm <- multimaps(
         out$doid,
         out$mapping_type,
         out$omim,
-        include_hasDbXref = include_hasDbXref
+        when_pred_NA = when_pred_NA
     )
     out <- dplyr::mutate(
         out,
