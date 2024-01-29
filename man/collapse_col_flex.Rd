@@ -60,3 +60,7 @@ collapse_col_flex(cc_df, x = "first", z = "unique")
 collapse_col_flex(cc_df, x = "first", z = "last")
 
 }
+\seealso{
+\code{\link[=collapse_col]{collapse_col()}} for a simpler approach and \code{\link[=lengthen_col]{lengthen_col()}} for the
+pseudo-reverse operation that lengthens/expands one or more specified columns.
+}

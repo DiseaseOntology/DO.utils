@@ -51,7 +51,9 @@
 #'   cc_df2
 #' }
 #'
-#' @seealso collapse_col
+#' @seealso [collapse_col()] or [collapse_col_flex()] for pseudo-reverse
+#' operations that collapse one or more specified columns.
+#'
 #' @export
 lengthen_col <- function(data, cols, delim = "|", trim = TRUE, convert = FALSE) {
     assert_scalar_logical(trim)

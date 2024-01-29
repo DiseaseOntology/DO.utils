@@ -49,3 +49,8 @@ collapse_col(cc_df, z)
 collapse_col(cc_df, c(x, z))
 
 }
+\seealso{
+\code{\link[=collapse_col_flex]{collapse_col_flex()}} for a more flexible approach and
+\code{\link[=lengthen_col]{lengthen_col()}} for the pseudo-reverse operation that lengthens/expands
+one or more specified columns.
+}

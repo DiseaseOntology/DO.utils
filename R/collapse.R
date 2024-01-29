@@ -73,6 +73,10 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #' collapse_col(cc_df, z)
 #' collapse_col(cc_df, c(x, z))
 #'
+#' @seealso [collapse_col_flex()] for a more flexible approach and
+#' [lengthen_col()] for the pseudo-reverse operation that lengthens/expands
+#' one or more specified columns.
+#'
 #' @export
 collapse_col <- function(df, .cols, delim = "|", method = "unique",
                          na.rm = FALSE) {
@@ -145,6 +149,9 @@ collapse_col <- function(df, .cols, delim = "|", method = "unique",
 #' collapse_col_flex(cc_df, x = "unique", z = "unique")
 #' collapse_col_flex(cc_df, x = "first", z = "unique")
 #' collapse_col_flex(cc_df, x = "first", z = "last")
+#'
+#' @seealso [collapse_col()] for a simpler approach and [lengthen_col()] for the
+#' pseudo-reverse operation that lengthens/expands one or more specified columns.
 #'
 #' @export
 collapse_col_flex <- function(df, ..., method = "unique",

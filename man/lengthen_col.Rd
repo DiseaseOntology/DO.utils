@@ -65,5 +65,6 @@ if (rlang::is_installed("waldo")) {
 
 }
 \seealso{
-collapse_col
+\code{\link[=collapse_col]{collapse_col()}} or \code{\link[=collapse_col_flex]{collapse_col_flex()}} for pseudo-reverse
+operations that collapse one or more specified columns.
 }
