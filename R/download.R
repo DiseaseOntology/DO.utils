@@ -166,7 +166,7 @@ download_omim <- function(omim_file, dest_dir, api_key = NULL,
         paste0(omim_file, ".txt")
     )
     url <- dplyr::if_else(
-        omim_file == "mim2gene",
+        omim_file == "mim2gene.txt",
         "https://omim.org/static/omim/data/mim2gene.txt",
         paste(base_url, api_key, omim_file, sep = "/")
     )
