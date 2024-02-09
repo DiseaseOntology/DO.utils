@@ -122,6 +122,60 @@ download_obo_ontology <- function(ontology_id, dest_dir, on_failure = "warn",
 }
 
 
+#' Download OMIM Files
+#'
+#' Downloads one or more specified files from [OMIM](https://www.omim.org/)
+#' (the Online catalog of Mendelian Inheritance in Man). `mim2gene.txt` is the
+#' only file accessible without an API key from OMIM.
+#'
+#' @param omim_file A character vector of one or more OMIM file name(s).
+#' @param dest_dir Path to directory where files will be saved; all OMIM files
+#' are saved in .txt format and consist of tab-separated values with a
+#' copyright header.
+#' @param api_key Your API key from OMIM, as a string; required if downloading
+#' any file other than 'mim2gene.txt'.
+#'
+#' [Register for downloads](https://www.omim.org/downloads) at OMIM.
+#' @inheritParams download_file
+#'
+#' @inherit download_file return
+#'
+#' @seealso [read_omim()] to read downloaded files as tibble/data.frames.
+#'
+#' @export
+download_omim <- function(omim_file, dest_dir, api_key = NULL,
+                          on_failure = "abort", ...) {
+    omim_file <- match.arg(
+        omim_file,
+        choices = c("mim2gene", "genemap2", "mimTitles", "morbidmap",
+                    "phenotypicSeries"),
+        several.ok = TRUE
+    )
+    omim_file <- unique(omim_file)
+
+    # mim2gene is freely accessible to anyone for download, all other files
+    # require permission
+    if (any(omim_file != "mim2gene") && is.null(api_key)) {
+        rlang::abort("An API key is needed for all downloads from OMIM other than mim2gene (https://www.omim.org/downloads).")
+    }
+
+    base_url <- "https://data.omim.org/downloads"
+    omim_file <- dplyr::if_else(
+        stringr::str_detect(omim_file, "\\.txt$"),
+        omim_file,
+        paste0(omim_file, ".txt")
+    )
+    url <- dplyr::if_else(
+        omim_file == "mim2gene",
+        "https://omim.org/static/omim/data/mim2gene.txt",
+        paste(base_url, api_key, omim_file, sep = "/")
+    )
+    dest <- file.path(dest_dir, omim_file)
+
+    download_file(url = url, dest_file = dest, on_failure = on_failure, ...)
+}
+
+
 # General Download --------------------------------------------------------
 
 #' Download File(s) from the Internet
