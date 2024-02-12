@@ -15,9 +15,48 @@ preprocess_omim_dl <- function(file, ...) {
             stringr::regex("copyright.*omim", ignore_case = TRUE)
         )
     )
+    # "generated" files are those downloaded programmatically
+    was_generated <- any(
+        stringr::str_detect(
+            utils::head(.lines, 10),
+            stringr::regex("generated", ignore_case = TRUE)
+        )
+    )
+    if (is_official && was_generated) {
+        # get header (last commented out line)
+        header_n <- which(stringr::str_detect(.lines, "^[^#]"))[1] - 1
+        header <- .lines[header_n] %>%
+            stringr::str_remove("^# *") %>%
+            stringr::str_split_1("\t")
 
-    if (is_official) {
-        # determine official download type: search, PS, or PS_titles
+        # determine official download type: PS_complete, etc.
+        ps_complete_col_nm <- c("Phenotypic Series Number", "MIM Number", "Phenotype")
+        if (isTRUE(all(header %in% ps_complete_col_nm))) {
+            dl_type <- "PS_complete"
+
+            # fix lines with PS labels - add tab to push label to Phenotype col
+            pos_replace <- dplyr::if_else(
+                stringr::str_detect(.lines, "^PS[0-9]+\t[0-9]{6}"),
+                "\\1\t",
+                "\\1\t\t"
+            )
+            .lines <- stringr::str_replace(
+                .lines,
+                "^(PS[0-9]+)\t",
+                pos_replace
+            )
+        } else {
+            dl_type <- NA
+        }
+
+        df <- readr::read_tsv(
+            file = I(.lines),
+            comment = "#",
+            col_names = header,
+            show_col_types = FALSE
+        )
+    } else if (is_official) {
+        # determine official, manual download type: search, PS, or PS_titles
         dl_type <- stringr::str_extract(
             .lines[1],
             stringr::regex(

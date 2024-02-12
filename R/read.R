@@ -116,19 +116,22 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 }
 
 
-#' Read Data from omim.org
+#' Read OMIM Data
 #'
-#' Reads and formats OMIM data copied or downloaded from https://omim.org/
-#' and appends columns to speed up subsequent curation activities.
+#' Reads and formats OMIM data copied or manually downloaded from
+#' https://omim.org/, or downloaded with [download_omim()] (permission
+#' required), and appends columns to speed up subsequent curation activities.
 #'
-#' @section Input Requirements:
+#' @section Manual Input Requirements:
 #' The `file` with OMIM data copied or downloaded must include headers at the
-#' top. These data can be left _as pasted_ even if they are not formatted
-#' correctly, as `read_omim()` will process and correct headers, which includes
-#' fixing multi-line or misarranged column headers, and will trim whitespace.
+#' top. These data can be left _as copied & pasted from omim.org_ even if they
+#' are not formatted correctly, as `read_omim()` will process and correct
+#' headers, which includes fixing multi-line or misarranged column headers,
+#' and will trim whitespace.
 #'
-#' @param file The path to a .tsv or .csv file (possibly compressed) with data
-#'     from https://omim.org/. See "Input Requirements" for details.
+#' @param file The path to a file (possibly compressed) with copy/pasted or
+#' manually downloaded from https://omim.org/ (see "Manual Input Requirements"
+#' for details), or downloaded with [download_omim()].
 #' @param keep_mim \[**OMIM search data only**\] The MIM symbols representing
 #' the data types to keep, as a character vector, or `NULL` to retain all
 #' (default: `"#"` and `"%"`).

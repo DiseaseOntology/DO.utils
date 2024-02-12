@@ -146,3 +146,22 @@ test_that("read_omim() works for COPIED data (PS or with entry info)", {
     expect_equal(read_omim("data/omim/omim-ps_cp-entry_page.csv"), ps_df_cp)
     # expect_snapshot(read_omim("data/omim/omim-ps_cp-entry_page_w_ps.csv")) # not supported
 })
+
+test_that("read_omim() works for key-required phenotypicSeries.txt downloads", {
+    expected <- structure(
+        list(
+            phenotypic_series_number = c("PS100070", "PS100070", "PS100070",
+                                         "PS100070"),
+            mim_number = c(NA, 100070, 609782, 611891),
+            phenotype = c("Aortic aneurysm, familial abdominal",
+                          "Aortic aneurysm, familial abdominal 1",
+                          "Aortic aneurysm, familial abdominal 2",
+                          "{Aneurysm, familial abdominal 3}")
+        ),
+        row.names = c(NA, -4L),
+        class = c("omim_PS_complete", "omim_tbl", "spec_tbl_df", "tbl_df",
+                  "tbl", "data.frame")
+    )
+
+    expect_equal(read_omim("data/omim/omim-ps_complete.txt"), expected)
+})

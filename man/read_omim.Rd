@@ -2,13 +2,14 @@
 % Please edit documentation in R/read.R
 \name{read_omim}
 \alias{read_omim}
-\title{Read Data from omim.org}
+\title{Read OMIM Data}
 \usage{
 read_omim(file, keep_mim = c("#", "\%"), ...)
 }
 \arguments{
-\item{file}{The path to a .tsv or .csv file (possibly compressed) with data
-from https://omim.org/. See "Input Requirements" for details.}
+\item{file}{The path to a file (possibly compressed) with copy/pasted or
+manually downloaded from https://omim.org/ (see "Manual Input Requirements"
+for details), or downloaded with \code{\link[=download_omim]{download_omim()}}.}
 
 \item{keep_mim}{[\strong{OMIM search data only}] The MIM symbols representing
 the data types to keep, as a character vector, or \code{NULL} to retain all
@@ -53,14 +54,16 @@ NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
 entries but column are ordered differently.
 }
 \description{
-Reads and formats OMIM data copied or downloaded from https://omim.org/
-and appends columns to speed up subsequent curation activities.
+Reads and formats OMIM data copied or manually downloaded from
+https://omim.org/, or downloaded with \code{\link[=download_omim]{download_omim()}} (permission
+required), and appends columns to speed up subsequent curation activities.
 }
-\section{Input Requirements}{
+\section{Manual Input Requirements}{
 
 The \code{file} with OMIM data copied or downloaded must include headers at the
-top. These data can be left \emph{as pasted} even if they are not formatted
-correctly, as \code{read_omim()} will process and correct headers, which includes
-fixing multi-line or misarranged column headers, and will trim whitespace.
+top. These data can be left \emph{as copied & pasted from omim.org} even if they
+are not formatted correctly, as \code{read_omim()} will process and correct
+headers, which includes fixing multi-line or misarranged column headers,
+and will trim whitespace.
 }
 

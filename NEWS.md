@@ -1,3 +1,18 @@
+# DO.utils (development version)
+
+## DO Management & Analysis
+
+### Updated
+* `read_omim()` now additionally parses official API-key requiring
+phenotypicSeries.txt downloads and may be able to handle additional API-key
+requiring downloads.
+
+### New
+* `download_omim()` downloads official API-key requiring files directly from
+OMIM (e.g. mim2gene.txt, phenotypicSeries.txt, etc.).
+
+
+
 # DO.utils 0.3.1
 
 ## Dependency Update

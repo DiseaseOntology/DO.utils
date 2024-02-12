@@ -1,0 +1,7 @@
+# Copyright (c) 1966-2024 Johns Hopkins University. Use of this file adheres to the terms specified at https://omim.org/help/agreement
+# Generated: 2024-02-09
+# Phenotypic Series Number	MIM Number	Phenotype
+PS100070	Aortic aneurysm, familial abdominal
+PS100070	100070	Aortic aneurysm, familial abdominal 1
+PS100070	609782	Aortic aneurysm, familial abdominal 2
+PS100070	611891	{Aneurysm, familial abdominal 3}
