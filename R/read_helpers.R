@@ -53,7 +53,8 @@ preprocess_omim_dl <- function(file, ...) {
             file = I(.lines),
             comment = "#",
             col_names = header,
-            show_col_types = FALSE
+            show_col_types = FALSE,
+            ...
         )
     } else if (is_official) {
         # determine official, manual download type: search, PS, or PS_titles
