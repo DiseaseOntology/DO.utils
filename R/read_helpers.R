@@ -161,7 +161,7 @@ preprocess_omim_dl <- function(file, ...) {
 identify_omim_header_row <- function(.lines) {
     mim_number <- stringr::str_detect(
         .lines,
-        stringr::regex("mim num", ignore_case = TRUE)
+        stringr::regex("(mim|series) num", ignore_case = TRUE)
     )
     tab_separated <- stringr::str_count(.lines, "\t") > 0
 
