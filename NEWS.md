@@ -10,7 +10,7 @@ requiring downloads.
 ### New
 * `download_omim()` downloads official API-key requiring files directly from
 OMIM (e.g. mim2gene.txt, phenotypicSeries.txt, etc.).
-
+* `extract_ordo_mappings()` extracts mappings from Orphanet Rare Disease Ontology, in native format as `oboInOwl:hasDbXref` with Orphanet's text-based predicate modifiers, or as SKOS (supplemented with filler `doid:` predicates where `SKOS` predicates don't exist.
 
 
 # DO.utils 0.3.1

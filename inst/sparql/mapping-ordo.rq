@@ -1,0 +1,40 @@
+# SPARQL query: Extract all ORDO mappings to SSSOM
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX ORPHA: <http://www.orpha.net/ORDO/Orphanet_>
+
+SELECT ?subject_id ?subject_label ?predicate_id ?predicate_modifier ?object_id ?status
+WHERE {
+    VALUES ?predicate_id { oboInOwl:hasDbXref }
+    ?class skos:notation ?subject_id ;
+        rdfs:label ?subject_label ;
+        ?predicate_id ?object_id .
+    FILTER(STRSTARTS(?subject_id, "ORPHA:"))
+
+    OPTIONAL {
+        ?xref_annot owl:annotatedSource ?class ;
+            owl:annotatedProperty ?predicate_id ;
+            owl:annotatedTarget ?object_id ;
+            obo:ECO_0000218 ?xref_eco .
+
+        BIND(
+            REPLACE(
+                str(?xref_eco), # convert to string to avoid possible language tag mismatches
+                ".*(E|NTBT|BTNT|W|ND)(.|\\n)*",
+                "$1"
+            ) AS ?predicate_modifier
+        )
+    }
+
+    OPTIONAL {
+        ?class rdfs:subClassOf* ?inactive .
+        ?inactive rdfs:subClassOf ORPHA:C041 ;
+            rdfs:label ?inactive_label .
+    }
+
+    # clean up output: F where missing and no language tags
+    BIND( if( BOUND( ?inactive_label ), ?inactive_label, "active") AS ?status)
+}
