@@ -23,8 +23,8 @@ preprocess_omim_dl <- function(file, ...) {
         )
     )
     if (is_official && was_generated) {
-        # get header (last commented out line)
-        header_n <- which(stringr::str_detect(.lines, "^[^#]"))[1] - 1
+        # get header
+        header_n <- identify_omim_header_row(.lines)
         header <- .lines[header_n] %>%
             stringr::str_remove("^# *") %>%
             stringr::str_split_1("\t")
@@ -159,9 +159,12 @@ preprocess_omim_dl <- function(file, ...) {
 }
 
 identify_omim_header_row <- function(.lines) {
-    dl_stmt <- stringr::str_detect(.lines, "Downloaded")
+    mim_number <- stringr::str_detect(
+        .lines,
+        stringr::regex("mim num", ignore_case = TRUE)
+    )
     tab_separated <- stringr::str_count(.lines, "\t") > 0
 
-    header_n <- which(tab_separated & !dl_stmt)[1]
+    header_n <- which(tab_separated & mim_number)[1]
     header_n
 }
