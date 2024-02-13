@@ -34,3 +34,50 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
     robot("convert", i = path, o = out_path, format = "ofn", .path = .robot_path)
     invisible(out_path)
 }
+
+
+#' Execute a SPARQL Query with ROBOT
+#'
+#' Wrapper for `robot("query", ...)` that accepts a file _or_ text query, and
+#' has more convenient arguments.
+#'
+#' @param input The path to an RDF/OWL file recognized by ROBOT, as a string.
+#' @param query The text for or path to a valid SPARQL query (`ASK`, `SELECT`,
+#' `CONSTRUCT`, or `UPDATE`) as a string.
+#' @param output The path where output will be written, as a string.
+#' @param ... Additional arguments to
+#' [ROBOT query](http://robot.obolibrary.org/query) formatted as described in
+#' [DO.utils::robot()].
+#'
+#' @returns `output` invisibly.
+#'
+#' @seealso [robot()] for underlying implementation; [tidy_sparql()] for tidying
+#' tabular output data read into R.
+#'
+#' @export
+robot_query <- function(input, query, output, ...) {
+    query_is_file <- file.exists(query)
+    if (query_is_file) {
+        q <- readr::read_lines(query)
+    } else {
+        q <- query
+        query <- tempfile(fileext = ".sparql")
+        readr::write_lines(q, query)
+        on.exit(file.remove(query))
+    }
+
+    # update query defined by the presence of INSERT/DELETE statements
+    update <- any(
+            stringr::str_detect(
+                q,
+                stringr::regex("insert|delete", ignore_case = TRUE)
+            )
+        )
+
+    if (isTRUE(update)) {
+        robot("query", i = input, update = query, o = output, ...)
+    } else {
+        robot("query", i = input, query = query, output, ...)
+    }
+    invisible(output)
+}

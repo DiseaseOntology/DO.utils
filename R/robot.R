@@ -70,45 +70,6 @@ robot <- function(..., .robot_path = NULL) {
 }
 
 
-#' Execute Robot Query
-#'
-#' Wrapper for system ROBOT program (OBO Foundry) that executes the query
-#' subcommand. See [ROBOT documentation](http://robot.obolibrary.org/) for
-#' details.
-#'
-#' @section NOTE:
-#' Requires installation of the OBO Foundry ROBOT tool in the system path. This
-#' can be achieved with [install_robot()].
-#'
-#' @section Citation:
-#' R.C. Jackson, J.P. Balhoff, E. Douglass, N.L. Harris, C.J. Mungall, and
-#' J.A. Overton. ROBOT: A tool for automating ontology workflows.
-#' BMC Bioinformatics, vol. 20, July 2019.
-#'
-#' @param input path to owl file to be queried
-#' @param rq file with SPARQL query to execute
-#' @param save path to save result to
-#'
-#' @export
-robot_query <- function(input, rq, save) {
-    system2(
-        # use system robot command
-        "robot",
-        # args - subcommand, input, query (rq & save)
-        c(
-            "query",
-            paste0("--input ", input),
-            paste(
-                "--query",
-                rq,
-                save,
-                sep = " "
-            )
-        )
-    )
-}
-
-
 #' Install OBO Foundry ROBOT Tool (Mac/Linux ONLY)
 #'
 #' Installs latest ROBOT and robot.jar files to default system path
