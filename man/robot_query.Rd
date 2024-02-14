@@ -4,7 +4,7 @@
 \alias{robot_query}
 \title{Execute a SPARQL Query with ROBOT}
 \usage{
-robot_query(input, query, output, ...)
+robot_query(input, query, output = NULL, ...)
 }
 \arguments{
 \item{input}{The path to an RDF/OWL file recognized by ROBOT, as a string.}
@@ -12,14 +12,17 @@ robot_query(input, query, output, ...)
 \item{query}{The text for or path to a valid SPARQL query (\code{ASK}, \code{SELECT},
 \code{CONSTRUCT}, or \code{UPDATE}) as a string.}
 
-\item{output}{The path where output will be written, as a string.}
+\item{output}{The path where output will be written, as a string, or \code{NULL}
+(default) to load data directly. \code{output} is required for \code{UPDATE} and
+\code{CONSTRUCT} queries.}
 
 \item{...}{Additional arguments to
 \href{http://robot.obolibrary.org/query}{ROBOT query} formatted as described in
 \code{\link[=robot]{robot()}}.}
 }
 \value{
-\code{output} invisibly.
+If \code{output} is specified, the path to the output file with the query result.
+Otherwise, the query result (ASK as boolean or SELECT as \code{tibble}).
 }
 \description{
 Wrapper for \code{robot("query", ...)} that accepts a file \emph{or} text query, and

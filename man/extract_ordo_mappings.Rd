@@ -23,8 +23,8 @@ The ORDO-skos equivalent predicates are as follows:
 \item \code{"W"} - \code{doid:notMatch} (supplements SKOS)
 }}
 
-\item{output}{The path where output will be written, as a string. If \code{NULL}
-(default), the data will be read into R and not saved to a file.}
+\item{output}{The path where output will be written, as a string, or \code{NULL}
+(default) to load data directly.}
 
 \item{...}{
   Arguments passed on to \code{\link[=tidy_sparql]{tidy_sparql}}
@@ -36,8 +36,8 @@ outputs, as a boolean (default: \code{TRUE}).}
   }}
 }
 \value{
-If \code{output} is specified, the path to the output file with the data,
-otherwise, a \code{tibble} with the data.
+If \code{output} is specified, the path to the output file with the data.
+Otherwise, the data as a \href{tibble::tibble}{tibble}.
 
 ORDO mappings data will be formatted according to the
 \href{https://github.com/mapping-commons/sssom}{SSSOM} specification,

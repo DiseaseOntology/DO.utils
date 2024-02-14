@@ -44,18 +44,23 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
 #' @param input The path to an RDF/OWL file recognized by ROBOT, as a string.
 #' @param query The text for or path to a valid SPARQL query (`ASK`, `SELECT`,
 #' `CONSTRUCT`, or `UPDATE`) as a string.
-#' @param output The path where output will be written, as a string.
+#' @param output The path where output will be written, as a string, or `NULL`
+#' (default) to load data directly. `output` is required for `UPDATE` and
+#' `CONSTRUCT` queries.
 #' @param ... Additional arguments to
 #' [ROBOT query](http://robot.obolibrary.org/query) formatted as described in
 #' [DO.utils::robot()].
 #'
-#' @returns `output` invisibly.
+#' @returns
+#' If `output` is specified, the path to the output file with the query result.
+#' Otherwise, the query result (ASK as boolean or SELECT as `tibble`).
 #'
 #' @seealso [robot()] for underlying implementation; [tidy_sparql()] for tidying
 #' tabular output data read into R.
 #'
 #' @export
-robot_query <- function(input, query, output, ...) {
+robot_query <- function(input, query, output = NULL, ...) {
+    # load query, also ensure query in a file (required by ROBOT)
     query_is_file <- file.exists(query)
     if (query_is_file) {
         q <- readr::read_lines(query)
@@ -63,21 +68,60 @@ robot_query <- function(input, query, output, ...) {
         q <- query
         query <- tempfile(fileext = ".sparql")
         readr::write_lines(q, query)
-        on.exit(file.remove(query))
+        on.exit(unlink(query))
     }
 
-    # update query defined by the presence of INSERT/DELETE statements
-    update <- any(
-            stringr::str_detect(
-                q,
-                stringr::regex("insert|delete", ignore_case = TRUE)
-            )
+    # determine query type (SELECT = default, but not in search since it can be
+    # used in other queries)
+    q_type <- stringr::str_extract(
+        q,
+        stringr::regex(
+            "\\b(insert|delete|construct|ask)\\b",
+            ignore_case = TRUE
         )
+    )[1]
+    q_type <- stringr::str_to_lower(q_type)
+    q_type[is.na(q_type)] <- "select"
+    q_type <- switch(
+        q_type,
+        insert = "update",
+        delete = "update",
+        q_type
+    )
 
-    if (isTRUE(update)) {
+    if (q_type %in% c("update", "construct") && is.null(output)) {
+        rlang::abort("`output` is required for CONSTRUCT or UPDATE (INSERT/DELETE) `query`")
+    }
+
+    # output handling
+    if (is.null(output)) {
+        to_stdout <- TRUE
+        output <- tmp_out <- tempfile(fileext = ".tsv")
+        on.exit(unlink(tmp_out), add = TRUE)
+    } else {
+        to_stdout <- FALSE
+    }
+
+    # handle varying ROBOT parameters for UPDATE queries
+    if (q_type == "update") {
         robot("query", i = input, update = query, o = output, ...)
     } else {
         robot("query", i = input, query = query, output, ...)
     }
-    invisible(output)
+
+    # handle output
+    if (isFALSE(to_stdout)) {
+        return(output)
+    }
+
+    if (q_type == "ask") {
+        ask_res <- readr::read_file(output)
+        out <- switch(ask_res, true = TRUE, false = FALSE, ask_res)
+    } else {
+        out <- readr::read_tsv(
+            output,
+            col_types = readr::cols(.default = readr::col_character())
+        )
+    }
+    out
 }

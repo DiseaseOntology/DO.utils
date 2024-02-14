@@ -463,12 +463,12 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #' * `"ND"` - `doid:undefinedMatch` (supplements SKOS)
 #' * `"W"` - `doid:notMatch` (supplements SKOS)
 #'
-#' @param output The path where output will be written, as a string. If `NULL`
-#' (default), the data will be read into R and not saved to a file.
+#' @param output The path where output will be written, as a string, or `NULL`
+#' (default) to load data directly.
 #' @inheritDotParams tidy_sparql -query_res
 #' @returns
-#' If `output` is specified, the path to the output file with the data,
-#' otherwise, a `tibble` with the data.
+#' If `output` is specified, the path to the output file with the data.
+#' Otherwise, the data as a [tibble](tibble::tibble).
 #'
 #' ORDO mappings data will be formatted according to the
 #' [SSSOM](https://github.com/mapping-commons/sssom) specification,
@@ -489,26 +489,7 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
     }
 
     q_file <- system.file("sparql", q_nm, package = "DO.utils", mustWork = TRUE)
-
-    if (is.null(output)) {
-        to_stdout <- TRUE
-        output <- tmp_out <- tempfile(fileext = ".tsv")
-        on.exit(unlink(tmp_out))
-    } else {
-        to_stdout <- FALSE
-    }
-
-    robot_query(input = ordo_path, query = q_file, output)
-
-    if (to_stdout) {
-        out <- readr::read_tsv(
-            output,
-            col_types = readr::cols(.default = readr::col_character())
-        )
-        out <- tidy_sparql(out, ...)
-    } else {
-        out <- output
-    }
-
+    out <- robot_query(input = ordo_path, query = q_file, output)
+    out <- tidy_sparql(out, ...)
     out
 }
