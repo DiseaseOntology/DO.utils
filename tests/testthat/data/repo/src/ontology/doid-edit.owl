@@ -1,0 +1,44 @@
+Prefix(:=<http://purl.obolibrary.org/obo/doid.owl#>)
+Prefix(dc:=<http://purl.org/dc/elements/1.1/>)
+Prefix(obo:=<http://purl.obolibrary.org/obo/>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdf:=<http://www.w3.org/1999/02/22-rdf-syntax-ns#>)
+Prefix(xml:=<http://www.w3.org/XML/1998/namespace>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+Prefix(doid:=<http://purl.obolibrary.org/obo/doid#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(skos:=<http://www.w3.org/2004/02/skos/core#>)
+Prefix(terms:=<http://purl.org/dc/terms/>)
+Prefix(oboInOwl:=<http://www.geneontology.org/formats/oboInOwl#>)
+
+
+Ontology(<http://purl.obolibrary.org/obo/doid.owl>
+
+Declaration(Class(obo:DOID_4))
+Declaration(AnnotationProperty(obo:IAO_0000115))
+Declaration(AnnotationProperty(dc:type))
+Declaration(AnnotationProperty(oboInOwl:hasDbXref))
+Declaration(AnnotationProperty(oboInOwl:hasOBONamespace))
+Declaration(AnnotationProperty(oboInOwl:id))
+Declaration(AnnotationProperty(oboInOwl:inSubset))
+
+
+############################
+#   Classes
+############################
+
+# Class: obo:DOID_4 (disease)
+
+AnnotationAssertion(Annotation(dc:type obo:ECO_0007645) Annotation(oboInOwl:hasDbXref "url:https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3041577/") obo:IAO_0000115 obo:DOID_4 "A disease is a disposition (i) to undergo pathological processes that (ii) exists in an organism because of one or more disorders in that organism.")
+AnnotationAssertion(oboInOwl:hasDbXref obo:DOID_4 "MESH:D004194")
+AnnotationAssertion(oboInOwl:hasDbXref obo:DOID_4 "NCI:C2991")
+AnnotationAssertion(oboInOwl:hasDbXref obo:DOID_4 "SNOMEDCT_US_2023_03_01:64572001")
+AnnotationAssertion(oboInOwl:hasDbXref obo:DOID_4 "UMLS_CUI:C0012634")
+AnnotationAssertion(oboInOwl:hasOBONamespace obo:DOID_4 "disease_ontology")
+AnnotationAssertion(oboInOwl:id obo:DOID_4 "DOID:4")
+AnnotationAssertion(oboInOwl:inSubset obo:DOID_4 doid:DO_RAD_slim)
+AnnotationAssertion(oboInOwl:inSubset obo:DOID_4 doid:NCIthesaurus)
+AnnotationAssertion(rdfs:label obo:DOID_4 "disease")
+
+
+)

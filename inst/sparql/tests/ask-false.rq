@@ -1,0 +1,4 @@
+# Test query: ASK -> false
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX DOID: <http://purl.obolibrary.org/obo/DOID_>
+ASK  { DOID:4 skos:notation ?label }

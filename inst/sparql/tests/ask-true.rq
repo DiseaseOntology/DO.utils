@@ -1,0 +1,4 @@
+# Test query: ASK -> true
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX DOID: <http://purl.obolibrary.org/obo/DOID_>
+ASK  { DOID:4 rdfs:label ?label }

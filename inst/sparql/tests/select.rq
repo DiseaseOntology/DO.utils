@@ -1,0 +1,10 @@
+# Test query: SELECT
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX DOID: <http://purl.obolibrary.org/obo/DOID_>
+
+SELECT ?id ?label
+WHERE {
+	DOID:4 oboInOwl:id ?id ;
+		rdfs:label ?label .
+}
