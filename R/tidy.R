@@ -62,7 +62,7 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
     }
 
     if ("as_tibble" %in% tidy_what) {
-        res <- tibble::as_tibble(query_res)
+        res <- tibble::as_tibble(res)
     }
 
     res
