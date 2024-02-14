@@ -142,18 +142,20 @@ install_robot <- function(...) {
 #' Check if ROBOT is functional and cache it for future use.
 #'
 #' @inheritParams robot
+#' @param on_fail What to do on fail: "error" (default), "warn", "inform", or
+#' `NULL` (meaning do nothing).
 #'
 #' @returns Path and version of functional ROBOT. Use [robot()] for execution.
 #'
 #' @noRd
-check_robot <- function(.robot_path = NULL) {
+check_robot <- function(.robot_path = NULL, on_fail = "error") {
     if (is.null(.robot_path) && !is.null(DO_env$robot)) {
         return(DO_env$robot_path)
     }
     if (is.null(.robot_path)) {
         DO_env$robot_path <- Sys.which("robot")
     } else {
-        .robot_path <- normalizePath(.robot_path, mustWork = TRUE)
+        .robot_path <- suppressWarnings(normalizePath(.robot_path))
         if (!is.null(DO_env$robot_path) && .robot_path == DO_env$robot_path) {
             rlang::inform("ROBOT path unchanged.")
             return(DO_env$robot_path)
@@ -182,19 +184,24 @@ check_robot <- function(.robot_path = NULL) {
 
     if (stringr::str_detect(version, "ROBOT version ")) {
         names(DO_env$robot_path) <- version
+        rlang::inform(
+            paste0(version, " at ", DO_env$robot_path, " activated for session.")
+        )
     } else {
         DO_env$robot <- NULL
         DO_env$robot_path <- NULL
     }
 
-    if (is.null(DO_env$robot)) {
+    if (is.null(DO_env$robot) && !is.null(on_fail)) {
         msg <- paste0("ROBOT at ", .robot_path, " is not available or working.")
-        rlang::abort(msg, class = "robot_fail")
+        msg_fxn <- switch(
+            on_fail,
+            error = rlang::abort,
+            warn = rlang::warn,
+            inform = rlang::inform
+        )
+        msg_fxn(msg, class = "robot_fail")
     }
-
-    rlang::inform(
-        paste0("Caching ", version, " at ", DO_env$robot_path, " for future use.")
-    )
 
     invisible(DO_env$robot_path)
 }
