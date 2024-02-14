@@ -50,16 +50,19 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
 #' @param ... Additional arguments to
 #' [ROBOT query](http://robot.obolibrary.org/query) formatted as described in
 #' [DO.utils::robot()].
+#' @param tidy_what The elements of a SELECT query to tidy, as a character
+#' vector. Ignored when `output` is specified. See [tidy_sparql()] `what` for
+#' options (default: `"nothing"`).
 #'
 #' @returns
 #' If `output` is specified, the path to the output file with the query result.
 #' Otherwise, the query result (ASK as boolean or SELECT as `tibble`).
 #'
-#' @seealso [robot()] for underlying implementation; [tidy_sparql()] for tidying
-#' tabular output data read into R.
+#' @seealso [robot()] for underlying implementation.
 #'
 #' @export
-robot_query <- function(input, query, output = NULL, ...) {
+robot_query <- function(input, query, output = NULL, ...,
+                        tidy_what = "nothing") {
     # load query, also ensure query in a file (required by ROBOT)
     query_is_file <- file.exists(query)
     if (query_is_file) {
@@ -122,6 +125,7 @@ robot_query <- function(input, query, output = NULL, ...) {
             output,
             col_types = readr::cols(.default = readr::col_character())
         )
+        out <- tidy_sparql(out, what = tidy_what)
     }
     out
 }

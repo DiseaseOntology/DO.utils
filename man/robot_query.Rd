@@ -4,7 +4,7 @@
 \alias{robot_query}
 \title{Execute a SPARQL Query with ROBOT}
 \usage{
-robot_query(input, query, output = NULL, ...)
+robot_query(input, query, output = NULL, ..., tidy_what = "nothing")
 }
 \arguments{
 \item{input}{The path to an RDF/OWL file recognized by ROBOT, as a string.}
@@ -19,6 +19,10 @@ robot_query(input, query, output = NULL, ...)
 \item{...}{Additional arguments to
 \href{http://robot.obolibrary.org/query}{ROBOT query} formatted as described in
 \code{\link[=robot]{robot()}}.}
+
+\item{tidy_what}{The elements of a SELECT query to tidy, as a character
+vector. Ignored when \code{output} is specified. See \code{\link[=tidy_sparql]{tidy_sparql()}} \code{what} for
+options (default: \code{"nothing"}).}
 }
 \value{
 If \code{output} is specified, the path to the output file with the query result.
@@ -29,6 +33,5 @@ Wrapper for \code{robot("query", ...)} that accepts a file \emph{or} text query,
 has more convenient arguments.
 }
 \seealso{
-\code{\link[=robot]{robot()}} for underlying implementation; \code{\link[=tidy_sparql]{tidy_sparql()}} for tidying
-tabular output data read into R.
+\code{\link[=robot]{robot()}} for underlying implementation.
 }
