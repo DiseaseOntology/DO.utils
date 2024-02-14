@@ -5,40 +5,64 @@ utils::globalVariables("where")
 
 #' Tidy SPARQL Query
 #'
-#' Tidies SPARQL query results, unnesting list columns, removing `?` from column
-#' names, and returning results as a [tibble][tibble::tibble()] instead of a
-#' data.frame. Also optionally converts URIs to CURIEs and replaces `NA` in
-#' logical outputs with `FALSE`.
+#' Tidies SPARQL query results according to desired specifications (see `what`
+#' param for details).
 #'
 #' @param query_res The results of a SPARQL query, as a data.frame (usually
 #'     produced by [owl_xml()]$query() or similar from [DOrepo()], but can also
 #'     be used to tidy results of [robot("query", ...)][robot] loaded with
 #'     `readr`).
-#' @param as_curies Whether to convert IRIs to CURIEs, as a boolean
-#'     (default: `TRUE`).
-#' @param lgl_NA_false Whether to replace `NA` values with `FALSE` in logical
-#'     outputs, as a boolean (default: `TRUE`).
+#' @param what The elements of the query to tidy, as a character vector. One or
+#' more of the following:
+#'
+#' * `"everything"` to apply all tidy operations (has precedence over
+#' `"nothing"`).
+#' * `"header"` to remove leading `?` from header labels.
+#' * `"unnest"` to unnest list columns with [unnest_cross()].
+#' * `"uri_to_curie"` to convert all URIs recognized by DO.utils to CURIEs with
+#' [to_curie()].
+#' * `"lgl_NA_false"` to replace `NA` in logical columns with `FALSE`.
+#' * `"as_tibble"` to make the output a [tibble][tibble::tibble].
+#' * `"nothing"` to prevent all tidying.
 #' @inheritDotParams to_curie -x
 #'
 #' @export
-tidy_sparql <- function(query_res, as_curies = TRUE, lgl_NA_false = TRUE, ...) {
-    res <- query_res %>%
-        tibble::as_tibble() %>%
-        DO.utils::unnest_cross(where(is.list), keep_empty = TRUE)
-    names(res) <- stringr::str_remove(names(res), "^\\?")
+tidy_sparql <- function(query_res, what = "everything", ...) {
+    what_opts <- c("header", "unnest", "uri_to_curie", "lgl_NA_FALSE",
+                          "as_tibble")
+    what <- match.arg(
+        what,
+        choices = c(what_opts, "everything", "nothing"),
+        several.ok = TRUE
+    )
+    if ("everything" %in% what) what <- what_opts
+    if ("nothing" %in% what) return(query_res)
 
-    if (as_curies) {
-        res <- res %>%
-            dplyr::mutate(
-                dplyr::across(dplyr::where(is.character), ~ to_curie(.x, ...))
-            )
+    res <- query_res
+    if ("header" %in% what) {
+        names(res) <- stringr::str_remove(names(res), "^\\?")
     }
 
-    if (lgl_NA_false) {
-        res <- res %>%
-            dplyr::mutate(
-                dplyr::across(dplyr::where(is.logical), ~ replace_na(.x, FALSE))
-            )
+    if ("unnest" %in% what) {
+        res <- DO.utils::unnest_cross(res, where(is.list), keep_empty = TRUE)
+    }
+
+    if ("uri_to_curie" %in% what) {
+        res <- dplyr::mutate(
+            res,
+            dplyr::across(dplyr::where(is.character), ~ to_curie(.x, ...))
+        )
+    }
+
+    if ("lgl_NA_FALSE" %in% what) {
+        res <- dplyr::mutate(
+            res,
+            dplyr::across(dplyr::where(is.logical), ~ replace_na(.x, FALSE))
+        )
+    }
+
+    if ("as_tibble" %in% what) {
+        res <- tibble::as_tibble(query_res)
     }
 
     res

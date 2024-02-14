@@ -4,7 +4,7 @@
 \alias{tidy_sparql}
 \title{Tidy SPARQL Query}
 \usage{
-tidy_sparql(query_res, as_curies = TRUE, lgl_NA_false = TRUE, ...)
+tidy_sparql(query_res, what = "everything", ...)
 }
 \arguments{
 \item{query_res}{The results of a SPARQL query, as a data.frame (usually
@@ -12,11 +12,19 @@ produced by \code{\link[=owl_xml]{owl_xml()}}$query() or similar from \code{\lin
 be used to tidy results of \link[=robot]{robot("query", ...)} loaded with
 \code{readr}).}
 
-\item{as_curies}{Whether to convert IRIs to CURIEs, as a boolean
-(default: \code{TRUE}).}
-
-\item{lgl_NA_false}{Whether to replace \code{NA} values with \code{FALSE} in logical
-outputs, as a boolean (default: \code{TRUE}).}
+\item{what}{The elements of the query to tidy, as a character vector. One or
+more of the following:
+\itemize{
+\item \code{"everything"} to apply all tidy operations (has precedence over
+\code{"nothing"}).
+\item \code{"header"} to remove leading \verb{?} from header labels.
+\item \code{"unnest"} to unnest list columns with \code{\link[=unnest_cross]{unnest_cross()}}.
+\item \code{"uri_to_curie"} to convert all URIs recognized by DO.utils to CURIEs with
+\code{\link[=to_curie]{to_curie()}}.
+\item \code{"lgl_NA_false"} to replace \code{NA} in logical columns with \code{FALSE}.
+\item \code{"as_tibble"} to make the output a \link[tibble:tibble]{tibble}.
+\item \code{"nothing"} to prevent all tidying.
+}}
 
 \item{...}{
   Arguments passed on to \code{\link[=to_curie]{to_curie}}
@@ -28,8 +36,6 @@ removal beforehand and use \code{strip_angle_brackets = FALSE}.}
   }}
 }
 \description{
-Tidies SPARQL query results, unnesting list columns, removing \verb{?} from column
-names, and returning results as a \link[tibble:tibble]{tibble} instead of a
-data.frame. Also optionally converts URIs to CURIEs and replaces \code{NA} in
-logical outputs with \code{FALSE}.
+Tidies SPARQL query results according to desired specifications (see \code{what}
+param for details).
 }
