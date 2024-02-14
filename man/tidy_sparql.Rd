@@ -4,7 +4,7 @@
 \alias{tidy_sparql}
 \title{Tidy SPARQL Query}
 \usage{
-tidy_sparql(query_res, what = "everything", ...)
+tidy_sparql(query_res, tidy_what = "everything", ...)
 }
 \arguments{
 \item{query_res}{The results of a SPARQL query, as a data.frame (usually
@@ -12,8 +12,8 @@ produced by \code{\link[=owl_xml]{owl_xml()}}$query() or similar from \code{\lin
 be used to tidy results of \link[=robot]{robot("query", ...)} loaded with
 \code{readr}).}
 
-\item{what}{The elements of the query to tidy, as a character vector. One or
-more of the following:
+\item{tidy_what}{The elements of a SPARQL-created data.frame to tidy, as a
+character vector. One or more of the following:
 \itemize{
 \item \code{"everything"} to apply all tidy operations (has precedence over
 \code{"nothing"}).
@@ -36,6 +36,6 @@ removal beforehand and use \code{strip_angle_brackets = FALSE}.}
   }}
 }
 \description{
-Tidies SPARQL query results according to desired specifications (see \code{what}
-param for details).
+Tidies SPARQL query results according to desired specifications (see
+\code{tidy_what} parameter for details).
 }

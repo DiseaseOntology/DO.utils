@@ -5,15 +5,15 @@ utils::globalVariables("where")
 
 #' Tidy SPARQL Query
 #'
-#' Tidies SPARQL query results according to desired specifications (see `what`
-#' param for details).
+#' Tidies SPARQL query results according to desired specifications (see
+#' `tidy_what` parameter for details).
 #'
 #' @param query_res The results of a SPARQL query, as a data.frame (usually
 #'     produced by [owl_xml()]$query() or similar from [DOrepo()], but can also
 #'     be used to tidy results of [robot("query", ...)][robot] loaded with
 #'     `readr`).
-#' @param what The elements of the query to tidy, as a character vector. One or
-#' more of the following:
+#' @param tidy_what The elements of a SPARQL-created data.frame to tidy, as a
+#' character vector. One or more of the following:
 #'
 #' * `"everything"` to apply all tidy operations (has precedence over
 #' `"nothing"`).
@@ -27,41 +27,41 @@ utils::globalVariables("where")
 #' @inheritDotParams to_curie -x
 #'
 #' @export
-tidy_sparql <- function(query_res, what = "everything", ...) {
+tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
     what_opts <- c("header", "unnest", "uri_to_curie", "lgl_NA_FALSE",
                           "as_tibble")
-    what <- match.arg(
-        what,
+    tidy_what <- match.arg(
+        tidy_what,
         choices = c(what_opts, "everything", "nothing"),
         several.ok = TRUE
     )
-    if ("everything" %in% what) what <- what_opts
-    if ("nothing" %in% what) return(query_res)
+    if ("everything" %in% tidy_what) tidy_what <- what_opts
+    if ("nothing" %in% tidy_what) return(query_res)
 
     res <- query_res
-    if ("header" %in% what) {
+    if ("header" %in% tidy_what) {
         names(res) <- stringr::str_remove(names(res), "^\\?")
     }
 
-    if ("unnest" %in% what) {
+    if ("unnest" %in% tidy_what) {
         res <- DO.utils::unnest_cross(res, where(is.list), keep_empty = TRUE)
     }
 
-    if ("uri_to_curie" %in% what) {
+    if ("uri_to_curie" %in% tidy_what) {
         res <- dplyr::mutate(
             res,
             dplyr::across(dplyr::where(is.character), ~ to_curie(.x, ...))
         )
     }
 
-    if ("lgl_NA_FALSE" %in% what) {
+    if ("lgl_NA_FALSE" %in% tidy_what) {
         res <- dplyr::mutate(
             res,
             dplyr::across(dplyr::where(is.logical), ~ replace_na(.x, FALSE))
         )
     }
 
-    if ("as_tibble" %in% what) {
+    if ("as_tibble" %in% tidy_what) {
         res <- tibble::as_tibble(query_res)
     }
 

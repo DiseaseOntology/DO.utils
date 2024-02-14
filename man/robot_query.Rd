@@ -20,9 +20,19 @@ robot_query(input, query, output = NULL, ..., tidy_what = "nothing")
 \href{http://robot.obolibrary.org/query}{ROBOT query} formatted as described in
 \code{\link[=robot]{robot()}}.}
 
-\item{tidy_what}{The elements of a SELECT query to tidy, as a character
-vector. Ignored when \code{output} is specified. See \code{\link[=tidy_sparql]{tidy_sparql()}} \code{what} for
-options (default: \code{"nothing"}).}
+\item{tidy_what}{The elements of a SPARQL-created data.frame to tidy, as a
+character vector. One or more of the following:
+\itemize{
+\item \code{"everything"} to apply all tidy operations (has precedence over
+\code{"nothing"}).
+\item \code{"header"} to remove leading \verb{?} from header labels.
+\item \code{"unnest"} to unnest list columns with \code{\link[=unnest_cross]{unnest_cross()}}.
+\item \code{"uri_to_curie"} to convert all URIs recognized by DO.utils to CURIEs with
+\code{\link[=to_curie]{to_curie()}}.
+\item \code{"lgl_NA_false"} to replace \code{NA} in logical columns with \code{FALSE}.
+\item \code{"as_tibble"} to make the output a \link[tibble:tibble]{tibble}.
+\item \code{"nothing"} to prevent all tidying.
+}}
 }
 \value{
 If \code{output} is specified, the path to the output file with the query result.

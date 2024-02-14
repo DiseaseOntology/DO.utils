@@ -4,7 +4,12 @@
 \alias{extract_ordo_mappings}
 \title{Extract mappings from ORDO}
 \usage{
-extract_ordo_mappings(ordo_path, as_skos = TRUE, output = NULL, ...)
+extract_ordo_mappings(
+  ordo_path,
+  as_skos = TRUE,
+  output = NULL,
+  tidy_what = "everything"
+)
 }
 \arguments{
 \item{ordo_path}{The path to the ORDO file, as a string.}
@@ -26,14 +31,19 @@ The ORDO-skos equivalent predicates are as follows:
 \item{output}{The path where output will be written, as a string, or \code{NULL}
 (default) to load data directly.}
 
-\item{...}{
-  Arguments passed on to \code{\link[=tidy_sparql]{tidy_sparql}}
-  \describe{
-    \item{\code{as_curies}}{Whether to convert IRIs to CURIEs, as a boolean
-(default: \code{TRUE}).}
-    \item{\code{lgl_NA_false}}{Whether to replace \code{NA} values with \code{FALSE} in logical
-outputs, as a boolean (default: \code{TRUE}).}
-  }}
+\item{tidy_what}{The elements of a SPARQL-created data.frame to tidy, as a
+character vector. One or more of the following:
+\itemize{
+\item \code{"everything"} to apply all tidy operations (has precedence over
+\code{"nothing"}).
+\item \code{"header"} to remove leading \verb{?} from header labels.
+\item \code{"unnest"} to unnest list columns with \code{\link[=unnest_cross]{unnest_cross()}}.
+\item \code{"uri_to_curie"} to convert all URIs recognized by DO.utils to CURIEs with
+\code{\link[=to_curie]{to_curie()}}.
+\item \code{"lgl_NA_false"} to replace \code{NA} in logical columns with \code{FALSE}.
+\item \code{"as_tibble"} to make the output a \link[tibble:tibble]{tibble}.
+\item \code{"nothing"} to prevent all tidying.
+}}
 }
 \value{
 If \code{output} is specified, the path to the output file with the data.

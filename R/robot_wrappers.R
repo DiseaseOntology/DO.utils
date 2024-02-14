@@ -50,9 +50,7 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
 #' @param ... Additional arguments to
 #' [ROBOT query](http://robot.obolibrary.org/query) formatted as described in
 #' [DO.utils::robot()].
-#' @param tidy_what The elements of a SELECT query to tidy, as a character
-#' vector. Ignored when `output` is specified. See [tidy_sparql()] `what` for
-#' options (default: `"nothing"`).
+#' @inheritParams tidy_sparql
 #'
 #' @returns
 #' If `output` is specified, the path to the output file with the query result.
@@ -125,7 +123,7 @@ robot_query <- function(input, query, output = NULL, ...,
             output,
             col_types = readr::cols(.default = readr::col_character())
         )
-        out <- tidy_sparql(out, what = tidy_what)
+        out <- tidy_sparql(out, tidy_what)
     }
     out
 }
