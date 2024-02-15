@@ -482,7 +482,7 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #'
 #' @export
 extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
-                                  tidy_what = "everything", col_types = NULL) {
+                                  tidy_what = "everything") {
     if (isTRUE(as_skos)) {
         q_nm <- "mapping-ordo-skos.rq"
     } else {
@@ -495,7 +495,7 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
         query = q_file,
         output = output,
         tidy_what = tidy_what,
-        col_types = col_types
+        col_types = readr::cols(.default = readr::col_character())
     )
 
     out
