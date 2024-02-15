@@ -47,7 +47,7 @@ character vector. One or more of the following:
 }
 \value{
 If \code{output} is specified, the path to the output file with the data.
-Otherwise, the data as a \href{tibble::tibble}{tibble}.
+Otherwise, the data as a \link[tibble:tibble]{tibble}.
 
 ORDO mappings data will be formatted according to the
 \href{https://github.com/mapping-commons/sssom}{SSSOM} specification,

@@ -471,7 +471,7 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #'
 #' @returns
 #' If `output` is specified, the path to the output file with the data.
-#' Otherwise, the data as a [tibble](tibble::tibble).
+#' Otherwise, the data as a [tibble][tibble::tibble].
 #'
 #' ORDO mappings data will be formatted according to the
 #' [SSSOM](https://github.com/mapping-commons/sssom) specification,
