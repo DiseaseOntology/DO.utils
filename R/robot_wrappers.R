@@ -51,6 +51,7 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
 #' [ROBOT query](http://robot.obolibrary.org/query) formatted as described in
 #' [DO.utils::robot()].
 #' @inheritParams tidy_sparql
+#' @inheritParams readr::read_tsv
 #'
 #' @returns
 #' If `output` is specified, the path to the output file with the query result.
@@ -60,7 +61,7 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
 #'
 #' @export
 robot_query <- function(input, query, output = NULL, ...,
-                        tidy_what = "nothing") {
+                        tidy_what = "nothing", col_types = NULL) {
     # load query, also ensure query in a file (required by ROBOT)
     query_is_file <- file.exists(query)
     if (query_is_file) {
@@ -121,7 +122,8 @@ robot_query <- function(input, query, output = NULL, ...,
     } else {
         out <- readr::read_tsv(
             output,
-            col_types = readr::cols(.default = readr::col_character())
+            col_types = col_types,
+            show_col_types = FALSE
         )
         out <- tidy_sparql(out, tidy_what)
     }

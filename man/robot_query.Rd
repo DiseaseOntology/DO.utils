@@ -4,7 +4,14 @@
 \alias{robot_query}
 \title{Execute a SPARQL Query with ROBOT}
 \usage{
-robot_query(input, query, output = NULL, ..., tidy_what = "nothing")
+robot_query(
+  input,
+  query,
+  output = NULL,
+  ...,
+  tidy_what = "nothing",
+  col_types = NULL
+)
 }
 \arguments{
 \item{input}{The path to an RDF/OWL file recognized by ROBOT, as a string.}
@@ -33,6 +40,38 @@ character vector. One or more of the following:
 \item \code{"as_tibble"} to make the output a \link[tibble:tibble]{tibble}.
 \item \code{"nothing"} to prevent all tidying.
 }}
+
+\item{col_types}{One of \code{NULL}, a \code{\link[readr:cols]{cols()}} specification, or
+a string. See \code{vignette("readr")} for more details.
+
+If \code{NULL}, all column types will be inferred from \code{guess_max} rows of the
+input, interspersed throughout the file. This is convenient (and fast),
+but not robust. If the guessed types are wrong, you'll need to increase
+\code{guess_max} or supply the correct types yourself.
+
+Column specifications created by \code{\link[=list]{list()}} or \code{\link[readr:cols]{cols()}} must contain
+one column specification for each column. If you only want to read a
+subset of the columns, use \code{\link[readr:cols_only]{cols_only()}}.
+
+Alternatively, you can use a compact string representation where each
+character represents one column:
+\itemize{
+\item c = character
+\item i = integer
+\item n = number
+\item d = double
+\item l = logical
+\item f = factor
+\item D = date
+\item T = date time
+\item t = time
+\item ? = guess
+\item _ or - = skip
+}
+
+By default, reading a file without a column specification will print a
+message showing what \code{readr} guessed they were. To remove this message,
+set \code{show_col_types = FALSE} or set `options(readr.show_col_types = FALSE).}
 }
 \value{
 If \code{output} is specified, the path to the output file with the query result.

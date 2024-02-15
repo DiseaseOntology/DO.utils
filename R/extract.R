@@ -465,7 +465,7 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #'
 #' @param output The path where output will be written, as a string, or `NULL`
 #' (default) to load data directly.
-#' @inheritParams tidy_sparql
+#' @inheritParams robot_query
 #'
 #' @returns
 #' If `output` is specified, the path to the output file with the data.
@@ -482,7 +482,7 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #'
 #' @export
 extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
-                                  tidy_what = "everything") {
+                                  tidy_what = "everything", col_types = NULL) {
     if (isTRUE(as_skos)) {
         q_nm <- "mapping-ordo-skos.rq"
     } else {
@@ -494,7 +494,8 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
         input = ordo_path,
         query = q_file,
         output = output,
-        tidy_what = tidy_what
+        tidy_what = tidy_what,
+        col_types = col_types
     )
 
     out
