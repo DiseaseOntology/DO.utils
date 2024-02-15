@@ -171,6 +171,7 @@ format_obo <- function(x, as = "CURIE", validate_input = TRUE) {
 #'     st_formatted
 #' }
 #'
+#' @seealso [extract_subtree()]
 #' @export
 format_subtree <- function(subtree_df, top_node) {
     rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")

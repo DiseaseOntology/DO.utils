@@ -25,3 +25,6 @@ mirroring \href{https://disease-ontology.org/}{disease-ontology.org}.
 }
 
 }
+\seealso{
+\code{\link[=extract_subtree]{extract_subtree()}}
+}

@@ -299,6 +299,8 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' and `parent_label`, with one row for each unique combination for each
 #' subclass below and including `top_node`.
 #'
+#' @seealso [format_subtree()] to arrange data in a tree structure similar to
+#' ontology browsers.
 #' @export
 extract_subtree <- function(x, top_node, reload = FALSE) {
     owl <- access_owl_xml(x)

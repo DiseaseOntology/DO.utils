@@ -25,3 +25,7 @@ subclass below and including \code{top_node}.
 Extracts the classes and parents of a DO subtree from a \code{pyDOID.owl.xml}
 object.
 }
+\seealso{
+\code{\link[=format_subtree]{format_subtree()}} to arrange data in a tree structure similar to
+ontology browsers.
+}
