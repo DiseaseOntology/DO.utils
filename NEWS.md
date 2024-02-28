@@ -1,5 +1,11 @@
 # DO.utils (development version)
 
+## General
+
+## Updated
+* `is_invariant()` no works for more than just character & numeric vectors, with new `list` and `data.frame` methods and a `default` method that should be able to handle more cases (and replaces the `character` method).
+
+
 ## DO Management & Analysis
 
 ### Updated

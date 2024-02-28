@@ -1,31 +1,59 @@
-#' Test if Vector is Invariant
+#' Test if an Object is Invariant
 #'
-#' Test if a vector is invariant (_i.e._ all values are equal, within a given
+#' Test if an object is invariant (_i.e._ all values are equal, within a given
 #' tolerance for numeric vectors).
 #'
-#' @param x vector to be tested
+#' @param x object to be tested
 #' @param na.rm logical indicating whether to exclude NA values
-#' @param tol double, tolerance to use (for numeric vectors)
 #' @param ... unused; for extensibility
 #'
 #' @family value predicates
 #' @family predicates
 #' @export
-is_invariant <- function(x, na.rm = FALSE, ...) {
+is_invariant <- function(x, ...) {
     UseMethod("is_invariant")
 }
 
 #' @export
 #' @rdname is_invariant
-is_invariant.character <- function(x, na.rm = FALSE, ...) {
-    dplyr::n_distinct(x, na.rm = na.rm) == 1
+is_invariant.default <- function(x, na.rm = FALSE, ...) {
+    if (isTRUE(na.rm)) {
+        x <- stats::na.omit(x)
+    }
+    length(unique(x)) == 1
 }
 
 #' @export
 #' @rdname is_invariant
+#' @param tol double, tolerance to use (for numeric vectors)
 is_invariant.numeric <- function(x, na.rm = FALSE,
                                  tol = sqrt(.Machine$double.eps), ...) {
+    if (isFALSE(na.rm)) {
+        na_n <- sum(is.na(x))
+        if (na_n == length(x)) return(TRUE)
+        if (na_n > 0) return(FALSE)
+    }
+
     diff(range(x, na.rm = na.rm)) < tol
+}
+
+#' @export
+#' @rdname is_invariant
+#' @param incl_nm Whether top-level names should be included in determining if a
+#' list is invariant (default: `TRUE`).
+is_invariant.list <- function(x, incl_nm = TRUE, ...) {
+    nm <- names(x)
+    if (isFALSE(incl_nm) || is.null(nm)) {
+        return(length(unique(x)) == 1)
+    }
+
+    length(unique(x)) == 1 && length(unique(nm)) == 1
+}
+
+#' @export
+#' @rdname is_invariant
+is_invariant.data.frame <- function(x, ...) {
+    nrow(unique(x)) == 1
 }
 
 

@@ -2,27 +2,36 @@
 % Please edit documentation in R/predicates.R
 \name{is_invariant}
 \alias{is_invariant}
-\alias{is_invariant.character}
+\alias{is_invariant.default}
 \alias{is_invariant.numeric}
-\title{Test if Vector is Invariant}
+\alias{is_invariant.list}
+\alias{is_invariant.data.frame}
+\title{Test if an Object is Invariant}
 \usage{
-is_invariant(x, na.rm = FALSE, ...)
+is_invariant(x, ...)
 
-\method{is_invariant}{character}(x, na.rm = FALSE, ...)
+\method{is_invariant}{default}(x, na.rm = FALSE, ...)
 
 \method{is_invariant}{numeric}(x, na.rm = FALSE, tol = sqrt(.Machine$double.eps), ...)
+
+\method{is_invariant}{list}(x, incl_nm = TRUE, ...)
+
+\method{is_invariant}{data.frame}(x, ...)
 }
 \arguments{
-\item{x}{vector to be tested}
-
-\item{na.rm}{logical indicating whether to exclude NA values}
+\item{x}{object to be tested}
 
 \item{...}{unused; for extensibility}
 
+\item{na.rm}{logical indicating whether to exclude NA values}
+
 \item{tol}{double, tolerance to use (for numeric vectors)}
+
+\item{incl_nm}{Whether top-level names should be included in determining if a
+list is invariant (default: \code{TRUE}).}
 }
 \description{
-Test if a vector is invariant (\emph{i.e.} all values are equal, within a given
+Test if an object is invariant (\emph{i.e.} all values are equal, within a given
 tolerance for numeric vectors).
 }
 \seealso{
