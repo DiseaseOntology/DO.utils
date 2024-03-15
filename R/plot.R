@@ -173,7 +173,7 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
         )(color_n)
     } else {
         if (length(color_set) != 7 || !all(names(color_set) %in% color_nm)) {
-            rlang::error("`color_set` must specify a DO_colors color set or 7 named colors")
+            rlang::abort("`color_set` must specify a DO_colors color set or 7 named colors")
         }
         # order colors to match publication type order
         cb_colors <- color_set[color_nm]
