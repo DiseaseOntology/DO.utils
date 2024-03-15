@@ -58,7 +58,9 @@ year.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_citedby</span><span class="op">(</span></span>
 <span>  data_file <span class="op">=</span> <span class="st">"data/citedby/DO_citedby.csv"</span>,</span>
 <span>  out_dir <span class="op">=</span> <span class="st">"graphics/website"</span>,</span>
-<span>  color_set <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#C45055"</span>, <span class="st">"#934FBB"</span>, <span class="st">"#95B1BB"</span>, <span class="st">"#83C85F"</span>, <span class="st">"#B9964B"</span>, <span class="st">"#4C3E45"</span><span class="op">)</span>,</span>
+<span>  color_set <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Article <span class="op">=</span> <span class="st">"#4C3E45"</span>, `Clinical Trial` <span class="op">=</span> <span class="st">"#B9964B"</span>, Book <span class="op">=</span> <span class="st">"#83C85F"</span>,</span>
+<span>    Conference <span class="op">=</span> <span class="st">"#95B1BB"</span>, Review <span class="op">=</span> <span class="st">"#934FBB"</span>, Other <span class="op">=</span> <span class="st">"#C45055"</span>, Retracted <span class="op">=</span> <span class="st">"#000000"</span><span class="op">)</span>,</span>
+<span>  retracted <span class="op">=</span> <span class="st">"warn"</span>,</span>
 <span>  w <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  h <span class="op">=</span> <span class="fl">3.15</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -77,10 +79,17 @@ should be saved, as a string. If <code>NULL</code> the plot is not saved to disk
 
 
 <dt>color_set</dt>
-<dd><p>A set of 6 colors or the prefix of the color set to use from
-<a href="DO_colors.html">DO_colors</a>. Available sets include: "sat", "accent1", "accent2",
-and "orange". The default and light versions of the specified color set
-will be used.</p></dd>
+<dd><p>A named set of 7 colors, one for each of
+the possible publication types (see Colors section) or the
+prefix of the color set to use from <a href="DO_colors.html">DO_colors</a>, as a character vector.</p></dd>
+
+
+<dt>retracted</dt>
+<dd><p>How to handle retracted publications, as a string.
+One of:</p><ul><li><p>"warn" (default) to drop them with a warning.</p></li>
+<li><p>"include" to display them in the plot in their own category.</p></li>
+<li><p>"other" to include them in the "Other" category.</p></li>
+</ul></dd>
 
 
 <dt>w</dt>
@@ -96,6 +105,18 @@ will be used.</p></dd>
     
 
 <p>To prepare data, execute <code>scripts/citedby_full_procedure.R</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="colors">Colors<a class="anchor" aria-label="anchor" href="#colors"></a></h2>
+    
+
+<p>If specifying a color set manually, one color should be included for each of
+the following publication types: "Article", "Book", "Clinical Trial",
+"Conference", "Review", "Other", "Retracted". "Other" serves as a catch all
+category (generally a small subset of otherwise uncategorized publications).</p>
+<p>Sets available in <a href="DO_colors.html">DO_colors</a> include: "sat" (saturated), "accent1",
+"accent2", and "orange". The default and light versions of the specified
+color set will be used to generate a gradient.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
