@@ -7,7 +7,9 @@
 plot_citedby(
   data_file = "data/citedby/DO_citedby.csv",
   out_dir = "graphics/website",
-  color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
+  color_set = c(Article = "#4C3E45", `Clinical Trial` = "#B9964B", Book = "#83C85F",
+    Conference = "#95B1BB", Review = "#934FBB", Other = "#C45055", Retracted = "#000000"),
+  retracted = "warn",
   w = 6,
   h = 3.15
 )
@@ -19,10 +21,17 @@ citing the DO, as a string.}
 \item{out_dir}{The directory where the plot \code{"DO_cited_by_count.png"}
 should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 
-\item{color_set}{A set of 6 colors or the prefix of the color set to use from
-\link{DO_colors}. Available sets include: "sat", "accent1", "accent2",
-and "orange". The default and light versions of the specified color set
-will be used.}
+\item{color_set}{A named set of 7 colors, one for each of
+the possible publication types (see Colors section) or the
+prefix of the color set to use from \link{DO_colors}, as a character vector.}
+
+\item{retracted}{How to handle retracted publications, as a string.
+One of:
+\itemize{
+\item "warn" (default) to drop them with a warning.
+\item "include" to display them in the plot in their own category.
+\item "other" to include them in the "Other" category.
+}}
 
 \item{w}{The width of the plot in inches, as numeric.}
 
@@ -35,5 +44,17 @@ year.
 \section{Data Preparation}{
 
 To prepare data, execute \code{scripts/citedby_full_procedure.R}.
+}
+
+\section{Colors}{
+
+If specifying a color set manually, one color should be included for each of
+the following publication types: "Article", "Book", "Clinical Trial",
+"Conference", "Review", "Other", "Retracted". "Other" serves as a catch all
+category (generally a small subset of otherwise uncategorized publications).
+
+Sets available in \link{DO_colors} include: "sat" (saturated), "accent1",
+"accent2", and "orange". The default and light versions of the specified
+color set will be used to generate a gradient.
 }
 

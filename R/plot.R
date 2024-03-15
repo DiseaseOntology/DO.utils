@@ -107,20 +107,43 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
 #'     citing the DO, as a string.
 #' @param out_dir The directory where the plot `"DO_cited_by_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
-#' @param color_set A set of 6 colors or the prefix of the color set to use from
-#'     [DO_colors]. Available sets include: "sat", "accent1", "accent2",
-#'     and "orange". The default and light versions of the specified color set
-#'     will be used.
+#' @param color_set A named set of 7 colors, one for each of
+#'     the possible publication types (see Colors section) or the
+#'     prefix of the color set to use from [DO_colors], as a character vector.
+#' @param retracted How to handle retracted publications, as a string.
+#' One of:
+#' * "warn" (default) to drop them with a warning.
+#' * "include" to display them in the plot in their own category.
+#' * "other" to include them in the "Other" category.
 #' @inheritParams plot_branch_counts
 #'
 #' @section Data Preparation:
 #' To prepare data, execute `scripts/citedby_full_procedure.R`.
 #'
+#' @section Colors:
+#' If specifying a color set manually, one color should be included for each of
+#' the following publication types: "Article", "Book", "Clinical Trial",
+#' "Conference", "Review", "Other", "Retracted". "Other" serves as a catch all
+#' category (generally a small subset of otherwise uncategorized publications).
+#'
+#' Sets available in [DO_colors] include: "sat" (saturated), "accent1",
+#' "accent2", and "orange". The default and light versions of the specified
+#' color set will be used to generate a gradient.
+#'
 #' @export
 plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
                          out_dir = "graphics/website",
-                         color_set = c("#C45055", "#934FBB", "#95B1BB", "#83C85F", "#B9964B", "#4C3E45"),
+                         color_set = c(
+                             "Article" = "#4C3E45", "Clinical Trial" = "#B9964B",
+                             "Book" = "#83C85F", "Conference" = "#95B1BB",
+                             "Review" = "#934FBB", "Other" = "#C45055",
+                             "Retracted" = "#000000"
+                         ),
+                         retracted = "warn",
                          w = 6, h = 3.15) {
+    retracted <- match.arg(retracted, c("warn", "include", "other"))
+    color_nm <- c("Retracted", "Other", "Review", "Conference", "Book",
+                  "Clinical Trial", "Article")
 
     df <- readr::read_csv(data_file) %>%
         dplyr::mutate(
@@ -128,13 +151,34 @@ plot_citedby <- function(data_file = "data/citedby/DO_citedby.csv",
             pub_type = clean_pub_type(.data$pub_type)
         )
 
-    # set color ramp
-    if (length(color_set) > 1) {
-        cb_colors <- color_set
-    } else {
+    retracted_n <- sum(df$pub_type == "Retracted")
+    if (retracted_n > 0) {
+        if (retracted == "warn") {
+            df <- dplyr::filter(df, .data$pub_type != "Retracted")
+            rlang::warn(paste0(retracted_n, " retracted publication(s) dropped."))
+        }
+        if (retracted == "other") {
+            df <- dplyr::mutate(
+                df,
+                pub_type = dplyr::recode(.data$pub_type, Retracted = "Other")
+            )
+        }
+    }
+
+    # prepare colors
+    color_n <- dplyr::n_distinct(df$pub_type)
+    if (length(color_set) == 1) {
         cb_colors <- grDevices::colorRampPalette(
             DO_colors[paste0(color_set, c("_light", ""))]
-        )(dplyr::n_distinct(df$pub_type))
+        )(color_n)
+    } else {
+        if (length(color_set) != 7 || !all(names(color_set) %in% color_nm)) {
+            rlang::error("`color_set` must specify a DO_colors color set or 7 named colors")
+        }
+        # order colors to match publication type order
+        cb_colors <- color_set[color_nm]
+        # use only colors corresponding to publication types in the data
+        cb_colors <- cb_colors[names(cb_colors) %in% df$pub_type]
     }
 
     g <- ggplot2::ggplot(data = df) +

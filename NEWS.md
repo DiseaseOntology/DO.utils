@@ -12,6 +12,11 @@
 * `read_omim()` now additionally parses official API-key requiring
 phenotypicSeries.txt downloads and may be able to handle additional API-key
 requiring downloads.
+* `plot_citedby():
+    * _[BREAKING CHANGE]_  `color_set` argument now requires names and one color
+    for each of the 7 possible publication types when specifying colors manually.
+    * `retracted` argument added to specify how retracted articles should be
+    managed.
 
 ### New
 * `download_omim()` downloads official API-key requiring files directly from
