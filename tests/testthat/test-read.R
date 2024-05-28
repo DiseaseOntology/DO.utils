@@ -1,10 +1,10 @@
 search_expected <- structure(
     list(
         omim = c(
-            "OMIM:620058", "OMIM:103850", "OMIM:615018", "OMIM:137100",
-            "OMIM:152200", "OMIM:107670", "OMIM:609529", "OMIM:620378",
-            "OMIM:137050", "OMIM:131330", "OMIM:168820", "OMIM:611003",
-            "OMIM:107410", "OMIM:240150"
+            "MIM:620058", "MIM:103850", "MIM:615018", "MIM:137100",
+            "MIM:152200", "MIM:107670", "MIM:609529", "MIM:620378",
+            "MIM:137050", "MIM:131330", "MIM:168820", "MIM:611003",
+            "MIM:107410", "MIM:240150"
         ),
         mim_symbol = c(
             "#", "*", "#", "%", "*", "+", "#", "%", "none", "*", "+", "%",
@@ -87,7 +87,7 @@ test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES",
     expected <- structure(
         list(
             omim = c(
-                "OMIM:PS605552", "OMIM:PS200600", "OMIM:PS142690", "OMIM:PS101800"
+                "MIM:PS605552", "MIM:PS200600", "MIM:PS142690", "MIM:PS101800"
             ),
             phenotypic_series_title = c(
                 "Abdominal obesity-metabolic syndrome", "Achondrogenesis",
@@ -107,7 +107,7 @@ test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES",
 
 ps_df <- structure(
     list(
-        omim = c("OMIM:PS613135", "OMIM:619738", "OMIM:613135", "OMIM:618049"),
+        omim = c("MIM:PS613135", "MIM:619738", "MIM:613135", "MIM:618049"),
         location = c(NA, "1p12", "5p15.33", "10q25.3"),
         phenotype = c(
             "Parkinsonism-dystonia, infantile",
