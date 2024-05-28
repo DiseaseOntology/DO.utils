@@ -91,6 +91,7 @@ get_url <- function(.name) {
             MESH = "https://meshb.nlm.nih.gov/record/ui?ui=",
             NCI = "https://ncit.nci.nih.gov/ncitbrowser/ConceptReport.jsp?dictionary=NCI_Thesaurus&ns=ncit&code=",
             ORDO = "https://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=en&Expert=",
+            MIM = "http://www.omim.org/MIM:",
             OMIM = "http://www.omim.org/MIM:",
             SNOMEDCT_US = "https://browser.ihtsdotools.org/?perspective=full&conceptId1=",
             UMLS_CUI = "https://uts.nlm.nih.gov/uts/umls/concept/"

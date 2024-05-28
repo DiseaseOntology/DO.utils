@@ -462,9 +462,9 @@ plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
         dplyr::count(.data$prefix, wt = .data$count, name = "count")
 
     curation_type <- c(
-        ORDO = "Manual", OMIM = "Manual", MEDDRA = "Manual", KEGG = "Manual",
+        ORDO = "Manual", MEDDRA = "Manual", KEGG = "Manual",
         ICDO = "Manual", GARD = "Manual", EFO = "Manual", ICD11 = "Manual",
-        NCI = "Mixed", MESH = "Mixed",
+        NCI = "Mixed", MESH = "Mixed", OMIM = "Manual", MIM = "Manual",
         UMLS_CUI = "Automated", SNOMEDCT_US = "Automated", ICD9CM = "Automated",
         ICD10CM = "Automated"
     )
@@ -478,7 +478,7 @@ plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
             prefix = dplyr::recode(
                 .data$prefix,
                 MESH = "MeSH", NCI = "NCIt", MEDDRA = "MedDRA",
-                ORDO = "Orphanet", UMLS_CUI = "UMLS"
+                ORDO = "Orphanet", UMLS_CUI = "UMLS", MIM = "OMIM"
             )
         )
 

@@ -216,7 +216,8 @@ label_properties <- function(x, property_df) {
 #' * ECO: 'ECO:evidence'
 #' * GENO: 'GENO:inheritance_pattern'
 #' * NCBITaxon: 'NCBITaxon:organism'
-#' * OMIM: 'OMIM:susceptibility'
+#' * MIM: 'MIM:susceptibility'
+#' * OMIM: 'MIM:susceptibility'
 #' * UBERON: 'UBERON:anatomy'
 #' * UPHENO: 'UPHENO:phenotype'
 #' * SO: 'SO:sequence'
@@ -237,7 +238,8 @@ generify_obo <- function(x) {
         "CHEBI" = "CHEBI:chemical", "DISDRIV" = "DISDRIV:disease_driver",
         "DOID" = "DOID:disease", "FOODON" = "FOODON:food_material",
         "ECO" = "ECO:evidence", "GENO" = "GENO:inheritance_pattern",
-        "NCBITaxon" = "NCBITaxon:organism", "OMIM" = "OMIM:susceptibility",
+        "NCBITaxon" = "NCBITaxon:organism",
+        "MIM" = "MIM:susceptibility", "OMIM" = "MIM:susceptibility",
         "UPHENO" = "UPHENO:phenotype", "SO" = "SO:sequence",
         "SYMP" = "SYMP:symptom", "TRANS" = "TRANS:pathogen_transmission"
     )

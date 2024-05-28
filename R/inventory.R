@@ -71,12 +71,19 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
         tidy_sparql()
 
     do_omim <- do_mappings %>%
-        dplyr::filter(stringr::str_detect(.data$mapping, "OMIM")) %>%
+        dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) %>%
         dplyr::rename(
             doid = .data$id, do_label = .data$label, do_dep = .data$dep,
             omim = .data$mapping
         ) %>%
         collapse_col(.data$mapping_type, na.rm = TRUE)
+
+    # convert OMIM: prefix to MIM: (preferred) with warning, if needed
+    if (any(stringr::str_detect(do_omim$omim, "OMIM"))) {
+        rlang::warn("`onto_path` file uses an unpreferred OMIM prefix. Converting to 'MIM'...")
+        do_omim <- do_omim %>%
+            dplyr::mutate(omim = stringr::str_replace(omim, "OMIM:", "MIM:"))
+    }
 
     out <- out %>%
         dplyr::left_join(do_omim, by = "omim") %>%
