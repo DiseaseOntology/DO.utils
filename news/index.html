@@ -60,9 +60,17 @@
 <div class="section level4">
 <h4 id="updated-development-version-1">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version-1"></a></h4>
 <ul><li>
+<code><a href="../reference/read_omim.html">read_omim()</a></code> and <code><a href="../reference/inventory_omim.html">inventory_omim()</a></code> now use the preferred “MIM:” prefix in their output instead of “OMIM:”. <code><a href="../reference/inventory_omim.html">inventory_omim()</a></code> has been modified to accept input with either prefix. <em>This coincides with changes in the Human Disease Ontology (see <a href="https://github.com/DiseaseOntology/HumanDiseaseOntology/issues/1323" class="external-link uri">https://github.com/DiseaseOntology/HumanDiseaseOntology/issues/1323</a>).</em>
+</li>
+<li>
 <code><a href="../reference/read_omim.html">read_omim()</a></code> now additionally parses official API-key requiring phenotypicSeries.txt downloads and may be able to handle additional API-key requiring downloads.</li>
 <li>
-<code>plot_citedby():     * _[BREAKING CHANGE]_</code>color_set<code>argument now requires names and one color     for each of the 7 possible publication types when specifying colors manually.     *</code>retracted` argument added to specify how retracted articles should be managed.</li>
+<code><a href="../reference/plot_citedby.html">plot_citedby()</a></code>:
+<ul><li>
+<em>[BREAKING CHANGE]</em> <code>color_set</code> argument now requires names and one color for each of the 7 possible publication types when specifying colors manually.</li>
+<li>
+<code>retracted</code> argument added to specify how retracted articles should be managed.</li>
+</ul></li>
 </ul></div>
 <div class="section level4">
 <h4 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h4>
