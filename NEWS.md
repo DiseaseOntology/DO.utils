@@ -9,11 +9,14 @@
 ## DO Management & Analysis
 
 ### Updated
+* `read_omim()` and `inventory_omim()` now use the preferred "MIM:" prefix in
+their output instead of "OMIM:". `inventory_omim()` has been modified to accept
+input with either prefix. _This coincides with changes in the Human Disease Ontology (see https://github.com/DiseaseOntology/HumanDiseaseOntology/issues/1323)._
 * `read_omim()` now additionally parses official API-key requiring
 phenotypicSeries.txt downloads and may be able to handle additional API-key
 requiring downloads.
-* `plot_citedby():
-    * _[BREAKING CHANGE]_  `color_set` argument now requires names and one color
+* `plot_citedby()`:
+    * _[BREAKING CHANGE]_ `color_set` argument now requires names and one color
     for each of the 7 possible publication types when specifying colors manually.
     * `retracted` argument added to specify how retracted articles should be
     managed.
