@@ -9,6 +9,7 @@
 #' @return
 #' A dataframe.
 #'
+#' @family Alliance functions
 #' @export
 read_alliance <- function(alliance_tsv) {
 
@@ -78,6 +79,7 @@ read_alliance <- function(alliance_tsv) {
 #' `record_lvl`, aggregated according to species/curator (`assign_to`) and,
 #' optionally, object type (`by_type`).
 #'
+#' @family Alliance functions
 #' @export
 count_alliance_records <- function(alliance_tbl, term_subset = NULL,
                                    by_type = TRUE, pivot = TRUE,
@@ -193,6 +195,8 @@ count_alliance_records <- function(alliance_tbl, term_subset = NULL,
 #'
 #' @returns
 #' Returns the `counts_tbl` with its version info footer invisibly.
+#'
+#' @family Alliance functions
 #' @export
 save_alliance_counts <- function(counts_tbl, file, ...) {
 

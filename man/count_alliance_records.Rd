@@ -60,3 +60,10 @@ that differ by seemingly unimportant information (e.g. only the date differs)
 have existed. These types of duplicates are removed prior to record counts.
 }
 
+\seealso{
+Other Alliance functions: 
+\code{\link{download_alliance_tsv}()},
+\code{\link{read_alliance}()},
+\code{\link{save_alliance_counts}()}
+}
+\concept{Alliance functions}

@@ -21,3 +21,10 @@ Returns the \code{counts_tbl} with its version info footer invisibly.
 Writes Alliance record counts to a .csv file with the version info of the
 Alliance file it came from as a footer.
 }
+\seealso{
+Other Alliance functions: 
+\code{\link{count_alliance_records}()},
+\code{\link{download_alliance_tsv}()},
+\code{\link{read_alliance}()}
+}
+\concept{Alliance functions}

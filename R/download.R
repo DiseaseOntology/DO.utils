@@ -18,6 +18,7 @@
 #' @return
 #' Path to saved file.
 #'
+#' @family Alliance functions
 #' @export
 download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
     # Use default URL, if missing

@@ -17,3 +17,10 @@ Reads in a .tsv or .tsv.gz file from the Alliance of Genome Resources
 as a tibble. It is recommended that Alliance files be downloaded using
 \code{\link[=download_alliance_tsv]{download_alliance_tsv()}}.
 }
+\seealso{
+Other Alliance functions: 
+\code{\link{count_alliance_records}()},
+\code{\link{download_alliance_tsv}()},
+\code{\link{save_alliance_counts}()}
+}
+\concept{Alliance functions}

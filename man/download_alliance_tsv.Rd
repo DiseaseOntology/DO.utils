@@ -31,3 +31,10 @@ Although it's possbile to directly read a file from the URL, downloading it
 promotes reproducibility and ensures future access if needed.
 }
 
+\seealso{
+Other Alliance functions: 
+\code{\link{count_alliance_records}()},
+\code{\link{read_alliance}()},
+\code{\link{save_alliance_counts}()}
+}
+\concept{Alliance functions}
