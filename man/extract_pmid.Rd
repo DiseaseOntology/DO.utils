@@ -28,8 +28,8 @@ method which returns a list of PubMed ID character vectors.
 \code{extract_pmid} is a generic function that extracts PubMed IDs.
 }
 \seealso{
-Other extract_pmid_methods: 
-\code{\link{extract_pmid.elink_list}()},
-\code{\link{extract_pmid.elink}()}
+Other extract_pmid documentation: 
+\code{\link{extract_pmid.elink}()},
+\code{\link{extract_pmid.elink_list}()}
 }
-\concept{extract_pmid_methods}
+\concept{extract_pmid documentation}

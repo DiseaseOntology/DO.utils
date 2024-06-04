@@ -20,8 +20,8 @@ results exist in a response; one of "error", "warning" (default),
 Extract PubMed ID from an \code{elink_list} object.
 }
 \seealso{
-Other extract_pmid_methods: 
-\code{\link{extract_pmid.elink}()},
-\code{\link{extract_pmid}()}
+Other extract_pmid documentation: 
+\code{\link{extract_pmid}()},
+\code{\link{extract_pmid.elink}()}
 }
-\concept{extract_pmid_methods}
+\concept{extract_pmid documentation}

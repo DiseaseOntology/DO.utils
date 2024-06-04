@@ -9,7 +9,7 @@
 #' A character vector of PubMed IDs, except for the `extract_pmid.elink_list`
 #' method which returns a list of PubMed ID character vectors.
 #'
-#' @family extract_pmid_methods
+#' @family extract_pmid documentation
 #' @export
 extract_pmid <- function(x, ...) {
     UseMethod("extract_pmid")
@@ -89,7 +89,7 @@ extract_pmid.data.frame <- function(x, ...) {
 #'     "message" or "none".
 #' @param ... Unused, included for generic consistency only.
 #'
-#' @family extract_pmid_methods
+#' @family extract_pmid documentation
 #' @export
 extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
                                no_result = "error", ...) {
@@ -144,7 +144,7 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
 #' @param ... Additional arguments passed on to [extract_pmid.elink()].
 #' @inheritParams extract_pmid.elink
 #'
-#' @family extract_pmid_methods
+#' @family extract_pmid documentation
 #' @export
 extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
     cond_msg <- NULL
