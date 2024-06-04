@@ -17,7 +17,7 @@ type with \code{get_url("names")}.
 
 \itemize{
 \item pub_urls: doi, github, orcid, pubmed, pmc
-\item xref_urls: ICD9CM, ICD10CM, KEGG, MESH, NCI, ORDO, OMIM, SNOMEDCT_US, UMLS_CUI
+\item xref_urls: ICD9CM, ICD10CM, KEGG, MESH, NCI, ORDO, MIM, OMIM, SNOMEDCT_US, UMLS_CUI
 \item web: DO_website
 \item data_urls: alliance_disease_tsv
 \item ns_prefix: ...includes common OBO Foundry and SPARQL prefixes; use \code{ns_prefix} to see the complete list.
