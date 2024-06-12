@@ -83,11 +83,11 @@ replace_html_counts <- function(DO_repo, svn_repo, page, reload = FALSE) {
         page,
         imports = file.path(
             svn_repo,
-            "disease_ontology/templates/resources/DO_Imports.html"
+            "templates/disease_ontology/resources/DO_Imports.html"
         ),
         slims = file.path(
             svn_repo,
-            "disease_ontology/templates/resources/DO_Slims.html"
+            "templates/disease_ontology/resources/DO_Slims.html"
         )
     )
     page_html <- readr::read_lines(page_path)
