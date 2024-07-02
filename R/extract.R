@@ -373,7 +373,7 @@ extract_subclass_axiom <- function(DO_repo) {
 #' Extract OWL/RDF as a tidygraph
 #'
 #' Extract 'nodes' and their 'parents' defined by a SPARQL `query` from OWL/RDF
-#' as a tidygraph.
+#' as a tidygraph. Utilizes [robot()].
 #'
 #' @inheritParams access_owl_xml
 #' @param query A SPARQL 1.1 query, as a string or the path to a .sparql/.rq
@@ -445,28 +445,73 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 }
 
 
+
+
+#' Extract Mappings from Ontologies
+#'
+#' Extract mappings from ontologies. Utilizes [robot()].
+#'
+#' @param onto_path The path to the ontology file, as a string.
+#' @param as_pref Whether to convert mappings to their DO-preferred equivalents,
+#' as a boolean (default: `TRUE`). For a list of preferred mapping equivalents,
+#' see [preferred_mappings].
+#' @param output The path where output will be written, as a string, or `NULL`
+#' (default) to load data directly.
+#' @inheritParams robot
+#'
+#' @returns
+#' If `output` is specified, the path to the output file with the data.
+#' Otherwise, the data as a [tibble][tibble::tibble].
+#'
+#' Mappings data will be formatted according to the
+#' [SSSOM](https://github.com/mapping-commons/sssom) specification,
+#' with an additional `status` column indicating the status (active, deprecated,
+#' etc.) of each term.
+#'
+#' @family SSSOM-related functions
+#' @export
+extract_mappings <- function(onto_path, onto_type = "obo", as_pref = TRUE,
+                             output = NULL, tidy_what = "everything") {
+    onto_type <- match.arg(onto_type, choices = c("obo", "ordo"))
+
+    if (onto_type == "ordo") {
+        out <- extract_ordo_mappings(
+            onto_path = onto_path,
+            as_pref = as_pref,
+            output = output,
+            tidy_what = tidy_what
+        )
+    } else {
+        q_file <- system.file(
+            "sparql", "mapping-default.rq",
+            package = "DO.utils",
+            mustWork = TRUE
+        )
+        out <- robot_query(
+            input = onto_path,
+            query = q_file,
+            output = output,
+            tidy_what = tidy_what,
+            col_types = readr::cols(.default = readr::col_character())
+        )
+    }
+
+    out
+}
+
+
+
+# Internal helpers --------------------------------------------------------
+
 #' Extract mappings from ORDO
 #'
 #' Extract mappings from the Orphanet Rare Disease Ontology (ORDO). ORDO uses
 #' `oboInOwl:hasDbXref` for mapping with annotations to indicate
 #' exact/broad/narrow-ness. Utilizes [robot()].
 #'
-#' @param ordo_path The path to the ORDO file, as a string.
-#' @param as_skos Whether to convert ORDO's annotated `oboInOwl:hasDbXref`
-#' mappings to their
-#' [Simple Knowledge Organization System (SKOS)](https://www.w3.org/TR/2009/REC-skos-reference-20090818/)
-#' equivalents, as a boolean (default: `TRUE`).
+#' @inheritParams extract_mappings
+#' @param as_pref Whether to convert
 #'
-#' The ORDO-skos equivalent predicates are as follows:
-#'
-#' * `"BTNT"` - `skos:narrowMatch`
-#' * `"NTBT"` - `skos:broadMatch`
-#' * `"E"` - `skos:exactMatch`
-#' * `"ND"` - `doid:undefinedMatch` (supplements SKOS)
-#' * `"W"` - `doid:notMatch` (supplements SKOS)
-#'
-#' @param output The path where output will be written, as a string, or `NULL`
-#' (default) to load data directly.
 #' @inheritParams robot_query
 #'
 #' @returns
@@ -478,14 +523,16 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #' with an additional `status` column indicating the status (active, deprecated,
 #' etc.) of each ORPHA term.
 #'
-#' If `as_skos = FALSE`, ORDO's text-based `oboInOwl:hasDbXref` annotations
+#' If `as_pref = FALSE`, ORDO's text-based `oboInOwl:hasDbXref` annotations
 #' denoting the type of relationship the Xref represents (simple text code only)
-#' will be included in the `predicate_modifier` column.
+#' will be included in the `predicate_modifier` column (_not in scope for SSSOM
+#' spec_).
 #'
-#' @export
-extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
+#' @rdname extract_mappings
+#' @keywords internal
+extract_ordo_mappings <- function(onto_path, as_pref = TRUE, output = NULL,
                                   tidy_what = "everything") {
-    if (isTRUE(as_skos)) {
+    if (isTRUE(as_pref)) {
         q_nm <- "mapping-ordo-skos.rq"
     } else {
         q_nm <- "mapping-ordo.rq"
@@ -493,7 +540,7 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 
     q_file <- system.file("sparql", q_nm, package = "DO.utils", mustWork = TRUE)
     out <- robot_query(
-        input = ordo_path,
+        input = onto_path,
         query = q_file,
         output = output,
         tidy_what = tidy_what,
@@ -502,3 +549,29 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 
     out
 }
+
+
+#' DO-Preferred Mapping Predicates
+#'
+#' The mapping predicates preferred and used by the Human Disease Ontology are
+#' `oboInOwl:hasDbXref` and those defined by the
+#' [Simple Knowledge Organization System (SKOS)](https://www.w3.org/TR/2009/REC-skos-reference-20090818/).
+#' In DO, `oboInOwl:hasDbXref` is used to cross-reference the _closest term in_
+#' _a given vocabulary_. For the most part, `oboInOwl:hasDbXref` will be
+#' equivalent to `skos:exactMatch`. However, when an exact match does not exist
+#' between a given term in a clinical vocabulary and _any_ term in DO, the close
+#'
+#' ORDO's annotated `oboInOwl:hasDbXref`
+#' mappings to their DO-preferred equivalents, as a boolean (default: `TRUE`).
+#'
+#' | ORDO predicate | DO-preferred equivalent | ORDO description (SOP_v2) |
+#' | -------------- | ----------------------- | ------------------------- |
+#' | `"E"` | `skos:exactMatch` | exact mapping (the terms and the concepts are equivalent) |
+#' | `"NTBT"` | `skos:broadMatch` | narrower term maps to a broader term |
+#' | `"BTNT"` | `skos:narrowMatch` | broader term maps to a narrower term |
+#' | `"W"` | `skos:exactMatch` with `predicate_modifier` = `Not` | incorrect mapping (two different concepts) |
+#' | `"ND"` | `doid:undefinedMatch` | not yet decided/unable to decide |
+#' | `"W/E"` | `skos:exactMatch` with `predicate_modifier` = `Not` | incorrect mapping (two different concepts) but syntactically exact mapping to a synonym or a preferred term in the target terminology |
+#' | `"NTBT/E"` | `doid:undefinedMatch` | narrower term maps to a broader term because of an exact mapping with a synonym in the target terminology |
+#' | `"BTNT/E"` | `doid:undefinedMatch` | broader term maps to a narrower term because of an exact mapping with a synonym in the target terminology |
+"preferred_mappings"

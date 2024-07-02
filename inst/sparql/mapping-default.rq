@@ -1,0 +1,23 @@
+# SPARQL query: Extract all mappings to SSSOM
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX ORPHA: <http://www.orpha.net/ORDO/Orphanet_>
+
+SELECT ?subject_id ?subject_label ?predicate_id ?object_id ?status
+WHERE {
+    VALUES ?predicate_id {
+        oboInOwl:hasDbXref
+        skos:exactMatch skos:closeMatch skos:broadMatch skos:narrowMatch
+        skos:relatedMatch
+    }
+    ?subject_id rdfs:label ?subject_label ;
+        ?predicate_id ?object_id .
+
+    OPTIONAL { ?subject_id owl:deprecated ?dep }
+
+    # clean up output: F where missing
+    BIND(if(BOUND(?dep), "deprecated", "active") AS ?status)
+}

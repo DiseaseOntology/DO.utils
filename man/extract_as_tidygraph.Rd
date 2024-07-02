@@ -23,7 +23,7 @@ Returns all intermediate objects as part of output.}
 }
 \description{
 Extract 'nodes' and their 'parents' defined by a SPARQL \code{query} from OWL/RDF
-as a tidygraph.
+as a tidygraph. Utilizes \code{\link[=robot]{robot()}}.
 }
 \section{Query Requirements}{
 

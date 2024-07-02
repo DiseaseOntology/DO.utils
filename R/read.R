@@ -250,6 +250,81 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
     df
 }
 
+#' Read SSSOM file
+#'
+#' Reads an SSSOM file (as .csv/.tsv) in as a data.frame.
+#'
+#' @inheritParams read_delim_auto
+#' @param unofficial_cols Response desired when columns outside the SSSOM spec
+#' are found in the file, as a string. One of "warning" (default), "error", or
+#' "allow".
+#'
+#' @family SSSOM-related functions
+#' @export
+read_sssom <- function(file, unofficial_cols = "warning") {
+    unofficial_cols <- match.arg(
+        unofficial_cols,
+        choices = c("warning", "error", "allow")
+    )
+
+    # # parse & capture SSSOM file info
+    # raw <- readr::read_lines(file)
+    # header_rng <- stringr::str_detect(raw, "^#") %>%
+    #     which() %>%
+    #     to_range() %>%
+    #     stringr::str_replace("(1[\-,].).+", "\\1") %>%
+    #     stringr::str_split("[\-,]") %>%
+    #     .[[1]]
+    # yml <-
+
+    out <- read_delim_auto(
+        file,
+        comment = "#",
+        col_types = readr::cols(
+            # mapping_cardinality = readr::col_integer(),
+            mapping_date = readr::col_date(),
+            # publication_date = readr::col_date(),
+            # confidence = readr::col_double(),
+            # semantic_similarity_score = readr::col_double(),
+            .default = readr::col_character()
+        )
+    )
+
+    sssom_official_cols <- c(
+        "subject_id", "subject_label", "subject_category", "predicate_id",
+        "predicate_label", "predicate_modifier", "object_id", "object_label",
+        "object_category", "mapping_justification", "author_id", "author_label",
+        "reviewer_id", "reviewer_label", "creator_id", "creator_label",
+        "license", "subject_type", "subject_source", "subject_source_version",
+        "object_type", "object_source", "object_source_version",
+        "mapping_provider", "mapping_source", "mapping_cardinality",
+        "mapping_tool", "mapping_tool_version", "mapping_date",
+        "publication_date", "confidence", "curation_rule",
+        "curation_rule_text", "subject_match_field", "object_match_field",
+        "match_string", "subject_preprocessing", "object_preprocessing",
+        "semantic_similarity_score", "semantic_similarity_measure", "see_also",
+        "issue_tracker_item", "other", "comment"
+    )
+    other_cols <- names(cols)[!names(cols) %in% sssom_official_cols]
+    if (length(other_cols) > 0 && unofficial_cols != "allow") {
+        if (length(other_cols) > 3) {
+            cols_report <- paste0(
+                vctr_to_string(other_cols[1:3], delim = ", "),
+                ", (+", length(other_cols) - 3, ")"
+            )
+        } else {
+            cols_report <- vctr_to_string(other_cols, delim = ", ")
+        }
+
+        rlang::signal(
+            paste0("Unofficial columns exist in SSSOM data:", cols_report),
+            class = unofficial_cols
+        )
+    }
+
+    out
+}
+
 
 # INTERNAL readers --------------------------------------------------------
 
