@@ -251,3 +251,32 @@ list_to_man <- function(x, ordered = FALSE) {
 
     vctr_to_string(man_list, delim = "\n")
 }
+
+
+# For updating internal data store ----------------------------------------
+
+use_data_internal <- function(..., overwrite = FALSE, compress = "bzip2",
+                              version = 2, ascii = FALSE) {
+    dots_as_strings <- rlang::enexprs(...) %>%
+        purrr::map_chr(rlang::as_string)
+    sysdata <- load("R/sysdata.rda")
+
+    obj_exist <- intersect(dots_as_strings, sysdata)
+    if (length(obj_exist) > 0 && !overwrite) {
+        rlang::abort(
+            c(
+                "Internal data already exists. Use `overwrite = TRUE` to overwrite.",
+                purrr::set_names(obj_exist, rep("x", length(obj_exist)))
+            )
+        )
+    }
+
+    save(
+        list = union(sysdata, dots_as_strings),
+        file = "R/sysdata.rda",
+        compress = compress,
+        version = version,
+        ascii = ascii,
+        envir = parent.frame()
+    )
+}
