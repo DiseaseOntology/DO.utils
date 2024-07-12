@@ -48,7 +48,8 @@ Suggests:
     tidygraph,
     waldo,
     keyring,
-    withr
+    withr,
+    yaml
 Config/testthat/edition: 3
 Config/reticulate:
     list(
