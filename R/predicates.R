@@ -278,12 +278,12 @@ is_valid_doid <- function(x) {
 is_curie <- function(x, def = "obo_generic") {
     def <- match.arg(def, choices = c("obo", "obo_generic", "w3c", "w3c_safe"))
 
-    if (def == "obo") pattern <- "^[A-Za-z_]+:[[:digit:]]+$"
-    if (def == "obo_generic") pattern <- "^[A-Za-z_]+:[[:alnum:]#_]+$"
-    if (def == "w3c") pattern <- "^[[:alnum:].-_]+:[[:graph:]]+$"
-    if (def == "w3c_safe") pattern <- "^\\[[[:alnum:].-_]+:[[:graph:]]+\\]$"
-
-    stringr::str_detect(x, pattern) & !stringr::str_detect(x, "^_:")
+    if (def == "obo") pattern <- "^[A-Za-z][A-Za-z0-9_.-]*[A-Za-z0-9_]:[0-9]+$"
+    if (def == "obo_generic") pattern <- "^[[A-Za-z]][A-Za-z0-9_.-]*[A-Za-z0-9_]:[A-Za-z0-9#_]+$"
+    if (def == "w3c") pattern <- "^[A-Za-z_][A-Za-z0-9.-_]*:[[:graph:]]+$"
+    if (def == "w3c_safe") pattern <- "^\\[[A-Za-z_][A-Za-z0-9._-]*:[[:graph:]]+\\]$"
+    # ^[A-Za-z_][A-Za-z0-9_.-]*[A-Za-z0-9_]:[^\\s]+$
+    stringr::str_detect(x, pattern)
 }
 
 #' Test for All Values

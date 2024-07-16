@@ -129,3 +129,74 @@ robot_query <- function(input, query, output = NULL, ...,
     }
     out
 }
+
+#' More powerful diff that relies on ROBOT export instead of robot diff
+# robot_diff <- function(old, new, output = NULL) {
+#     input <- c(old = old, new = new)
+#     temp_tsv <- c(
+#         temp1 = tempfile(fileext = ".tsv"),
+#         temp2 = tempfile(fileext = ".tsv")
+#     )
+#     on.exit(unlink(temp_tsv))
+#
+#     prop_query <- system.file(
+#         "sparql/all-class-predicates.rq",
+#         package = "DO.utils",
+#         mustWork = TRUE
+#     )
+#     prop <- purrr::map2(
+#         input,
+#         temp_tsv,
+#         ~ vctr_to_string(
+#             robot_query(
+#                 input = .x,
+#                 query = prop_query,
+#                 tidy_what = "everything"
+#             )$predicate
+#         )
+#     )
+#
+#     export <- purrr::pmap(
+#         input,
+#         prop,
+#         temp_tsv,
+#         function(.i, .p, .o) {
+#             robot("export", i = .i, header = sandwich_text(.p, '"'), e = .o)
+#             out <- readr::read_tsv(
+#                 .o,
+#                 col_types = col_types,
+#                 show_col_types = FALSE
+#             )
+#             tidy_sparql(out, tidy_what = "everything")
+#         }
+#     )
+#
+#     # output handling
+#     if (is.null(output)) {
+#         to_stdout <- TRUE
+#         output <- temp_tsv
+#     } else {
+#         to_stdout <- FALSE
+#     }
+#
+#     # handle output
+#     if (isFALSE(to_stdout)) {
+#         return(output)
+#     }
+#
+#     if (q_type == "ask") {
+#         ask_res <- readr::read_file(output)
+#         out <- switch(ask_res, true = TRUE, false = FALSE, ask_res)
+#     } else {
+#         out <- readr::read_tsv(
+#             output,
+#             col_types = col_types,
+#             show_col_types = FALSE
+#         )
+#         out <- tidy_sparql(out, tidy_what)
+#     }
+#     out
+# }
+# }
+
+

@@ -288,29 +288,46 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' Extracts the classes and parents of a DO subtree from a `pyDOID.owl.xml`
 #' object.
 #'
-#' @inheritParams access_owl_xml
-#' @param top_node The top node of the tree, as a valid DOID (see
-#'     [is_valid_doid()] for valid input formats).
-#' @param reload Force reload the file into memory, as `TRUE` or `FALSE`
-#'     (default).
+
+#' @param top_node The full URI of the top node of the desired subtree, as a
+#' string.
+#' @param top_node_id The top node of the tree, as a string matching an
+#' `oboInOwl:id` in `x`.
+#' @inheritDotParams robot_query
 #'
 #' @returns
-#' A [tibble][tibble::tibble] with the columns: `id`, `label`, `parent_id`,
-#' and `parent_label`, with one row for each unique combination for each
-#' subclass below and including `top_node`.
+#' If `output = NULL` (default), a [tibble][tibble::tibble] with the columns:
+#' `id`, `label`, `parent_id`, and `parent_label`, with one row for each unique
+#' combination for each subclass below and including specified top node.
+#' Otherwise, the same data written to the specified file.
 #'
 #' @seealso [format_subtree()] to arrange data in a tree structure similar to
 #' ontology browsers.
 #' @export
-extract_subtree <- function(x, top_node, reload = FALSE) {
-    owl <- access_owl_xml(x)
-    assert_string(top_node)
+extract_subtree <- function(x, top_node = NULL, top_node_id = NULL,
+                            prefix = "", tidy_what = "everything", ...) {
+    stopifnot(
+        "One of `top_node` or `top_node_id` must be specified." = !is.null(top_node) || !is.null(top_node_id),
+        "Only one of `top_node` or `top_node_id` should be specified." = !(is.null(top_node) && is.null(top_node_id))
+    )
+    if (!is.null(top_node)) {
+        # need to add is_uri test for top_node
+        top_node_triple <- glueV("?top_class oboInOwl:id !<< top_node_id >>! .")
+    } else {
+        if(!is_curie(top_node_id, def = "w3c")) {
+            rlang::abort(
+                "`top_node_id` must be a valid CURIE. See is_curie(x, def = 'w3c')."
+            )
+        }
+        top_node_triple <- glueV("VALUES ?top_class { !<< top_node_id >>! }")
+    }
+    q_template <- system.file("sparql/template/subtree_extract.rq", mustWork = TRUE)
+    q <- tempfile(fileext = ".rq")
+    readr::read_file(q_template) %>%
+        glueV(top_node_triple = top_node_triple) %>%
+        readr::write_file(q)
 
-    top_class <- format_doid(top_node, as = "obo_CURIE")
-    q <- glue::glue(subtree_query_glue)
-    subtree <- owl$query(q, reload = reload) %>%
-        tibble::as_tibble()
-
+    subtree <- robot_query(x, q, tidy_what = tidy_what, ...)
     subtree
 }
 
@@ -465,8 +482,8 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #'
 #' Mappings data will be formatted according to the
 #' [SSSOM](https://github.com/mapping-commons/sssom) specification,
-#' with an additional `status` column indicating the status (active, deprecated,
-#' etc.) of each term.
+#' with an additional `subject_status` in the `other` column indicating the
+#' status (active, deprecated, etc.) of each term in the ontology file.
 #'
 #' @family SSSOM-related functions
 #' @export
@@ -496,7 +513,7 @@ extract_mappings <- function(onto_path, onto_type = "obo", as_pref = TRUE,
         )
     }
 
-    out
+    # out <-
 }
 
 

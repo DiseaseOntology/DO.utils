@@ -174,6 +174,9 @@ match_arg_several <- function(arg, choices) {
     arg
 }
 
+#
+# cols_specify <- function(cols, types = NULL) {
+#     types
 
 # For producing messages --------------------------------------------------
 

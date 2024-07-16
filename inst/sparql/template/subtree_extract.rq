@@ -1,0 +1,18 @@
+# Extract subtree with specified top_class
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT ?id ?label ?parent_id ?parent_label
+WHERE {
+    !!<top_node_triple>>!
+    ?class a owl:Class ;
+        rdfs:subClassOf* ?top_class ;
+        rdfs:subClassOf ?parent ;
+        oboInOwl:id ?id ;
+        rdfs:label ?label .
+    ?parent oboInOwl:id ?parent_id ;
+        rdfs:label ?parent_label .
+    FILTER(!isblank(?parent))
+}
