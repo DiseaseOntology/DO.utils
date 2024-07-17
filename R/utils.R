@@ -206,6 +206,11 @@ trunc_cat_n <- function(x, n, delim = ", ", unique = TRUE, na.rm = FALSE,
     msg
 }
 
+# creates a message for `...` that shows the values in it as part of the message,
+# when applicable (using .which arg)
+#
+# .which = logical/numeric vector indicating positions in `...` to include
+#   in message
 msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {
     dots <- rlang::exprs(...)
     arg <- msg_dots_(dots)
