@@ -23,13 +23,16 @@ utils::globalVariables("where")
 #' [to_curie()].
 #' * `"lgl_NA_false"` to replace `NA` in logical columns with `FALSE`.
 #' * `"as_tibble"` to make the output a [tibble][tibble::tibble].
+#' * `"rm_lang_tag"` to remove language tags. Tags will only be removed from
+#' `character` class columns, and then only if there is one unique language tag
+#' in the given column.
 #' * `"nothing"` to prevent all tidying.
 #' @inheritDotParams to_curie -x
 #'
 #' @export
 tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
     what_opts <- c("header", "unnest", "uri_to_curie", "lgl_NA_FALSE",
-                          "as_tibble")
+                          "as_tibble", "rm_lang_tag")
     tidy_what <- match.arg(
         tidy_what,
         choices = c(what_opts, "everything", "nothing"),
@@ -63,6 +66,46 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
 
     if ("as_tibble" %in% tidy_what) {
         res <- tibble::as_tibble(res)
+    }
+
+    if ("rm_lang_tag" %in% tidy_what) {
+        col_tags <- purrr::map(
+            res,
+            function(.x) {
+                if (!is.character(.x)) return(character(0))
+                stringr::str_extract_all(.x, "@[a-z]{2}") %>%
+                    unlist() %>%
+                    na.omit() %>%
+                    unique()
+            }
+        )
+        mult_tag <- purrr::map_lgl(col_tags, ~ length(.x) > 1)
+
+        if (any(mult_tag)) {
+            mt_col <- names(col_tags)[mult_tag]
+            col_tag_cat <- purrr::map_chr(
+                col_tags[mult_tag],
+                ~  trunc_cat_n(
+                    stringr::str_remove(.x, "^@"),
+                    5
+                )
+            )
+            col_msg <- paste0(mt_col, ": ", col_tag_cat)
+            rlang::inform(
+                c(
+                    "Multiple language tags were found and retained in the following columns:",
+                    purrr::set_names(col_msg, rep("i", length(col_msg)))
+                )
+            )
+        }
+
+        res <- dplyr::mutate(
+            res,
+            dplyr::across(
+                names(col_tags)[!mult_tag],
+                ~ stringr::str_remove(.x, "@[a-z]{2}")
+            )
+        )
     }
 
     res
