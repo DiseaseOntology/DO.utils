@@ -177,6 +177,35 @@ match_arg_several <- function(arg, choices) {
 
 # For producing messages --------------------------------------------------
 
+# concatenates vector input `x` replacing values with the quantity dropped
+# when `x` is longer than `n` (optionally dropping duplicates)
+trunc_cat_n <- function(x, n, delim = ", ", unique = TRUE, na.rm = FALSE,
+                        sort = FALSE, decreasing = FALSE, ...) {
+    if (unique) x <- unique(x)
+    if (length(x) > n) {
+        x_cat <- vctr_to_string(
+            x[1:n],
+            delim = delim,
+            na.rm = na.rm,
+            sort = sort,
+            decreasing = decreasing,
+            ...
+        )
+        msg <- paste0(x_cat, " [+", length(x) - n, " more]")
+    } else {
+        msg <- vctr_to_string(
+            x,
+            delim = delim,
+            na.rm = na.rm,
+            sort = sort,
+            decreasing = decreasing,
+            ...
+        )
+    }
+
+    msg
+}
+
 msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {
     dots <- rlang::exprs(...)
     arg <- msg_dots_(dots)
