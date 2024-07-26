@@ -5,17 +5,22 @@
 #' @param x A string or character vector.
 #' @param placeholder One or two placeholders to sandwich each element of `x`
 #'     between. When two placeholders are provided, `x` will be sandwiched
-#'     between them with the first on the left and second on the right.
-#'     Otherwise, `x` will be sandwiched on both sides by the same placeholder.
-#' @inheritDotParams base::paste0
+#'     between them with the first at the start and second at the end.
+#'     Otherwise, `x` will be sandwiched at both start and end by the same
+#'     placeholder.
+#' @param add_dup Whether to add placeholders even if the same character is
+#'     already found in that position, as a boolean (default: `TRUE`).
 #'
 #' @examples
 #' sandwich_text("a", placeholder = "h")
 #' sandwich_text("a", placeholder = c("b", "h"))
+#' sandwich_text("bah", placeholder = c("b", "h"), add_dup = TRUE)
+#' sandwich_text("bah", placeholder = c("b", "h"), add_dup = FALSE)
+#' sandwich_text("bah", placeholder = "h", add_dup = FALSE)
 #'
 #' @family general utilities
 #' @export
-sandwich_text <- function(x, placeholder, ...) {
+sandwich_text <- function(x, placeholder, add_dup = TRUE) {
     if (length(placeholder) < 1 ||
         length(placeholder) > 2 ||
         !is.character(placeholder)
@@ -23,11 +28,20 @@ sandwich_text <- function(x, placeholder, ...) {
         stop("`placeholder` must be a length-1 or -2 character vector.")
     }
 
-    if (length(placeholder) == 1) {
-        out <- paste0(placeholder, x, placeholder, ...)
+    placeholder2 <- rep(placeholder, length(placeholder) %% 2 + 1)
+    if (add_dup) {
+        pattern <- c("^", "$")
     } else {
-        out <- paste0(placeholder[1], x, placeholder[2], ...)
+        opt_placeholder <- paste0(placeholder2, "?")
+        pattern <- paste0(c("^", opt_placeholder[2]), c(opt_placeholder[1], "$"))
     }
+
+    out <- x
+    purrr::map2(
+        pattern,
+        placeholder2,
+        function(.p, .r) out <<- stringr::str_replace(out, .p, .r)
+    )
 
     if (!is.null(names(x))) {
         names(out) <- names(x)

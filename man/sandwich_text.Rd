@@ -4,27 +4,19 @@
 \alias{sandwich_text}
 \title{Sandwich Text Between Placeholders}
 \usage{
-sandwich_text(x, placeholder, ...)
+sandwich_text(x, placeholder, add_dup = TRUE)
 }
 \arguments{
 \item{x}{A string or character vector.}
 
 \item{placeholder}{One or two placeholders to sandwich each element of \code{x}
 between. When two placeholders are provided, \code{x} will be sandwiched
-between them with the first on the left and second on the right.
-Otherwise, \code{x} will be sandwiched on both sides by the same placeholder.}
+between them with the first at the start and second at the end.
+Otherwise, \code{x} will be sandwiched at both start and end by the same
+placeholder.}
 
-\item{...}{
-  Arguments passed on to \code{\link[base:paste]{base::paste0}}
-  \describe{
-    \item{\code{collapse}}{an optional character string to separate the results.  Not
-    \code{\link[base]{NA_character_}}.}
-    \item{\code{recycle0}}{\code{\link[base]{logical}} indicating if zero-length
-    character arguments should lead to the zero-length
-    \code{\link[base]{character}(0)} after the \code{sep}-phase (which turns into
-    \code{""} in the \code{collapse}-phase, i.e., when \code{collapse} is
-    not \code{NULL}).}
-  }}
+\item{add_dup}{Whether to add placeholders even if the same character is
+already found in that position, as a boolean (default: \code{TRUE}).}
 }
 \description{
 Sandwiches strings between one or two placeholders.
@@ -32,6 +24,9 @@ Sandwiches strings between one or two placeholders.
 \examples{
 sandwich_text("a", placeholder = "h")
 sandwich_text("a", placeholder = c("b", "h"))
+sandwich_text("bah", placeholder = c("b", "h"), add_dup = TRUE)
+sandwich_text("bah", placeholder = c("b", "h"), add_dup = FALSE)
+sandwich_text("bah", placeholder = "h", add_dup = FALSE)
 
 }
 \concept{general utilities}

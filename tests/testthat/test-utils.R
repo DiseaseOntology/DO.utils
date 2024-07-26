@@ -9,11 +9,22 @@ test_that("sandwich_text() works", {
         sandwich_text(c("ally", "ail"), "s"),
         c("sallys", "sails")
     )
-    expect_equal(
-        sandwich_text(c("es", "a", "oo"), "t", collapse = ", "),
-        "test, tat, toot"
-    )
     expect_error(sandwich_text("a", 1))
+})
+
+test_that("sandwich_text() add_dup argument works", {
+    expect_equal(
+        sandwich_text("bah", placeholder = c("b", "h"), add_dup = TRUE),
+        "bbahh"
+    )
+    expect_equal(
+        sandwich_text("bah", placeholder = c("b", "h"), add_dup = FALSE),
+        "bah"
+    )
+    expect_equal(
+        sandwich_text("bah", placeholder = "h", add_dup = FALSE),
+        "hbah"
+    )
 })
 
 
