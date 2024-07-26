@@ -21,7 +21,7 @@ character vector. One or more of the following:
 \item \code{"unnest"} to unnest list columns with \code{\link[=unnest_cross]{unnest_cross()}}.
 \item \code{"uri_to_curie"} to convert all URIs recognized by DO.utils to CURIEs with
 \code{\link[=to_curie]{to_curie()}}.
-\item \code{"lgl_NA_false"} to replace \code{NA} in logical columns with \code{FALSE}.
+\item \code{"lgl_NA_FALSE"} to replace \code{NA} in logical columns with \code{FALSE}.
 \item \code{"as_tibble"} to make the output a \link[tibble:tibble]{tibble}.
 \item \code{"rm_lang_tag"} to remove language tags. Tags will only be removed from
 \code{character} class columns, and then only if there is one unique language tag

@@ -21,7 +21,7 @@ utils::globalVariables("where")
 #' * `"unnest"` to unnest list columns with [unnest_cross()].
 #' * `"uri_to_curie"` to convert all URIs recognized by DO.utils to CURIEs with
 #' [to_curie()].
-#' * `"lgl_NA_false"` to replace `NA` in logical columns with `FALSE`.
+#' * `"lgl_NA_FALSE"` to replace `NA` in logical columns with `FALSE`.
 #' * `"as_tibble"` to make the output a [tibble][tibble::tibble].
 #' * `"rm_lang_tag"` to remove language tags. Tags will only be removed from
 #' `character` class columns, and then only if there is one unique language tag
