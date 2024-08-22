@@ -233,6 +233,7 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
                     .data$inheritance == "AD" ~ "autosomal dominant inheritance",
                     .data$inheritance == "XLR" ~ "X-linked recessive inheritance",
                     .data$inheritance == "XLD" ~ "X-linked recessive inheritance",
+                    .data$inheritance == "XL" ~ "X-linked inheritance",
                     stringr::str_detect(.data$inheritance, stringr::coll("AR")) &
                         stringr::str_detect(.data$inheritance, stringr::coll("AD")) ~ "autosomal inheritance",
                     stringr::str_detect(.data$inheritance, stringr::coll("XLR")) &
