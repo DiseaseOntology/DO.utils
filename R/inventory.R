@@ -82,7 +82,9 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
     if (any(stringr::str_detect(do_omim$omim, "OMIM"))) {
         rlang::warn("`onto_path` file uses an unpreferred OMIM prefix. Converting to 'MIM'...")
         do_omim <- do_omim %>%
-            dplyr::mutate(omim = stringr::str_replace(omim, "OMIM:", "MIM:"))
+            dplyr::mutate(
+                omim = stringr::str_replace(.data$omim, "OMIM:", "MIM:")
+            )
     }
 
     out <- out %>%

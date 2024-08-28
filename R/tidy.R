@@ -75,7 +75,7 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
                 if (!is.character(.x)) return(character(0))
                 stringr::str_extract_all(.x, "@[a-z]{2}") %>%
                     unlist() %>%
-                    na.omit() %>%
+                    stats::na.omit() %>%
                     unique()
             }
         )
