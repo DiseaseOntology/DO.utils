@@ -270,6 +270,8 @@ msg_dots_ <- function(x) {
 
 # For creating code-formatted text in manuals programmatically ------------
 
+# makes elements in `x` appear as code in documentation
+#   see R/data.R DO_colors for examples on how this works
 vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
     if (use_names) x <- names(x)
     if (!is.null(regex)) x <- x[stringr::str_detect(x, regex)]
