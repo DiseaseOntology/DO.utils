@@ -28,7 +28,9 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
         stop("`placeholder` must be a length-1 or -2 character vector.")
     }
 
-    placeholder2 <- rep(placeholder, length(placeholder) %% 2 + 1)
+    placeholder2 <- stringr::str_escape(
+        rep(placeholder, length(placeholder) %% 2 + 1)
+    )
     if (add_dup) {
         pattern <- c("^", "$")
     } else {

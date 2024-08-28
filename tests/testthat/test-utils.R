@@ -27,6 +27,10 @@ test_that("sandwich_text() add_dup argument works", {
     )
 })
 
+test_that("sandwich_text() works with metacharacters", {
+    expect_equal(sandwich_text("a", c("\\code{", "}")), "\\code{a}")
+    expect_equal(sandwich_text("a", "\\1"), "\\1a\\1")
+})
 
 # length_sort() tests -----------------------------------------------------
 
