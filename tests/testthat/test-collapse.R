@@ -142,6 +142,25 @@ test_that("collapse_col() works", {
     expect_identical(collapse_col(cc_df, c(y, z)), yz_unique)
 })
 
+test_that("collapse_col works with various tidyselectors", {
+    expect_identical(collapse_col(cc_df, dplyr::contains("x")), x_unique)
+    expect_identical(collapse_col(cc_df, dplyr::starts_with("x")), x_unique)
+    expect_identical(collapse_col(cc_df, dplyr::ends_with("x")), x_unique)
+    expect_identical(collapse_col(cc_df, dplyr::all_of(c("x", "z"))), xz_unique)
+    expect_identical(collapse_col(cc_df, dplyr::matches("x|z")), xz_unique)
+    expect_identical(
+        collapse_col(cc_df, dplyr::starts_with("z") | dplyr::ends_with("x")),
+        xz_unique
+    )
+})
+
+test_that("collapse_col works with negative col selectors", {
+    expect_identical(collapse_col(cc_df, -y), xz_unique)
+    expect_identical(collapse_col(cc_df, -dplyr::matches("y|z")), x_unique)
+    expect_identical(collapse_col(cc_df, !y), xz_unique)
+    expect_identical(collapse_col(cc_df, !dplyr::matches("y|z")), x_unique)
+})
+
 test_that("collapse_col(): duplicated rows (3-4) are always collapsed", {
     expect_unique_rows(collapse_col(cc_df, y), nrow(cc_df) - 1)
 })

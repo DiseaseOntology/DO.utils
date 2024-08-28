@@ -48,6 +48,11 @@ collapse_col(cc_df, x)
 collapse_col(cc_df, z)
 collapse_col(cc_df, c(x, z))
 
+# negative & tidy selection works; all equivalent to collapse_col(cc_df, c(x, z))
+collapse_col(cc_df, -y)
+collapse_col(cc_df, dplyr::matches("x|z"))
+collapse_col(cc_df, -dplyr::all_of("y"))
+
 }
 \seealso{
 \code{\link[=collapse_col_flex]{collapse_col_flex()}} for a more flexible approach and

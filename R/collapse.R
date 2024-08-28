@@ -73,6 +73,11 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #' collapse_col(cc_df, z)
 #' collapse_col(cc_df, c(x, z))
 #'
+#' # negative & tidy selection works; all equivalent to collapse_col(cc_df, c(x, z))
+#' collapse_col(cc_df, -y)
+#' collapse_col(cc_df, dplyr::matches("x|z"))
+#' collapse_col(cc_df, -dplyr::all_of("y"))
+#'
 #' @seealso [collapse_col_flex()] for a more flexible approach and
 #' [lengthen_col()] for the pseudo-reverse operation that lengthens/expands
 #' one or more specified columns.
@@ -82,12 +87,11 @@ collapse_col <- function(df, .cols, delim = "|", method = "unique",
                          na.rm = FALSE) {
     valid_methods <- c("unique", "first", "last")
     method <- match.arg(method, choices = valid_methods)
-
     df %>%
         dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
         dplyr::summarize(
             dplyr::across(
-                .cols = {{ .cols }},
+                .cols = dplyr::everything(),
                 .fns = ~ collapse_method(
                     .x,
                     method = method,
@@ -97,7 +101,7 @@ collapse_col <- function(df, .cols, delim = "|", method = "unique",
             )
         ) %>%
         dplyr::ungroup() %>%
-        dplyr::select(dplyr::one_of(names(df)))
+        dplyr::select(dplyr::all_of(names(df)))
 }
 
 
@@ -186,7 +190,7 @@ collapse_col_flex <- function(df, ..., method = "unique",
         dplyr::group_by(dplyr::across(-{{ collapse_vars }})) %>%
         dplyr::summarize(
             dplyr::across(
-                .cols = {{ collapse_vars }},
+                .cols = dplyr::everything(),
                 .fns = ~ collapse_method(
                     .x,
                     c_method[[dplyr::cur_column()]],
@@ -195,5 +199,5 @@ collapse_col_flex <- function(df, ..., method = "unique",
             )
         ) %>%
         dplyr::ungroup() %>%
-        dplyr::select(dplyr::one_of(names(df)))
+        dplyr::select(dplyr::all_of(names(df)))
 }
