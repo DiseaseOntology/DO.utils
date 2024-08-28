@@ -28,8 +28,12 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
         stop("`placeholder` must be a length-1 or -2 character vector.")
     }
 
-    placeholder2 <- stringr::str_escape(
-        rep(placeholder, length(placeholder) %% 2 + 1)
+    # str_replace_all code from stringr::str_escape() without $, because
+    #   stringr::str_replace() already has special handling to escape $
+    placeholder2 <- stringr::str_replace_all(
+        rep(placeholder, length(placeholder) %% 2 + 1),
+        "([.^\\\\|*+?{}\\[\\]()])",
+        "\\\\\\1"
     )
     if (add_dup) {
         pattern <- c("^", "$")
