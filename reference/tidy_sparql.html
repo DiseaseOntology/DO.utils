@@ -9,7 +9,7 @@ tidy_what parameter for details)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,11 @@ character vector. One or more of the following:</p><ul><li><p><code>"everything"
 <li><p><code>"unnest"</code> to unnest list columns with <code><a href="unnest_cross.html">unnest_cross()</a></code>.</p></li>
 <li><p><code>"uri_to_curie"</code> to convert all URIs recognized by DO.utils to CURIEs with
 <code><a href="to_curie.html">to_curie()</a></code>.</p></li>
-<li><p><code>"lgl_NA_false"</code> to replace <code>NA</code> in logical columns with <code>FALSE</code>.</p></li>
+<li><p><code>"lgl_NA_FALSE"</code> to replace <code>NA</code> in logical columns with <code>FALSE</code>.</p></li>
 <li><p><code>"as_tibble"</code> to make the output a <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a>.</p></li>
+<li><p><code>"rm_lang_tag"</code> to remove language tags. Tags will only be removed from
+<code>character</code> class columns, and then only if there is one unique language tag
+in the given column.</p></li>
 <li><p><code>"nothing"</code> to prevent all tidying.</p></li>
 </ul></dd>
 

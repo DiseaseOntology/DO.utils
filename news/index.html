@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,34 +37,55 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.2" id="doutils-032">DO.utils 0.3.2<a class="anchor" aria-label="anchor" href="#doutils-032"></a></h2>
 <div class="section level3">
-<h3 id="general-development-version">General<a class="anchor" aria-label="anchor" href="#general-development-version"></a></h3>
+<h3 id="general-0-3-2">General<a class="anchor" aria-label="anchor" href="#general-0-3-2"></a></h3>
 </div>
 <div class="section level3">
-<h3 id="updated-development-version">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version"></a></h3>
+<h3 id="updates-0-3-2">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-2"></a></h3>
 <ul><li>
-<code><a href="../reference/is_invariant.html">is_invariant()</a></code> no works for more than just character &amp; numeric vectors, with new <code>list</code> and <code>data.frame</code> methods and a <code>default</code> method that should be able to handle more cases (and replaces the <code>character</code> method).</li>
+<code><a href="../reference/is_invariant.html">is_invariant()</a></code> now works for more than just character &amp; numeric vectors, with new <code>list</code> and <code>data.frame</code> methods and a <code>default</code> method that should be able to handle more cases (and replaces the <code>character</code> method).</li>
+<li>
+<code><a href="../reference/sandwich_text.html">sandwich_text()</a></code> revised with new <code>add_dup</code> argument to control whether placeholders are added when they already exist at the start and end of strings.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="do-management--analysis-development-version">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-development-version"></a></h3>
+<h3 id="do-management--analysis-0-3-2">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-2"></a></h3>
 <div class="section level4">
-<h4 id="updated-development-version-1">Updated<a class="anchor" aria-label="anchor" href="#updated-development-version-1"></a></h4>
+<h4 id="breaking-changes-0-3-2">BREAKING CHANGES<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-2"></a></h4>
+<ul><li>
+<code><a href="../reference/plot_citedby.html">plot_citedby()</a></code> argument <code>color_set</code> now requires names and one color for each of the 7 possible publication types when specifying colors manually.
+<ul><li>
+<em>NEW</em> <code>retracted</code> argument added to specify how retracted articles should be managed.</li>
+</ul></li>
+<li>
+<code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code> arguments <code>as_curies</code> and <code>lgl_NA_false</code> replaced with new <code>tidy_what</code> argument and the optional tidy procedures has increased to include cleaning headers, unnesting list columns, converting URIs to CURIEs, outputting data as a tibble, replacing logical missing values with FALSE, and remove invariant language tags.</li>
+<li>
+<code><a href="../reference/robot_query.html">robot_query()</a></code> completely revised to:
+<ol style="list-style-type: decimal"><li>use <code><a href="../reference/robot.html">DO.utils::robot()</a></code> instead of a direct system call to a system-wide robot, to improve consistency.</li>
+<li>replace <code>rq</code> argument with <code>query</code>and now accepts query text directly, in addition to file paths. It also automatically handles different SPARQL query types (i.e. <code>SELECT</code>, <code>UPDATE</code>, <code>CONSTRUCT</code>, etc.</li>
+<li>replace <code>save</code> argument with <code>output</code> and now outputs results to R console by default when possible, with the option to save them to a file when given a file path.</li>
+<li>allow for additional arguments to passed to ROBOT with <code>...</code>.</li>
+<li>
+<em>NEW</em> <code>tidy_what</code> argument to use <code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code> on results with the need for a separate function call.</li>
+<li>
+<em>NEW</em> <code>col_types</code> to specify column types of results.</li>
+</ol></li>
+</ul></div>
+<div class="section level4">
+<h4 id="updates-0-3-2-1">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-2-1"></a></h4>
 <ul><li>
 <code><a href="../reference/read_omim.html">read_omim()</a></code> and <code><a href="../reference/inventory_omim.html">inventory_omim()</a></code> now use the preferred “MIM:” prefix in their output instead of “OMIM:”. <code><a href="../reference/inventory_omim.html">inventory_omim()</a></code> has been modified to accept input with either prefix. <em>This coincides with changes in the Human Disease Ontology (see <a href="https://github.com/DiseaseOntology/HumanDiseaseOntology/issues/1323" class="external-link uri">https://github.com/DiseaseOntology/HumanDiseaseOntology/issues/1323</a>).</em>
 </li>
 <li>
-<code><a href="../reference/read_omim.html">read_omim()</a></code> now additionally parses official API-key requiring phenotypicSeries.txt downloads and may be able to handle additional API-key requiring downloads.</li>
+<code><a href="../reference/read_omim.html">read_omim()</a></code> now additionally:
+<ol style="list-style-type: decimal"><li>parses official API-key requiring phenotypicSeries.txt downloads and may be able to handle additional API-key requiring downloads.</li>
+<li>recognizes X-linked inheritance from OMIM.</li>
+</ol></li>
 <li>
-<code><a href="../reference/plot_citedby.html">plot_citedby()</a></code>:
-<ul><li>
-<em>[BREAKING CHANGE]</em> <code>color_set</code> argument now requires names and one color for each of the 7 possible publication types when specifying colors manually.</li>
-<li>
-<code>retracted</code> argument added to specify how retracted articles should be managed.</li>
-</ul></li>
+<code><a href="../reference/collapse_col.html">collapse_col()</a></code> updated to support negative selection and tidyselect selectors with dplyr versions &gt;= 1.0, which broke these approaches.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="new-development-version">New<a class="anchor" aria-label="anchor" href="#new-development-version"></a></h4>
+<h4 id="new-0-3-2">New<a class="anchor" aria-label="anchor" href="#new-0-3-2"></a></h4>
 <ul><li>
 <code><a href="../reference/download_omim.html">download_omim()</a></code> downloads official API-key requiring files directly from OMIM (e.g. mim2gene.txt, phenotypicSeries.txt, etc.).</li>
 <li>
