@@ -1,30 +1,40 @@
-# DO.utils (development version)
+# DO.utils 0.3.2
 
 ## General
 
-## Updated
-* `is_invariant()` no works for more than just character & numeric vectors, with new `list` and `data.frame` methods and a `default` method that should be able to handle more cases (and replaces the `character` method).
+## Updates
+* `is_invariant()` now works for more than just character & numeric vectors, with new `list` and `data.frame` methods and a `default` method that should be able to handle more cases (and replaces the `character` method).
+* `sandwich_text()` revised with new `add_dup` argument to control whether placeholders are added when they already exist at the start and end of strings.
 
 
 ## DO Management & Analysis
 
-### Updated
+### BREAKING CHANGES
+* `plot_citedby()` argument `color_set` now requires names and one color for each of the 7 possible publication types when specifying colors manually.
+    * _NEW_ `retracted` argument added to specify how retracted articles should be managed.
+* `tidy_sparql()` arguments `as_curies` and `lgl_NA_false` replaced with new `tidy_what` argument and the optional tidy procedures has increased to include cleaning headers, unnesting list columns, converting URIs to CURIEs, outputting data as a tibble, replacing logical missing values with FALSE, and remove invariant language tags.
+* `robot_query()` completely revised to:
+    1. use `DO.utils::robot()` instead of a direct system call to a system-wide robot, to improve consistency.
+    2. replace `rq` argument with `query`and now accepts query text directly, in addition to file paths. It also automatically handles different SPARQL query types (i.e. `SELECT`, `UPDATE`, `CONSTRUCT`, etc.
+    3. replace `save` argument with `output` and now outputs results to R console by default when possible, with the option to save them to a file when given a file path.
+    4. allow for additional arguments to passed to ROBOT with `...`.
+    5. _NEW_ `tidy_what` argument to use `tidy_sparql()` on results with the need for a separate function call.
+    6. _NEW_ `col_types` to specify column types of results.
+
+### Updates
 * `read_omim()` and `inventory_omim()` now use the preferred "MIM:" prefix in
 their output instead of "OMIM:". `inventory_omim()` has been modified to accept
 input with either prefix. _This coincides with changes in the Human Disease Ontology (see https://github.com/DiseaseOntology/HumanDiseaseOntology/issues/1323)._
-* `read_omim()` now additionally parses official API-key requiring
-phenotypicSeries.txt downloads and may be able to handle additional API-key
-requiring downloads.
-* `plot_citedby()`:
-    * _[BREAKING CHANGE]_ `color_set` argument now requires names and one color
-    for each of the 7 possible publication types when specifying colors manually.
-    * `retracted` argument added to specify how retracted articles should be
-    managed.
+* `read_omim()` now additionally:
+    1. parses official API-key requiring phenotypicSeries.txt downloads and may be able to handle additional API-key requiring downloads.
+    2. recognizes X-linked inheritance from OMIM.
+* `collapse_col()` updated to support negative selection and tidyselect selectors with dplyr versions >= 1.0, which broke these approaches.
 
 ### New
 * `download_omim()` downloads official API-key requiring files directly from
 OMIM (e.g. mim2gene.txt, phenotypicSeries.txt, etc.).
 * `extract_ordo_mappings()` extracts mappings from Orphanet Rare Disease Ontology, in native format as `oboInOwl:hasDbXref` with Orphanet's text-based predicate modifiers, or as SKOS (supplemented with filler `doid:` predicates where `SKOS` predicates don't exist.
+
 
 
 # DO.utils 0.3.1

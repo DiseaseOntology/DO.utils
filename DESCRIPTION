@@ -1,7 +1,7 @@
 Package: DO.utils
 Type: Package
 Title: Public Resource Utilities Designed by/for the Disease Ontology
-Version: 0.3.1.9000
+Version: 0.3.2
 Author: J. Allen Baron
 Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
 Description: Generally useful tools to assess use of public resources in
