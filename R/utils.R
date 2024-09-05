@@ -195,6 +195,33 @@ match_arg_several <- function(arg, choices) {
 }
 
 
+############################ INTERNAL UTILITIES ###############################
+
+#' Replace Arabic Numbers with Roman Equivalent
+#'
+#' Converts arabic numbers _embedded in strings_ to roman numerals to support
+#' string comparison where arabic and roman numerals may be used
+#' interchangeably. The reverse, identifying roman numerals and converting to
+#' arabic numbers is much harder and less precise. _Replacement is not suitable_
+#' _when arabic numbers contain ANY separators (e.g. commas, decimals, etc.)._
+#'
+#' @param x A character vector.
+#'
+#' @noRd
+replace_w_roman <- function(x) {
+    numbers <- stringr::str_extract_all(x, "[0-9]+") |>
+        unlist() |>
+        unique() |>
+        length_sort(decreasing = TRUE)
+
+    if (length(numbers) == 0) return(x)
+
+    replace_vctr <- as.character(utils::as.roman(numbers))
+    names(replace_vctr) <- numbers
+    stringr::str_replace_all(x, replace_vctr)
+}
+
+
 # For producing messages --------------------------------------------------
 
 # concatenates vector input `x` replacing values with the quantity dropped
