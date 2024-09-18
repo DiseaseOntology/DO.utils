@@ -163,17 +163,84 @@ test_that("match_arg_several() works for integer vectors", {
 
 # suggest_regex() tests ---------------------------------------------------
 
-test_that("suggest_regex() works", {
-    expect_equal(suggest_regex(LETTERS), "[ABCDEFGHIJKLMNOPQRSTUVWXYZ]")
+test_that("suggest_regex(pivot = 'wide') works (default)", {
+    expected <- tibble::tibble(
+        position = c("regex", "n"),
+        `1` = c("[ABCDEFGHIJKLMNOPQRSTUVWXYZ]", "26")
+    )
+    expect_equal(suggest_regex(LETTERS), expected)
+
+    expected <- tibble::tibble(
+        position = c("regex", "n"),
+        `1` = c("[5ADMT]", "4"),
+        `2` = c("[2ACHN]", "4"),
+        `3` = c("[0ACDP]", "4"),
+        `4` = c("[12]", "2")
+    )
     expect_equal(
         suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")),
-        "[5ADMT][2ACHN][0ACDP][12]"
+        expected
+    )
+
+    # testthat uses "C" for LC_COLLATE, so this order may differ than what is on
+    #   a local machine; see https://github.com/r-lib/testthat/issues/1181
+    expected <- tibble::tibble(
+        position = c("regex", "n"),
+        `1` = c("[Aa]", "2"), `2` = c("[Bb]", "2"), `3` = c("[Cc]", "2"),
+        `4` = c("[Dd]", "2"), `5` = c("[Ee]", "2"), `6` = c("[Ff]", "2"),
+        `7` = c("[Gg]", "2"), `8` = c("[Hh]", "2"), `9` = c("[Ii]", "2"),
+        `10` = c("[Jj]", "2"), `11` = c("[Kk]", "2"), `12` = c("[Ll]", "2"),
+        `13` = c("[Mm]", "2"), `14` = c("[Nn]", "2"), `15` = c("[Oo]", "2"),
+        `16` = c("[Pp]", "2"), `17` = c("[Qq]", "2"), `18` = c("[Rr]", "2"),
+        `19` = c("[Ss]", "2"), `20` = c("[Tt]", "2"), `21` = c("[Uu]", "2"),
+        `22` = c("[Vv]", "2"), `23` = c("[Ww]", "2"), `24` = c("[Xx]", "2"),
+        `25` = c("[Yy]", "2"), `26` = c("[Zz]", "2")
     )
     expect_equal(
         suggest_regex(
             c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = ""))
         ),
-        paste0("[", LETTERS, letters, "]", collapse = "")
+        expected
+    )
+})
+
+test_that("suggest_regex(pivot = 'long') works", {
+    expected <- tibble::tibble(
+        position = 1L,
+        regex = "[ABCDEFGHIJKLMNOPQRSTUVWXYZ]",
+        n = 26
+    )
+    expect_equal(suggest_regex(LETTERS, "long"), expected)
+
+    expected <- tibble::tibble(
+        position = 1:4,
+        regex = c("[5ADMT]", "[2ACHN]", "[0ACDP]", "[12]"),
+        n = c(4, 4, 4, 2)
+    )
+    expect_equal(
+        suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD"), "long"),
+        expected
+    )
+
+    # testthat uses "C" for LC_COLLATE, so this order may differ than what is on
+    #   a local machine; see https://github.com/r-lib/testthat/issues/1181
+    expected <- tibble::tibble(
+        position = 1:26,
+        regex = c(
+            "[Aa]", "[Bb]", "[Cc]",   "[Dd]", "[Ee]", "[Ff]", "[Gg]", "[Hh]",
+            "[Ii]", "[Jj]", "[Kk]",  "[Ll]", "[Mm]", "[Nn]", "[Oo]", "[Pp]",
+            "[Qq]", "[Rr]", "[Ss]", "[Tt]", "[Uu]", "[Vv]", "[Ww]", "[Xx]",
+            "[Yy]", "[Zz]"
+        ),
+        n = c(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+              2, 2, 2, 2)
+    )
+    expect_equal(
+        suggest_regex(
+            c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = "")),
+            "long"
+        ),
+        expected
     )
 })
 

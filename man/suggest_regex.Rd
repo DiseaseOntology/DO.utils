@@ -4,13 +4,26 @@
 \alias{suggest_regex}
 \title{Suggest a Regular Expression That Will Match All Input}
 \usage{
-suggest_regex(x)
+suggest_regex(x, pivot = "wide")
 }
 \arguments{
 \item{x}{A character vector.}
+
+\item{pivot}{Whether the resulting \code{tibble} should be in "wide" (default) or
+"long" format.}
 }
 \value{
-A string with a bracketed character set for each position.
+When \code{pivot = "long"}, a tidy \code{tibble} with 3 columns and as many
+rows as the string length of the longest input:
+\enumerate{
+\item \code{position}: indicating the position of the character set in the input.
+\item \code{regex}: giving the character set (in brackets),
+\item \code{n}: the count of input strings that have a character at that \code{position}.
+}
+
+When \code{pivot = "wide"} (default), a \code{tibble} with the same information
+organized into rows (1 header and 2 normal rows) corresponding to the 3
+columns described.
 }
 \description{
 Collects the full set of characters found at each position across all strings
@@ -22,5 +35,6 @@ position.
 x <- c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")
 
 suggest_regex(x)
+suggest_regex(x, "long")
 
 }

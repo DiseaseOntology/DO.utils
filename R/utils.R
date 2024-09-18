@@ -199,18 +199,35 @@ match_arg_several <- function(arg, choices) {
 #' position.
 #'
 #' @param x A character vector.
+#' @param pivot Whether the resulting `tibble` should be in "wide" (default) or
+#' "long" format.
 #'
-#' @returns A string with a bracketed character set for each position.
+#' @returns When `pivot = "long"`, a tidy `tibble` with 3 columns and as many
+#' rows as the string length of the longest input:
+#' 1. `position`: indicating the position of the character set in the input.
+#' 2. `regex`: giving the character set (in brackets),
+#' 3. `n`: the count of input strings that have a character at that `position`.
+#'
+#' When `pivot = "wide"` (default), a `tibble` with the same information
+#' organized into rows (1 header and 2 normal rows) corresponding to the 3
+#' columns described.
 #'
 #' @examples
 #' x <- c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")
 #'
 #' suggest_regex(x)
+#' suggest_regex(x, "long")
 #'
 #' @export
-suggest_regex <- function(x) {
-    x_len <- sort(unique(stringr::str_length(x)))
-    max_len <- max(x_len)
+suggest_regex <- function(x, pivot = "wide") {
+    pivot <- match.arg(pivot, choices = c("wide", "long"))
+    out <- tibble::tibble(position = stringr::str_length(x)) |>
+        dplyr::count(.data$position)
+    max_len <- max(out$position)
+    missing_pos <- (1:max_len)[!1:max_len %in% out$position]
+    out <- out |>
+        tibble::add_row(position = missing_pos, n = max(out$n)) |>
+        dplyr::arrange(.data$position)
 
     xsplit <- stringr::str_split(x, "")
 
@@ -232,7 +249,25 @@ suggest_regex <- function(x) {
         ) |>
         sandwich_text(c("[", "]"))
 
-    paste0(chr_at_pos, collapse = "")
+    out <- out |>
+        dplyr::mutate(regex = chr_at_pos, .after = "position")
+
+    if (pivot == "wide") {
+        out <- out |>
+            dplyr::mutate(n = as.character(n)) |>
+            dplyr::rename(pos = position) |>
+            tidyr::pivot_longer(
+                cols = c("regex", "n"),
+                names_to = "position",
+                values_to = "value"
+            ) |>
+            tidyr::pivot_wider(
+                names_from = "pos",
+                values_from = "value"
+            )
+    }
+
+    out
 }
 
 
