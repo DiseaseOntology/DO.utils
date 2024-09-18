@@ -128,6 +128,7 @@ length_order <- function(data, cols, ...) {
     data[index, ]
 }
 
+
 #' Identify all duplicates
 #'
 #' Built on [base::duplicated()] but, unlike `base::duplicated()`,
@@ -139,11 +140,6 @@ length_order <- function(data, cols, ...) {
 all_duplicated <- function (x, ...)
 {
     duplicated(x, ...) | duplicated(x, fromLast = TRUE, ...)
-}
-
-
-glueV <- function(..., .envir = parent.frame()) {
-    glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
 }
 
 
@@ -196,6 +192,11 @@ match_arg_several <- function(arg, choices) {
 
 
 ############################ INTERNAL UTILITIES ###############################
+
+glueV <- function(..., .envir = parent.frame()) {
+    glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
+}
+
 
 #' Replace Arabic Numbers with Roman Equivalent
 #'
@@ -253,6 +254,7 @@ trunc_cat_n <- function(x, n, delim = ", ", unique = TRUE, na.rm = FALSE,
     msg
 }
 
+
 # creates a message for `...` that shows the values in it as part of the message,
 # when applicable (using .which arg)
 #
@@ -285,6 +287,7 @@ msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {
     c(.msg, arg)
 }
 
+
 msg_dots_ <- function(x) {
     x_val <- dplyr::if_else(
         purrr::map_lgl(x, rlang::is_string),
@@ -309,6 +312,7 @@ vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
     # vctr_to_string(
         sandwich_text(x, c('\\code{', '}'))#, ", ")
 }
+
 
 # converts a named list to a list for R documentation, ordered controls whether
 # upper-level list items are bulleted or numbered, converts from
