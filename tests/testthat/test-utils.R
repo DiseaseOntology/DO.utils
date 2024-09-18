@@ -161,6 +161,23 @@ test_that("match_arg_several() works for integer vectors", {
 })
 
 
+# suggest_regex() tests ---------------------------------------------------
+
+test_that("suggest_regex() works", {
+    expect_equal(suggest_regex(LETTERS), "[ABCDEFGHIJKLMNOPQRSTUVWXYZ]")
+    expect_equal(
+        suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")),
+        "[5ADMT][2ACHN][0ACDP][12]"
+    )
+    expect_equal(
+        suggest_regex(
+            c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = ""))
+        ),
+        paste0("[", LETTERS, letters, "]", collapse = "")
+    )
+})
+
+
 # roll_middle() tests -----------------------------------------------------
 
 test_that("roll_middle() works", {

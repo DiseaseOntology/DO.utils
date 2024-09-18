@@ -191,6 +191,51 @@ match_arg_several <- function(arg, choices) {
 }
 
 
+#' Suggest a Regular Expression That Will Match All Input
+#'
+#' Collects the full set of characters found at each position across all strings
+#' in `x` and returns it as a quasi-regular expression. Letter and numbers will
+#' not be condensed to ranges in output, even if the full sets are present at a
+#' position.
+#'
+#' @param x A character vector.
+#'
+#' @returns A string with a bracketed character set for each position.
+#'
+#' @examples
+#' x <- c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")
+#'
+#' suggest_regex(x)
+#'
+#' @export
+suggest_regex <- function(x) {
+    x_len <- sort(unique(stringr::str_length(x)))
+    max_len <- max(x_len)
+
+    xsplit <- stringr::str_split(x, "")
+
+    chr_at_pos <- purrr::map(
+        xsplit,
+        ~ append(.x, rep(NA, max_len - length(.x)))
+    ) |>
+        invert_sublists() |>
+        purrr::map_chr(
+            function(.x) {
+                unlist(.x) |>
+                    sort() |>
+                    collapse_to_string(
+                        delim = "",
+                        na.rm = TRUE,
+                        unique = TRUE
+                    )
+            }
+        ) |>
+        sandwich_text(c("[", "]"))
+
+    paste0(chr_at_pos, collapse = "")
+}
+
+
 ############################ INTERNAL UTILITIES ###############################
 
 glueV <- function(..., .envir = parent.frame()) {
