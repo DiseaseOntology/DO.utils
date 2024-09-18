@@ -1,3 +1,5 @@
+# sandwich_text() tests ---------------------------------------------------
+
 test_that("sandwich_text() works", {
     expect_equal(sandwich_text("a", "h"), "hah")
     expect_equal(sandwich_text("a", c("b", "h")), "bah")
@@ -156,4 +158,14 @@ test_that("match_arg_several() works for integer vectors", {
         .z(1:3, 1:2),
         regexp = '`x` must be one of: 1, 2\n.*Not 3 \\(pos: 3\\)'
     )
+})
+
+
+# roll_middle() tests -----------------------------------------------------
+
+test_that("roll_middle() works", {
+    x <- c(7, 14, 21, 25)
+    expect_equal(roll_middle(x, 0), c(3.5, 10.5, 17.5, 23))
+    expect_equal(roll_middle(x, 0, "min"), c(3.5, 10.5, 17.5, 23))
+    expect_equal(roll_middle(x, 30, "max"), c(10.5, 17.5, 23, 27.5))
 })

@@ -198,6 +198,56 @@ glueV <- function(..., .envir = parent.frame()) {
 }
 
 
+#' Calculate a Rolling/Windowed Middle (Mean) Value
+#'
+#' Calculates a rolling/windowed mean between two values using an additional
+#' `limit` value for the first or last calculation.
+#'
+#' @param x A numeric vector.
+#' @param limit A value that will be added to the start or end of `x`, as a
+#' numeric scalar.
+#' @param limit_type Specify whether `limit` should be used as the `"min"`
+#' (default) or `"max"` value.
+#'
+#' @returns A numeric vector of middle values of the same length as `x`.
+#' @examples
+#' x <- c(7, 14, 21, 25)
+#'
+#' roll_middle(x, 0, "min")
+#' roll_middle(x, 30, "max")
+#'
+#' @section Notes:
+#' An alternative function that produces the same result when the `limit` is
+#' added at the start or end of the input `x` (e.g. `c(limit, x)` or
+#' `c(x, limit)`) is `roll_mean(x, n = 2)` from the `RccpRoll` package.
+#'
+#' @keywords internal
+roll_middle <- function(x, limit, limit_type = "min") {
+    limit_type <- match.arg(limit_type, choices = c("min", "max"))
+    stopifnot(
+        "`x` must be a numeric vector sorted in ascending order" = x == sort(x),
+        "`limit` must be a numeric scalar" =
+            length(limit) == 1 && is.numeric(limit)
+    )
+
+    if (limit_type == "min") {
+        stopifnot(
+            "`limit` must be <= min(x) when `limit_type = 'start'`" = limit <= min(x)
+        )
+        x_rng <- c(limit, x[-length(x)])
+        out <- (x - x_rng) / 2 + x_rng
+    } else {
+        stopifnot(
+            "`limit` must be >= max(x) when `limit_type = 'end'`" = limit >= max(x)
+        )
+        x_rng <- c(x[-1], limit)
+        out <- (x_rng - x) / 2 + x
+    }
+
+    out
+}
+
+
 #' Replace Arabic Numbers with Roman Equivalent
 #'
 #' Converts arabic numbers _embedded in strings_ to roman numerals to support
