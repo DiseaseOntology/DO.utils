@@ -8,7 +8,7 @@ audit_url <- function(url, user_agent = DO_agent(), delay = 1, verbose = FALSE,
         user_agent <- paste0("polite ", getOption("HTTPUserAgent"), " bot")
     }
     req_polite <- polite::politely(
-        httr2::req_perform,
+        httr2::request,
         user_agent = user_agent,
         delay = delay,
         verbose = verbose,
@@ -17,7 +17,7 @@ audit_url <- function(url, user_agent = DO_agent(), delay = 1, verbose = FALSE,
 
     reqs <- purrr::map(
         url,
-        ~ httr2::request(.x) |>
+        ~ req_polite(.x) |>
             httr2::req_error(is_error = \(resp) FALSE)
     )
 
@@ -26,11 +26,11 @@ audit_url <- function(url, user_agent = DO_agent(), delay = 1, verbose = FALSE,
         resps <- purrr::map2(
             reqs,
             paths
-            ~ req_polite(.x, path = .y)
+            ~ httr2::req_perform(.x, path = .y)
         )
         save(resps, file = file.path(resp_dir, "all.Rdata"))
     } else {
-        resps <- purrr::map(reqs, req_polite)
+        resps <- purrr::map(reqs, httr2::req_perform)
     }
     resps
 }
