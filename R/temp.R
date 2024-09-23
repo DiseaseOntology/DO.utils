@@ -8,33 +8,28 @@ audit_url <- function(url, user_agent = DO_agent(), delay = 1, verbose = FALSE,
         user_agent <- paste0("polite ", getOption("HTTPUserAgent"), " bot")
     }
     req_polite <- polite::politely(
-        httr2::request,
+        full_request,
         user_agent = user_agent,
         delay = delay,
         verbose = verbose,
         cache = cache
     )
 
-    reqs <- purrr::map(
-        url,
-        ~ req_polite(.x) |>
-            httr2::req_error(is_error = \(resp) FALSE)
-    )
-
     if (!is.null(resp_dir)) {
         paths <- file.path(resp_dir, paste0("resp", 1:length(url)))
-        resps <- purrr::map2(
-            reqs,
-            paths
-            ~ httr2::req_perform(.x, path = .y)
-        )
+        resps <- purrr::map2(url, paths, ~ req_polite(.x, .y))
         save(resps, file = file.path(resp_dir, "all.Rdata"))
     } else {
-        resps <- purrr::map(reqs, httr2::req_perform)
+        resps <- purrr::map(url, ~ req_polite(.x))
     }
     resps
 }
 
+full_request <- function(url, path = NULL) {
+    httr2::request(url) |>
+        httr2::req_error(is_error = \(resp) FALSE) |>
+        httr2::req_perform(path = path)
+}
 
 #' Package User Agent (INTERNAL)
 #'
