@@ -28,6 +28,7 @@ audit_url <- function(url, user_agent = DO_agent(), delay = 1, verbose = FALSE,
 full_request <- function(url, path = NULL) {
     httr2::request(url) |>
         httr2::req_error(is_error = \(resp) FALSE) |>
+        httr2::req_method("HEAD") |>
         httr2::req_perform(path = path)
 }
 
