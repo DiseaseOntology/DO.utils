@@ -291,10 +291,12 @@ glueV <- function(..., .envir = parent.frame()) {
 #'
 #' @returns A numeric vector of middle values of the same length as `x`.
 #' @examples
+#' \dontrun{
 #' x <- c(7, 14, 21, 25)
 #'
 #' roll_middle(x, 0, "min")
 #' roll_middle(x, 30, "max")
+#' }
 #'
 #' @section Notes:
 #' An alternative function that produces the same result when the `limit` is

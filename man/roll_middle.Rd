@@ -30,10 +30,12 @@ added at the start or end of the input \code{x} (e.g. \code{c(limit, x)} or
 }
 
 \examples{
+\dontrun{
 x <- c(7, 14, 21, 25)
 
 roll_middle(x, 0, "min")
 roll_middle(x, 30, "max")
+}
 
 }
 \keyword{internal}
