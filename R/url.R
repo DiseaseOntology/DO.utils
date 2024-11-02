@@ -78,7 +78,7 @@ get_url <- function(.name) {
             github = "https://github.com/",
             orcid = "https://orcid.org/",
             pubmed = "https://pubmed.ncbi.nlm.nih.gov/",
-            pmc = "https://www.ncbi.nlm.nih.gov/pmc/"
+            pmc = "https://pmc.ncbi.nlm.nih.gov/articles/"
         ),
         xref_urls = c(
             # GARD = "https://rarediseases.info.nih.gov/diseases/{LUI}/index", # requires glue spec, exclude for now
