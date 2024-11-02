@@ -208,7 +208,7 @@ match_arg_several <- function(arg, choices) {
 #' @param x A character vector.
 #'
 #' @noRd
-replace_w_roman <- function(x) {
+arabic_to_roman <- function(x) {
     numbers <- stringr::str_extract_all(x, "[0-9]+") |>
         unlist() |>
         unique() |>
