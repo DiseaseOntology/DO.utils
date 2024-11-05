@@ -458,8 +458,9 @@ plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
             prefix = stringr::str_remove(
                 .data$prefix,
                 "_[0-9]{4}_[0-9]{2}_[0-9]{2}"
-            )
-        ) %>%
+            ),
+            count = as.integer(.data$count)
+        ) |>
         dplyr::count(.data$prefix, wt = .data$count, name = "count")
 
     curation_type <- c(
