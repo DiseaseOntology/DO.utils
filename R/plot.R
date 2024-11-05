@@ -30,6 +30,7 @@ plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
         dplyr::rename("Total" = "count")
     df <- dplyr::left_join(asserted, total, by = "branch") %>%
         dplyr::mutate(
+            dplyr::across(.cols = c("Asserted", "Total"), .fns = as.integer),
             Inferred = .data$Total - .data$Asserted,
             branch = stringr::str_to_title(
                 stringr::str_remove(.data$branch, "disease (of|by) ")
