@@ -9,12 +9,12 @@ plot_branch_counts(
   out_dir = "graphics/website",
   w = 8,
   h = 5.6,
-  aspect_ratio = 1
+  aspect_ratio = 1,
+  .robot_path = NULL
 )
 }
 \arguments{
-\item{DO_repo}{The local path to the HumanDiseaseOntology repo, as a string,
-or a \link{DOrepo} object.}
+\item{DO_repo}{The local path to the HumanDiseaseOntology repo, as a string.}
 
 \item{out_dir}{The directory where the plot \code{"DO_branch_count.png"}
 should be saved, as a string. If \code{NULL}, the plot is not saved to disk.}
@@ -25,6 +25,12 @@ should be saved, as a string. If \code{NULL}, the plot is not saved to disk.}
 
 \item{aspect_ratio}{The aspect ratio of the panel (i.e. plot area), as
 numeric. If \code{NULL}, the aspect ratio will not be set.}
+
+\item{.robot_path}{The path to a ROBOT executable or .jar file, as a string.
+When \code{NULL} (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.
+
+\strong{NOTE:} \code{DO.utils} caches the last ROBOT used for future use.}
 }
 \description{
 Plots the count of \emph{non-obsolete} terms in each major branch of the Human

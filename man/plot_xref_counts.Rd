@@ -4,11 +4,16 @@
 \alias{plot_xref_counts}
 \title{Plot Xref Counts}
 \usage{
-plot_xref_counts(DO_repo, out_dir = "graphics/website", w = 8, h = 5.6)
+plot_xref_counts(
+  DO_repo,
+  out_dir = "graphics/website",
+  w = 8,
+  h = 5.6,
+  .robot_path = NULL
+)
 }
 \arguments{
-\item{DO_repo}{The local path to the HumanDiseaseOntology repo, as a string,
-or a \link{DOrepo} object.}
+\item{DO_repo}{The local path to the HumanDiseaseOntology repo, as a string.}
 
 \item{out_dir}{The directory where the plot \code{"DO_xref_count.png"}
 should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
@@ -16,6 +21,12 @@ should be saved, as a string. If \code{NULL} the plot is not saved to disk.}
 \item{w}{The width of the plot in inches, as numeric.}
 
 \item{h}{The height of the plot in inches, as numeric.}
+
+\item{.robot_path}{The path to a ROBOT executable or .jar file, as a string.
+When \code{NULL} (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.
+
+\strong{NOTE:} \code{DO.utils} caches the last ROBOT used for future use.}
 }
 \description{
 Plots the count of cross-references by source in the Human Disease Ontology.

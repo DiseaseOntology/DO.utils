@@ -10,7 +10,8 @@ robot_query(
   output = NULL,
   ...,
   tidy_what = "nothing",
-  col_types = NULL
+  col_types = NULL,
+  .robot_path = NULL
 )
 }
 \arguments{
@@ -75,6 +76,12 @@ character represents one column:
 By default, reading a file without a column specification will print a
 message showing what \code{readr} guessed they were. To remove this message,
 set \code{show_col_types = FALSE} or set `options(readr.show_col_types = FALSE).}
+
+\item{.robot_path}{The path to a ROBOT executable or .jar file, as a string.
+When \code{NULL} (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.
+
+\strong{NOTE:} \code{DO.utils} caches the last ROBOT used for future use.}
 }
 \value{
 If \code{output} is specified, the path to the output file with the query result.

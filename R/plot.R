@@ -3,31 +3,42 @@
 #' Plots the count of _non-obsolete_ terms in each major branch of the Human
 #' Disease Ontology.
 #'
-#' @param DO_repo The local path to the HumanDiseaseOntology repo, as a string,
-#'     or a [DOrepo] object.
+#' @param DO_repo The local path to the HumanDiseaseOntology repo, as a string.
 #' @param out_dir The directory where the plot `"DO_branch_count.png"`
 #'     should be saved, as a string. If `NULL`, the plot is not saved to disk.
 #' @param w The width of the plot in inches, as numeric.
 #' @param h The height of the plot in inches, as numeric.
 #' @param aspect_ratio The aspect ratio of the panel (i.e. plot area), as
 #'     numeric. If `NULL`, the aspect ratio will not be set.
+#' @inheritParams robot_query
 #'
 #' @export
 plot_branch_counts <- function(DO_repo, out_dir = "graphics/website",
-                               w = 8, h = 5.6, aspect_ratio = 1) {
-    DO_repo <- access_DOrepo(DO_repo)
+                               w = 8, h = 5.6, aspect_ratio = 1,
+                               .robot_path = NULL) {
+    if (!dir.exists(DO_repo)) {
+        rlang::abort("`DO_repo` must be a valid directory.")
+    }
+    dnc_path <- file.path(DO_repo, "src/ontology/doid-non-classified.owl")
+    doid_path <- file.path(DO_repo, "src/ontology/doid.owl")
     branch_query <- system.file(
         "sparql/branch-count.rq",
         package = "DO.utils",
         mustWork = TRUE
     )
 
-    asserted <- DO_repo$doid_non_classified$query(branch_query) %>%
-        tidy_sparql() %>%
+    tidy_what <- c("header", "as_tibble", "rm_lang_tag")
+    asserted <- robot_query(
+        dnc_path,
+        branch_query,
+        tidy_what = tidy_what,
+        .robot_path = .robot_path
+    ) |>
         dplyr::rename("Asserted" = "count")
-    total <- DO_repo$doid$query(branch_query) %>%
-        tidy_sparql() %>%
+
+    total <- robot_query(doid_path, branch_query, tidy_what = tidy_what) |>
         dplyr::rename("Total" = "count")
+
     df <- dplyr::left_join(asserted, total, by = "branch") %>%
         dplyr::mutate(
             dplyr::across(.cols = c("Asserted", "Total"), .fns = as.integer),
@@ -441,19 +452,27 @@ plot_term_def_counts <- function(
 #' @inheritParams plot_branch_counts
 #' @param out_dir The directory where the plot `"DO_xref_count.png"`
 #'     should be saved, as a string. If `NULL` the plot is not saved to disk.
+#' @inheritParams robot_query
 #'
 #' @export
 plot_xref_counts <- function(DO_repo, out_dir = "graphics/website",
-                             w = 8, h = 5.6) {
-    DO_repo <- access_DOrepo(DO_repo)
+                             w = 8, h = 5.6, .robot_path = NULL) {
+    if (!dir.exists(DO_repo)) {
+        rlang::abort("`DO_repo` must be a valid directory.")
+    }
+    doid_path <- file.path(DO_repo, "src/ontology/doid.owl")
     xref_query <- system.file(
         "sparql/all-xref-report.rq",
         package = "DO.utils",
         mustWork = TRUE
     )
 
-    df <- DO_repo$doid$query(xref_query) %>%
-        tidy_sparql() %>%
+    df <- robot_query(
+        doid_path,
+        xref_query,
+        tidy_what = c("header", "as_tibble", "rm_lang_tag"),
+        .robot_path = .robot_path
+    ) |>
         dplyr::mutate(
             prefix = stringr::str_remove(
                 .data$prefix,
