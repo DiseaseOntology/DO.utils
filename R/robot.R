@@ -193,7 +193,12 @@ check_robot <- function(.robot_path = NULL, on_fail = "error") {
     }
 
     if (is.null(DO_env$robot) && !is.null(on_fail)) {
-        msg <- paste0("ROBOT at ", .robot_path, " is not available or working.")
+        if (is.null(.robot_path)) {
+            msg <- "ROBOT cannot be found. Please specify a path to robot.jar, or install and add it to the system path (see https://robot.obolibrary.org)"
+        } else {
+            msg <- paste0("ROBOT at ", .robot_path, " is not available or working.")
+        }
+
         msg_fxn <- switch(
             on_fail,
             error = rlang::abort,
