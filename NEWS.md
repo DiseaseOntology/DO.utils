@@ -1,3 +1,13 @@
+# DO.utils 0.3.3
+
+## Updates
+* `plot_xref_counts()` and `plot_branch_counts()` now use ROBOT instead of pyDOID for data extraction.
+* `append_to_url()` updated with new PMC URL.
+
+## New
+* `suggest_regex()` takes a list of strings and suggests a regex pattern that will match them all.
+
+
 # DO.utils 0.3.2
 
 ## General

@@ -254,8 +254,8 @@ suggest_regex <- function(x, pivot = "wide") {
 
     if (pivot == "wide") {
         out <- out |>
-            dplyr::mutate(n = as.character(n)) |>
-            dplyr::rename(pos = position) |>
+            dplyr::mutate(n = as.character(.data$n)) |>
+            dplyr::rename(pos = "position") |>
             tidyr::pivot_longer(
                 cols = c("regex", "n"),
                 names_to = "position",
