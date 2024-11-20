@@ -474,20 +474,49 @@ list_to_man <- function(x, ordered = FALSE) {
 
 # For updating internal data store ----------------------------------------
 
+#' Update sysdata.rda retaining existing data
+#'
+#' Adds objects to the internal data store, `sysdata.rda`, optionally
+#' overwriting existing objects. Works whether `sysdata.rda` exists or not and
+#' will ONLY overwrite objects that are specified in the `...` argument.
+#'
+#' @param ... Objects to add to the internal data store.
+#' @param overwrite Whether to overwrite the data objects in `...` if they
+#' already exist in the internal data store.
+#' @inheritParams save
+#'
+#' @noRd
 use_data_internal <- function(..., overwrite = FALSE, compress = "bzip2",
                               version = 2, ascii = FALSE) {
     dots_as_strings <- rlang::enexprs(...) %>%
         purrr::map_chr(rlang::as_string)
-    sysdata <- load("R/sysdata.rda")
 
-    obj_exist <- intersect(dots_as_strings, sysdata)
-    if (length(obj_exist) > 0 && !overwrite) {
+    dots_not_exist <- purrr::map_lgl(dots_as_strings, ~ !exists(.x))
+    if (any(dots_not_exist)) {
         rlang::abort(
             c(
-                "Internal data already exists. Use `overwrite = TRUE` to overwrite.",
-                purrr::set_names(obj_exist, rep("x", length(obj_exist)))
+                "Specified data could not be found:",
+                purrr::set_names(
+                    dots_as_strings[dots_not_exist],
+                    rep("x", sum(dots_not_exist))
+                )
             )
         )
+    }
+    if (file.exists("R/sysdata.rda")) {
+        sysdata <- load("R/sysdata.rda")
+
+        obj_exist <- intersect(dots_as_strings, sysdata)
+        if (length(obj_exist) > 0 && !overwrite) {
+            rlang::abort(
+                c(
+                    "Internal data already exists. Use `overwrite = TRUE` to overwrite.",
+                    purrr::set_names(obj_exist, rep("x", length(obj_exist)))
+                )
+            )
+        }
+    } else {
+        sysdata <- character(0)
     }
 
     save(
