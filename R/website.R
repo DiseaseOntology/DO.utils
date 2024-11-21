@@ -35,8 +35,8 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
 
     # prep data
     use_case_gs <- googlesheets4::read_sheet(
-        ss = .DO_gs$users,
-        sheet = "DO_website_user_list",
+        ss = .DO_gs$users$ss,
+        sheet = .DO_gs$users$sheet,
         range = "A:E",
         col_types = "lcccc"
     )
@@ -161,8 +161,8 @@ make_user_list_html <- function(file) {
 
     # get data
     user_list <- googlesheets4::read_sheet(
-        ss = .DO_gs$users,
-        sheet = "DO_website_user_list",
+        ss = .DO_gs$users$ss,
+        sheet = .DO_gs$users$sheet,
         range = "A:E",
         col_types = "lcccc"
     )
