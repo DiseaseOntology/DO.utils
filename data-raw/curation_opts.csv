@@ -1,0 +1,57 @@
+header,template,type,example,optional_values,alternate_title,alternate_format,notes
+iri/curie,ID,required manual,DOID:0080943,IRI or CURIE,NA,NA,NA
+label,AL rdfs:label@en,required manual,"46,XX sex reversal 5",NA,NA,NA,NA
+parent iri/curie,SC % SPLIT=|,required manual,DOID:0111760,disease by infectious agent,CI,IRI or CURIE; CI means Class IRI --> type will be CLASS_TYPE,NA
+definition,AL obo:IAO_0000115@en,required manual,"A 46,XX sex reversal that is characterized by genital virilization in 46,XX individuals, associated with congenital heart disease and variable somatic anomalies including blepharophimosis-ptosis-epicanthus inversus syndrome and congenital diaphragmatic hernia and that has_material_basis_in heterozygous mutation in the NR2F2 gene on chromosome 15q26.",NA,NA,NA,NA
+definition source(s),>A oboInOwl:hasDbXref SPLIT=|,required manual,url:https://pubmed.ncbi.nlm.nih.gov/29478779/,NA,NA,NA,NA
+definition source type(s),>AI dc11:type SPLIT=|,optional manual,curator inference from journal publication,"ECO codes, e.g. ECO:0007645",NA,NA,do not quote!!!
+synonym(s): exact,AL oboInOwl:hasExactSynonym@en SPLIT=|,optional manual,hemangiosarcoma,NA,NA,NA,do not quote!!!
+synonym(s): broad,AL oboInOwl:hasBroadSynonym@en SPLIT=|,optional manual,NA,NA,NA,NA,NA
+synonym(s): narrow,AL oboInOwl:hasNarrowSynonym@en SPLIT=|,optional manual,NA,NA,NA,NA,NA
+synonym(s): related,AL oboInOwl:hasRelatedSynonym@en SPLIT=|,optional manual,NA,NA,NA,NA,NA
+acronym(s): exact,AL oboInOwl:hasExactSynonym@en SPLIT=|,optional manual,CAMRQ,NA,NA,NA,"must be accompanied by ""acronym annotation"" header/template in the adjacent column to the rigth in robot template"
+acronym(s): broad,AL oboInOwl:hasBroadSynonym@en SPLIT=|,optional manual,NA,NA,NA,NA,NA
+acronym(s): narrow,AL oboInOwl:hasNarrowSynonym@en SPLIT=|,optional manual,NA,NA,NA,NA,NA
+acronym(s): related,AL oboInOwl:hasRelatedSynonym@en SPLIT=|,optional manual,DES,NA,NA,NA,"must be accompanied by ""acronym annotation"" header/template in the adjacent column to the rigth in robot template"
+acronym annotation,>AI oboInOwl:hasSynonymType,optional auto,acronym,NA,NA,NA,NA
+xref(s),A oboInOwl:hasDbXref SPLIT=|,optional manual,OMIM:618901,NA,NA,NA,NA
+skos mapping(s): exact,A skos:exactMatch SPLIT=|,optional manual,OMIM:618901,NA,NA,"should use IRIs and be as follows:
+AI skos:exactMatch SPLIT=|
+ - example input: https://omim.org/MIM:618901",adds skos mappings as strings; current INCORRECT DO format
+skos mapping(s): broad,A skos:broadMatch SPLIT=|,optional manual,OMIM:PS613135,NA,NA,"should use IRIs and be as follows:
+AI skos:exactMatch SPLIT=|
+ - example input: https://omim.org/MIM:618901",adds skos mappings as strings; current INCORRECT DO format
+skos mapping(s): narrow,A skos:narrowMatch SPLIT=|,optional manual,OMIM:618901,NA,NA,"should use IRIs and be as follows:
+AI skos:exactMatch SPLIT=|
+ - example input: https://omim.org/MIM:618901",adds skos mappings as strings; current INCORRECT DO format
+skos mapping(s): related,A skos:relatedMatch SPLIT=|,optional manual,NA,NA,NA,"should use IRIs and be as follows:
+AI skos:exactMatch SPLIT=|
+ - example input: https://omim.org/MIM:618901",adds skos mappings as strings; current INCORRECT DO format
+equivalent class,EC %,optional manual,disease and ('has material basis in' some (Viruses or Bacteria or Eukaryota)),NA,NA,NA,NA
+sc axiom: inheritance,SC 'has material basis in' some % SPLIT=|,optional manual,NA,NA,NA,NA,NA
+sc axiom: anatomical location,SC 'disease has location' some %,optional manual,NA,NA,NA,NA,NA
+sc axiom: onset,SC 'existence starts during' some %,optional manual,NA,NA,NA,NA,NA
+sc axiom: has_material_basis_in,SC has_material_basis_in some %,optional manual,autosomal dominant inheritance,NA,NA,NA,do not quote!!!
+sc axiom: located_in,SC located_in some %,optional manual,NA,rdfs:label (preferred); IRI or CURIE (possible),NA,NA,NA
+disjoint class,DC %,optional manual,NA,NA,NA,NA,NA
+subset(s),AI oboInOwl:inSubset SPLIT=|,optional manual,DO_AGR_slim,any subset (aka 'slim') defined in doid-edit.owl,NA,NA,NA
+deprecate,AT owl:deprecated^^xsd:boolean,optional manual,true,NA,NA,NA,NA
+alternate id(s),A oboInOwl:hasAlternativeId SPLIT=|,optional manual,DOID:4,CURIE of deprecated term,NA,NA,NA
+term replaced by,AI obo:IAO_0100001,optional manual,DOID:4,IRI or CURIE of term to replace by,NA,NA,NA
+comment,AL rdfs:comment@en,optional manual,This is a comment. There should only be one per term.,NA,NA,NA,NA
+obo id,A oboInOwl:id,required auto,DOID:0080943,OBO CURIE,NA,NA,"required data, but not necessary to include in manual curation; will be inferred from iri/curie
+
+if manually entered it must match the CURIE form of iri/curie"
+obo namespace,A oboInOwl:hasOBONamespace,required auto,disease_ontology,"OBO namespace of ontology: disease_ontology, symptoms, transmission_process",NA,NA,"required data, but not necessary to include in manual curation; will be automatically added for any new disease
+
+if manually entered it must be ""disease_ontology"" (without quotes)"
+español - label,AL rdfs:label@es,optional manual,NA,NA,NA,NA,NA
+español - definition,AL obo:IAO_0000115@es,optional manual,NA,NA,NA,NA,NA
+español - synonym(s): exact,AL oboInOwl:hasExactSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - synonym(s): broad,AL oboInOwl:hasBroadSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - synonym(s): narrow,AL oboInOwl:hasNarrowSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - synonym(s): related,AL oboInOwl:hasRelatedSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - acronym(s): exact,AL oboInOwl:hasExactSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - acronym(s): broad,AL oboInOwl:hasBroadSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - acronym(s): narrow,AL oboInOwl:hasNarrowSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
+español - acronym(s): related,AL oboInOwl:hasRelatedSynonym@es SPLIT=|,optional manual,NA,NA,NA,NA,NA
