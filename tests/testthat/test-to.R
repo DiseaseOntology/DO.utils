@@ -13,11 +13,13 @@ uri <- c(
     "http://www.w3.org/2000/01/rdf-schema#comment",
     "http://bio2rdf.org/",
     # to ensure pass through of unrecognized URI/CURIEs
-    "not a URI or CURIE",
+    "not a <URI or CURIE>",
     # multiple delimited (should be able to handle)
     "http://purl.org/dc/elements/1.1/date|http://www.w3.org/2002/07/owl#deprecated",
     # handle angle brackets (URI to CURIE only)
-    "<http://www.geneontology.org/formats/oboInOwl#hasDbXref>"
+    "<http://www.geneontology.org/formats/oboInOwl#hasDbXref>",
+    # preserve unmatched angle brackets
+    "<http://www.geneontology.org/formats/oboInOwl#hasDbXref<"
 )
 curie <- c(
     "SYMP:0000000",
@@ -32,11 +34,13 @@ curie <- c(
     "rdfs:comment",
     "http://bio2rdf.org/",
     # to ensure pass through of unrecognized URI/CURIEs
-    "not a URI or CURIE",
+    "not a <URI or CURIE>",
     # multiple delimited (should be able to handle)
     "dc:date|owl:deprecated",
     # handle angle brackets (URI to CURIE only)
-    "oboInOwl:hasDbXref"
+    "oboInOwl:hasDbXref",
+    # preserve unmatched angle brackets
+    "<oboInOwl:hasDbXref<"
 )
 
 test_that("to_curie() works", {
@@ -44,7 +48,10 @@ test_that("to_curie() works", {
 })
 
 test_that("to_uri() works", {
-    expect_equal(to_uri(curie), stringr::str_remove_all(uri, "<|>"))
+    expect_equal(
+        to_uri(curie),
+        stringr::str_replace_all(uri, "<([^: ]+:[^> ]*)>", "\\1")
+    )
 })
 
 

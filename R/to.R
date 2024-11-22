@@ -49,7 +49,9 @@ to_curie <- function(x, strip_angle_brackets = TRUE) {
         stats::setNames(paste0(names(prefixes), ":"), prefixes)
     )
 
-    if (strip_angle_brackets) curie <- stringr::str_remove_all(curie, "<|>")
+    if (strip_angle_brackets) {
+        curie <- stringr::str_replace_all(curie, "<([^: ]+:[^> ]*)>", "\\1")
+    }
 
     curie
 }
