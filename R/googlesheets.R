@@ -22,8 +22,8 @@
 #' value violates the data validation rule or "Show a warning" (`FALSE`).
 #' @param display_arrow Whether to display a dropdown arrow next to the cell
 #' (default: `TRUE`) or not (`FALSE`).
-#'
-#' @rdname range_add_validation
+#' @name range_add_validation
+NULL
 
 #' @rdname range_add_validation
 #' @keywords internal
