@@ -1,4 +1,4 @@
-## code to prepare `sparql_prefix` dataset, created 2022-07-22
+## code to prepare prefix datasets
 
 #### REQUIRES program: robot (any version; see http://robot.obolibrary.org/)
 prefix_json <- system2("robot", args = "export-prefixes", stdout = TRUE)
@@ -7,6 +7,7 @@ prefix <- jsonlite::fromJSON(prefix_json)[[1]] %>%
 
 
 # non-OBO prefixes --------------------------------------------------------
+
 not_obo_prefix <- prefix[!stringr::str_detect(prefix, "/obo")]
 not_obo_prefix <- not_obo_prefix %>%
     append(
@@ -31,6 +32,9 @@ names(not_obo_prefix) <- dplyr::recode(
 
 
 # Standard OBO prefixes ---------------------------------------------------
+
+# ROBOT prefixes should stay up-to-date as new ontologies are added to the OBO
+# Foundry, see https://github.com/ontodev/robot/issues/51
 obo_general <- prefix[stringr::str_detect(prefix, "/obo(/|InOwl#)$")] %>%
     sort(decreasing = TRUE)
 
@@ -39,6 +43,7 @@ obo_prefix <- prefix[stringr::str_detect(prefix, "/obo/.")] %>%
 
 
 # Common OBO property prefix ----------------------------------------------
+
 obo_prop_prefix <- obo_prefix %>%
     stringr::str_to_lower() %>%
     stringr::str_replace("_$", "#")
@@ -47,6 +52,7 @@ names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prefix))
 
 # All prefixes ------------------------------------------------------------
 # ordered specific-to-general (with standard OBO ontology prefixes first)
+
 ns_prefix <- c(
     obo_prefix,
     obo_prop_prefix,
