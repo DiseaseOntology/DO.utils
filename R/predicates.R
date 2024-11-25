@@ -167,9 +167,14 @@ is_boolean <- function(x) {
 #' These predicates _do not_ attempt to confirm any ID actually exists in an
 #' OBO Foundry ontology, but only test if the IDs are syntactically formatted
 #' correctly (see [OBO Foundry ID Policy](https://obofoundry.org/id-policy) and
-#' [OBO File Specification](https://owlcollab.github.io/oboformat/doc/obo-syntax.html)).
+#' [OBO File Specification](https://owlcollab.github.io/oboformat/doc/obo-syntax.html))
+#' _AND_ correspond to a known namespace of an OBO Foundry ontology (as provided
+#' by ROBOT [export-prefixes](https://robot.obolibrary.org/export-prefixes).
+#' These prefixes _should_ be up-to-date with the latest OBO Foundry ontologies
+#' (https://github.com/ontodev/robot/issues/51).
 #'
-#' Not all OBO formats are valid DOID formats and vice versa.
+#' Not all OBO formats are valid DOID formats, but all valid DOID formats _ARE_
+#' valid OBO formats.
 #'
 #' @param x A set of IDs, as a character vector.
 #'
@@ -180,10 +185,11 @@ is_boolean <- function(x) {
 #'     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
 #'     "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
 #'     "obo:DOID_4", # CURIE, standard version
+#'     #### valid OBO property ####
 #'     "obo:so#has_origin", # '#' separator ~ OBO annotation properties
 #'     #### invalid ####
 #'     "0001816", # bare number without prefix
-#'     "obo:DOID:14566", # namespace-lui separator must be '_' or '#'
+#'     "obo:DOID:14566", # namespace-lui separator must be '_' ('#' for properties)
 #'     " obo:HP_0000001" # must have NO `[:space:]` characters
 #' )
 #'
@@ -198,8 +204,8 @@ is_boolean <- function(x) {
 #'     "DOID_0040001", # basename (OBO prefix removed)
 #'     #### invalid ####
 #'     "0001816", # bare number without prefix
-#'     "doid#DO_IEDB_slim", # namespace-lui separator must be '_'
-#'     "obo:doid#DO_IEDB_slim",
+#'     "doid#DO_IEDB_slim", # namespace-lui separator must be ':'
+#'     "obo:doid#DO_IEDB_slim", # properties are NOT recognized as valid
 #'     "obo:DOID_21 " # must have NO `[:space:]` characters
 #' )
 #'
@@ -214,7 +220,39 @@ NULL
 #' @export
 is_valid_obo <- function(x) {
     assert_character(x)
-    obo_regex <- "^<?http://purl.obolibrary.org/obo/[A-Za-z_]+[_#][[:alnum:]_]+>?$|^obo:[A-Za-z_]+[_#][[:alnum:]_]+$"
+    # regular expression components
+    ns <- paste0("(", paste0(names(obo_prefix), collapse = "|"), ")")
+    lui <- "[0-9]+"
+    obo_lui <- paste0(ns, "_", lui)
+
+    # full regular expressions for different formats
+    uri <- paste0("^<?http://purl.obolibrary.org/obo/", obo_lui, ">?$")
+    obo_curie <- paste0("^obo:", obo_lui, "$")
+    onto_curie <- paste0("^", ns, ":", lui, "$")
+
+    # final regex
+    obo_regex <- paste(uri, obo_curie, onto_curie, sep = "|")
+
+    stringr::str_detect(x, obo_regex)
+}
+
+#' @rdname obo_ID_predicates
+#' @export
+is_valid_obo_prop <- function(x) {
+    assert_character(x)
+    # regular expression components
+    ns <- paste0("(", paste0(names(obo_prop_prefix), collapse = "|"), ")")
+    lui <- "[[:alnum:]_]+"
+    obo_lui <- paste0(ns, "#", lui)
+
+    # full regular expressions for different formats
+    uri <- paste0("^<?http://purl.obolibrary.org/obo/", obo_lui, ">?$")
+    obo_curie <- paste0("^obo:", obo_lui, "$")
+    onto_curie <- paste0("^", ns, ":", lui, "$")
+
+    # final regex
+    obo_regex <- paste(uri, obo_curie, onto_curie, sep = "|")
+
     stringr::str_detect(x, obo_regex)
 }
 
