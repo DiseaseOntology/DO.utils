@@ -11,10 +11,14 @@ is_valid_obo(x)
 
 is_valid_obo_prop(x)
 
-is_valid_doid(x)
+is_valid_doid(x, strict = FALSE)
 }
 \arguments{
 \item{x}{A set of IDs, as a character vector.}
+
+\item{strict}{Whether to enforce the DOID format strictly, as a boolean. If
+\code{FALSE} (default), the \code{DOID_4} format without the \verb{obo:} prefix will be
+allowed.}
 }
 \description{
 These predicates are designed to identify and validate common ID formats
@@ -69,9 +73,10 @@ doid <- c(
     "DOID_0040001", # basename (OBO prefix removed)
     #### invalid ####
     "0001816", # bare number without prefix
-    "doid#DO_IEDB_slim", # namespace-lui separator must be '_'
-    "obo:doid#DO_IEDB_slim",
-    "obo:DOID_21 " # must have NO `[:space:]` characters
+    "obo:DOID_21 ", # must have NO `[:space:]` characters
+    # properties are NOT recognized as valid
+    "doid:DO_IEDB_slim",
+    "obo:doid#DO_IEDB_slim"
 )
 
 is_valid_doid(doid)
