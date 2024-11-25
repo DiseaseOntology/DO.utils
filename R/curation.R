@@ -34,6 +34,8 @@ curation_template <- function(ss = NULL, sheet = NULL, .data = NULL,
   if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
   gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
 
+  if (is.null(ss)) ss <- gs_info
+
   # add curation template data validation
   gs_range <- spreadsheet_range(cur_df, "annotation", sheet = sheet)
   range_add_dropdown(ss, gs_range, values = .curation_opts$header)
