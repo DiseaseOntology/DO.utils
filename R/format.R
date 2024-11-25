@@ -42,7 +42,7 @@
 #' @family format IDs
 #' @export
 format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
-                        validate_input = TRUE) {
+                        validate_input = TRUE, strict = FALSE) {
     as <- match.arg(as, choices = c("URI", "CURIE", "obo_CURIE", "basename"))
     prefix <- switch(
         as,
@@ -55,7 +55,9 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
     if (convert_bare) {
         bare_number <- stringr::str_detect(x, "^[0-9]{1,7}$")
         if (validate_input) {
-            assertthat::assert_that(all(is_valid_doid(x) | bare_number))
+            assertthat::assert_that(
+                all(is_valid_doid(x, strict = strict) | bare_number)
+            )
         }
 
         formatted <- dplyr::if_else(
@@ -65,7 +67,7 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
         )
     } else {
         if (validate_input) {
-            assertthat::assert_that(all(is_valid_doid(x)))
+            assertthat::assert_that(all(is_valid_doid(x, strict = strict)))
         }
 
         formatted <- stringr::str_replace(x, "^.*DOID[:_]", prefix)
@@ -102,6 +104,8 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
 #' @param validate_input Whether to ensure only valid OBO IDs are included in
 #'     `x`,`TRUE` (default) or `FALSE`. When `FALSE`, non-OBO ID input will
 #'     _most likely_ be returned unchanged.
+#' @param allow_prop Whether OBO properties are allowed in the input (default:
+#'     `TRUE`). Only used if `validate_input = TRUE`.
 #'
 #' @section Caution:
 #' Be extra cautious when using `format_obo()` with `validate_input = FALSE` as
@@ -130,14 +134,19 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
 #'
 #' @family format IDs
 #' @export
-format_obo <- function(x, as = "CURIE", validate_input = TRUE) {
+format_obo <- function(x, as = "CURIE", validate_input = TRUE,
+                       allow_prop = TRUE) {
     as <- match.arg(
         as,
         choices = c("CURIE", "URI", "bracketed_URI", "ns_lui", "ns")
     )
 
     if (validate_input) {
-        assertthat::assert_that(all(is_valid_obo(x)))
+        if (allow_prop) {
+            assertthat::assert_that(all(is_valid_obo(x) | is_valid_obo_prop(x)))
+        } else {
+            assertthat::assert_that(all(is_valid_obo(x)))
+        }
     }
 
     obo_pattern <- "^.*obo[/:]([A-Za-z_]+)(_[[:alnum:]_]+)>?$|^.*obo[/:]([A-Za-z_]+#)([[:alnum:]_]+)>?$"

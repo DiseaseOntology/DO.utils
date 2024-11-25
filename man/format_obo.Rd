@@ -4,7 +4,7 @@
 \alias{format_obo}
 \title{Format OBO Foundry IDs}
 \usage{
-format_obo(x, as = "CURIE", validate_input = TRUE)
+format_obo(x, as = "CURIE", validate_input = TRUE, allow_prop = TRUE)
 }
 \arguments{
 \item{x}{A set of IDs, as a character vector.}
@@ -26,6 +26,9 @@ formats and cannot be formatted again by \code{format_obo()}.}
 \item{validate_input}{Whether to ensure only valid OBO IDs are included in
 \code{x},\code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-OBO ID input will
 \emph{most likely} be returned unchanged.}
+
+\item{allow_prop}{Whether OBO properties are allowed in the input (default:
+\code{TRUE}). Only used if \code{validate_input = TRUE}.}
 }
 \description{
 Convert valid OBO Foundry ontology IDs to a specified format. Input
