@@ -3,10 +3,13 @@
 \name{obo_ID_predicates}
 \alias{obo_ID_predicates}
 \alias{is_valid_obo}
+\alias{is_valid_obo_prop}
 \alias{is_valid_doid}
 \title{OBO ID predicates}
 \usage{
 is_valid_obo(x)
+
+is_valid_obo_prop(x)
 
 is_valid_doid(x)
 }
@@ -30,9 +33,14 @@ pattern.
 These predicates \emph{do not} attempt to confirm any ID actually exists in an
 OBO Foundry ontology, but only test if the IDs are syntactically formatted
 correctly (see \href{https://obofoundry.org/id-policy}{OBO Foundry ID Policy} and
-\href{https://owlcollab.github.io/oboformat/doc/obo-syntax.html}{OBO File Specification}).
+\href{https://owlcollab.github.io/oboformat/doc/obo-syntax.html}{OBO File Specification})
+\emph{AND} correspond to a known namespace of an OBO Foundry ontology (as provided
+by ROBOT \href{https://robot.obolibrary.org/export-prefixes}{export-prefixes}.
+These prefixes \emph{should} be up-to-date with the latest OBO Foundry ontologies
+(https://github.com/ontodev/robot/issues/51).
 
-Not all OBO formats are valid DOID formats and vice versa.
+Not all OBO formats are valid DOID formats, but all valid DOID formats \emph{ARE}
+valid OBO formats.
 }
 
 \examples{
@@ -42,10 +50,11 @@ obo_id <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
     "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
     "obo:DOID_4", # CURIE, standard version
+    #### valid OBO property ####
     "obo:so#has_origin", # '#' separator ~ OBO annotation properties
     #### invalid ####
     "0001816", # bare number without prefix
-    "obo:DOID:14566", # namespace-lui separator must be '_' or '#'
+    "obo:DOID:14566", # namespace-lui separator must be '_' ('#' for properties)
     " obo:HP_0000001" # must have NO `[:space:]` characters
 )
 
