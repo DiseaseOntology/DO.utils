@@ -39,14 +39,35 @@ test_that("is_valid_doid() works", {
     expect_true(is_valid_doid("DOID:4"))
     expect_true(is_valid_doid("obo:DOID_14566"))
     expect_true(is_valid_doid("DOID_0040001"))
-    expect_false(is_valid_doid("0001816"))
-    expect_false(is_valid_doid("obo:DOID:14566"))
+    expect_false(is_valid_doid("0001816")) # no prefix
+    expect_false(is_valid_doid("obo:DOID:14566")) # wrong separator
+    expect_false(is_valid_doid(" DOID_0040001")) # has space
+    expect_false(is_valid_doid("DOID _0040001")) # has space
+    # properties not allowed
     expect_false(is_valid_doid("obo:doid#DO_IEDB_slim"))
-    expect_false(is_valid_doid(" DOID_0040001"))
-    expect_false(is_valid_doid("DOID _0040001"))
+    # non-character input
     expect_error(is_valid_doid(1L))
 })
 
+test_that("is_valid_doid() works", {
+    expect_true(
+        is_valid_doid(
+            "http://purl.obolibrary.org/obo/DOID_0001816",
+            strict = TRUE
+        )
+    )
+    expect_true(is_valid_doid("DOID:4", strict = TRUE))
+    expect_true(is_valid_doid("obo:DOID_14566", strict = TRUE))
+    expect_false(is_valid_doid("DOID_0040001", strict = TRUE))
+    expect_false(is_valid_doid("0001816", strict = TRUE)) # no prefix
+    expect_false(is_valid_doid("obo:DOID:14566", strict = TRUE)) # wrong separator
+    expect_false(is_valid_doid(" DOID:0040001", strict = TRUE)) # has space
+    expect_false(is_valid_doid("DOID :0040001", strict = TRUE)) # has space
+    # properties not allowed
+    expect_false(is_valid_doid("obo:doid#DO_IEDB_slim", strict = TRUE))
+    # non-character input
+    expect_error(is_valid_doid(1L, strict = TRUE))
+})
 
 # is_invariant() tests ----------------------------------------------------
 
