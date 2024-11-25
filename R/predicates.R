@@ -218,9 +218,10 @@ is_boolean <- function(x) {
 #'     "DOID_0040001", # basename (OBO prefix removed)
 #'     #### invalid ####
 #'     "0001816", # bare number without prefix
-#'     "doid#DO_IEDB_slim", # namespace-lui separator must be ':'
-#'     "obo:doid#DO_IEDB_slim", # properties are NOT recognized as valid
-#'     "obo:DOID_21 " # must have NO `[:space:]` characters
+#'     "obo:DOID_21 ", # must have NO `[:space:]` characters
+#'     # properties are NOT recognized as valid
+#'     "doid:DO_IEDB_slim",
+#'     "obo:doid#DO_IEDB_slim"
 #' )
 #'
 #' is_valid_doid(doid)
@@ -270,11 +271,19 @@ is_valid_obo_prop <- function(x) {
     stringr::str_detect(x, obo_regex)
 }
 
+#' @param strict Whether to enforce the DOID format strictly, as a boolean. If
+#' `FALSE` (default), the `DOID_4` format without the `obo:` prefix will be
+#' allowed.
 #' @rdname obo_ID_predicates
 #' @export
-is_valid_doid <- function(x) {
+is_valid_doid <- function(x, strict = FALSE) {
     assert_character(x)
-    doid_regex <- "^(http://purl.obolibrary.org/obo/|obo:)?DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$"
+    if (strict) {
+        obo_prefix <- "^(http://purl.obolibrary.org/obo/|obo:)"
+    } else {
+        obo_prefix <- "^(http://purl.obolibrary.org/obo/|obo:)?"
+    }
+    doid_regex <- paste0(obo_prefix, "DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$")
     stringr::str_detect(x, doid_regex)
 }
 
