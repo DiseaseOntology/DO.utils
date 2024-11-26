@@ -74,3 +74,76 @@ elucidate.omim_inventory <- function(x, type = "basic", print = TRUE,
 
     invisible(out)
 }
+
+
+#' @rdname elucidate
+#'
+#' @returns `mapping_inventory` method:
+#'
+#' - For `type = "basic"`, a single `tibble` of input and DOID statistical
+#' information including the total number of terms for each, the number of input
+#' terms present/absent in DO, the number of deprecated DO terms, and the number
+#' of terms with one-to-many matches (in either direction).
+#' - For `type = "full"`, the "basic" statistical `tibble` and additional
+#' `tibble`'s containing the full records for the following:
+#'     - `doid_deprecated`,
+#'     - `input_to_many`: Results where an input ID corresponds to multiple
+#' DOIDs, excluding skos broad/narrow/related matches.
+#'     - `doid_to_many`): Results where a DOID corresponds to multiple
+#' input IDs, excluding skos broad/narrow/related matches.
+#'
+#' @export
+elucidate.mapping_inventory <- function(x, type = "basic", print = TRUE,
+                                     ...) {
+    x_summary <- x |>
+        dplyr::mutate(input = stringr::str_remove(mapping, ":.*") |>
+        tidyr::pivot_wider(
+        dplyr::summarize(
+            # NEED TO SUMMARIZE BY INPUT!!! INCOMPLETE!!!
+            dplyr::across(
+                mapping,
+                .fns = list(
+                    total = ~ dplyr::n_distinct(.x),
+                    absent = ~ dplyr::n_distinct(x$mapping[is.na(x$doid)]),
+                    present = ~ sum(!is.na(.))
+                )
+        )
+    dep <- dplyr::filter(x, isTRUE(.data$do_dep))
+    input_to_many <- dplyr::filter(
+        x,
+        .data$multimaps %in% c("input_to_doid", "both_ways")
+    )
+
+    doid_to_many <- dplyr::filter(
+        x,
+        .data$multimaps %in% c("doid_to_input", "both_ways")
+    )
+    basic <- tibble::tribble(
+        ~ "report", ~ "n",
+        "input_total", dplyr::n_distinct(x$mapping),
+        "input_absent", dplyr::n_distinct(x$mapping[is.na(x$doid)]),
+        "input_present", dplyr::n_distinct(x$mapping[!is.na(x$doid)]),
+        "input_to_many", dplyr::n_distinct(input_to_many$mapping),
+        "doid_total", dplyr::n_distinct(x$doid, na.rm = TRUE),
+        "doid_deprecated", dplyr::n_distinct(dep$doid),
+        "doid_to_many", dplyr::n_distinct(doid_to_many$doid)
+    )
+    class(basic) <- c("mieb", class(basic)) # mapping_inventory_elucidation_basic
+
+    if (type == "full") {
+        out <- list(
+            stats = basic,
+            dep = dep,
+            input_to_many = input_to_many,
+            doid_to_many = doid_to_many
+        )
+    } else {
+        out <- basic
+    }
+
+    if (print) {
+        print(basic)
+    }
+
+    invisible(out)
+}

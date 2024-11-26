@@ -3,11 +3,14 @@
 \name{elucidate}
 \alias{elucidate}
 \alias{elucidate.omim_inventory}
+\alias{elucidate.mapping_inventory}
 \title{Elucidate the Data in an Object}
 \usage{
 elucidate(x, type = "basic", print = TRUE, ...)
 
 \method{elucidate}{omim_inventory}(x, type = "basic", print = TRUE, ...)
+
+\method{elucidate}{mapping_inventory}(x, type = "basic", print = TRUE, ...)
 }
 \arguments{
 \item{x}{An R object with a defined \code{elucidate()} method.}
@@ -36,6 +39,23 @@ of terms with one-to-many matches (in either direction).
 DOIDs, excluding skos broad/narrow/related matches.
 \item \code{doid_to_many}): Results where a DOID corresponds to multiple
 OMIM IDs, excluding skos broad/narrow/related matches.
+}
+}
+
+\code{mapping_inventory} method:
+\itemize{
+\item For \code{type = "basic"}, a single \code{tibble} of input and DOID statistical
+information including the total number of terms for each, the number of input
+terms present/absent in DO, the number of deprecated DO terms, and the number
+of terms with one-to-many matches (in either direction).
+\item For \code{type = "full"}, the "basic" statistical \code{tibble} and additional
+\code{tibble}'s containing the full records for the following:
+\itemize{
+\item \code{doid_deprecated},
+\item \code{input_to_many}: Results where an input ID corresponds to multiple
+DOIDs, excluding skos broad/narrow/related matches.
+\item \code{doid_to_many}): Results where a DOID corresponds to multiple
+input IDs, excluding skos broad/narrow/related matches.
 }
 }
 }

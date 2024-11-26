@@ -2,7 +2,7 @@
 % Please edit documentation in R/extract.R
 \name{extract_subtree}
 \alias{extract_subtree}
-\title{Extract Subtree}
+\title{Extract Subtree (DEPRECATED)}
 \usage{
 extract_subtree(x, top_node, reload = FALSE)
 }
@@ -26,6 +26,7 @@ Extracts the classes and parents of a DO subtree from a \code{pyDOID.owl.xml}
 object.
 }
 \seealso{
-\code{\link[=format_subtree]{format_subtree()}} to arrange data in a tree structure similar to
-ontology browsers.
+\link[=extract_subclass]{extract_subclass(method = "descendants")} for the
+same result with a single \code{class}. \code{\link[=format_subtree]{format_subtree()}} to arrange data in a
+tree structure similar to ontology browsers.
 }
