@@ -22,12 +22,21 @@ evaluated in that environment and \code{.envir} is ignored. If \code{NULL} is pa
 
 \item{max_iter}{The maximum number of iterations to run before stopping. If
 \code{NULL}, will default to the number of named arguments passed to \code{...} minus
-one.}
+one. \code{max_iter} will always be set internally to a minimum of 2 to ensure
+the case where temporary variables are found in the specified environment and
+not passed as arguments is supported.}
 }
 \description{
 Cumulative gluing with \code{\link[=glueV]{glueV()}} for rare cases where temporary variables are
 found in other temporary variables.
 }
+\section{Note}{
+
+\code{glueV_cum()} differs from \code{\link[glue:glue]{glue::glue()}} in producing an ERROR when no
+expression strings are included in \code{...}, instead of simply returning an
+empty \code{glue} object.
+}
+
 \examples{
 glueV_cum(
   # unnamed expression strings

@@ -273,7 +273,7 @@ test_that("suggest_regex(pivot = 'long') works", {
 
 # glueV_cum() tests -------------------------------------------------------
 test_that("glueV_cum() works", {
-    expect_equal(glueV_cum(NULL), glue::as_glue(character(0)))
+    expect_error(glueV_cum(NULL))
     expect_equal(glueV_cum("a"), glue::as_glue("a"))
     expect_equal(
         glueV_cum("who is at !<<loc>>!?", loc = "home"),
