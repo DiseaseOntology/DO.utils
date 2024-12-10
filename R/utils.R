@@ -296,6 +296,11 @@ glueV <- function(..., .envir = parent.frame()) {
 #' the case where temporary variables are found in the specified environment and
 #' not passed as arguments is supported.
 #'
+#' @section Note:
+#' `glueV_cum()` differs from [glue::glue()] in producing an ERROR when no
+#' expression strings are included in `...`, instead of simply returning an
+#' empty `glue` object.
+#'
 #' @examples
 #' glueV_cum(
 #'   # unnamed expression strings
@@ -321,6 +326,8 @@ glueV_cum <- function(..., .sep = "\n", .envir = parent.frame(),
     expr_str <- drop_null(dots[!named])
     expr_len <- vapply(expr_str, length, integer(1L))
     stopifnot(
+        "`...` must include at least one unnamed expression string" =
+            length(expr_str) > 0,
         "Unnamed expresssions must be length-1 character vectors" =
             all(expr_len < 2)
     )
