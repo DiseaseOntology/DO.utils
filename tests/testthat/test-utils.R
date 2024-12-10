@@ -245,6 +245,44 @@ test_that("suggest_regex(pivot = 'long') works", {
 })
 
 
+# glueV_cum() tests -------------------------------------------------------
+test_that("glueV_cum() works", {
+    expect_equal(glueV_cum(NULL), glue::as_glue(character(0)))
+    expect_equal(glueV_cum("a"), glue::as_glue("a"))
+    expect_equal(
+        glueV_cum("who is at !<<loc>>!?", loc = "home"),
+        glue::as_glue("who is at home?")
+    )
+    expect_equal(
+        glueV_cum("who is at !<<loc>>!?", loc = "home !<<when>>!", when = "now"),
+        glue::as_glue("who is at home now?")
+    )
+    expect_equal(
+        glueV_cum(
+            "who is at !<<loc>>!?",
+            "!<<response>>!",
+            loc = "home",
+            response = "I am at !<<loc>>!!"
+        ),
+        glue::as_glue("who is at home?\nI am at home!")
+    )
+    expect_error(glueV_cum(c("a", "b")))
+})
+
+test_that("glueV_cum() .sep argument works", {
+    expect_equal(
+        glueV_cum(
+            "who is at !<<loc>>!?",
+            "!<<response>>!",
+            loc = "home",
+            response = "I am at !<<loc>>!!",
+            .sep = " "
+        ),
+        glue::as_glue("who is at home? I am at home!")
+    )
+})
+
+
 # roll_middle() tests -----------------------------------------------------
 
 test_that("roll_middle() works", {
