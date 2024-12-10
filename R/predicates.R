@@ -264,11 +264,9 @@ is_valid_obo_prop <- function(x) {
 #' @export
 is_valid_doid <- function(x, strict = FALSE) {
     assert_character(x)
-    if (strict) {
-        obo_prefix <- "^(http://purl.obolibrary.org/obo/|obo:)"
-    } else {
-        obo_prefix <- "^(http://purl.obolibrary.org/obo/|obo:)?"
-    }
+    obo_prefix <- "^(http://purl.obolibrary.org/obo/|obo:)"
+    if (!strict) obo_prefix <- paste0(obo_prefix, "?")
+
     doid_regex <- paste0(obo_prefix, "DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$")
     stringr::str_detect(x, doid_regex)
 }
