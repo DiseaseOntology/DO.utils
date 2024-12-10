@@ -295,7 +295,9 @@ glueV <- function(..., .envir = parent.frame()) {
 #' @inheritParams glue::glue
 #' @param max_iter The maximum number of iterations to run before stopping. If
 #' `NULL`, will default to the number of named arguments passed to `...` minus
-#' one.
+#' one. `max_iter` will always be set internally to a minimum of 2 to ensure
+#' the case where temporary variables are found in the specified environment and
+#' not passed as arguments is supported.
 #'
 #' @examples
 #' glueV_cum(
@@ -345,6 +347,7 @@ glueV_cum <- function(..., .sep = "\n", .envir = parent.frame(),
 
     i <- 0
     if (is.null(max_iter)) max_iter <- length(temp_vars) - 1
+    if (max_iter < 2) max_iter <- 2
     while (stringr::str_detect(out, "!<<|>>!") || i <= max_iter) {
         out <- glueV(out, .envir = glue_env)
         i <- i + 1
