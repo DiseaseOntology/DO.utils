@@ -276,8 +276,67 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
 
 ############################ INTERNAL UTILITIES ###############################
 
+# simple wrapper for glue::glue() with !<< & >>! delimiters
 glueV <- function(..., .envir = parent.frame()) {
     glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
+}
+
+#' Cumulative String Interpolation
+#'
+#' Cumulative gluing with [glueV()] for rare cases where one or more inputs need
+#' to replace delimited variables in another.
+#'
+#' @param ... Named strings where expression string(s) to format should be
+#' named with the order in which they are to be processed (e.g. `1`, `2`, `3`;
+#' multiple expressions can be processed at the same level) and temporary
+#' variables for substitution should be named to match the !<< >>! delimited
+#' variables in the expressions. Order the expressions strings to ensure that
+#' temporary variables stack.
+#'
+#' @examples
+#' glueV_cum(
+#'  # expression strings
+#'  `1` = 'FILTER(lang(!<<object>>!) = "!<<lang>>!")',
+#'  "2" = '?iri oboInOwl:has!<<syn_scope>>!Synonym ?!<<syn_scope>>!Synonym .',
+#'  # temporary variables
+#'  object = "?!<<syn_scope>>!Synonym",
+#'  lang = "es",
+#'  syn_scope = "Exact"
+#' )
+#'
+#' @noRd
+glueV_cum <- function(..., .envir = parent.frame()) {
+    .list <- list(...)
+    stopifnot("All elements of `...` must be named." = all(names(.list) != ""))
+
+    is_lvl <- stringr::str_detect(names(.list), "^ *[0-9]+ *$")
+    lvls <- names(.list)[is_lvl] |>
+        unique() |>
+        as.integer() |>
+        sort()
+
+    temp_vars <- .list[!is_lvl]
+    if (length(temp_vars) > 0) {
+        glue_env <- rlang::env_clone(.envir, parent.env(.envir))
+        purrr::walk2(
+            names(temp_vars),
+            unname(temp_vars),
+            function(.x, .y) glue_env[[.x]] <- .y
+        )
+    } else {
+        glue_env <- .envir
+    }
+
+    out <- NULL
+    purrr::map(
+        lvls,
+        function(.x) {
+            out <<- paste(out, .list[.x], sep = "\n") |>
+                glueV(.envir = glue_env)
+        }
+    )
+
+    out
 }
 
 
