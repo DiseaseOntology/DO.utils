@@ -39,6 +39,7 @@ Other value predicates:
 Other predicates: 
 \code{\link{char_val_predicates}},
 \code{\link{is_curie}()},
+\code{\link{is_hex_color}()},
 \code{\link{is_invariant}()},
 \code{\link{lgl_predicates}},
 \code{\link{obo_ID_predicates}}

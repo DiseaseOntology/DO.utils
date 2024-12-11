@@ -30,6 +30,7 @@ Other value predicates:
 
 Other predicates: 
 \code{\link{is_curie}()},
+\code{\link{is_hex_color}()},
 \code{\link{is_invariant}()},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
