@@ -17,5 +17,9 @@ A 3 x \code{length(colors)} matrix with \code{Red}, \code{Green}, & \code{Blue} 
 \description{
 Converts one or more Google Sheets color names or hex codes to RGB values.
 }
-\concept{Google Sheets Formatting}
+\seealso{
+Other Google Sheets Formatting functions: 
+\code{\link{set_gs_fill}()}
+}
+\concept{Google Sheets Formatting functions}
 \keyword{internal}
