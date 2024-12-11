@@ -137,8 +137,7 @@ length_order <- function(data, cols, ...) {
 #' @inheritParams base::duplicated
 #'
 #' @export
-all_duplicated <- function (x, ...)
-{
+all_duplicated <- function(x, ...) {
     duplicated(x, ...) | duplicated(x, fromLast = TRUE, ...)
 }
 
@@ -540,7 +539,7 @@ list_to_man <- function(x, ordered = FALSE) {
         rlang::abort("All elements in `x` must be named.")
     }
     list_item <- if (ordered) {
-        paste0(1:length(names(x)), ". ")
+        paste0(seq_along(names(x)), ". ")
     } else {
         "* "
     }

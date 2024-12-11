@@ -30,11 +30,11 @@ NULL
 range_add_checkbox <- function(ss, range, msg = "Value must be TRUE or FALSE",
                                quiet = TRUE) {
   rule <- googlesheets4:::new(
-      "DataValidationRule",
-      condition = googlesheets4:::new_BooleanCondition(type = "BOOLEAN"),
-      inputMessage = msg,
-      strict = TRUE, # same as in range_add_dropdown(), FALSE doesn't make sense
-      showCustomUi = TRUE # seems to be ignored
+    "DataValidationRule",
+    condition = googlesheets4:::new_BooleanCondition(type = "BOOLEAN"),
+    inputMessage = msg,
+    strict = TRUE, # same as in range_add_dropdown(), FALSE doesn't make sense
+    showCustomUi = TRUE # seems to be ignored
   )
 
   if (quiet) {
