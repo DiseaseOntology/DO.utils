@@ -93,12 +93,12 @@ range_add_dropdown <- function(ss, range, values, msg = "Choose a valid value",
 #'
 #' @keywords internal
 gs_col2rgb <- function(colors) {
+  hex <- is_hex_color(colors)
   stopifnot(
-    "`colors` must be one or more recognized DO.utils:::gs_color name(s) or hex code(s)" =
-      all(colors %in% gs_color | colors %in% names(gs_color))
+    "`colors` must be one or more hex code(s) or recognized DO.utils:::gs_color name(s)" =
+      all(hex | colors %in% names(gs_color))
   )
-  color_data <- ifelse(colors %in% gs_color, colors, gs_color[colors])
-  names(color_data) <- names(gs_color[gs_color %in% color_data])
+  color_data <- ifelse(hex, colors, gs_color[colors])
 
   col2rgb(color_data)
 }
