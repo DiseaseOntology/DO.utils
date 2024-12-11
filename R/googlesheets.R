@@ -80,6 +80,54 @@ range_add_dropdown <- function(ss, range, values, msg = "Choose a valid value",
 }
 
 
+#' Set Google Sheets Range Fill Color
+#'
+#' Sets the fill color for one or more ranges in a Google Sheet.
+#'
+#' @inheritParams curation_template
+#' @param ranges A character vector of ranges to set the background color for,
+#' as recognized by [googlesheets4::range_flood()].
+#'
+#' @section NOTE:
+#' This function relies on internal functions from the `googlesheets4` package
+#' and may break if the package is updated. See examples of
+#' [googlesheets4::range_flood()] for reference.
+#'
+#' @family Google Sheets Formatting functions
+#'
+#' @keywords internal
+set_gs_fill <- function(ss, sheet, ranges, colors) {
+  stopifnot(
+    "`ranges` and `colors` must be same length" =
+      length(ranges) == length(colors),
+  )
+  color_mat <- gs_col2rgb(colors)
+
+  gs_fill <- purrr::map(
+    seq_along(ranges),
+    function(.i) {
+      googlesheets4:::CellData(
+        userEnteredFormat = googlesheets4:::new(
+          "CellFormat",
+          backgroundColor = googlesheets4:::new(
+            "Color",
+            red = color_mat[1, .i] / 255,
+            green = color_mat[2, .i] / 255,
+            blue = color_mat[3, .i] / 255
+          )
+        )
+      )
+    }
+  )
+
+  purrr::walk2(
+    ranges,
+    gs_fill,
+    ~ googlesheets4::range_flood(ss, sheet, range = .x, cell = .y)
+  )
+}
+
+
 #' Convert Google Sheets Colors to RGB
 #'
 #' Converts one or more Google Sheets color names or hex codes to RGB values.
@@ -89,7 +137,7 @@ range_add_dropdown <- function(ss, range, values, msg = "Choose a valid value",
 #' @return A 3 x `length(colors)` matrix with `Red`, `Green`, & `Blue` rows in
 #' 1 column for each color in `colors`.
 #'
-#' @family Google Sheets Formatting
+#' @family Google Sheets Formatting functions
 #'
 #' @keywords internal
 gs_col2rgb <- function(colors) {
