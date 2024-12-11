@@ -1,7 +1,8 @@
 #' Build Hyperlinks
 #'
-#' Builds hyperlinks for Google Sheets, Excel, or HTML by appending a value to
-#' the end of a base url.
+#' Build hyperlinks for Google Sheets, Excel, or HTML. `build_hyperlinks()
+#' appends a value to the end of a base url, while `hyperlink_curie()` converts
+#' CURIEs to hyperlinks.
 #'
 #' @inheritParams append_to_url
 #' @inheritParams format_hyperlink
@@ -58,4 +59,16 @@ build_hyperlink <- function(x, url, as, ..., sep = "", text = x,
     )
 
     hyperlink
+}
+
+#' @param curie A character vector of CURIEs to convert to hyperlinks.
+#' @param def The definition to use when checking for CURIEs. See [is_curie()]
+#' for details.
+#' @rdname build_hyperlink
+#' @export
+hyperlink_curie <- function(curie, as, ..., def = "obo_generic") {
+    stopifnot(any(is_curie(curie, def = def) | is.na(curie)))
+    lui <- stringr::str_remove(curie, ".*:")
+    prefix <- stringr::str_remove(curie, ":.*")
+    build_hyperlink(x = lui, url = prefix, text = curie, as = as, ...)
 }

@@ -2,9 +2,12 @@
 % Please edit documentation in R/hyperlink.R
 \name{build_hyperlink}
 \alias{build_hyperlink}
+\alias{hyperlink_curie}
 \title{Build Hyperlinks}
 \usage{
 build_hyperlink(x, url, as, ..., sep = "", text = x, preserve = "text")
+
+hyperlink_curie(curie, as, ..., def = "obo_generic")
 }
 \arguments{
 \item{x}{Value(s) to append, as a character vector.}
@@ -35,10 +38,15 @@ hyperlink.}
 "url" or "text" (default). Note that the default for \code{build_hyperlink()}
 is opposite the default of \code{\link[=format_hyperlink]{format_hyperlink()}} because \code{text} is provided by
 default.}
+
+\item{curie}{A character vector of CURIEs to convert to hyperlinks.}
+
+\item{def}{The definition to use when checking for CURIEs. See \code{\link[=is_curie]{is_curie()}}
+for details.}
 }
 \description{
-Builds hyperlinks for Google Sheets, Excel, or HTML by appending a value to
-the end of a base url.
+Build hyperlinks for Google Sheets, Excel, or HTML. \verb{build_hyperlinks() appends a value to the end of a base url, while }hyperlink_curie()` converts
+CURIEs to hyperlinks.
 }
 \examples{
 build_hyperlink(
