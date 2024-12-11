@@ -80,8 +80,50 @@ range_add_dropdown <- function(ss, range, values, msg = "Choose a valid value",
 }
 
 
-# microbenchmark(
-#   cur_cols %>% purrr::map_dfc(setNames, object = list(logical())),
-#   cur_cols %>% purrr::map_dfc(~ tibble::tibble(!!.x := logical())),
+#' Convert Google Sheets Colors to RGB
+#'
+#' Converts one or more Google Sheets color names or hex codes to RGB values.
+#'
+#' @param colors A character vector of hex codes or one of the following color
+#' names from Google Sheets `r paste0(names(gs_color), collapse = ", ")`.
+#' @return A 3 x `length(colors)` matrix with `Red`, `Green`, & `Blue` rows in
+#' 1 column for each color in `colors`.
+#'
+#' @family Google Sheets Formatting
+#'
+#' @keywords internal
+gs_col2rgb <- function(colors) {
+  stopifnot(
+    "`colors` must be one or more recognized DO.utils:::gs_color name(s) or hex code(s)" =
+      all(colors %in% gs_color | colors %in% names(gs_color))
+  )
+  color_data <- ifelse(colors %in% gs_color, colors, gs_color[colors])
+  names(color_data) <- names(gs_color[gs_color %in% color_data])
 
-# )
+  col2rgb(color_data)
+}
+
+
+# Google Sheets colors defined in DO.utils
+gs_color <- c(
+  "red" = "#ff0000",
+  "orange" = "#ff9900",
+  "yellow" = "#ffff00",
+  "green" = "#00ff00",
+  "cyan" = "#00ffff",
+  "blue" = "#0000ff",
+  "purple" = "#9900ff",
+  "magenta" = "#ff00ff",
+  "light red 3" = "#f4cccc",
+  "light orange 3" = "#fce5cd",
+  "light yellow 3" = "#fff2cc",
+  "light green 3" = "#d9ead3",
+  "light cyan 3" = "#d0e0e3",
+  "light blue 3" = "#cfe2f3",
+  "light purple 3" = "#d9d2e9",
+  "light magenta 3" = "#ead1dc",
+  "white" = "#ffffff",
+  "black" = "#000000",
+  "dark grey 1" = "#b7b7b7",
+  "light grey 2" = "#efefef"
+)
