@@ -79,8 +79,9 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
                     unique()
             }
         )
-        mult_tag <- purrr::map_lgl(col_tags, ~ length(.x) > 1)
+        tag_n <- purrr::map_int(col_tags, ~ length(.x))
 
+        mult_tag <- tag_n > 1
         if (any(mult_tag)) {
             mt_col <- names(col_tags)[mult_tag]
             col_tag_cat <- purrr::map_chr(
@@ -102,7 +103,7 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
         res <- dplyr::mutate(
             res,
             dplyr::across(
-                names(col_tags)[!mult_tag],
+                names(col_tags)[tag_n == 1],
                 ~ stringr::str_remove(.x, "@[a-z]{2}")
             )
         )
