@@ -126,8 +126,125 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
     out
 }
 
+# [SSSOM](https://mapping-commons.github.io/sssom/)
 
-# inventory_omim() helpers ----------------------------------------------
+#' Assess if Mappings Exist in DO
+#'
+#' Assesses whether identifiers are present in the Human Disease Ontology as
+#' mappings (either xrefs or skos mappings). Utilizes [robot()] for comparison.
+#'
+#' @param onto_path The path to an ontology file, as a string.
+#' @param input A data.frame or the path to a .tsv or .csv file (possibly
+#' compressed) that includes identifiers to compare against the mappings in the
+#' ontology in one and ONLY one of the following columns: `id` or `mapping`.
+#'
+#' @inheritParams multimaps
+#'
+#' @returns
+#' The `input` with the identifer column (re)named `mapping` and 5 additional
+#' columns:
+#' - `exists`: Logical indicating whether an ID exists as a mapping in the DO.
+#' - `mapping_type`: The mapping predicate(s) of this ID to a disease, if
+#' present. Multiple predicate(s) between the same ID and DOID will be pipe
+#' delimited.
+#' - `doid`: The DOID of the disease mapped to this ID, if present.
+#' - `do_label`: The label of the disease mapped to this ID, if present.
+#' - `do_dep`: Logical indicating whether a disease is deprecated or not, if
+#' present.
+#' - `multimaps`: The direction in which an ID or DO term maps to multiple
+#' terms in the other resource, as "input_to_doid", "doid_to_input", "both_ways"
+#' or `NA`.
+#'
+#' Output will have the class `mapping_inventory`.
+#'
+#' @examples
+#' \dontrun{
+#' # manually copy or download data ... UPDATE EXAMPLE!!!
+#' inventory_mapping(
+#'     onto_path = "~/Ontologies/HumanDiseaseOntology/src/ontology/doid-edit.owl",
+#'     input = "omimps.csv",
+#' )
+#' }
+#'
+#' @export
+inventory_mapping <- function(onto_path, input,
+                              include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+                              when_pred_NA = "error") {
+    stopifnot("`onto_path` does not exist." = file.exists(onto_path))
+
+    if (file.exists(input)) {
+        out <- read_delim_auto(input)
+    } else if (is.data.frame(input)) {
+        out <- input
+    } else {
+        rlang::abort(
+            "`input` must be a `data.frame` or the path to an existing file."
+        )
+    }
+
+    col_present <- c("id", "mapping") %in% colnames(out)
+    if (sum(col_present) != 1) {
+        rlang::abort(
+            "`input` must have exactly one column named `id` or `mapping`."
+        )
+    }
+
+    if (col_present[1]) out <- dplyr::rename(out, mapping = "id")
+
+    # get DO-mapping mappings
+    q <- system.file(
+        "sparql", "mapping-all.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    )
+    do_mappings <- robot_query(onto_path, query = q, tidy_what = "everything")
+
+    do_mapping <- do_mappings |>
+        dplyr::rename(
+            doid = .data$id, do_label = .data$label, do_dep = .data$dep
+        ) |>
+        collapse_col(.data$mapping_type, na.rm = TRUE)
+
+    out <- out |>
+        dplyr::left_join(do_mapping, by = "mapping") |>
+        append_empty_col(
+            col = c("exists", "mapping_type", "doid", "do_label", "do_dep")
+        ) |>
+        dplyr::mutate(exists = !is.na(.data$doid)) |>
+        dplyr::relocate(
+            c(.data$mapping_type, .data$exists),
+            .before = .data$doid
+        )
+
+    # identify terms that multimap
+    input_mm <- multimaps(
+        out$mapping,
+        out$mapping_type,
+        out$doid,
+        when_pred_NA = when_pred_NA
+    )
+    doid_mm <- multimaps(
+        out$doid,
+        out$mapping_type,
+        out$mapping,
+        when_pred_NA = when_pred_NA
+    )
+    out <- dplyr::mutate(
+        out,
+        multimaps = dplyr::case_when(
+            input_mm & doid_mm ~ "both_ways",
+            input_mm ~ "input_to_doid",
+            doid_mm ~ "doid_to_input",
+            TRUE ~ NA_character_
+        )
+    )
+
+    class(out) <- c("mapping_inventory", class(out))
+
+    out
+}
+
+# inventory_*() helpers ------------------------------------------------------
 
 #' Identify One-to-Multiple Mappings
 #'
