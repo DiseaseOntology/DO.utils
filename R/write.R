@@ -66,21 +66,16 @@ write_gs <- function(data, ss, hyperlink_curie = NULL, ...) {
 write_gs.omim_inventory <- function(data, ss,
                                     hyperlink_curie = c("omim", "doid"),
                                     datestamp = "%Y%m%d", ...) {
-    hyperlink_curie <- tidyselect::eval_select(
+    hyperlink_col <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
     )
-    if (length(hyperlink_curie) > 0) {
+    if (length(hyperlink_col) > 0) {
         data <- dplyr::mutate(
             data,
             dplyr::across(
-                .cols = {{ hyperlink_curie }},
-                .fns = ~ build_hyperlink(
-                    x = stringr::str_remove(.x, ".*:"),
-                    url = stringr::str_remove(.x, ":.*"),
-                    text = .x,
-                    as = "gs"
-                )
+                .cols = {{ hyperlink_col }},
+                .fns = ~ hyperlink_curie(.x, as = "gs")
             )
         )
     }
