@@ -21,3 +21,27 @@ subtree_query_glue <- '
             rdfs:label ?parent_label .
         FILTER(!isblank(?parent))
     }}'
+
+
+# extract_subclass() helpers -------------------------------------------------
+
+prep_extract_query <- function(class, method) {
+    opts <- c("self", "parents", "descendants", "ancestors", "common_ancestor")
+    if (!method %in% opts) {
+        rlang::abort("`method` must be one of: ", paste(opts, collapse = ", "))
+    }
+    q_dir <- system.file("sparql", package = "DO.utils")
+    q_path <- switch(
+        self = file.path(q_dir, "set.rq"),
+        descendants = file.path(q_dir, "set_descendants.rq"),
+        ancestors = file.path(q_dir, "set_ancestors.rq"),
+        common_ancestor = file.path(q_dir, "set_to_common_ancestor.rq")
+    )
+
+    set <- paste0(class, collapse = " ")
+    # only for common_ancestor
+    set_values <- set <- paste0(class, collapse = ", ")
+    query <- glueV(readr::read_file(q_path), set = set, set_values = set_values)
+
+    query
+}
