@@ -110,3 +110,31 @@ write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
 
     invisible(gs_info)
 }
+
+#' @rdname write_gs
+#' @export
+write_gs.curation_template <- function(data, ss = NULL,
+                                       sheet = "curation-%Y%m%d", ...) {
+    data <- dplyr::mutate(data, links = format_hyperlink(data$links, as = "gs"))
+
+    if (is.null(sheet)) {
+        sheet_nm <- "curation"
+    } else {
+        sheet_nm <- format(Sys.Date(), sheet)
+    }
+
+    gs_info <- googlesheets4::write_sheet(data, ss, sheet)
+
+    if (is.null(ss)) ss <- gs_info
+
+    # add curation template data validation
+    gs_range <- spreadsheet_range(data, "annotation", sheet = sheet)
+    range_add_dropdown(ss, gs_range, values = .curation_opts$header)
+
+    # freeze first two columns
+    googlesheets4::with_gs4_quiet(
+        googlesheets4:::sheet_freeze(ss, sheet = sheet, ncol = 2)
+    )
+
+    invisible(gs_info)
+}
