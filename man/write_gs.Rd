@@ -65,7 +65,7 @@ stamp suffix, separated by '-', to the default sheet name. This behavior is
 retained for backward compatibility and invoked when \code{sheet = NULL}.}
 }
 \value{
-The data as written to the Google Sheet, invisibly.
+The input \code{ss}, as an instance of \link[googlesheets4:sheets_id]{googlesheets4::sheets_id}.
 }
 \description{
 Specialized methods for writing data created by \code{DO.utils} to a specified

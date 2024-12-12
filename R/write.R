@@ -62,7 +62,8 @@ write_graphml <- function(graph, file) {
 #'
 #' @param ... Arguments passed on to methods.
 #'
-#' @returns The data as written to the Google Sheet, invisibly.
+#' @returns The input `ss`, as an instance of [googlesheets4::sheets_id].
+#'
 #' @export
 write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
     stopifnot(
@@ -73,7 +74,6 @@ write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
 }
 
 #' @rdname write_gs
-#'
 #' @param datestamp **DEPRECATED** Use `sheet` instead.
 #'
 #' Previously `NULL` or `NA` would default to the sheet name 'omim_inventory',
@@ -86,7 +86,7 @@ write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
                                     hyperlink_curie = c("omim", "doid"),
                                     sheet_nm = "omim_inventory",
                                     datestamp = "%Y%m%d", ...) {
-    .df <- write_gs.data.frame(
+    gs_info <- write_gs.data.frame(
         data = data,
         ss = ss,
         hyperlink_curie = hyperlink_curie,
@@ -94,8 +94,7 @@ write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
         datestamp = datestamp,
         ...
     )
-
-    invisible(.df)
+    invisible(gs_info)
 }
 
 #' @rdname write_gs
@@ -131,11 +130,7 @@ write_gs.data.frame <- function(data, ss, hyperlink_curie = NULL, sheet_nm = "da
         sheet_nm <- format(Sys.Date(), sheet)
     }
 
-    googlesheets4::write_sheet(
-        data = .df,
-        ss = ss,
-        sheet = sheet_nm
-    )
+    gs_info <- googlesheets4::write_sheet(data, ss, sheet_nm)
 
-    invisible(.df)
+    invisible(gs_info)
 }
