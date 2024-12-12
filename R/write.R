@@ -86,21 +86,16 @@ write_gs.data.frame <- function(data, ss, hyperlink_curie = NULL, sheet_nm = "da
     if (!rlang::is_string(sheet_nm)) {
         rlang::abort("`sheet_nm` must be a single string.")
     }
-    hyperlink_curie <- tidyselect::eval_select(
+    hyperlink_col <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
     )
-    if (length(hyperlink_curie) > 0) {
-        .df <- dplyr::mutate(
+    if (length(hyperlink_col) > 0) {
+        data <- dplyr::mutate(
             data,
             dplyr::across(
-                .cols = {{ hyperlink_curie }},
-                .fns = ~ build_hyperlink(
-                    x = stringr::str_remove(.x, ".*:"),
-                    url = stringr::str_remove(.x, ":.*"),
-                    text = .x,
-                    as = "gs"
-                )
+                .cols = {{ hyperlink_col }},
+                .fns = ~ hyperlink_curie(.x, as = "gs")
             )
         )
     }
