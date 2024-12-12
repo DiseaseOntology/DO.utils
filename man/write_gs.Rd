@@ -5,11 +5,12 @@
 \alias{write_gs.omim_inventory}
 \title{Write Data to a Google Sheet}
 \usage{
-write_gs(data, ss, hyperlink_curie = NULL, ...)
+write_gs(data, ss, sheet = NULL, hyperlink_curie = NULL, ...)
 
 \method{write_gs}{omim_inventory}(
   data,
   ss,
+  sheet = "omim_inventory-\%Y\%m\%d",
   hyperlink_curie = c("omim", "doid"),
   datestamp = "\%Y\%m\%d",
   ...
@@ -30,14 +31,25 @@ returns
 
 Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 
+\item{sheet}{The name to use for the sheet to write into, in the sense of
+"worksheet" or "tab". If a date format recognized by \code{\link[=format.Date]{format.Date()}} is
+included in the string, today's date will be added in the specified format
+and location. If \code{NULL}, the sheet name will be the default for the
+underlying method.
+
+\strong{\emph{WARNING:}} If a sheet with the same name exists it will be overwritten.}
+
 \item{hyperlink_curie}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> The
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.}
 
 \item{...}{Arguments passed on to methods.}
 
-\item{datestamp}{\code{NULL} or \code{NA} to use the default sheet name
-('omim_inventory') or a format recognized by \code{\link[=format.Date]{format.Date()}} to add a date
-stamp suffix, separated by '-', to the default sheet name.}
+\item{datestamp}{\strong{DEPRECATED} Use \code{sheet} instead.
+
+Previously \code{NULL} or \code{NA} would default to the sheet name 'omim_inventory',
+while a format recognized by \code{\link[=format.Date]{format.Date()}} would add an additional date
+stamp suffix, separated by '-', to the default sheet name. This behavior is
+retained for backward compatibility and invoked when \code{sheet = NULL}.}
 }
 \value{
 The data as written to the Google Sheet, invisibly.
