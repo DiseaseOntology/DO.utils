@@ -57,7 +57,8 @@ write_graphml <- function(graph, file) {
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
 #' @param ... Arguments passed on to methods.
 #'
-#' @returns The data as written to the Google Sheet, invisibly.
+#' @returns The input `ss`, as an instance of [googlesheets4::sheets_id].
+#'
 #' @export
 write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
     stopifnot(
@@ -68,7 +69,6 @@ write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
 }
 
 #' @rdname write_gs
-#'
 #' @param datestamp **DEPRECATED** Use `sheet` instead.
 #'
 #' Previously `NULL` or `NA` would default to the sheet name 'omim_inventory',
@@ -106,11 +106,7 @@ write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
         sheet_nm <- format(Sys.Date(), sheet)
     }
 
-    googlesheets4::write_sheet(
-        data = data,
-        ss = ss,
-        sheet = sheet_nm
-    )
+    gs_info <- googlesheets4::write_sheet(data, ss, sheet_nm)
 
-    invisible(data)
+    invisible(gs_info)
 }
