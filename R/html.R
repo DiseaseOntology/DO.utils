@@ -70,10 +70,23 @@ indent_html <- function(n) {
     collapse_to_string(rep('  ', n), delim = "")
 }
 
-
+#' Set HTML Attributes
+#'
+#' Sets HTML attributes for a single HTML element.
+#'
+#' @param attr A named character vector of HTML attributes. Attributes with
+#' `NULL` or `NA` values will be dropped. Names should correspond to HTML
+#' attributes.
+#'
+#' @returns A character vector of HTML attribute strings including necessary
+#' quotes and with a leading space, e.g.
+#' `' src="img path" alt="img alt text here"'`.
+#'
+#' @keywords internal
 set_html_attr <- function(attr) {
-    if (is.null(attr)) return(NULL)
-
+    stopifnot("All `attr` must be named" = rlang::is_named(attr))
+    attr <- attr[!is.na(attr)]
+    if (length(attr) == 0) return(NULL)
     collapse_to_string(
         # to add space between html element and attributes
         "",
