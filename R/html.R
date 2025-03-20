@@ -77,6 +77,7 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #'
 #' @returns A character vector of HTML `img` tags.
 #'
+#' @encoding UTF-8
 #' @export
 as_html_img <- function(src, alt, ..., quote = "\"") {
     src_len <- length(src)
@@ -87,7 +88,7 @@ as_html_img <- function(src, alt, ..., quote = "\"") {
 
     arg_len <- purrr::map_int(list(...), length)
     if (any(arg_len > 1 & arg_len != src_len)) {
-        rlang::abort("Additional `...` attributes must be length-1 or the same lenght as `src`")
+        rlang::abort("Additional `...` attributes must be length\u20111 or the same length as `src`")
     }
     attrs <- set_html_attr(src = src, alt = alt, ..., quote = quote)
     attrs[is.na(src) | is.na(alt)] <- NA_character_
@@ -127,6 +128,7 @@ as_html_img <- function(src, alt, ..., quote = "\"") {
 #' @returns A character vector of HTML elements, including start tags along with
 #' attributes, content, and/or end tags as appropriate.
 #'
+#' @encoding UTF-8
 #' @export
 build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
                                    quote = "\"", include = "optional") {
@@ -281,6 +283,7 @@ build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
 #' quotes and with a leading space, e.g.
 #' `' src="img path" alt="img alt text here"'`.
 #'
+#' @encoding UTF-8
 #' @keywords internal
 set_html_attr <- function(..., max_length = NULL, quote = "\"") {
     attr_list <- check_html_attr(..., max_length = max_length)
@@ -289,7 +292,7 @@ set_html_attr <- function(..., max_length = NULL, quote = "\"") {
 
     q_len <- length(quote)
     if (q_len != 1 & q_len != max_length) {
-        rlang::abort("`quote` must be length‑1 or the same length as the longest attribute")
+        rlang::abort("`quote` must be length\u20111 or the same length as the longest attribute")
     }
 
     attr_list <- purrr::map2(
