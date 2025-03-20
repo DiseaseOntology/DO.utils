@@ -64,8 +64,38 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 }
 
 
-# Internal helpers --------------------------------------------------------
+#' Construct HTML `img` Tag(s)
+#'
+#' Vectorized construction of one or more HTML `img` tags with the specified
+#' attributes. `src` & `alt` are required. Where they are missing, no `img`
+#' tag will be created. Additional attributes should be the same length as `src`
+#' or length <= 1. Length‑1 attributes are recycled.
+#'
+#' @param src The image source(s), as a character vector.
+#' @param alt The alternate text, as a character vector.
+#' @inheritParams set_html_attr
+#'
+#' @returns A character vector of HTML `img` tags.
+#'
+#' @export
+as_html_img <- function(src, alt, ..., quote = "\"") {
+    src_len <- length(src)
+    alt_len <- length(alt)
+    if (src_len < 1 | alt_len < 1 | src_len != alt_len) {
+        rlang::abort("`src` and `alt` are required and must be the same length")
+    }
 
+    arg_len <- purrr::map_int(list(...), length)
+    if (any(arg_len > 1 & arg_len != src_len)) {
+        rlang::abort("Additional `...` attributes must be length-1 or the same lenght as `src`")
+    }
+    attrs <- set_html_attr(src = src, alt = alt, ..., quote = quote)
+    attrs[is.na(src) | is.na(alt)] <- NA_character_
+    dplyr::if_else(!is.na(attrs), paste0('<img', attrs, '>'), NA_character_)
+}
+
+
+# Internal helpers --------------------------------------------------------
 
 #' Set HTML Attributes
 #'
