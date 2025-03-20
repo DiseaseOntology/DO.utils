@@ -4,9 +4,14 @@
 \name{DO.utils-package}
 \alias{DO.utils}
 \alias{DO.utils-package}
-\title{DO.utils: Public Resource Utilities Designed by/for the Disease Ontology}
+\title{Human Disease Ontology (DO) support package}
 \description{
-Generally useful tools to assess use of public resources in scientific literature ("cited by", search, etc.) and to simplify common R tasks, along with tools specifically designed for analysis and improvement of the Human Disease Ontology (DO; https://disease-ontology.org).
+The DO.utils packages provides functions that assist in three main areas:
+\enumerate{
+\item Managing DO tools/builds
+\item Assessing DO's impact on science (bibliometrics/scientometrics)
+\item Making R programming simpler/faster
+}
 }
 \seealso{
 Useful links:
