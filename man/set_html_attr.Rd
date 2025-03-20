@@ -4,12 +4,15 @@
 \alias{set_html_attr}
 \title{Set HTML Attributes}
 \usage{
-set_html_attr(attr)
+set_html_attr(..., quote = "\\"")
 }
 \arguments{
-\item{attr}{A named character vector of HTML attributes. Attributes with
-\code{NULL} or \code{NA} values will be dropped. Names should correspond to HTML
-attributes.}
+\item{...}{Named character vector(s) or name-value pairs of HTML attributes.
+Attributes with values of \code{NULL} or \code{NA} will be dropped. Names should
+correspond exactly to desired HTML attributes.}
+
+\item{quote}{The quote with which to surround the attribute values. Use \code{""}
+if quotes are not desired (default: \verb{"\\""}, double quote).}
 }
 \value{
 A character vector of HTML attribute strings including necessary
