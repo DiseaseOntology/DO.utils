@@ -35,4 +35,8 @@ index_legend <- raw_element_index |>
     tidyr::replace_na(list(start_tag = "required", end_tag = "required")) |>
     dplyr::select(-"empty")
 
+if (nrow(.html_tags) != dplyr::n_distinct(.html_tags$name)) {
+    rlang::abort("Duplicate HTML tag names found")
+}
+
 use_data_internal(.html_tags, overwrite = TRUE)
