@@ -72,13 +72,22 @@ indent_html <- function(n) {
 
 #' Set HTML Attributes
 #'
-#' Sets HTML attributes for a single HTML element.
+#' These functions set attributes in HTML tags, `set_html_attr()` for a single
+#' tag and `map_set_html_attr()` for one or more tags in a vectorized manner.
 #'
 #' @param ... Named character vector(s) or name-value pairs of HTML attributes.
 #' Attributes with values of `NULL` or `NA` will be dropped. Names should
-#' correspond exactly to desired HTML attributes.
+#' correspond exactly to the desired HTML attributes.
 #' @param quote The quote with which to surround the attribute values. Use `""`
 #' if quotes are not desired (default: `"\""`, double quote).
+#'
+#' @section Notes:
+#' * For `map_set_html_attr()`, each input to `...` and `quote` must be a
+#' length-1 vector or a vector of the same length as the longest input. Length-1
+#' vectors will be recycled.
+#'
+#' * No checking is done to confirm names correspond to true HTML attributes.
+#' Beware of spelling errors!
 #'
 #' @returns A character vector of HTML attribute strings including necessary
 #' quotes and with a leading space, e.g.
@@ -96,5 +105,47 @@ set_html_attr <- function(..., quote = "\"") {
         "",
         paste0(names(attr), '=', sandwich_text(attr, quote)),
         delim = " "
+    )
+}
+
+#' @rdname set_html_attr
+map_set_html_attr <- function(..., quote = "\"") {
+    attr_list <- list(...)
+    attr_list <- attr_list[purrr::map_lgl(attr_list, ~ !is.null(.x))]
+    a_len <- purrr::map_int(attr_list, length)
+    max_len <- max(a_len)
+    if (any(a_len > 1 & a_len != max_len)) {
+        rlang::abort("All attributes must have the same length or length <= 1")
+    }
+    if (!rlang::is_named(attr_list)) {
+        rlang::abort("All attributes must be named")
+    }
+    attr_nm_dup <- names(attr_list) |>
+        table() |>
+        (\(x) x > 1)()
+    if (any(attr_nm_dup)) rlang::abort("Attribute names must be unique")
+    q_len <- length(quote)
+    if (q_len != 1 & q_len != max_len) {
+        rlang::abort("`quote` must be length-1 or the same length as the longest attribute")
+    }
+    attr_list <- purrr::map2(
+        attr_list,
+        names(attr_list),
+        ~ if (length(.x) == 1) {
+            purrr::set_names(rep(.x, max_len), rep(.y, max_len))
+        } else {
+            purrr::set_names(.x, rep(.y, length(.x)))
+        }
+    )
+    if (q_len == 1) {
+        attr_list[["quote"]] <- rep(quote, max_len)
+    } else {
+        attr_list[["quote"]] <- quote
+    }
+    purrr::pmap_chr(
+        attr_list,
+        function(..., q) {
+            dplyr::coalesce(set_html_attr(...), NA_character_)
+        }
     )
 }

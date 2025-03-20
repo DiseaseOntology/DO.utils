@@ -2,14 +2,17 @@
 % Please edit documentation in R/html.R
 \name{set_html_attr}
 \alias{set_html_attr}
+\alias{map_set_html_attr}
 \title{Set HTML Attributes}
 \usage{
 set_html_attr(..., quote = "\\"")
+
+map_set_html_attr(..., quote = "\\"")
 }
 \arguments{
 \item{...}{Named character vector(s) or name-value pairs of HTML attributes.
 Attributes with values of \code{NULL} or \code{NA} will be dropped. Names should
-correspond exactly to desired HTML attributes.}
+correspond exactly to the desired HTML attributes.}
 
 \item{quote}{The quote with which to surround the attribute values. Use \code{""}
 if quotes are not desired (default: \verb{"\\""}, double quote).}
@@ -20,6 +23,18 @@ quotes and with a leading space, e.g.
 \code{' src="img path" alt="img alt text here"'}.
 }
 \description{
-Sets HTML attributes for a single HTML element.
+These functions set attributes in HTML tags, \code{set_html_attr()} for a single
+tag and \code{map_set_html_attr()} for one or more tags in a vectorized manner.
 }
+\section{Notes}{
+
+\itemize{
+\item For \code{map_set_html_attr()}, each input to \code{...} and \code{quote} must be a
+length-1 vector or a vector of the same length as the longest input. Length-1
+vectors will be recycled.
+\item No checking is done to confirm names correspond to true HTML attributes.
+Beware of spelling errors!
+}
+}
+
 \keyword{internal}
