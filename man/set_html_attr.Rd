@@ -2,17 +2,21 @@
 % Please edit documentation in R/html.R
 \name{set_html_attr}
 \alias{set_html_attr}
-\alias{map_set_html_attr}
 \title{Set HTML Attributes}
 \usage{
-set_html_attr(..., quote = "\\"")
-
-map_set_html_attr(..., quote = "\\"")
+set_html_attr(..., max_length = NULL, quote = "\\"")
 }
 \arguments{
 \item{...}{Named character vector(s) or name-value pairs of HTML attributes.
 Attributes with values of \code{NULL} or \code{NA} will be dropped. Names should
-correspond exactly to the desired HTML attributes.}
+correspond exactly to the desired HTML attributes.
+
+For historical reasons, input may also be a single character vector of
+name-value pairs.}
+
+\item{max_length}{The maximum expected length of attributes, as an integer. If
+\code{NULL} (default), the maximum length will be the length of the longest
+attribute.}
 
 \item{quote}{The quote with which to surround the attribute values. Use \code{""}
 if quotes are not desired (default: \verb{"\\""}, double quote).}
@@ -23,15 +27,14 @@ quotes and with a leading space, e.g.
 \code{' src="img path" alt="img alt text here"'}.
 }
 \description{
-These functions set attributes in HTML tags, \code{set_html_attr()} for a single
-tag and \code{map_set_html_attr()} for one or more tags in a vectorized manner.
+Sets attributes for one or more HTML tags in a vectorized manner.
 }
 \section{Notes}{
 
 \itemize{
-\item For \code{map_set_html_attr()}, each input to \code{...} and \code{quote} must be a
-length-1 vector or a vector of the same length as the longest input. Length-1
-vectors will be recycled.
+\item Each input to \code{...} and \code{quote} must be a length‑1 vector, a vector of the
+same length as the longest input, or a vector of length equal to
+\code{max_length}. Length‑1 vectors are recycled.
 \item No checking is done to confirm names correspond to true HTML attributes.
 Beware of spelling errors!
 }

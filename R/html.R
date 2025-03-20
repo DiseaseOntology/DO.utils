@@ -64,27 +64,28 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 }
 
 
-# html_in_rows() helpers --------------------------------------------------
+# Internal helpers --------------------------------------------------------
 
-indent_html <- function(n) {
-    collapse_to_string(rep('  ', n), delim = "")
-}
 
 #' Set HTML Attributes
 #'
-#' These functions set attributes in HTML tags, `set_html_attr()` for a single
-#' tag and `map_set_html_attr()` for one or more tags in a vectorized manner.
+#' Sets attributes for one or more HTML tags in a vectorized manner.
 #'
 #' @param ... Named character vector(s) or name-value pairs of HTML attributes.
 #' Attributes with values of `NULL` or `NA` will be dropped. Names should
 #' correspond exactly to the desired HTML attributes.
+#'
+#' For historical reasons, input may also be a single character vector of
+#' name-value pairs.
+#'
 #' @param quote The quote with which to surround the attribute values. Use `""`
 #' if quotes are not desired (default: `"\""`, double quote).
+#' @inheritParams check_html_attr
 #'
 #' @section Notes:
-#' * For `map_set_html_attr()`, each input to `...` and `quote` must be a
-#' length-1 vector or a vector of the same length as the longest input. Length-1
-#' vectors will be recycled.
+#' * Each input to `...` and `quote` must be a length‑1 vector, a vector of the
+#' same length as the longest input, or a vector of length equal to
+#' `max_length`. Length‑1 vectors are recycled.
 #'
 #' * No checking is done to confirm names correspond to true HTML attributes.
 #' Beware of spelling errors!
@@ -94,58 +95,95 @@ indent_html <- function(n) {
 #' `' src="img path" alt="img alt text here"'`.
 #'
 #' @keywords internal
-set_html_attr <- function(..., quote = "\"") {
-    attr <- c(...)
-    attr <- attr[!is.na(attr)]
-    if (length(attr) == 0) return(NULL)
-    stopifnot("All `...` must be named" = rlang::is_named(attr))
+set_html_attr <- function(..., max_length = NULL, quote = "\"") {
+    attr_list <- check_html_attr(..., max_length = max_length)
+    if (is.null(attr_list)) return(invisible(NULL))
+    if (is.null(max_length)) max_length <- attr(attr_list, "max_length")
 
-    collapse_to_string(
-        # to add space between html element and attributes
-        "",
-        paste0(names(attr), '=', sandwich_text(attr, quote)),
-        delim = " "
-    )
-}
-
-#' @rdname set_html_attr
-map_set_html_attr <- function(..., quote = "\"") {
-    attr_list <- list(...)
-    attr_list <- attr_list[purrr::map_lgl(attr_list, ~ !is.null(.x))]
-    a_len <- purrr::map_int(attr_list, length)
-    max_len <- max(a_len)
-    if (any(a_len > 1 & a_len != max_len)) {
-        rlang::abort("All attributes must have the same length or length <= 1")
-    }
-    if (!rlang::is_named(attr_list)) {
-        rlang::abort("All attributes must be named")
-    }
-    attr_nm_dup <- names(attr_list) |>
-        table() |>
-        (\(x) x > 1)()
-    if (any(attr_nm_dup)) rlang::abort("Attribute names must be unique")
     q_len <- length(quote)
-    if (q_len != 1 & q_len != max_len) {
-        rlang::abort("`quote` must be length-1 or the same length as the longest attribute")
+    if (q_len != 1 & q_len != max_length) {
+        rlang::abort("`quote` must be length‑1 or the same length as the longest attribute")
     }
+
     attr_list <- purrr::map2(
         attr_list,
         names(attr_list),
         ~ if (length(.x) == 1) {
-            purrr::set_names(rep(.x, max_len), rep(.y, max_len))
+            purrr::set_names(rep(.x, max_length), rep(.y, max_length))
         } else {
             purrr::set_names(.x, rep(.y, length(.x)))
         }
     )
+
     if (q_len == 1) {
-        attr_list[["quote"]] <- rep(quote, max_len)
+        attr_list[["quote"]] <- rep(quote, max_length)
     } else {
         attr_list[["quote"]] <- quote
     }
-    purrr::pmap_chr(
+
+    out <- purrr::pmap_chr(
         attr_list,
         function(..., q) {
-            dplyr::coalesce(set_html_attr(...), NA_character_)
+            dplyr::coalesce(paste_html_attr(...), NA_character_)
         }
     )
+    unname(out)
+}
+
+#' Check HTML Attribute Inputs
+#'
+#' Checks that all HTML attribute inputs are valid, meaning (1) either
+#' length <= 1 or the same length as the longest attribute, (2) that all
+#' attributes are named, and (3) that no attributes are duplicated.
+#'
+#' @inheritParams set_html_attr
+#' @param max_length The maximum expected length of attributes, as an integer. If
+#' `NULL` (default), the maximum length will be the length of the longest
+#' attribute.
+#'
+#' @keywords internal
+check_html_attr <- function(..., max_length = NULL) {
+    attr_list <- list(...)
+    attr_nm <- names(attr_list)
+    # try as if attributes were passed as a single character vector
+    if (is.null(attr_nm) & length(attr_list) == 1) {
+        attr_list <- as.list(attr_list[[1]])
+        attr_nm <- names(attr_list)
+    }
+
+    empty_attr <- purrr::map_lgl(attr_list, ~ length(stats::na.omit(.x)) == 0)
+    attr_list <- attr_list[!empty_attr]
+    if (length(attr_list) == 0) return(invisible(NULL))
+
+    attr_len <- purrr::map_int(attr_list, length)
+    if (is.null(max_length)) max_length <- max(attr_len)
+    if (any(attr_len > 1 & attr_len != max_length)) {
+        rlang::abort(
+            "All attributes must have length <= 1 or be of the same length as all length > 1 html inputs"
+        )
+    }
+
+    if (!rlang::is_named(attr_list)) {
+        rlang::abort("All attributes must be named")
+    }
+    attr_nm_dup <- table(attr_nm) > 1
+    if (any(attr_nm_dup)) rlang::abort("Attribute names must be unique")
+
+    attr(attr_list, "max_length") <- max_length
+    attr_list
+}
+
+paste_html_attr <- function(..., quote = "\"") {
+    .attr <- c(...)
+    .attr <- .attr[!is.na(.attr)]
+    paste0(
+        # to add spec required space before all attributes
+        " ",
+        paste0(names(.attr), '=', sandwich_text(.attr, quote)),
+        collapse = ""
+    )
+}
+
+indent_html <- function(n) {
+    collapse_to_string(rep('  ', n), delim = "")
 }
