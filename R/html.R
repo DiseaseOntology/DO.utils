@@ -95,6 +95,163 @@ as_html_img <- function(src, alt, ..., quote = "\"") {
 }
 
 
+#' Build HTML Element(s)
+#'
+#' Vectorized construction of one or more HTML elements including the specified
+#' tag(s), attribute(s) and content. Length‑1 inputs will be recycled to the
+#' length of the longest input. All inputs with length > 1, must be of the same
+#' length.
+#'
+#' @param tag The tag(s) to include, as a character vector. Length‑1 character
+#' vectors will be recycled to the length of the
+#' @inheritParams set_html_attr
+#' @param content The content to include within the tag(s), as a character
+#' vector. The default, `NULL`, means no content is intended. For tags that are
+#' required to be empty, content will be ignored. Length‑1 content will be
+#' recycled.
+#' @param close_empty Whether to close empty tags (e.g. `<img>`) with a space
+#' and slash (default: `TRUE` for compatibility with XHTML). For a reference,
+#' see https://stackoverflow.com/questions/1946426/html-5-is-it-br-br-or-br.
+#' @param include The type(s) of tag(s) to include from the output; one of
+#' "optional" (default, including both optional & required tags) or "required"
+#' (including _ONLY_ required tags).
+#'
+#' Take extra care when using `include = "required"`. There are many cases where
+#' a tag considered "optional" is actually required. `build_html_element()`
+#' only handles two possible scenarios: (1) both tags are included when
+#' `content` has a value, and (2) start tags are included when there are
+#' corresponding attributes. To understand tag requirements, review this
+#' [table of HTML tags](https://www.w3.org/TR/html401/index/elements.html) and
+#' the [HTML5 syntax](https://www.w3.org/TR/2011/WD-html5-20110405/syntax.html).
+#'
+#' @returns A character vector of HTML elements, including start tags along with
+#' attributes, content, and/or end tags as appropriate.
+#'
+#' @export
+build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
+                                   quote = "\"", include = "optional") {
+    include_opts <- c("optional", "required")
+    include <- match.arg(include, include_opts)
+    if (include == "optional") include <- include_opts
+
+    if (length(tag) == 0) {
+        rlang::abort("`tag` must be a non-empty character vector")
+    }
+    tryCatch(
+        element_df <- tibble::tibble(
+            name = tag,
+            content = dplyr::coalesce(content, NA_character_)
+        ),
+        tibble_error_incompatible_size = function(e) {
+            rlang::abort("`tag` and `content` must be length <= 1 or the same length")
+        }
+    )
+
+    element_df <- dplyr::left_join(
+        element_df,
+        .html_tags,
+        by = "name",
+        relationship = "many-to-one"
+    )
+    unknown <- unique(dplyr::filter(element_df, is.na(.data$start_tag))$name)
+    if (length(unknown) > 0) {
+        rlang::abort(
+            paste0(
+                "The following tag(s) are not official HTML & cannot be used: ",
+                paste0(unknown, collapse = ", ")
+            )
+        )
+    }
+
+    df_length <- nrow(element_df)
+    if (df_length > 1) {
+        element_df <- dplyr::mutate(
+            element_df,
+            attr_chr = set_html_attr(..., max_length = df_length, quote = quote)
+        )
+    } else {
+        element_df <- element_df |>
+            dplyr::mutate(attr_chr = list(set_html_attr(..., quote = quote))) |>
+            tidyr::unnest("attr_chr")
+    }
+
+    element_df <- dplyr::mutate(
+        element_df,
+        tag_use = dplyr::case_when(
+            .data$start_tag %in% include & .data$end_tag %in% include ~ "both",
+            # content must be between tags, except where forbidden
+            !is.na(.data$content) & .data$end_tag == "forbidden" ~ "error",
+            !is.na(.data$content) ~ "both",
+            # attributes require a start tag
+            !is.na(.data$attr_chr) & .data$end_tag %in% include ~ "both",
+            !is.na(.data$attr_chr) ~ "start",
+            # other scenarios
+            .data$start_tag %in% include ~ "start",
+            .data$end_tag %in% include ~ "end",
+            TRUE ~ "none"
+        )
+    )
+    forbidden <- unique(dplyr::filter(element_df, .data$tag_use == "error")$name)
+    if (length(forbidden) > 0) {
+        rlang::abort(
+            c(
+                paste0(
+                    "The following tag(s) are not allowed to have content: ",
+                    paste0(forbidden, collapse = ", ")
+                )
+            )
+        )
+    }
+
+    deprecated <- unique(dplyr::filter(element_df, .data$deprecated)$name)
+    if (length(deprecated) > 0) {
+        rlang::warn(
+            paste0(
+                "The following tag(s) are deprecated, consider removing them: ",
+                paste0(deprecated, collapse = ", ")
+            )
+        )
+    }
+
+    dropped <- which(element_df$tag_use == "none")
+    if (length(dropped) > 0) {
+        rlang::warn(
+            c(
+                paste0(
+                    "The following optional tag(s) were dropped: ",
+                    paste0(unique(element_df$name[dropped]), collapse = ", "),
+                    " at positions ",
+                    to_range(dropped)
+                ),
+                "i" = "To include them use `include = \"optional\"`"
+            )
+        )
+    }
+
+    if (close_empty) {
+        close <- " />"
+    } else {
+        close <- ">"
+    }
+    element_df <- dplyr::mutate(
+        element_df,
+        out = dplyr::case_when(
+            .data$tag_use == "both" ~
+                paste0(
+                    "<", .data$name, .data$attr_chr, ">",
+                    .data$content,
+                    "</", .data$name, ">"
+                ),
+            .data$tag_use == "start" ~
+                paste0("<", .data$name, .data$attr_chr, close),
+            .data$tag_use == "end" ~ paste0("</", .data$name, ">"),
+            TRUE ~ NA_character_
+        )
+    )
+    element_df$out
+}
+
+
 # Internal helpers --------------------------------------------------------
 
 #' Set HTML Attributes
