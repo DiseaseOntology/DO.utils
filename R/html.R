@@ -258,7 +258,7 @@ build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
 
 get_html_table <- function(html, id) {
     table_start <- html |>
-        stringr::str_detect(, paste0("<table.*id=\"", id, "\"")) |>
+        stringr::str_detect(paste0("<table.*id=\"", id, "\"")) |>
         which()
     table_ends <- html |>
         stringr::str_detect("</table>") |>
