@@ -257,31 +257,47 @@ build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
 # Internal helpers --------------------------------------------------------
 
 get_html_table <- function(html, id) {
-    table_start <- html |>
-        stringr::str_detect(paste0("<table.*id=\"", id, "\"")) |>
-        which()
-    table_ends <- html |>
-        stringr::str_detect("</table>") |>
-        which()
-    table_end <- table_ends[table_ends > table_start][1]
-    html_tbl <- html[table_start:table_end]
-    attr(html_tbl, "pos") <- c(table_start, table_end)
+    if (length(html) == 1) {
+        html_tbl <- stringr::str_extract(
+            html,
+            stringr::regex(
+                paste0("[ \t]*<table[^>]*id=\"", id, "\".*?</ *table>"),
+                dotall = TRUE,
+                ignore_case = TRUE
+            )
+        )
+    } else {
+        table_start <- html |>
+            stringr::str_detect(paste0("<table[^>]*id=\"", id, "\"")) |>
+            which()
+        table_ends <- html |>
+            stringr::str_detect("</ *table>") |>
+            which()
+        table_end <- table_ends[table_ends > table_start][1]
+        html_tbl <- html[table_start:table_end]
+        attr(html_tbl, "table_range") <- c(table_start, table_end)
+    }
     html_tbl
 }
 
 get_html_indent <- function(html) {
-    indents <- html |>
-        stringr::str_extract("^\\s+")
-    indent_type <- dplyr::if_else(
+    if (length(html) == 1) html <- stringr::str_split(html, "\n")[[1]]
+    indents <- stringr::str_extract_all(html, "^\\s+") |>
+        unlist()
+    indent_types <- dplyr::if_else(
         stringr::str_count(indents, "\t") > stringr::str_count(indents, " "),
         "\t",
         " "
-    )
+    ) |>
+        table()
+    preferred_indent <- indent_types == max(indent_types, na.rm = TRUE)
+    indent_type <- names(indent_types)[preferred_indent]
     indent_n <- stringr::str_count(indents, indent_type)
     indent_min <- min(indent_n)
     min_pos <- which(indent_n == indent_min)[1]
-    increment <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
+    increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
         indent_min
+    increment <- min(increments, na.rm = TRUE)
     list(type = indent_type, min = indent_min, increment = increment)
 }
 
