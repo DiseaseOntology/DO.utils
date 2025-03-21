@@ -256,8 +256,7 @@ build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
 
 # Internal helpers --------------------------------------------------------
 
-get_html_table <- function(path, id) {
-    html <- readr::read_lines(path)
+get_html_table <- function(html, id) {
     table_start <- html |>
         stringr::str_detect(, paste0("<table.*id=\"", id, "\"")) |>
         which()
