@@ -256,6 +256,36 @@ build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
 
 # Internal helpers --------------------------------------------------------
 
+get_html_table <- function(path, id) {
+    html <- readr::read_lines(path)
+    table_start <- html |>
+        stringr::str_detect(, paste0("<table.*id=\"", id, "\"")) |>
+        which()
+    table_ends <- html |>
+        stringr::str_detect("</table>") |>
+        which()
+    table_end <- table_ends[table_ends > table_start][1]
+    html_tbl <- html[table_start:table_end]
+    attr(html_tbl, "pos") <- c(table_start, table_end)
+    html_tbl
+}
+
+get_html_indent <- function(html) {
+    indents <- html |>
+        stringr::str_extract("^\\s+")
+    indent_type <- dplyr::if_else(
+        stringr::str_count(indents, "\t") > stringr::str_count(indents, " "),
+        "\t",
+        " "
+    )
+    indent_n <- stringr::str_count(indents, indent_type)
+    indent_min <- min(indent_n)
+    min_pos <- which(indent_n == indent_min)[1]
+    increment <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
+        indent_min
+    list(type = indent_type, min = indent_min, increment = increment)
+}
+
 #' Set HTML Attributes
 #'
 #' Sets attributes for one or more HTML tags in a vectorized manner.
