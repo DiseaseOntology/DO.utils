@@ -16,7 +16,7 @@ pub_id_match <- c(
     pmid = "[0-9]{1,8}",
     pmcid = "PMC[0-9]+",
     doi = "10.+/.+",
-    scopus_eid = "2-s2.0-[0-9]{11}"
+    scopus_eid = "2-s2.0-[0-9]{11,}"
 )
 
 
