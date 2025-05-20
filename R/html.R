@@ -1,69 +1,3 @@
-#' Arrange HTML in Rows
-#'
-#' Arrange html elements in rows, with each row containing the specified number
-#' of elements `per_row`.
-#'
-#' @param cell_html HTML to use in cells, as a character vector.
-#' @param row_attr Name-value pairs of HTML attributes to set for rows, as a
-#'     named character vector (see NOTE).
-#' @param cell_attr Name-value pairs of HTML attributes to set for cells, as a
-#'     named character vector (see NOTE).
-#' @param per_row The number of cells per row, as an integer.
-#' @param indent_n The number of 2-space indents to use for row html code
-#'     (`<tr>` tag). _Only used to make html more readable._ NOTE that cell
-#'     html (`<td>` tags) will have one more 2-space indent than `<tr>` tag.
-#'
-#' @section NOTES:
-#' As currently coded, it is not possible to specify attributes separately for
-#' each row/cell. All attributes are applied to each row/cell.
-#'
-#' Formatting here is currently designed to follow the
-#' [W3C style guide](https://www.w3schools.com/html/html5_syntax.asp). The
-#' [google style guide](https://google.github.io/styleguide/htmlcssguide.html)
-#' may be used in the future.
-#'
-#' @examples
-#' html_in_rows(c("<b>Hi!</b>", "", "", "What's", "your", "name"))
-#'
-#' @noRd
-html_in_rows <- function(cell_html, row_attr = NULL,
-                         cell_attr = NULL, per_row = 3, indent_n = 2) {
-
-    # format row elements (include attributes)
-    r_start <- collapse_to_string(
-        indent_html(indent_n),
-        '<tr',
-        set_html_attr(row_attr),
-        '>',
-        delim = ""
-    )
-    r_end <- collapse_to_string(indent_html(indent_n), '</tr>', delim = "")
-
-    # format cell elements (include attributes & html)
-    cell <- paste0(
-        collapse_to_string(
-            indent_html(indent_n + 1),
-            '<td',
-            set_html_attr(cell_attr),
-            '>',
-            delim = ""
-        ),
-        cell_html,
-        '</td>'
-    )
-
-    # arrange cells in rows
-    cell_grouped <- partition(cell, n = per_row)
-    row_cell_html <- purrr::map(
-        cell_grouped,
-        ~ c(r_start, .x, r_end)
-    ) %>%
-        unlist(use.names = FALSE)
-
-    row_cell_html
-}
-
-
 #' Construct HTML `img` Tag(s)
 #'
 #' Vectorized construction of one or more HTML `img` tags with the specified
@@ -253,6 +187,191 @@ build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
     element_df$out
 }
 
+#' Build HTML Table from data.frame
+#'
+#' Builds an HTML table from a data.frame.
+#'
+#' @param .df A data.frame.
+#' @param head Either a boolean indicating whether the column names should be
+#' included in the table header (default: `TRUE`), or a character vector of
+#' column names to use as the header.
+#' @param foot Either a boolean indicating whether the column names should be
+#' included in the table header (default: `TRUE`), or a character vector of
+#' column names to use as the header.
+#' @param per_row The number of cells to include in each row, or `NULL`
+#' (default) to determine automatically from `.df`.
+#' @inheritDotParams html_in_rows
+#' @param .attr A named list of attribute lists where outer list names specify
+#' the HTML element, and inner lists are name-value pairs of attributes. Values
+#' should be either length‑1 or the same length as the number of elements in the
+#' final table. Length‑1 values are recycled.
+#' @param section_tag The HTML table section tags to include; one or more of
+#' "thead", "tbody", and "tfoot" (default: "all"). Section tags will only be
+#' included if there are elements within the specified section (e.g. `tfoot`
+#' section tags will not be added when `tfoot = FALSE`).
+#' @param thead_cell The HTML table cell tag to use for the header row (default:
+#' "th").
+#' @param tfoot_cell The HTML table cell tag to use for the footer row (default:
+#' "th").
+#' @param indent The value to use for indenting the HTML code (default: two
+#' spaces).
+#' @param indent_min The minimum number of indents to use for the HTML code.
+#'
+#' @returns An HTML table as a character vector.
+#'
+#' @export
+# build_html_table <- function(.df, thead = TRUE, tfoot = FALSE, per_row = NULL,
+#                              .attr = NULL, tbody = FALSE, section_tag = "all",
+#                              thead_cell = "th", tfoot_cell = "th",
+#                              indent = "  ", indent_min = 0) {
+#     tsections <- c("thead", "tbody", "tfoot")
+#     section_tag <- match.arg(section_tag, c(tsections, "all"), several.ok = TRUE)
+#     if ("all" %in% section_tag) section_tag <- c("thead", "tbody", "tfoot")
+#
+#     thead_cell <- match.arg(thead_cell, c("th", "td"))
+#     tfoot_cell <- match.arg(tfoot_cell, c("th", "td"))
+#
+#     if (is.null(per_row)) {
+#         per_row <- ncol(.df)
+#     } else {
+#         if (!is_scalar_whole_number(per_row)) {
+#             rlang::abort("`per_row` must be a whole number")
+#         }
+#         per_row <- as.integer(per_row)
+#     }
+#
+#     if (!is.logical(thead)) {
+#         if (length(thead) != ncol(.df)) {
+#             rlang::abort("`thead` must be a logical or a character vector of the same length as `per_row`")
+#         }
+#     } else {
+#         if (thead) {
+#             thead <- colnames(.df)
+#         } else {
+#             thead <- NULL
+#         }
+#     }
+#
+#     if (!is.logical(tfoot)) {
+#         if (length(tfoot) != ncol(.df)) {
+#             rlang::abort("`tfoot` must be a logical or a character vector of the same length as `per_row`")
+#         }
+#     } else {
+#         if (tfoot) {
+#             tfoot <- colnames(.df)
+#         } else {
+#             tfoot <- NULL
+#         }
+#     }
+#
+#     attr_nm <- names(.attr)
+#     if (!is.null(thead)) {
+#         thead_cell <- build_html_element(
+#             thead_cell,
+#             .attr[["th"]],
+#             content = thead
+#         )
+#         thead_row <-
+#         thead <- build_html_element("thead", .attr[["thead"]], content = th)
+#     } else {
+#         head_elements <- c("thead", "th")
+#         attr_no_head <- head_elements[head_elements %in% attr_nm]
+#         if (length(attr_no_head) > 0) {
+#             rlang::abort(
+#                 paste0(
+#                     "Table head attributes were specified for missing elements: "
+#                     paste0(attr_no_head, collapse = ", ")
+#                 )
+#             )
+#         }
+#     }
+#
+#     if (!is.null(tfoot)) {
+#         th <- build_html_element("th", .attr[["th"]], content = thead)
+#         thead <- build_html_element("thead", .attr[["thead"]], content = th)
+#     } else {
+#         head_elements <- c("thead", "th")
+#         attr_no_head <- head_elements[head_elements %in% attr_nm]
+#         if (length(attr_no_head) > 0) {
+#             rlang::abort(
+#                 paste0(
+#                     "Table head attributes were specified for missing elements: "
+#                     paste0(attr_no_head, collapse = ", ")
+#                 )
+#             )
+#         }
+#     }
+#     tbody <-
+#     # build table
+#     table_tag <- build_html_element("table", table_attr)
+# }
+
+
+#' Arrange HTML in Rows
+#'
+#' Arrange html elements in rows, with each row containing the specified number
+#' of elements `per_row`.
+#'
+#' @param cell_html HTML to use in cells, as a character vector.
+#' @param row_attr Name-value pairs of HTML attributes to set for rows, as a
+#'     named character vector (see NOTE).
+#' @param cell_attr Name-value pairs of HTML attributes to set for cells, as a
+#'     named character vector (see NOTE).
+#' @param per_row The number of cells per row, as an integer.
+#' @param indent_n The number of 2-space indents to use for row html code
+#'     (`<tr>` tag). _Only used to make html more readable._ NOTE that cell
+#'     html (`<td>` tags) will have one more 2-space indent than `<tr>` tag.
+#'
+#' @section NOTES:
+#' As currently coded, it is not possible to specify attributes separately for
+#' each row/cell. All attributes are applied to each row/cell.
+#'
+#' Formatting here is currently designed to follow the
+#' [W3C style guide](https://www.w3schools.com/html/html5_syntax.asp). The
+#' [google style guide](https://google.github.io/styleguide/htmlcssguide.html)
+#' may be used in the future.
+#'
+#' @examples
+#' html_in_rows(c("<b>Hi!</b>", "", "", "What's", "your", "name"))
+#'
+#' @noRd
+html_in_rows <- function(cell_html, row_attr = NULL,
+                         cell_attr = NULL, per_row = 3, indent_n = 2) {
+
+    # format row elements (include attributes)
+    r_start <- collapse_to_string(
+        indent_html(indent_n),
+        '<tr',
+        set_html_attr(row_attr),
+        '>',
+        delim = ""
+    )
+    r_end <- collapse_to_string(indent_html(indent_n), '</tr>', delim = "")
+
+    # format cell elements (include attributes & html)
+    cell <- paste0(
+        collapse_to_string(
+            indent_html(indent_n + 1),
+            '<td',
+            set_html_attr(cell_attr),
+            '>',
+            delim = ""
+        ),
+        cell_html,
+        '</td>'
+    )
+
+    # arrange cells in rows
+    cell_grouped <- partition(cell, n = per_row)
+    row_cell_html <- purrr::map(
+        cell_grouped,
+        ~ c(r_start, .x, r_end)
+    ) %>%
+        unlist(use.names = FALSE)
+
+    row_cell_html
+}
+
 
 # Internal helpers --------------------------------------------------------
 
@@ -298,8 +417,16 @@ get_html_indent <- function(html) {
     increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
         indent_min
     increment <- min(increments, na.rm = TRUE)
-    list(type = indent_type, min = indent_min, increment = increment)
+    out <- list(
+        type = indent_type,
+        min = indent_min,
+        min_location = min_pos,
+        increment = increment
+    )
+    class(out) <- c("html_indent", class(out))
+    out
 }
+
 
 #' Set HTML Attributes
 #'
