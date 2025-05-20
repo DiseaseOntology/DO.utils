@@ -23,6 +23,30 @@ parse_mapping <- function(py_gilda_res_list, ...) {
 }
 
 
+#' Parse Error Messages from Fastobo Validator
+#'
+#' Reads saved error messages from fastobo-validator and parses them into a
+#' tibble. Assumes the input will specify errors including CURIEs.
+#'
+#' @param file Path to the file containing the error messages. Output should be
+#' saved on the commandline by assigning stdout to a file, e.g.
+#' fastobo-validator input.obo > input_err.txt
+#'
+#' @returns A tibble with columns `id`, `where`, and `err`.
+#'
+#' @export
+parse_fastobo_validator <- function(file) {
+    parsed <- readr::read_file(file) |>
+        stringr::str_match_all(
+            "--> (?<where>.+) (?<id>[^:]+:[0-9]+)[^\n]*\n[:space:]*(?<err>[^\n]+)"
+        )
+    out <- tibble::as_tibble(parsed[[1]][, -1]) |>
+        dplyr::relocate("where", "err", .after = "id")
+
+    out
+}
+
+
 # parse_mapping() utils ---------------------------------------------------
 
 #' Parse Mapping for Single Term (INTERNAL)
