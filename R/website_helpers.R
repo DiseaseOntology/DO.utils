@@ -174,14 +174,15 @@ find_count_pos <- function(page_html, data_df, page) {
     }
 
     data_pattern <- paste0("<td>[^/]*", id)
+    tdnum_pos <- which(stringr::str_detect(page_html, "<td> *[0-9,.]+ *</td>"))
     pos <- purrr::map_dbl(
         data_pattern,
         function(.p) {
-            match_pos <- which(stringr::str_detect(page_html, .p)) + 2
+            match_pos <- which(stringr::str_detect(page_html, .p))
             if (length(match_pos) == 0) {
                 0
             } else {
-                match_pos
+                tdnum_pos[tdnum_pos > match_pos][1]
             }
         }
     )
