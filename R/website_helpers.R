@@ -43,6 +43,8 @@ html_col_sort.default <- function(x, cols) {
 #' @family make_use_case_html() > html_col_sort() helpers
 #' @noRd
 create_row_index <- function(len, cols) {
+    if (len < cols) return(rep(1, len))
+
     in_last_row <- len %% cols
     if (in_last_row == 0) in_last_row <- cols
     rows <- round_up(len / cols, 0)
