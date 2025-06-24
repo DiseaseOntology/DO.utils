@@ -59,31 +59,30 @@ lengthen_col <- function(data, cols, delim = "|", trim = TRUE, convert = FALSE) 
     assert_scalar_logical(trim)
     assert_scalar_logical(convert)
 
-    .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
     df_sep <- dplyr::mutate(
         data,
         dplyr::across(
-            {{ .cols }},
+            {{ cols }},
             .fns = ~ stringr::str_split(.x, stringr::coll(delim))
         )
     )
 
-    df_long <- unnest_cross(df_sep, .cols, keep_empty = TRUE)
+    df_long <- unnest_cross(df_sep, {{ cols }}, keep_empty = TRUE)
     if (trim) {
         df_long <- dplyr::mutate(
             df_long,
-            dplyr::across(.cols, stringr::str_trim)
+            dplyr::across({{ cols }}, stringr::str_trim)
         )
     }
     if (convert) {
         df_long <- dplyr::mutate(
             df_long,
-            dplyr::across(.cols, utils::type.convert, as.is = TRUE)
+            dplyr::across({{ cols }}, utils::type.convert, as.is = TRUE)
         )
     } else {
         df_long <- dplyr::mutate(
             df_long,
-            dplyr::across(.cols, dplyr::na_if, y = "NA")
+            dplyr::across({{ cols }}, ~ dplyr::na_if(.x, y = "NA"))
         )
     }
 
