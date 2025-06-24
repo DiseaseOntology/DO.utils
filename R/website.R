@@ -8,9 +8,11 @@
 #' "Use Cases" file in the appropriate section/table.
 #'
 #' @param out_dir The path to the directory where output should be saved, as a
-#'     string.
+#' string.
 #' @param group The group(s) to generate html for, as a character vector. One or
-#'      more of: "all" (default), "ontology", "resource", or "methodology".
+#' more of: "all" (default) or specific values in the `type` column of the
+#' [DO_uses](https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/?gid=1972219724#gid=1972219724)
+#' `DO_website_user_list` sheet.
 #'
 #' @returns
 #' One "html" file in `out_dir` for each `group` named as
@@ -25,13 +27,6 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
             message = "`out_dir` is not a single directory or does not exist."
         )
     }
-    possible_use_cases <- c("ontology", "resource", "methodology")
-    group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
-    if ("all" %in% group) {
-        group <- possible_use_cases
-    }
-
-    out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
 
     # prep data
     use_case_gs <- googlesheets4::read_sheet(
@@ -43,6 +38,16 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
     use_case_df <- use_case_gs %>%
         dplyr::filter(!is.na(.data$added)) %>%
         dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
+
+
+    possible_use_cases <- unique(use_case_df$type) |>
+        na.omit()
+    group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
+    if ("all" %in% group) {
+        group <- possible_use_cases
+    }
+
+    out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
 
     use_case_list <- purrr::map(
         group,

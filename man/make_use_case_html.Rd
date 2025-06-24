@@ -11,7 +11,9 @@ make_use_case_html(out_dir = "graphics/website", group = "all")
 string.}
 
 \item{group}{The group(s) to generate html for, as a character vector. One or
-more of: "all" (default), "ontology", "resource", or "methodology".}
+more of: "all" (default) or specific values in the \code{type} column of the
+\href{https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/?gid=1972219724#gid=1972219724}{DO_uses}
+\code{DO_website_user_list} sheet.}
 }
 \value{
 One "html" file in \code{out_dir} for each \code{group} named as
