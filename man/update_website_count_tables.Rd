@@ -7,13 +7,12 @@
 update_website_count_tables(DO_repo, tag, svn_repo)
 }
 \arguments{
-\item{DO_repo}{A \code{pyDOID.repo.DOrepo} object (see \code{\link[=DOrepo]{DOrepo()}}).}
+\item{DO_repo}{The local path to the HumanDiseaseOntology repository, as a
+string.}
 
 \item{tag}{The repo tag to extract data from, as a string.}
 
-\item{svn_repo}{The local path to the DO website svn directory, as a string.
-The correct directory will include a Dockerfile and the
-'disease_ontology' directory.}
+\item{svn_repo}{The local path to the DO website svn trunk, as a string.}
 }
 \value{
 Updated counts directly in the html of the svn repo for each page,
@@ -26,12 +25,3 @@ Directly updates counts listed in the tables on the disease-ontology.org
 Changes to these html files should be reviewed and, if correct, committed to
 the svn repo for deployment.
 }
-\section{Speed Note}{
-
-Expect this function to make more than a minute. The majority of the time is
-consumed loading the doid-merged.owl file and cannot be sped up
-without a faster RDF/OWL parser. This is currently handled via DO.utils'
-dependency on the python package pyDOID with RDF handled by the RDFLib python
-package.
-}
-

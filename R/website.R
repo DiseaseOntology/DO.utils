@@ -87,43 +87,21 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
 #' Changes to these html files should be reviewed and, if correct, committed to
 #' the svn repo for deployment.
 #'
-#' @param DO_repo A `pyDOID.repo.DOrepo` object (see [DOrepo()]).
+#' @inheritParams replace_html_counts
 #' @param tag The repo tag to extract data from, as a string.
-#' @param svn_repo The local path to the DO website svn directory, as a string.
-#'     The correct directory will include a Dockerfile and the
-#'     'disease_ontology' directory.
 #'
 #' @returns
 #' Updated counts directly in the html of the svn repo for each page,
 #' _as well as_, the old and new counts for comparison as a list of tibbles
 #' (invisibly).
 #'
-#' @section Speed Note:
-#' Expect this function to make more than a minute. The majority of the time is
-#' consumed loading the doid-merged.owl file and cannot be sped up
-#' without a faster RDF/OWL parser. This is currently handled via DO.utils'
-#' dependency on the python package pyDOID with RDF handled by the RDFLib python
-#'  package.
-#'
 #' @export
 update_website_count_tables <- function(DO_repo, tag, svn_repo) {
-    # validate arguments
-    if (class(DO_repo)[1] != "pyDOID.repo.DOrepo") {
-        rlang::abort("`DO_repo` is not a pyDOID.repo.DOrepo object.")
-    }
-    if (!rlang::is_string(tag)) {
-        rlang::abort("`tag` must be a string corresponding to a DO release.")
-    }
-    if (!rlang::is_string(svn_repo) || !dir.exists(svn_repo)) {
-        rlang::abort(
-            message = "`svn_repo` is not a single directory or does not exist."
-        )
-    }
-
-    # reversibly checkout tag; tmp to capture empty lines in output
-    DO_repo$capture_head()
-    on.exit(DO_repo$restore_head())
-    DO_repo$checkout_tag(tag)
+    # reversibly checkout tag
+    repo <- git2r::repository(DO_repo)
+    repo_head <- git2r::repository_head(repo)
+    on.exit(git2r::checkout(repo_head))
+    git2r::checkout(repo, tag)
 
     imports <- replace_html_counts(DO_repo, svn_repo, "imports", reload = TRUE)
     slims <- replace_html_counts(DO_repo, svn_repo, "slims", reload = FALSE)

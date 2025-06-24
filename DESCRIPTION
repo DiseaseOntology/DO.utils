@@ -17,6 +17,7 @@ Imports:
     assertthat,
     dplyr (>= 1.1.0),
     ggplot2,
+    git2r,
     glue,
     googlesheets4,
     httr,
