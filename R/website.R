@@ -41,7 +41,7 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
 
 
     possible_use_cases <- unique(use_case_df$type) |>
-        na.omit()
+        stats::na.omit()
     group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
     if ("all" %in% group) {
         group <- possible_use_cases

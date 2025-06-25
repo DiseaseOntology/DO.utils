@@ -65,7 +65,7 @@ Config/reticulate:
         )
     )
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Remotes: allenbaron/rentrez
 VignetteBuilder: knitr
 URL: https://diseaseontology.github.io/DO.utils/
