@@ -311,6 +311,7 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 }
 
 
+<<<<<<< Updated upstream
 #' Extract Class Axioms
 #'
 #' Extract `owl:equivalentClass` and `owl:subClassOf` axioms from the
@@ -438,4 +439,12 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
     if (debug) info["tidygraph"] <- tg
 
     tg
+=======
+# new data identified by appearing after || (double pipe)
+extract_new_rt <- function(x) {
+    new_list <- stringr::str_extract(x, "\\|\\|.*") %>%
+        stringr::str_split(" *\\| *")
+    new <- purrr::map(new_list, ~omit(.x, identify = FALSE))
+    new
+>>>>>>> Stashed changes
 }
