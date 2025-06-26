@@ -1,0 +1,511 @@
+---
+title: "Analysis of Names for DOID:0060889"
+subtitle: "Issue #1431"
+date: "2025-03-05"
+output:
+    html_notebook:
+        toc: true
+        toc_float: true
+        code_folding: hide
+---
+
+```{r setup, include=FALSE}
+library(europepmc)
+library(tidyverse)
+library(xml2)
+library(here)
+library(DO.utils)
+library(lubridate)
+library(glue)
+library(hues)
+library(plotly)
+```
+
+```{r data_input}
+anal_date <- "2025-03-05"
+do_nm <- "prune belly syndrome"
+doid <- "DOID:0060889"
+terms <- list(
+    DO = c(
+        "prune belly syndrome", # current label
+        "abdominal muscle deficiency syndrome",
+        "Eagle-Barret syndrome",
+        "Obrisnksy syndrome"
+    ),
+    OMIM = c(
+        "abdominal muscles, absence of, with urinary tract abnormality and cryptorchidism",
+        "Eagle-Barrett syndrome",
+        "EGBRS"
+    ),
+    GARD = c(
+        "abdominal muscle deficiency syndrome",
+        "eagle-Barret syndrome",
+        "Obrinsky syndrome",
+        "Obrisnksy syndrome",
+        "syndrome of agenesis of abdominal muscles",
+        "triad syndrome"
+    ),
+    MeSH = c(
+        "Abdominal Muscle Deficiency Syndrome",
+        "Congenital Absence of the Abdominal Muscles",
+        "Eagle-Barrett Syndrome",
+        "Obrinsky Syndrome",
+        "Prune-Belly Syndrome"
+    ),
+    Orphanet = c(
+        "Abdominal muscle deficiency syndrome",
+        "Eagle-Barret syndrome",
+        "Obrinsky syndrome",
+        "Triad syndrome"
+    ),
+    issue_author = c(
+        "Eagle-Barrett syndrome",
+        "Obrinsky syndrome"
+    )
+)
+```
+
+
+```{r custom_functions}
+# get_ftxt_safely() will automatically get PMC articles or books and will NOT
+#   fail if on errors caused by individual download failures
+safe_epmc_ftxt <- purrr::safely(europepmc::epmc_ftxt, otherwise = NA, quiet = FALSE)
+safe_epmc_ftxt_bk <- purrr::safely(europepmc::epmc_ftxt_book, otherwise = NA, quiet = FALSE)
+
+get_ftxt_safely <- function(pmcid = NA, bookid = NA) {
+    if (is.na(pmcid) && is.na(bookid) ) return(NA)
+    if (!is.na(pmcid)) {
+        out <- list(safe_epmc_ftxt(pmcid))
+    } else {
+        out <- list(safe_epmc_ftxt_bk(bookid))
+    }
+    cat(".")
+    out
+}
+
+
+# parse_ftxt_xml() parses results from get_ftxt_safely()
+parse_ftxt_xml <- function(safe_ftxt_xml, xml_accessor) {
+    if (!is.null(safe_ftxt_xml$error)) {
+        return(paste0("ERROR: ", safe_ftxt_xml$error$message))
+    }
+    out <- safe_ftxt_xml$result |>
+        xml2::xml_find_all(xml_accessor) |>
+        xml2::xml_text()
+
+    if (length(out) == 0) {
+        out <- paste0(
+            "ERROR [NO BODY]: ",
+            xml2::xml_text(safe_ftxt_xml$result)
+        )
+        if (length(out) == 0) {
+            out <- "ERROR: No text extractable"
+        }
+    } else if (length(out) > 1) {
+        out <- DO.utils::vctr_to_string(out, delim = "%%%%%") |>
+            paste0("WARNING: Multilength output, separated by %%%%%.")
+    }
+
+    out
+}
+
+as_ulist <- function(x, indent = 0) {
+    paste0(rep('    ', indent), collapse = "") |>
+    paste0('- %s   ') |>
+    sprintf(x) |>
+    cat(sep = '\n')
+}
+```
+
+```{r in_progress_data}
+file_nm <- paste0(
+    "names-",
+    stringr::str_replace(doid, ":", "_"), "-",
+    format(as.Date(anal_date), "%Y%m%d"),
+    ".rda"
+)
+    
+data_file <- here::here("data/disease_info", file_nm)
+```
+
+The goal of this analysis is to identify which name among the known potential names for this disease should be the label (often the name in greatest, current use) and which names to include as synonyms. Note that older historical names are likelyl to be missed in this analysis, so low count names should not necessarily be removed from the Disease Ontology if present.
+
+The label for `r doid` in the latest release is `r paste0('"', do_nm, '"')`. There are `r dplyr::n_distinct(unlist(terms))` potential names in this analysis. Additional synonyms, may be identified. 
+
+
+# Publication Search
+
+To identify publications of interest, exact matches to these terms are used with the default search against data at EuropePMC. Initialisms are excluded from the search at this stage due to promiscuity.
+
+Results are **saved to `r stringr::str_remove(data_file, paste0(here::here(), "/*"))`**, to avoid potential of repeat of API calls.
+
+```{r}
+search_terms <- terms |>
+    unlist() |>
+    (\(x) x[!stringr::str_detect(x, "^[A-Za-z][A-Z0-9]{1,7}$")])() |>
+    stringr::str_to_lower() |>
+    unique() |>
+    sort()
+
+search_str <- paste0(
+    'OPEN_ACCESS:y AND (',
+    paste0('"', search_terms , '"', collapse = " OR "),
+    ')'
+)
+
+if (!file.exists(data_file)) {
+    res <- europepmc::epmc_search(search_str, synonym = FALSE, limit = 20000)
+
+    save(res, file = data_file)
+} else {
+    load(data_file)
+}
+
+```
+
+The number of **publication hits is `r format(nrow(res), big.mark = ",")`**, including some unreliable publications, such as preprints and retractions, and some that are unlikely to have relevant information, e.g. errata, calendars.
+
+```{r}
+res_tidy <- res |>
+    dplyr::filter(
+        !stringr::str_detect(
+            pubType,
+            "retract|preprint|correction|erratum|calendar|overall"
+        ),
+        !(is.na(pmcid) & is.na(bookid))
+    ) |>
+    dplyr::select(
+        "id", "title", "pubYear", pubDate = "firstPublicationDate",
+        "pmcid", "bookid") |>
+    dplyr::mutate(
+        pubDate = lubridate::as_date(pubDate),
+        pubYear = lubridate::year(pubDate)
+    )
+
+res_n <- nrow(res_tidy)
+
+if (!exists("res_sample")) {
+    if (nrow(res_tidy) > 1000) {
+    # calculate the proportion to sample for ~ 1000 results
+    prop <- min(DO.utils::round_up(1100 / nrow(res_tidy), 2), 1)
+    res_sample <- res_tidy |>
+        dplyr::slice_sample(prop = 0.25, by = pubYear)
+    } else {
+        res_sample <- res_tidy
+    }
+    save(res, res_sample, file = data_file)
+}
+
+if (res_n > 1100) {
+    res_msg <- glue::glue(
+        ", of which only {actual_n} (~{pct}%) will be sampled for full-text download and analysis",
+        actual_n = nrow(res_sample),
+        pct = prop * 100
+    )
+} else {
+    res_msg <- ", which is a reasonable number for complete full-text download and analysis"
+}
+```
+
+Excluding those there are **`r format(res_n, big.mark = ",")`**`r res_msg`.
+
+```{r}
+if (!exists("res_ftxt")) {
+    res_ftxt <- res_sample |>
+        dplyr::rowwise() |>
+        dplyr::mutate(ft_xml = get_ftxt_safely(pmcid, bookid)) |>
+        dplyr::mutate(ft = parse_ftxt_xml(ft_xml, "//body"))
+    
+    save(res, res_sample, res_ftxt, file = data_file)
+}
+```
+
+
+# Evaluating Usage
+
+First, all the terms, including initialisms, are extracted from the titles and full text of the available publication data and all the titles, in both a case-sensitive and case-insensitive manner.
+
+```{r}
+term_groups <- names(terms)
+if (is.list(terms) && !is.null(term_groups) && any(term_groups != "")) {
+    use_groups <- TRUE
+    terms_chr <- unlist(terms, use.names = TRUE)
+    term_df <- tibble::tibble(
+        group = stringr::str_remove(names(terms_chr), "[0-9]+$"),
+        term = terms_chr
+    )
+    term_df <- DO.utils::collapse_col(term_df, "group")
+} else {
+    use_groups <- FALSE
+    term_df <- tibble::tibble(
+        group = "original",
+        term = unlist(terms, use.names = FALSE)
+    ) |>
+        unique()
+}
+
+# add unpunctuated terms to identify as many EuropePMC matches as possible -->
+#   EuropePMC search uses some sort of word tokenization, even for quoted terms
+term_df <- term_df |>
+    dplyr::mutate(
+        group = "punct_mod",
+        term = stringr::str_replace_all(term, "[:punct:]", " ") |>
+            stringr::str_squish()
+    ) |>
+    dplyr::bind_rows(term_df) |>
+    dplyr::filter(
+        !(.data$group == "punct_mod" & duplicated(.data$term, fromLast = TRUE))
+    )
+
+regex_str <- term_df$term |>
+    stringr::str_to_lower() |>
+    unique() |>
+    stringr::str_escape() |>
+    DO.utils::length_sort(decreasing = TRUE) |>
+    paste0(collapse = "|")
+
+anal_df <- res_tidy |>
+    dplyr::left_join(
+        res_ftxt,
+        by = c("id", "title", "pubYear", "pubDate", "pmcid", "bookid")
+    ) |>
+    dplyr::select("id", "pubDate", "title", "ft") |>
+    dplyr::mutate(
+        title_term = stringr::str_extract_all(
+            .data$title,
+            stringr::regex(regex_str, ignore_case = TRUE)
+        ),
+        ft_term = stringr::str_extract_all(
+            .data$ft,
+            stringr::regex(regex_str, ignore_case = TRUE)
+        )
+    ) |>
+    tidyr::unnest(title_term, keep_empty = TRUE) |>
+    tidyr::unnest(ft_term, keep_empty = TRUE) |>
+    dplyr::mutate(ft = !is.na(ft)) |>
+    dplyr::select(-"title") |>
+    tidyr::pivot_longer(
+        c("title_term", "ft_term"),
+        names_to = c("source", ".value"),
+        names_sep = "_"
+    ) |>
+    dplyr::mutate(
+        source = dplyr::if_else(!is.na(.data$term), .data$source, NA_character_)
+    ) |>
+    # number of uses in a publication are not of interest
+    unique()
+```
+
+The number of matches in publication titles and/or full text are as follows:
+
+```{r}
+anal_df |>
+    dplyr::summarize(
+        full_text = dplyr::if_else(unique(ft), "downloaded", "unavailable"),
+        match = dplyr::case_when(
+            all(c("title", "ft") %in% .data$source) ~ "title & full text",
+            "ft" %in% .data$source ~ "full text only",
+            "title" %in% .data$source ~ "title only",
+            TRUE ~ "none",
+        ),
+        match = factor(
+            .data$match,
+            levels = c("title & full text", "full text only", "title only", "none")
+        ),
+        .by = "id"
+    ) |>
+    dplyr::count(.data$full_text, .data$match) |>
+    dplyr::arrange(.data$match) |>
+    dplyr::mutate(pct = round(n / sum(n) * 100, 2))
+```
+Although unexpected, it is common for no matches to be extracted. No attempt has been made to determine why there was no match in these publications and they will be ignored for the remainder of the analysis.
+
+```{r}
+match_df <- anal_df |>
+    dplyr::filter(!is.na(.data$term))
+```
+
+The case-insensitive term counts are as follows:
+
+```{r}
+nm_categorize <- function(n, base = 10, h = 0.95) {
+    n_ord <- order(n, decreasing = TRUE)
+    ns <- n[n_ord]
+    hc <- hclust(dist(log(ns + 1, base)))
+    category <- cutree(hc, h = h)
+    category[ns == 0] <- NA_integer_
+    category[order(n_ord)]
+}
+
+term_count <- match_df |>
+    dplyr::filter(!is.na(.data$source)) |>
+    dplyr::count(.data$term, name = "n") |>
+    dplyr::full_join(term_df, by = "term") |>
+    dplyr::mutate(
+        n = tidyr::replace_na(.data$n, 0),
+        group = dplyr::if_else(!is.na(.data$group), .data$group, "new"),
+        term_lc = stringr::str_to_lower(.data$term),
+        relevance = nm_categorize(.data$n)
+    ) |>
+    dplyr::relocate("group", "term_lc", "term", .before = "n") |>
+    dplyr::arrange(.data$term_lc, .data$term)
+
+term_lc_n <- term_count |>
+    dplyr::count(.data$term_lc, wt = .data$n, name = "n", sort = TRUE) |>
+    dplyr::mutate(relevance = nm_categorize(.data$n))
+
+term_lc_n
+```
+
+The number of terms that were **not found at all is `r sum(term_lc_n$n == 0)`**. These will be listed at the end of the analysis to aid in decision-making.
+
+Next, the case-sensitive counts. Note that while looking at these counts, there's a  possibility that additional case patterns were extracted, given the case-insensitive nature of the search. If there are any, they will be noted as part of a "new" group. The counts are as follows:
+
+```{r}
+term_count |>
+    dplyr::select(-"term_lc") |>
+    dplyr::arrange(.data$relevance, dplyr::desc(.data$n))
+
+do_nm_rank <- term_count |>
+    dplyr::mutate(rank = dplyr::min_rank(-.data$n)) |>
+    dplyr::filter(term == do_nm) |>
+    (\(x) x[["rank"]])()
+
+if (is.na(do_nm_rank)) do_nm_rank <- "UNMATCHED"
+```
+
+The current name in DO is **#`r do_nm_rank` of `r nrow(term_count)`**.
+
+
+## Relevance of Initialisms
+
+Just to confirm that the initialism(s) is/are used in conjunction with this disease:
+```{r}
+initialism <- terms |>
+    unlist() |>
+    (\(x) x[stringr::str_detect(x, "^[A-Za-z][A-Z0-9]{1,7}$")])()
+
+init_df <- dplyr::count(match_df, .data$term, .data$source) |>
+    dplyr::filter(term %in% initialism)
+
+if (!any(init_df$source == "title")) {
+    title_msg <- "None of those initialisms seem to appear in titles."
+    show_titles <- FALSE
+} else {
+    title_msg <- "Looking at the title(s) with initialisms:"
+    show_titles <- TRUE
+}
+```
+
+`r title_msg`
+```{r}
+if (show_titles) {
+    match_df |>
+        dplyr::filter(.data$term %in% init_df$term, .data$source == "title") |>
+        dplyr::left_join(
+            dplyr::select(res_tidy, "id", "title"),
+            by = "id"
+        ) |>
+        dplyr::select("pubDate", initialism = "term", "title")
+}
+```
+
+
+## Usage over Time
+
+Organized by publication date and binned into year intervals, the case-insensitive results are as follows:
+```{r}
+g_df <- match_df |>
+    dplyr::mutate(
+        term = stringr::str_trunc(stringr::str_to_lower(.data$term), 30),
+        source = dplyr::recode(.data$source, ft = "full text")
+    )
+
+if (min(g_df$pubDate < as.Date("2000-01-01"))) {
+    date_msg <- " Since the data go back a while, the default zoom will be set to 2000 and forward."
+} else {
+    date_msg <- NULL
+}
+
+plot_colors <- hues::iwanthue(dplyr::n_distinct(g_df$term))
+    
+ggplot2::ggplot(g_df) +
+    ggplot2::geom_freqpoly(
+        ggplot2::aes(x = pubDate, color = term),
+        binwidth = 365
+    ) +
+    ggplot2::scale_color_manual(values = plot_colors) +
+    ggplot2::facet_wrap(~ source, ncol = 1, scales = "free_y")
+```
+
+The patterns are easier to explore as an interactive plot.`r date_msg`
+
+```{r warning = FALSE}
+g <- ggplot2::ggplot(g_df) +
+    ggplot2::geom_freqpoly(
+        ggplot2::aes(x = pubDate, color = term, group = term),
+        binwidth = 365,
+        linewidth = 1
+    ) +
+    ggplot2::scale_color_manual(values = plot_colors) +
+    ggplot2::scale_x_date(
+        date_breaks = "5 years",
+        date_labels = "%Y"
+    ) +
+    ggplot2::facet_wrap(~ source, ncol = 1, scales = "free_y") +
+    ggplot2::theme_minimal()
+
+if (!is.null(date_msg)) {
+    g <- g +
+        ggplot2::coord_cartesian(
+            xlim = c(as.Date("2000-01-01"), Sys.Date())
+        )
+}
+
+plotly::ggplotly(g)
+```
+
+
+# SUMMARY
+
+```{r echo = FALSE}
+label <- term_count |>
+    dplyr::filter(.data$n == max(.data$n, na.rm = TRUE)) |>
+    (\(x) paste0('"', x[["term"]], '" (', x[["n"]], ')'))() |>
+    paste0(collapse = ", ")
+```
+
+- Suggested label(s), by overall use: `r label` _(see plots above for use over time)_
+
+```{r results='asis', echo = FALSE}
+cat("- Suggested synonym(s), with counts (for reference):\n")
+term_count |>
+    dplyr::filter(.data$n > 0) |>
+    dplyr::mutate(n_lc = sum(n, na.rm = TRUE), .by = "term_lc") |>
+    dplyr::arrange(-.data$n_lc, -.data$n, .data$term) |>
+    (\(x) paste0('"', x[["term"]], '" (', x[["n"]], ')'))() |>
+    as_ulist(1)
+```
+    
+```{r results = 'asis', echo = FALSE}
+cat("- Names that were not found in this analysis:\n")
+cat("    - By case-insensitive matching:\n")
+term_lc_n |>
+    dplyr::filter(.data$n == 0) |>
+    dplyr::left_join(
+        dplyr::select(term_count, "term", "term_lc"),
+        by = "term_lc"
+    ) |>
+    (\(x) DO.utils::sandwich_text(x[["term"]], '"'))() |>
+    as_ulist(2)
+
+cat("    - By case-sensitive matching:\n")
+term_count |>
+    dplyr::mutate(n_lc = sum(n, na.rm = TRUE), .by = "term_lc") |>
+    dplyr::filter(.data$n == 0 & .data$n_lc != 0) |>
+    (\(x) DO.utils::sandwich_text(x[["term"]], '"'))() |>
+    as_ulist(2)
+```
+
+**IMPORTANT**    
+Even though these terms were not found in this analysis, there's a possibility that they have been used historically. Care should be taken before removing terms currently in the ontology.
