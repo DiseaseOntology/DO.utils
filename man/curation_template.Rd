@@ -2,11 +2,17 @@
 % Please edit documentation in R/curation.R
 \name{curation_template}
 \alias{curation_template}
+\alias{curation_template.NULL}
 \title{Create a Curation Template}
 \usage{
-curation_template(ss = NULL, sheet = NULL, .data = NULL, nrow = 50)
+curation_template(.data = NULL, ss = NULL, sheet = NULL, ...)
+
+\method{curation_template}{`NULL`}(ss = NULL, sheet = NULL, ..., nrow = 50)
 }
 \arguments{
+\item{.data}{Data to add to the curation sheet. If \code{NULL} (default), an empty
+curation sheet will be created.}
+
 \item{ss}{Something that identifies a Google Sheet:
 \itemize{
 \item its file id as a string or \code{\link[googledrive:drive_id]{drive_id}}
@@ -23,11 +29,8 @@ Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 sheet name will default to "curation-" with today's date appended (formatted
 as "\%Y\%m\%d"; see \code{\link[=format.Date]{format.Date()}}).}
 
-\item{.data}{Data to add to the curation sheet. If \code{NULL} (default), an empty
-curation sheet will be created.}
-
 \item{nrow}{The number of rows to create in the curation template when
-\code{data = NULL} (default: \code{50}).}
+\code{.data = NULL} (default: \code{50}).}
 }
 \value{
 The Google Sheet info (\code{ss}), as a \link[googlesheets4:sheets_id]{googlesheets4::sheets_id}.

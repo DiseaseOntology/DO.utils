@@ -1,55 +1,62 @@
-
 #' Create a Curation Template
 #'
 #' Create a curation template in a Google Sheet, optionally including data.
 #'
 #' @inheritParams googlesheets4::range_write
+#' @param .data Data to add to the curation sheet. If `NULL` (default), an empty
+#' curation sheet will be created.
 #' @param sheet (OPTIONAL) The sheet name, as a string. If `NULL` (default), the
 #' sheet name will default to "curation-" with today's date appended (formatted
 #' as "%Y%m%d"; see [format.Date()]).
-#' @param .data Data to add to the curation sheet. If `NULL` (default), an empty
-#' curation sheet will be created.
-#' @param nrow The number of rows to create in the curation template when
-#' `data = NULL` (default: `50`).
 #'
 #' @returns The Google Sheet info (`ss`), as a [googlesheets4::sheets_id].
 #'
 #' @export
-curation_template <- function(ss = NULL, sheet = NULL, .data = NULL,
-                              nrow = 50) {
-  cur_cols <- c(
-    "iri/curie", "annotation", "value", "remove", "curation_notes", "links",
-    "action_notes", "status"
-  )
+curation_template <- function(.data = NULL, ss = NULL, sheet = NULL, ...) {
+    UseMethod("curation_template", .data)
+}
 
-  if (is.null(.data)) {    # create empty curation sheet
-    val <- rep(NA, nrow)
+#' @param nrow The number of rows to create in the curation template when
+#' `.data = NULL` (default: `50`).
+#'
+#' @export
+#' @rdname curation_template
+curation_template.NULL <- function(ss = NULL, sheet = NULL, ..., nrow = 50) {
+  val <- rep(NA, nrow)
 
-    # inspired by https://stackoverflow.com/a/60495352/6938922
-    cur_df <- tibble::as_tibble(rlang::rep_named(cur_cols, list(val)))
-  } else {
-    cur_df <- .data    # NEED TO ADD REFORMATTING HERE!!!
-  }
+  # inspired by https://stackoverflow.com/a/60495352/6938922
+  cur_df <- tibble::as_tibble(rlang::rep_named(curation_cols, list(val)))
 
+  class(cur_df) <- c("curation_template", class(cur_df))
   if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
   gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
 
   if (is.null(ss)) ss <- gs_info
-
-  # add curation template data validation
-  gs_range <- spreadsheet_range(cur_df, "annotation", sheet = sheet)
-  range_add_dropdown(ss, gs_range, values = .curation_opts$header)
-
-  # freeze first two columns
-  googlesheets4::with_gs4_quiet(
-    googlesheets4:::sheet_freeze(ss, sheet = sheet, ncol = 2)
-  )
+  set_curation_validation(cur_df, ss, sheet)
 
   invisible(gs_info)
 }
 
 
 # helpers --------------------------------------------------------------------
+
+# define expected columns for curation template (in order)
+curation_cols <- c(
+  "id", "annotation", "value", "remove", "curation_notes", "links",
+  "action_notes", "status"
+)
+
+#' Set Data Validation for Curation Templates
+set_curation_validation <- function(cur_df, ss, sheet) {
+    # add curation template data validation
+    gs_range <- spreadsheet_range(cur_df, "annotation", sheet = sheet)
+    range_add_dropdown(ss, gs_range, values = .curation_opts$header)
+
+    # freeze first two columns
+    googlesheets4::with_gs4_quiet(
+        googlesheets4:::sheet_freeze(ss, sheet = sheet, ncol = 2)
+    )
+}
 
 #' Calculate a Spreadsheet Range
 #'
