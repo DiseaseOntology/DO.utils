@@ -114,7 +114,10 @@ preprocess_omim_dl <- function(file, ...) {
         )
 
         # fix headers
-        header_in_df <- purrr::pmap_lgl(df, function(...) sum(is.na(c(...))) > 3)
+        header_in_df <- purrr::pmap_lgl(
+            df,
+            function(...) sum(is.na(c(...))) > 2
+        )
         if (sum(header_in_df) > 3) {
             rlang::abort("Copied OMIM data in unexpected format.")
         }
