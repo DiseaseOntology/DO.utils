@@ -66,21 +66,21 @@ search_expected <- structure(
 
 test_that("read_omim() works for OFFICIAL download of SEARCH results", {
     expect_equal(
-        read_omim("data/omim/omim-search_dl.tsv"),
+        read_omim("data/omim/omim-dl-search.tsv"),
         dplyr::filter(search_expected, mim_symbol %in% c("#", "%"))
     )
 })
 
 test_that("read_omim() keep_mim arg works", {
     expect_equal(
-        read_omim("data/omim/omim-search_dl.tsv", keep_mim = "none"),
+        read_omim("data/omim/omim-dl-search.tsv", keep_mim = "none"),
         dplyr::filter(search_expected, mim_symbol == "none")
     )
     expect_equal(
-        read_omim("data/omim/omim-search_dl.tsv", keep_mim = NULL),
+        read_omim("data/omim/omim-dl-search.tsv", keep_mim = NULL),
         search_expected
     )
-    expect_error(read_omim("data/omim/omim-search_dl.tsv", keep_mim = "@"))
+    expect_error(read_omim("data/omim/omim-dl-search.tsv", keep_mim = "@"))
 })
 
 test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES", {
@@ -102,7 +102,7 @@ test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES",
         omim_official = TRUE
     )
 
-    expect_equal(read_omim("data/omim/omim-ps_titles_dl.tsv"), expected)
+    expect_equal(read_omim("data/omim/omim-dl-ps_titles.tsv"), expected)
 })
 
 ps_df <- structure(
@@ -131,7 +131,7 @@ ps_df <- structure(
 )
 
 test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES", {
-  expect_equal(read_omim("data/omim/omim-ps_dl.tsv"), ps_df)
+  expect_equal(read_omim("data/omim/omim-dl-ps.tsv"), ps_df)
 })
 
 test_that("read_omim() works for COPIED data (PS or with entry info)", {
@@ -141,9 +141,9 @@ test_that("read_omim() works for COPIED data (PS or with entry info)", {
     attr(ps_df_cp, "omim_official") <- FALSE
     class(ps_df_cp) <- class(ps_df)[-1]
 
-    expect_equal(read_omim("data/omim/omim-ps_cp-ps_page.csv"), ps_df_cp)
+    expect_equal(read_omim("data/omim/omim-cp-ps.csv"), ps_df_cp)
     # expect_snapshot(read_omim("data/omim/omim-ps_cp-ps_page_w_ps.csv")) # not supported
-    expect_equal(read_omim("data/omim/omim-ps_cp-entry_page.csv"), ps_df_cp)
+    expect_equal(read_omim("data/omim/omim-cp-entry-p-ps.csv"), ps_df_cp)
     # expect_snapshot(read_omim("data/omim/omim-ps_cp-entry_page_w_ps.csv")) # not supported
 })
 
