@@ -121,17 +121,37 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' Reads and formats OMIM data copied or manually downloaded from
 #' https://omim.org/, or downloaded with [download_omim()] (permission
 #' required), and appends columns to speed up subsequent curation activities.
+#' `read_omim()` will attempt to process and correct headers including fixing
+#' multi-line or misarranged column headers, and will trim whitespace.
 #'
 #' @section Manual Input Requirements:
-#' The `file` with OMIM data copied or downloaded must include headers at the
-#' top. These data can be left _as copied & pasted from omim.org_ even if they
-#' are not formatted correctly, as `read_omim()` will process and correct
-#' headers, which includes fixing multi-line or misarranged column headers,
-#' and will trim whitespace.
+#' The `file` with OMIM data copied or manually downloaded must include column
+#' headers at the top and should be tab- or comma-separated. If the data _is_
+#' _copied & pasted from omim.org_ either to a spreadsheet program or to a text
+#' file, the data will _likely_ be tab-separated. To improve parsing success, it
+#' is recommended that the copy-pasted data include both the copmlete table and
+#' the table type (e.g. "Phenotype-Gene Relationships"), which is usually
+#' directly above the table on a given omim.org entry. In most casees, there
+#' should not be a need to fix data copy/pasted from OMIM manually prior to
+#' reading with `read_omim()`.
+#'
+#' @section Available downloads:
+#' Some data are available for download without an API key. This includes:
+#' 1. The full list of phenotypic series titles
+#'   (\url{https://www.omim.org/phenotypicSeriesTitles/})
+#' 2. Any complete phenotypic series, from its PS page
+#' (https://www.omim.org/phenotypicSeries/\{PS number\})
+#'     - Example: Achondrogenesis, MIM:PS200600
+#'       (\url{https://www.omim.org/phenotypicSeries/PS200600})
+#' 3. OMIM gene entry ID relationships to external gene IDs, mim2gene.txt.
+#'     - From downloads page: \url{https://www.omim.org/downloads/}
+#'     - Direct: \url{https://www.omim.org/static/omim/data/mim2gene.txt}
+#'
+#' Additional data is available with an approved API key.
 #'
 #' @param file The path to a file (possibly compressed) with copy/pasted or
-#' manually downloaded from https://omim.org/ (see "Manual Input Requirements"
-#' for details), or downloaded with [download_omim()].
+#' manually downloaded data from https://omim.org/ (see "Manual Input
+#' Requirements" for details), or downloaded with [download_omim()].
 #' @param keep_mim \[**OMIM search data only**\] The MIM symbols representing
 #' the data types to keep, as a character vector, or `NULL` to retain all
 #' (default: `"#"` and `"%"`).
