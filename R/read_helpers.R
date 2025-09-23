@@ -173,3 +173,14 @@ identify_omim_header_row <- function(.lines) {
     header_n <- which(tab_separated & mim_number)[1]
     header_n
 }
+
+# identify delimiter as greater of "," or "\t" present in most lines
+guess_delim <- function(x) {
+    dplyr::if_else(
+        sum(
+            stringr::str_count(x, ",") > stringr::str_count(x, "\t")
+        ) / length(x) > 0.5,
+        ",",
+        "\t"
+    )
+}
