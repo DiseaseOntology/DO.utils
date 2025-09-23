@@ -176,11 +176,17 @@ identify_omim_header_row <- function(.lines) {
 
 # identify delimiter as greater of "," or "\t" present in most lines
 guess_delim <- function(x) {
-    dplyr::if_else(
-        sum(
-            stringr::str_count(x, ",") > stringr::str_count(x, "\t")
-        ) / length(x) > 0.5,
-        ",",
-        "\t"
-    )
+    # deal with incorrect counts for quoted data by dropping quoted strings
+    .x <- stringr::str_remove_all(x, '"[^"]*"')
+
+    # ensure one type exists and is more prevalent in rows
+    comma_n <- stringr::str_count(.x, ",")
+    tab_n <- stringr::str_count(.x, "\t")
+    most_delim <- max(sum(comma_n > 0), sum(tab_n > 0)) / length(x) > 0.5
+    if (!most_delim) {
+        stop("Delimiter could not be guessed. Is this tab- or comma-delimited data?")
+    }
+
+    if (sum(comma_n > tab_n) / length(.x) > 0.5) return(",")
+    "\t"
 }
