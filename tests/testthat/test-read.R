@@ -160,7 +160,8 @@ test_that("read_omim() works for key-required phenotypicSeries.txt downloads", {
         ),
         row.names = c(NA, -4L),
         class = c("omim_PS_complete", "omim_tbl", "spec_tbl_df", "tbl_df",
-                  "tbl", "data.frame")
+                  "tbl", "data.frame"),
+        omim_official = TRUE
     )
 
     expect_equal(read_omim("data/omim/omim-ps_complete.txt"), expected)
