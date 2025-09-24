@@ -190,3 +190,10 @@ guess_delim <- function(x) {
     if (sum(comma_n > tab_n) / length(.x) > 0.5) return(",")
     "\t"
 }
+
+# add delimiters to end of lines to bring each line to max # of delim
+equalize_delim <- function(x, delim) {
+    x_delim <- lengths(strsplit(x, delim)) - 1
+    max_delim <- max(x_delim)
+    paste0(x, strrep(delim, max_delim - x_delim))
+}
