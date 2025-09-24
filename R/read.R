@@ -277,7 +277,8 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
 #' Automatically Identify & Read TSV/CSV files (INTERNAL)
 #'
 #' A light wrapper around [readr::read_delim()] that automatically identifies
-#' the delimiter based on file extension (can include compression extensions).
+#' the delimiter based on file extension (can include compression extensions),
+#' or for literal data by identifying the most likely delimiter.
 #'
 #' Note that this function is primarily intended for internal use; therefore,
 #' messages about guessed column types are not generated.
@@ -290,14 +291,22 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
 #'    `https://`, `ftp://`, or `ftps://` will be automatically
 #'    downloaded. Remote gz files can also be automatically downloaded and
 #'    decompressed.
+#' @inheritParams guess_delim
 #' @inheritParams readr::read_delim
 #' @inheritDotParams readr::read_delim -delim -quoted_na
 #'
 #' @keywords internal
-read_delim_auto <- function(file, ..., show_col_types = FALSE) {
-    ext <- stringr::str_extract(file, "\\.[tc]sv")
-    delim <- switch(ext, .tsv = "\t", .csv = ",")
-    if (is.null(delim)) rlang::abort("`file` must have .tsv or .csv extension.")
+read_delim_auto <- function(file, ..., strict = TRUE, show_col_types = FALSE) {
+    if (length(file) != 1) file <- paste0(file, collapse = "\n")
+    if (file.exists(file)) {
+        ext <- stringr::str_extract(file, "\\.[tc]sv")
+        delim <- switch(ext, .tsv = "\t", .csv = ",")
+        if (is.null(delim)) {
+            rlang::abort("`file` must have .tsv or .csv extension.")
+        }
+    } else {
+        delim <- guess_delim(file, strict = strict)
+    }
 
     readr::read_delim(
         file = file,

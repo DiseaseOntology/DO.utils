@@ -176,13 +176,15 @@ identify_omim_header_row <- function(.lines) {
 
 #' Guess Data Delimiter
 #'
-#' Identifies the delimiter of data as being the greater of "," or "\t" present
+#' Identifies the delimiter of data as being the greater of "," or "\\t" present
 #' in all or most lines.
 #'
 #' @param x String or character data for which to guess delimiter.
 #' @param strict Whether delimiter should be found in all lines (default:
-#' `TRUE`), or just a majority of lines. If `FALSE`, `guess_delim()` attempts
-#' to guess the delimiter for data that may not be entirely delimited.
+#' `TRUE`), or just a majority of lines. If `FALSE`, an attempt is made to guess
+#' the delimiter for data that may not be entirely delimited.
+#'
+#' @keywords internal
 guess_delim <- function(x, strict = TRUE) {
     # ensure all data as individual lines
     .x <- strsplit(x, "\n")
