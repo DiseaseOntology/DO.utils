@@ -186,16 +186,16 @@ identify_omim_header_row <- function(.lines) {
 #'
 #' @keywords internal
 guess_delim <- function(x, strict = TRUE) {
-    # ensure all data as individual lines
-    .x <- strsplit(x, "\n")
-
     # avoid incorrect counts for quoted data by dropping quoted strings
     .x <- stringr::str_remove_all(x, '"[^"]*"')
+
+    # ensure all data in individual lines
+    .x <- unlist(stringr::str_split(.x, "\n"))
 
     # ensure one type exists and is more prevalent in rows
     comma_n <- stringr::str_count(.x, ",")
     tab_n <- stringr::str_count(.x, "\t")
-    row_delim_prop <- max(sum(comma_n > 0), sum(tab_n > 0)) / length(x)
+    row_delim_prop <- max(sum(comma_n > 0), sum(tab_n > 0)) / length(.x)
     if (strict) {
         if (row_delim_prop != 1) {
             stop("Delimiter could not be guessed. Consider using `strict = FALSE`, if not all lines are delimited.")
