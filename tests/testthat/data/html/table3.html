@@ -1,0 +1,795 @@
+{% extends "disease_ontology/base_page.html" %}
+{% block content %}
+<p><a href = "/">{{ _("Home") }}</a> &gt; {{ _("Community") }} &gt; {{ _("Use Cases") }}</p>
+
+<h2>{{ _("Use Cases") }}</h2>
+
+<p>{{ _("The Disease Ontology is utilized extensively in biomedical and bioinformatics research, by both scientists conducting primary
+  research and those creating research tools for others. Some of those research tools designed for reuse by the broader
+  scientific community that have used the Disease Ontology are listed here. These have been grouped into three categories:
+  <a href='#ontologies'>ontologies</a>, <a href='#resources'>resources</a>, and <a href='#methodologies'>methodologies</a>.") }}
+</p>
+
+
+<section id="ontologies">
+  <h3>{{ _("Ontologies") }}</h3>
+  <p>
+    {{ _("The Disease Ontology is utilized to build other biomedical ontologies. These application ontologies either reuse DO's terms and/or IDs
+    (often as PURLs, unique URL based IDs, e.g. http://purl.obolibrary.org/obo/DOID_4) or map to DOIDs as ontology cross references (xrefs),
+    synonyms or annotations. To date, the Disease Ontology is being utilized by more than 50 other biomedical ontologies:") }}
+  </p>
+
+  <table class="ontologies-and-resources">
+    <tr>
+      <td class="default"><a href="https://www.allotrope.org/" target="_blank">Allotrope Foundation Ont (AFO)</a></td>
+      <td class="default"><a href="https://ijicis.journals.ekb.eg/article_19833.html" target="_blank">Fuzzy Ont Obesity Cancer (FOORC)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ontoneo.html" target="_blank">Obstet and Neonatal Ont (OntONeo)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/aro.html" target="_blank">Antibiotic Resistance Ont (ARO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/gsso.html" target="_blank">Gend, Sex & Sex Orien Ont (GSSO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ohmi.html" target="_blank">Ont Host-Microbiom Interact (OHMI)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/apollo_sv.html" target="_blank">Apollo Structured Vocabulary</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/genepio.html" target="_blank">Genomic Epi Ont (GenEpiO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/ODAE" target="_blank">Ont of Drug Adverse Events (ODAE)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bioassayontology.org/" target="_blank">BioAssay Ontology (BAO)</a></td>
+      <td class="default"><a href="https://github.com/glycoinfo/GlycoCoO" target="_blank">Glycoconjugate Ont (GlycoCoO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ohpi.html" target="_blank">Ont of Host Pathogen Inter (OHPI)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8500271/#Sec12" target="_blank">Breast Cancer Fuzzy Ont (BCFO)</a></td>
+      <td class="default"><a href="https://tetherless-world.github.io/GProv/" target="_blank">Guideline Provenance Ont (G-Prov)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/opmi.html" target="_blank">Ont of Precis Med & Investig (OPMI)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/cvdo.html" target="_blank">Cardiovasc Dis Ontology (CVDO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/HIO" target="_blank">Hearing Impairment Ontology (HIO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/obib.html" target="_blank">Ontology for Biobanking (OBIB)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/clo.html" target="_blank">Cell Culture Ontology (CCONT)</a></td>
+      <td class="default"><a href="https://hhearprogram.org/" target="_blank">HHEAR Ontology</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/obi.html" target="_blank">Ontology for Biomed Investig (OBI)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/clo.html" target="_blank">Cell Line Ontology (CLO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/HUPSON" target="_blank">Hum Physiol Simul Ont (HuPSON)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ogms.html" target="_blank">Ontology for Gen Med Sci (OGMS)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.niehs.nih.gov/research/supported/exposure/hhear/index.cfm" target="_blank">CHEAR Ontology</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/hp.html" target="_blank">Human Phenotype Ontology (HP)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/omit.html" target="_blank">Ontology for MIRNA Target (OMIT)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.chemfont.ca/" target="_blank">ChemFOnt</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/htn.html" target="_blank">Hypertension Ontology (HTN)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/oae.html" target="_blank">Ontology of Adverse Events (OAE)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/CIDO-ontology/cido" target="_blank">Coronavirus Infect Dis Ont (CIDO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ido.html" target="_blank">Infectious Disease Ontology (IDO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/PE-O" target="_blank">Pre-Eclampsia Ontology (PE-O)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/duo.html" target="_blank">Data Use Ontology (DUO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/FLU/?p=summary" target="_blank">Influenza Ontology (FLU)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/pr.html" target="_blank">Protein Ontology (PRO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://aber-owl.net/ontology/DERMO/#/" target="_blank">Dermatological Dis Ont (DermO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ico.html" target="_blank">Informed Consent Ontology (ICO)</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/29021130/" target="_blank">Public Health Doc Ont (OntoPH)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/DMTO" target="_blank">Diabetes Mellit Treat Ont (DMTO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/mfomd.html" target="_blank">Mental Disease Ontology (MFOMD)</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5316345/" target="_blank">Quant Histopath Image Ont (QHIO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11701671/#SEC5" target="_blank">Dog Disease Trait Ont (DDTO)</a></td>
+      <td class="default"><a href="https://www.ebi.ac.uk/ols/ontologies/msio" target="_blank">Metabolomics Stand Init Ont (MSIO)</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/23589184/" target="_blank">Quant Imag Biomarker Ont (QIBO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://www.ontobee.org/ontology/DIDEO" target="_blank">Drug Interact & Evid Ont (DIDEO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/micro.html" target="_blank">MicrO</a></td>
+      <td class="default"><a href="http://www.gamuts.net/" target="_blank">Radiology Gamuts Ontology (RGO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/DTO" target="_blank">Drug Target Ontology (DTO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/mondo.html" target="_blank">Mondo Disease Ontology (MONDO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/SCDO" target="_blank">Sickle Cell Disease Ont (SCDO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://obofoundry.org/ontology/ero.html" target="_blank">eagle-i resource ontology (ERO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/mpath.html" target="_blank">Mouse Pathology Ont (MPATH)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/txpo.html" target="_blank">TOXic Process Ontology (TXPO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/ENM" target="_blank">eNanoMapper Ontology (ENM)</a></td>
+      <td class="default"><a href="http://www.sysbio.org.cn/MIKB/MIO/" target="_blank">Myocardial Infarction Ont (MIO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/TMO" target="_blank">Translational Med Ontology (TMO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/Exercise-Medicine-Ontology/EXMO" target="_blank">Exercise Med Ontology (EXMO)</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/NEMO?p=summary" target="_blank">Neural Electro Magnet Ont (NEMO)</a></td>
+      <td class="default"><a href="http://www.ontobee.org/ontology/VICO" target="_blank">Vaccine Informed Cons Ont (VICO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/EFO" target="_blank">Experimental Factor Ontology (EFO)</a></td>
+      <td class="default"><a href="https://github.com/SciCrunch/NIF-Ontology/tree/master" target="_blank">NIF Standardized Onts (NIFSTD)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/vo.html" target="_blank">Vaccine Ontology (VO)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://foodon.org/" target="_blank">FoodOn</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/ncro.html" target="_blank">Non-Coding RNA Ontology (NCRO)</a></td>
+      <td class="default"><a href="https://obofoundry.org/ontology/eupath.html" target="_blank">VEuPathDB Ontology (eupath)</a></td>
+    </tr>
+  </table>
+</section>
+
+<section id="resources">
+  <h3>{{ _("Resources") }}</h3>
+  <p>{{ _("We actively seek collaborations with other data resources and users to improve data integration, share efforts, and make our data maximally
+    useful to biologists and bioinformaticians. Here are a list of databases, software tools and other web resources that: i) support the use
+    of DO data, ii) have integrated or were built using DO data, or iii) provide data linkages to the DO website. If we are missing your
+    database, software tool or web resource, please <a href='/outreach/contact-us' target='_blank'>contact us</a>") }}.
+  </p>
+
+  <table class="ontologies-and-resources">
+    <tr>
+      <td class="default"><a href="https://agotool.org/" target="_blank">a GO tool</a></td>
+      <td class="default"><a href="http://genome.ugr.es:9000/drugnet" target="_blank">DrugNet</a></td>
+      <td class="default"><a href="https://ophid.utoronto.ca/mirDIP" target="_blank">mirDIP</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://biokb.ncpsb.org.cn/aagatlas/index.php" target="_blank">AAgAtlas: Human AutoAntigen Db</a></td>
+      <td class="default"><a href="http://www.lilab-ecust.cn/etsn/" target="_blank">e-TSN</a></td>
+      <td class="default"><a href="https://tools4mirs.org/software/other_tools/mirtex/" target="_blank">miRTex</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/atrautm1/ABCkb" target="_blank">ABCkb</a></td>
+      <td class="default"><a href="http://ecgene.bioinfo-minzhao.org/" target="_blank">ECGene: Endometr Cancer G Db</a></td>
+      <td class="default"><a href="http://mlodis.phasep.pro" target="_blank">MloDisDB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://acgt.cs.tau.ac.il/adeptus/" target="_blank">ADEPTUS</a></td>
+      <td class="default"><a href="https://ngdc.cncb.ac.cn/edk/" target="_blank">EDK: Editome Dis Kb</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3245040/" target="_blank">MOPED</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://microbiome.h3abionet.org/" target="_blank">African Human Microbiome Portal</a></td>
+      <td class="default"><a href="https://demo.bmd-software.com/egas/" target="_blank">Egas</a></td>
+      <td class="default"><a href="http://www.inetbio.org/morphin/" target="_blank">MORPHIN</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/zd105/AllEnricher" target="_blank">AllEnricher</a></td>
+      <td class="default"><a href="https://huggingface.co/datasets/ericw955/EHD" target="_blank">EHD dataset</a></td>
+      <td class="default"><a href="http://mosaicbase.com/" target="_blank">MosaicBase</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/29688358/" target="_blank">AllerGAtlas</a></td>
+      <td class="default"><a href="https://research.bioinformatics.udel.edu/emirit/" target="_blank">emiRIT: extract miRNA Info Text</a></td>
+      <td class="default"><a href="http://www.mousemine.org/mousemine/keywordSearchResults.do?searchTerm=Parkinson&searchBag=&facet_Category=DOTerm" target="_blank">MouseMine</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.alliancegenome.org/" target="_blank">Alliance of Genome Resources</a></td>
+      <td class="default"><a href="https://www.infrafrontier.eu/search?keyword=browse_human_diseases#" target="_blank">EMMA</a></td>
+      <td class="default"><a href="http://mulinlab.tmu.edu.cn/mtctscan" target="_blank">mTCTScan</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://alzkb.ai/" target="_blank">AlzKB: Alzheimer’s KB</a></td>
+      <td class="default"><a href="https://www.encodeproject.org/" target="_blank">ENCODE: Encyc of DNA Elements</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/26413258/" target="_blank">My Corporis Fabrica Embryo</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://annot.readthedocs.io/en/latest/index.html" target="_blank">Annot</a></td>
+      <td class="default"><a href="https://bioconductor.org/packages/release/bioc/html/EnrichDO.html" target="_blank">EnrichDO</a></td>
+      <td class="default"><a href="https://www.biosino.org/mpa/" target="_blank">Mycobacteriaceae Phenome Atlas</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://arax.rtx.ai/" target="_blank">ARAX</a></td>
+      <td class="default"><a href="http://www.unimd.org/eram/" target="_blank">eRAM</a></td>
+      <td class="default"><a href="https://mydisease.info/" target="_blank">MyDisease.info</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://ncrnadb.scienze.univr.it/sites/arenaidb/" target="_blank">Arena-Idb</a></td>
+      <td class="default"><a href="https://github.com/HUST-NingKang-Lab/EXPERT" target="_blank">EXPERT</a></td>
+      <td class="default"><a href="https://mygeneset.info" target="_blank">MyGeneset.info</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://argo.nactem.ac.uk/" target="_blank">Argo</a></td>
+      <td class="default"><a href="https://extract.jensenlab.org/" target="_blank">EXTRACT</a></td>
+      <td class="default"><a href="https://www.biosino.org/nafldkb" target="_blank">NAFLDkb</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/chenchenxiong/ASDmiR" target="_blank">ASDmiR</a></td>
+      <td class="default"><a href="https://fairsharing.org/" target="_blank">FAIRsharing</a></td>
+      <td class="default"><a href="https://drugs.ncats.io/" target="_blank">NCATS Inxight Drugs</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://auto2disease.nwsuaflmz.com/" target="_blank">ATD: Autophagy To Disease</a></td>
+      <td class="default"><a href="http://fantom.gsc.riken.jp/" target="_blank">FANTOM</a></td>
+      <td class="default"><a href="https://bioportal.bioontology.org/recommender" target="_blank">NCBO Ontology Recommender</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/27278815/" target="_blank">AuDis</a></td>
+      <td class="default"><a href="https://www.cbrc.kaust.edu.sa/farna/" target="_blank">FARNA</a></td>
+      <td class="default"><a href="http://www.liwzlab.cn/ncrnavar/" target="_blank">ncRNAVar</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://autismkb.cbi.pku.edu.cn/" target="_blank">AutismKB</a></td>
+      <td class="default"><a href="https://github.com/OHNLP/FHOntology" target="_blank">FHOntology</a></td>
+      <td class="default"><a href="https://netme.click/" target="_blank">NetMe</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://baldr.cpr.ku.dk" target="_blank">BALDR</a></td>
+      <td class="default"><a href="http://biokb.ncpsb.org/fibroatlas/" target="_blank">FibroAtlas</a></td>
+      <td class="default"><a href="http://147.8.185.62/services/NutriChem-2.0/" target="_blank">NutriChem</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/developerpiru/BEAVR" target="_blank">BEAVR</a></td>
+      <td class="default"><a href="http://flame.pavlopouloslab.info/" target="_blank">Flame</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4519680/" target="_blank">OCDB: OCD Database</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.repository.cam.ac.uk/handle/1810/276631" target="_blank">Bio-SimLex</a></td>
+      <td class="default"><a href="http://flybase.org/" target="_blank">FlyBase</a></td>
+      <td class="default"><a href="https://www.omim.org/" target="_blank">OMIM</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.repository.cam.ac.uk/handle/1810/276631" target="_blank">Bio-SimVerb</a></td>
+      <td class="default"><a href="https://github.com/gjorgjinac/foodis_pipeline" target="_blank">FooDis: Food-disease mining</a></td>
+      <td class="default"><a href="https://bioconductor.org/packages/release/bioc/html/Onassis.html" target="_blank">OnASSIs</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bio2rdf.org/" target="_blank">Bio2RDF</a></td>
+      <td class="default"><a href="https://github.com/armando2603/GeMI" target="_blank">GeMI: Genom Meta Integration</a></td>
+      <td class="default"><a href="https://www.oncokb.org/" target="_blank">OncoKB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bioasq.org/" target="_blank">BioASQ</a></td>
+      <td class="default"><a href="https://gemma.msl.ubc.ca/home.html" target="_blank">Gemma</a></td>
+      <td class="default"><a href="https://www.oncomx.org/" target="_blank">OncoMX</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://doi.org/10.5281%2Fzenodo.7655130" target="_blank">BioASQ-QA</a></td>
+      <td class="default"><a href="https://ngdc.cncb.ac.cn/gen/" target="_blank">GEN: Gene Expression Nebulas</a></td>
+      <td class="default"><a href="https://oncopdss.capitalbiobigdata.com/" target="_blank">OncoPDSS</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://www.biocreative.org/news/biocreative-v/" target="_blank">BioCreative V</a></td>
+      <td class="default"><a href="https://genconet.kalis-amts.de/" target="_blank">GenCoNet</a></td>
+      <td class="default"><a href="https://mccb.umassmed.edu/OneStopRNAseq/" target="_blank">OneStopRNAseq</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://dataome.mensxmachina.org/" target="_blank">BioDataome</a></td>
+      <td class="default"><a href="https://www.genecards.org/" target="_blank">GeneCards</a></td>
+      <td class="default"><a href="http://bib.fleming.gr:3838/OnTheFly/" target="_blank">OnTheFly2.0</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://thebiogrid.org/" target="_blank">BioGrid</a></td>
+      <td class="default"><a href="https://genekitr.org" target="_blank">Genekitr</a></td>
+      <td class="default"><a href="https://wiki.gcc.rug.nl/wiki/OntocatStart" target="_blank">OntoCAT</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/biopragmatics/biomappings" target="_blank">biomappings</a></td>
+      <td class="default"><a href="https://www.geneplexus.net/index" target="_blank">GenePlexus</a></td>
+      <td class="default"><a href="https://github.com/azankl/Ontoclick" target="_blank">Ontoclick</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://biomarkerkb.org/" target="_blank">BiomarkerKB</a></td>
+      <td class="default"><a href="https://geneweaver.org/" target="_blank">GeneWeaver</a></td>
+      <td class="default"><a href="https://github.com/OntoGene" target="_blank">OntoGene</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ebi.ac.uk/biomodels-main/" target="_blank">Biomodels</a></td>
+      <td class="default"><a href="https://jbiomedsem.biomedcentral.com/articles/10.1186/2041-1480-3-S1-S6" target="_blank">GeneWiki+</a></td>
+      <td class="default"><a href="https://github.com/bio-ontology-research-group/ontology-extension" target="_blank">Ontology Extension</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://hive.biochemistry.gwu.edu/biomuta" target="_blank">BioMuta</a></td>
+      <td class="default"><a href="https://www.geniadb.net/app/home/" target="_blank">GenIA</a></td>
+      <td class="default"><a href="http://www.openxgr.com" target="_blank">OpenXGR</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bionda.mpc.ruhr-uni-bochum.de/" target="_blank">BIONDA</a></td>
+      <td class="default"><a href="https://genomeconnect.org/en/" target="_blank">GenomeConnect</a></td>
+      <td class="default"><a href="http://dna2.leeds.ac.uk:8080/OVA/index.jsp" target="_blank">OVA: Onto Variant Analysis Tool</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioportal.bioontology.org/ontologies/DOID" target="_blank">BioPortal</a></td>
+      <td class="default"><a href="https://sing-group.org/glutknois/" target="_blank">GlutKNOIS: Gluten Interactions Db</a></td>
+      <td class="default"><a href="https://www.pancreatlas.org/" target="_blank">Pancreatlas</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://biotagme.eu/" target="_blank">BioTAGME</a></td>
+      <td class="default"><a href="https://glyconnect.expasy.org/" target="_blank">Glyconnect</a></td>
+      <td class="default"><a href="http://patho.phenomebrowser.net/#/" target="_blank">PathoPhenoDB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://biothings.io" target="_blank">BioThings API ecosystem</a></td>
+      <td class="default"><a href="https://glycosmos.org/" target="_blank">GlyCosmos Portal</a></td>
+      <td class="default"><a href="https://www.patricbrc.org/" target="_blank">PATRIC</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://www.biowes.org/" target="_blank">BioWES</a></td>
+      <td class="default"><a href="https://bojarlab.github.io/glycowork/" target="_blank">Glycowork</a></td>
+      <td class="default"><a href="http://143.169.238.105/pbrit/" target="_blank">pBRIT</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://hive.biochemistry.gwu.edu/bioxpress" target="_blank">BioXpress</a></td>
+      <td class="default"><a href="https://www.glygen.org/" target="_blank">GlyGen</a></td>
+      <td class="default"><a href="https://www.pdxfinder.org/pdx-standard/" target="_blank">PDX-MI</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/27315278/" target="_blank">BLAT2DOLite</a></td>
+      <td class="default"><a href="https://support.google.com/websearch/answer/2364942?p=medical_conditions&hl=en&visit_id=637831615422879372-1017231193&rd=1#zippy=%2Cmedical-information-sources" target="_blank">Google</a></td>
+      <td class="default"><a href="http://119.3.41.228/pedam/" target="_blank">PedAM</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bio.tools/BO-LSTM" target="_blank">BO-LSTM</a></td>
+      <td class="default"><a href="https://www.gensc.org/" target="_blank">GSC: Genomic Stand Consortium</a></td>
+      <td class="default"><a href="http://pedican.bioinfo-minzhao.org/" target="_blank">Pedican: Pediatric cancer gene Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://ngdc.cncb.ac.cn/brainbase/index" target="_blank">BrainBase</a></td>
+      <td class="default"><a href="http://www.inbirg.com/gto/" target="_blank">GTO: Gene Therapy Omnibus</a></td>
+      <td class="default"><a href="https://github.com/TaylorResearchLab/Petagraph" target="_blank">Petagraph</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://brd.bsvgateway.org/" target="_blank">BRD: Biosurveillance Resource Dir</a></td>
+      <td class="default"><a href="https://www.guidetopharmacology.org/" target="_blank">Guide to PHARMACOLOGY</a></td>
+      <td class="default"><a href="https://protein.som.geisinger.edu/Pharmacorank/" target="_blank">Pharmacorank</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.cancergenomeinterpreter.org/mutations" target="_blank">Cancer Genome Interpreter</a></td>
+      <td class="default"><a href="https://github.com/drzeeshanahmed/GVViZ-Public" target="_blank">GVViZ: Vis Genes with Dis Variants</a></td>
+      <td class="default"><a href="https://pharmebi.net/" target="_blank">PharMeBINet</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bioinfo.jialab-ucr.org/CancerMIRNome/" target="_blank">CancerMIRNome</a></td>
+      <td class="default"><a href="https://www.gwascentral.org/" target="_blank">GWAS Central</a></td>
+      <td class="default"><a href="https://pharos.nih.gov/idg/index" target="_blank">Pharos</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://cbgda.zhounan.org/main" target="_blank">CBGDA</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/labs/pmc/articles/PMC4702921/" target="_blank">GWASdb</a></td>
+      <td class="default"><a href="https://phen2gene.wglab.org/" target="_blank">Phen2Gene</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.cbioportal.org/" target="_blank">cBioportal</a></td>
+      <td class="default"><a href="http://www.informatics.jax.org/gxd" target="_blank">GXD: Mouse Gene Expression Db</a></td>
+      <td class="default"><a href="https://phencards.org" target="_blank">PhenCards</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://ngdc.cncb.ac.cn/ccas/" target="_blank">CCAS</a></td>
+      <td class="default"><a href="https://appyters.maayanlab.cloud/#/harmonizome_ml" target="_blank">Harmonizome-ML Appyter</a></td>
+      <td class="default"><a href="http://phenolyzer.wglab.org/" target="_blank">Phenolyzer</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://cedar.iedb.org/" target="_blank">CEDAR</a></td>
+      <td class="default"><a href="https://github.com/TJWenjing/HDncRNA" target="_blank">HDncRNA: Heart Dis ncRNA Db</a></td>
+      <td class="default"><a href="http://phenomebrowser.net/" target="_blank">Phenomebrowser</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-018-2247-6" target="_blank">CEDAR OnDemand</a></td>
+      <td class="default"><a href="http://heartfailure.medical-bigdata.com/" target="_blank">Heart Failure Integrated Platform</a></td>
+      <td class="default"><a href="https://rgd.mcw.edu/rgdweb/phenominer/selectTerms.html?ont=MMO" target="_blank">PhenoMiner</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://ngdc.cncb.ac.cn/celltaxonomy" target="_blank">Cell Taxonomy</a></td>
+      <td class="default"><a href="https://hemi.biocuckoo.org/" target="_blank">HemI: Heatmap Illustrator</a></td>
+      <td class="default"><a href="http://www.yandell-lab.org/software/phevor.html" target="_blank">Phevor2</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://data.cfde.cloud/" target="_blank">CFDE: Common Fund Data Ecosystem</a></td>
+      <td class="default"><a href="http://herb.ac.cn/v2" target="_blank">HERB: Traditional Chinese Med Db</a></td>
+      <td class="default"><a href="https://pk-db.com/" target="_blank">PK-DB: Pharmacokinetics Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://cwtung.kmu.edu.tw/chemdis/" target="_blank">ChemDIS</a></td>
+      <td class="default"><a href="https://het.io/" target="_blank">Hetionet</a></td>
+      <td class="default"><a href="https://dianalab.e-ce.uth.gr/plasmir/#/" target="_blank">PlasmiR</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioconductor.org/packages/release/bioc/html/ChIPseeker.html" target="_blank">ChIPseeker</a></td>
+      <td class="default"><a href="http://apps.cytoscape.org/apps/hgpec" target="_blank">HGPEC</a></td>
+      <td class="default"><a href="https://www.ccb.uni-saarland.de/plsdb" target="_blank">PLSDB: Plasmid Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bioinformatics.zju.edu.cn/Circ2Disease/disease.html" target="_blank">Circ2Disease</a></td>
+      <td class="default"><a href="http://biokb.ncpsb.org/HisgAtlas/" target="_blank">HisgAtlas</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4274039/" target="_blank">POEAS</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pmc.ncbi.nlm.nih.gov/articles/articles/PMC7661096" target="_blank">CircR2Cancer</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4911788/" target="_blank">HITSZ_CDR</a></td>
+      <td class="default"><a href="http://www.e-lico.eu/populous.html" target="_blank">Populous</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://cgga.org.cn/circRNADisease/" target="_blank">circRNADisease</a></td>
+      <td class="default"><a href="http://www.informatics.jax.org/humanDisease.shtml" target="_blank">HMDC: Human-Mouse Dis Connect</a></td>
+      <td class="default"><a href="https://bcgsc.github.io/pori/" target="_blank">PORI</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://civicdb.org/home" target="_blank">CIViC</a></td>
+      <td class="default"><a href="https://www.cuilab.cn/hmdd" target="_blank">HMDD: Human MicroRNA Dis Db</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/23761449" target="_blank">PosMed: Positional MEDLINE</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bionlp.bcgsc.ca/civicmine/" target="_blank">CIViCMine</a></td>
+      <td class="default"><a href="http://humap2.proteincomplexes.org/" target="_blank">hu.MAP: Hum Prot Complex Map</a></td>
+      <td class="default"><a href="https://github.com/ermshaua/preon/" target="_blank">preon</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.clinicalgenome.org/" target="_blank">ClinGen</a></td>
+      <td class="default"><a href="https://webapp.ufz.de/hmgdb/" target="_blank">HumanMetagenomeDB</a></td>
+      <td class="default"><a href="https://psindb.itk.ppke.hu/" target="_blank">PSINDB: Postsynaptic Inter Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bioconductor.org/packages/release/bioc/html/clusterProfiler.html" target="_blank">clusterProfiler</a></td>
+      <td class="default"><a href="http://ibkh.ai/" target="_blank">iBKH</a></td>
+      <td class="default"><a href="https://github.com/chenqiuhao/PUTransGCN" target="_blank">PUTransGCN</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.coexpedia.org/" target="_blank">COEXPEDIA</a></td>
+      <td class="default"><a href="http://apps.cytoscape.org/apps/ictnet2" target="_blank">iCTNet2</a></td>
+      <td class="default"><a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03583-6" target="_blank">pyMeSHSim</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://opengenetics.ca/" target="_blank">COGR: Canadian Open Genet Repo</a></td>
+      <td class="default"><a href="https://www.iedb.org/" target="_blank">IEDB: Immune Epitope Db</a></td>
+      <td class="default"><a href="https://queryor.cribi.unipd.it/cgi-bin/queryor/mainpage.pl" target="_blank">QueryOR</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://csbg.cnb.csic.es/CoMentG/" target="_blank">CoMentG</a></td>
+      <td class="default"><a href="http://bliulab.net/iLncDA-LTR/" target="_blank">iLncDA-LTR</a></td>
+      <td class="default"><a href="https://www.questdiagnostics.com/home.html" target="_blank">Quest Diagnostics</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bitbucket.org/ibi_group/comorbidity" target="_blank">comoRbidity</a></td>
+      <td class="default"><a href="https://www.immport.org/shared/home" target="_blank">ImmPort</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8728142" target="_blank">R-loopBase</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://convaq.compbio.sdu.dk/" target="_blank">CoNVaQ</a></td>
+      <td class="default"><a href="https://cb.imsc.res.in/imppat/" target="_blank">IMPPAT</a></td>
+      <td class="default"><a href="https://github.com/isegura/NLP4RARE-CM-UC3M" target="_blank">RareDis</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bioinfo.na.iac.cnr.it/cosmonet/" target="_blank">COSMONET</a></td>
+      <td class="default"><a href="http://iid.ophid.utoronto.ca/" target="_blank">Integrated Interactions Db</a></td>
+      <td class="default"><a href="https://reactome.org/" target="_blank">Reactome</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://covidbase-v3.vercel.app/" target="_blank">COVID-19Base</a></td>
+      <td class="default"><a href="http://imp.princeton.edu/" target="_blank">Integrative Multispecies Prediction</a></td>
+      <td class="default"><a href="http://regene.bioinfo-minzhao.org/" target="_blank">REGene</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/27370962/" target="_blank">CryptoGene DB</a></td>
+      <td class="default"><a href="https://intermine.org/" target="_blank">InterMine</a></td>
+      <td class="default"><a href="http://www.resmarkerdb.org/" target="_blank">ResMarkerDB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://csgator.ewha.ac.kr/" target="_blank">CSgator: Compound Set Navigator</a></td>
+      <td class="default"><a href="https://www.iprox.cn/" target="_blank">iProX</a></td>
+      <td class="default"><a href="https://rgd.mcw.edu/rgdweb/portal/index.jsp" target="_blank">RGD: Rat Genome Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://csgene.bioinfo-minzhao.org/" target="_blank">CSGene: Cell Senesc Gene Db</a></td>
+      <td class="default"><a href="https://www.irida.ca/" target="_blank">IRIDA: Integr Rapid Infect Dis Anal</a></td>
+      <td class="default"><a href="http://www.rnainter.org/riscoper" target="_blank">RIscoper</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://ocg.cancer.gov/programs/ctd2" target="_blank">CTD2: Cancer Target Discov & Dev</a></td>
+      <td class="default"><a href="https://www.isabl.info/" target="_blank">Isabl Platform</a></td>
+      <td class="default"><a href="https://www.bio-bigdata.com/rna2immune/home.jsp" target="_blank">RNA2Immune</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://ctdbase.org/" target="_blank">CTD: Compar Toxicogenomic Db</a></td>
+      <td class="default"><a href="http://www.sdu-idea.cn/codes.php?name=IsoDA" target="_blank">IsoDA: Isoform-Dis Assoc predict</a></td>
+      <td class="default"><a href="http://www.rnadisease.org/" target="_blank">RNADisease</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://ctrdb.ncpsb.org.cn/" target="_blank">CTR-DB</a></td>
+      <td class="default"><a href="https://research.bioinformatics.udel.edu/itextmine/integrate" target="_blank">iTextMine</a></td>
+      <td class="default"><a href="http://robot.obolibrary.org/" target="_blank">ROBOT</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://d2h2.maayanlab.cloud/" target="_blank">D2H2</a></td>
+      <td class="default"><a href="https://ckb.jax.org/" target="_blank">JAX Clinical Kb</a></td>
+      <td class="default"><a href="http://www.liwzlab.cn/scmoresdb/" target="_blank">scMoresDB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/elixir-luxembourg/daisy" target="_blank">DAISY: Data Information System</a></td>
+      <td class="default"><a href="http://syntenybrowser.jax.org/" target="_blank">JAX Synteny Browser</a></td>
+      <td class="default"><a href="https://github.com/fmalinka/sem1r" target="_blank">sem1R</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.inetbio.org/danionet/search.php" target="_blank">DanioNet</a></td>
+      <td class="default"><a href="https://github.com/jinyangwu/KGETCDA" target="_blank">KGETCDA</a></td>
+      <td class="default"><a href="https://www.yeastgenome.org/" target="_blank">SGD: Saccharomyces Genome Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://bib.fleming.gr:8084/app/darling" target="_blank">Darling</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/35655307" target="_blank">KGEV: KGraph Explor and Visual</a></td>
+      <td class="default"><a href="https://bioconductor.org/packages/release/bioc/html/signatureSearch.html" target="_blank">signatureSearch</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://dbbact.org" target="_blank">dbBact Kb</a></td>
+      <td class="default"><a href="https://kidsbrainhealth.ca/" target="_blank">Kids Brain Health Network</a></td>
+      <td class="default"><a href="https://bioconductor.org/packages/simona/" target="_blank">simona</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://dbemt.bioinfo-minzhao.org/" target="_blank">dbEMT</a></td>
+      <td class="default"><a href="http://kobas.cbi.pku.edu.cn/" target="_blank">KOBAS</a></td>
+      <td class="default"><a href="https://spoke.rbvi.ucsf.edu/" target="_blank">SPOKE</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/gap" target="_blank">dbGaP</a></td>
+      <td class="default"><a href="https://sysbio.lab.iupui.edu/lantern/" target="_blank">Lantern</a></td>
+      <td class="default"><a href="https://sugarbind.expasy.org/" target="_blank">SugarbindDB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://supfam.org/SUPERFAMILY/dcGO/" target="_blank">DcGO</a></td>
+      <td class="default"><a href="https://www.health-atlas.de/" target="_blank">Leipzig Health Atlas</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3774754/" target="_blank">SurvExpress</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://cran.r-project.org/web/packages/dcGOR/index.html" target="_blank">dcGOR</a></td>
+      <td class="default"><a href="http://sites.gatech.edu/cssb/LeMeDISCO" target="_blank">LeMeDISCO</a></td>
+      <td class="default"><a href="https://academic.oup.com/bioinformatics/article/30/11/1630/284047" target="_blank">SurvMicro</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://dd-kg-ui.cfde.cloud/" target="_blank">DDKG: Data Distillery KG</a></td>
+      <td class="default"><a href="http://tdb.ccmb.res.in/LeukmiR/http://tdb.ccmb.res.in/LeukmiR/" target="_blank">LeukmiR</a></td>
+      <td class="default"><a href="http://www.sympgan.org/" target="_blank">SympGAN</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/CBBresearch/Yu/mn/DeCoaD/" target="_blank">DeCoaD</a></td>
+      <td class="default"><a href="http://lincsportal.ccs.miami.edu/dcic-portal/" target="_blank">LINCS</a></td>
+      <td class="default"><a href="https://github.com/larsjuhljensen/tagger" target="_blank">tagger (tagcorpus)</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://denglab.org/DeepciRGO/" target="_blank">DeepciRGO</a></td>
+      <td class="default"><a href="https://lod-cloud.net/#about" target="_blank">Linked Open Data Cloud</a></td>
+      <td class="default"><a href="http://juniper.health.unm.edu/tcrd/" target="_blank">Target Central Resource Db</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://deepgo.cbrc.kaust.edu.sa/deepgo/" target="_blank">DeepGO</a></td>
+      <td class="default"><a href="https://list2net.cing-big.hpcf.cyi.ac.cy/" target="_blank">List2Net</a></td>
+      <td class="default"><a href="http://targetmine.mizuguchilab.org/" target="_blank">TargetMine</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/cansyl/DEEPScreen" target="_blank">DEEPScreen</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/24939151/" target="_blank">Literome</a></td>
+      <td class="default"><a href="https://tarkg.ddtmlab.org/" target="_blank">TarKG</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.cbrc.kaust.edu.sa/des-amyloidosis/home/" target="_blank">DES-Amyloidosis</a></td>
+      <td class="default"><a href="https://liveratlas.org/" target="_blank">LiverAtlas</a></td>
+      <td class="default"><a href="https://www.cancerimagingarchive.net/" target="_blank">TCIA: The Cancer Imaging Archive</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.nature.com/articles/s41598-018-31439-w" target="_blank">DES-Mutation</a></td>
+      <td class="default"><a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1852-0" target="_blank">LiverWiki</a></td>
+      <td class="default"><a href="https://TCMBank.CN/" target="_blank">TCMBank: Trad Chinese Med Bank</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.cbrc.kaust.edu.sa/des-rod/home/" target="_blank">DES-ROD: RNA Oxid & Dis</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/29069510/" target="_blank">Lnc2Meth</a></td>
+      <td class="default"><a href="https://www.newdrugtargets.org/" target="_blank">TIN-X</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.cbrc.kaust.edu.sa/des-tcell/home/" target="_blank">DES-Tcell</a></td>
+      <td class="default"><a href="http://spare4.hospital.studio:9000/lncPCD/Home.jsp" target="_blank">LncPCD</a></td>
+      <td class="default"><a href="https://www.diseaselinks.com/TissueNexus/" target="_blank">TissueNexus</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://biotm.cis.udel.edu/DEXTER" target="_blank">DEXTER</a></td>
+      <td class="default"><a href="https://www.cuilab.cn/lncrnadisease" target="_blank">LncRNADisease</a></td>
+      <td class="default"><a href="https://github.com/TMCjp/ToxDAR" target="_blank">ToxDAR</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://labworm.com/tool/dga" target="_blank">DGA: Disease and Gene Annot</a></td>
+      <td class="default"><a href="https://lnctard.bio-database.com/" target="_blank">LncTarD</a></td>
+      <td class="default"><a href="https://toxpilot.nibiohn.go.jp/" target="_blank">TOXPILOT</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://dictybase.org/" target="_blank">dictyBase</a></td>
+      <td class="default"><a href="http://enlord.bndmr.fr/#homepage" target="_blank">LORD</a></td>
+      <td class="default"><a href="http://www.grnpedia.org/trrust/" target="_blank">TRRUST</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://phenotype.digital/" target="_blank">Digital Phenotype Explorer</a></td>
+      <td class="default"><a href="https://zenodo.org/records/13952449" target="_blank">LSD600</a></td>
+      <td class="default"><a href="https://bioinfo.uth.edu/TSGene/" target="_blank">TSGene</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://academic.oup.com/bioinformatics/article/34/11/1953/4820333" target="_blank">DincRNA</a></td>
+      <td class="default"><a href="http://lynx.ci.uchicago.edu/" target="_blank">Lynx</a></td>
+      <td class="default"><a href="https://github.com/x-atlas-consortia/ubkg-etl" target="_blank">UBKG</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://disease-maps.io/" target="_blank">Disease Maps</a></td>
+      <td class="default"><a href="https://www.malacards.org/" target="_blank">MalaCards</a></td>
+      <td class="default"><a href="https://github.com/hauldhut/ufo" target="_blank">UFO</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://diseases.jensenlab.org" target="_blank">DISEASES</a></td>
+      <td class="default"><a href="https://markerdb.ca" target="_blank">MarkerDB</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/26940363/" target="_blank">UniCarbKB</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://triage.cyberneticcare.com/diseasePrediction" target="_blank">Diseasomics knowledge system</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/labs/pmc/articles/PMC3308155/" target="_blank">MEDIC</a></td>
+      <td class="default"><a href="https://genomics-hub.pros.dsic.upv.es:3016/" target="_blank">VarGuideAtlas</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://www.disgenet.org/" target="_blank">DisGeNET</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/32237745/" target="_blank">MEDICASCY</a></td>
+      <td class="default"><a href="https://www.vectorbase.org/" target="_blank">VectorBase</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://www.inbirg.com/disignatlas/" target="_blank">DiSignAtlas</a></td>
+      <td class="default"><a href="http://pitools.niper.ac.in/medkg/" target="_blank">MedKG</a></td>
+      <td class="default"><a href="https://search.cancervariants.org/#*" target="_blank">VICC</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://disnet.ctb.upm.es/" target="_blank">DISNET</a></td>
+      <td class="default"><a href="https://cb.imsc.res.in/mefsat/home" target="_blank">MeFSAT</a></td>
+      <td class="default"><a href="https://www.viprbrc.org/brc/home.spg?decorator=vipr" target="_blank">VIPR: Virus Pathogen Resource</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://disnor.uniroma2.it/" target="_blank">DISNOR</a></td>
+      <td class="default"><a href="https://mendelvar.mrcieu.ac.uk/" target="_blank">MendelVar</a></td>
+      <td class="default"><a href="http://viruses.string-db.org/" target="_blank">Viruses.STRING</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://disphasedb.leloir.org.ar/" target="_blank">DisPhaseDB</a></td>
+      <td class="default"><a href="http://labs.fc.ul.pt/mer/" target="_blank">MER: Minimal Entity Recognizer</a></td>
+      <td class="default"><a href="https://www.wikidata.org/" target="_blank">Wikidata</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://jbiomedsem.biomedcentral.com/articles/10.1186/s13326-017-0140-2" target="_blank">DisSetSim</a></td>
+      <td class="default"><a href="https://metasra.biostat.wisc.edu/?species=human&assay=RNA-seq" target="_blank">MetaSRA</a></td>
+      <td class="default"><a href="https://www.wikipathways.org/index.php/WikiPathways" target="_blank">Wikipathways</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.nature.com/articles/srep30024" target="_blank">DisSim</a></td>
+      <td class="default"><a href="https://ngdc.cncb.ac.cn/methbank/" target="_blank">MethBank</a></td>
+      <td class="default"><a href="https://wormbase.org/" target="_blank">WormBase</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://docm.info/" target="_blank">DoCM: Db of Curated Mutations</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/28968812/" target="_blank">MetSigDis: Metab Signat of Dis Db</a></td>
+      <td class="default"><a href="http://www.xenbase.org/" target="_blank">Xenbase</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/Elysheba/DODO" target="_blank">DODO: Dict of Dis Ontologies</a></td>
+      <td class="default"><a href="https://github.com/Jack-Cxy/MFF-nDA" target="_blank">MFF-nDA</a></td>
+      <td class="default"><a href="http://xgr.r-forge.r-project.org/" target="_blank">XGR: eXploring Genomic Relations</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bioconductor.org/packages/release/bioc/html/DOSE.html" target="_blank">DOSE: DO Semant Enrich analysis</a></td>
+      <td class="default"><a href="https://www.informatics.jax.org/" target="_blank">MGI: Mouse Genome Informatics</a></td>
+      <td class="default"><a href="https://cosbi7.ee.ncku.edu.tw/YMLA/" target="_blank">YMLA: Yeast Multiple List Analyzer</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-12-266" target="_blank">DOSim</a></td>
+      <td class="default"><a href="http://www.mir2disease.org/" target="_blank">miR2Disease</a></td>
+      <td class="default"><a href="https://zfin.org/" target="_blank">ZFIN</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="http://drugcentral.org/" target="_blank">DrugCentral</a></td>
+    </tr>
+  </table>
+</section>
+
+
+<section id="methodologies">
+  <h3>{{ _("Methodologies") }}</h3>
+  <p>
+    {{ _("Many algorithms, frameworks, software tools, workflows and state-of-the art methods designed for (re)use and implementation by the
+    scientific community incorporate the Disease Ontology. These &quot;methodologies&quot;, which have not been incorporated into an existing software
+    tool, database, or web resource or are not freely available, include:") }}
+  </p>
+
+  <table class="ontologies-and-resources">
+    <tr>
+      <td class="default"><a href="https://www.doi.org/10.1016/j.humgen.2024.201309" target="_blank">Alzheimer Gene Assoc Classifier</a></td>
+      <td class="default"><a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-019-2829-y" target="_blank">GeneSurrounder</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8761525" target="_blank">MEDSHARE</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/ylaboratory/ANDES" target="_blank">ANDES</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/35883487" target="_blank">GGCDA</a></td>
+      <td class="default"><a href="https://github.com/biohnuster/metaCDA" target="_blank">metaCDA</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.semanticscholar.org/paper/Bootstrapping-Biomedical-Ontologies-for-Scientific-Movshovitz-Attias-Cohen/415d4231cab5ddee73e2ed536d033d5c31f24b4a" target="_blank">BioNELL</a></td>
+      <td class="default"><a href="https://www.doi.org/10.1016/j.compbiomed.2024.109252" target="_blank">GSWHomoNet</a></td>
+      <td class="default"><a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-016-1396-8" target="_blank">MicroPIE</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/30459803" target="_blank">BPLLDA</a></td>
+      <td class="default"><a href="https://github.com/tigerkey10/HIT" target="_blank">HIT</a></td>
+      <td class="default"><a href="https://github.com/zhangxue2115/MSMCDA" target="_blank">MSMCDA</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/34727570" target="_blank">brainMI</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/29433958/" target="_blank">IDDAP</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/37276756/" target="_blank">MultiDS-MDA</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5601150/" target="_blank">BRWLDA</a></td>
+      <td class="default"><a href="https://www.doi.org/10.3389/fgene.2023.1249171" target="_blank">iLncDA-RSN</a></td>
+      <td class="default"><a href="https://www.techscience.com/cmc/v82n3/59933/html" target="_blank">OM-GGAT</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.doi.org/10.3934/mbe.2023345" target="_blank">CDA-SKAG</a></td>
+      <td class="default"><a href="https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-017-4338-6" target="_blank">InfAcrOnt</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5398485/" target="_blank">Oncodomains</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://ieeexplore.ieee.org/document/8513041" target="_blank">Cognitive DDx Asst in Rare Dis</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5216984/" target="_blank">IntNetLncSim</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4525265/" target="_blank">ORPheUS</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10041818/" target="_blank">CVSARRP</a></td>
+      <td class="default"><a href="http://bliulab.net/iPiDA-GCN/" target="_blank">iPiDA-GCN</a></td>
+      <td class="default"><a href="https://github.com/27167199/PPDAMEGCN" target="_blank">PPDAMEGCN</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/38791306" target="_blank">DDCM: Disease-Drug Corr Method</a></td>
+      <td class="default"><a href="http://bliulab.net/iPiDA-LTR" target="_blank">iPiDA-LTR</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6398264/" target="_blank">PreOptique</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.doi.org/10.2174/1574893618666221118092849" target="_blank">DHOSGR</a></td>
+      <td class="default"><a href="http://bliulab.net/iPiDA-SWGCN/" target="_blank">iPiDA-SWGCN</a></td>
+      <td class="default"><a href="https://ascopubs.org/doi/10.1200/CCI.20.00001?url_ver=Z39.88-2003&rfr_id=ori%3Arid%3Acrossref.org&rfr_dat=cr_pub++0pubmed&" target="_blank">PRISM</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8985251" target="_blank">DLMPM</a></td>
+      <td class="default"><a href="https://doi.org/10.1016/j.asoc.2024.111523" target="_blank">iSG-PDA</a></td>
+      <td class="default"><a href="https://www.doi.org/10.1016/j.compbiomed.2022.105322" target="_blank">RGCNCDA</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/Shen-Lab/Drug-Combo-Generator" target="_blank">Drug-Combo-Generator</a></td>
+      <td class="default"><a href="https://github.com/nofou/LDAGM" target="_blank">LDAGM</a></td>
+      <td class="default"><a href="https://github.com/lianliu09/RMDGCN" target="_blank">RMDGCN</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0189663" target="_blank">eGARD</a></td>
+      <td class="default"><a href="https://github.com/idrblab/LEDAP" target="_blank">LEDAP</a></td>
+      <td class="default"><a href="https://doi.org/10.18129/B9.bioc.SVMDO" target="_blank">SVMDO</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://aclanthology.org/2024.sicon-1.10.pdf" target="_blank">EHDChat</a></td>
+      <td class="default"><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8728953" target="_blank">M2PP</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/35857363" target="_blank">UPHO: Urban Pop Health Observ</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-015-2303-9" target="_blank">EPOM: Epigen Overlap Measure</a></td>
+      <td class="default"><a href="https://pubmed.ncbi.nlm.nih.gov/35590258" target="_blank">MAGCNSE</a></td>
+      <td class="default"><a href="https://github.com/menchelab/VRNetzer" target="_blank">VRNetzer</a></td>
+    </tr>
+    <tr>
+      <td class="default"><a href="https://github.com/chenyunmolu/GCDSAEMDA" target="_blank">GCDSAEMDA</a></td>
+      <td class="default"><a href="https://github.com/vinash85/MedGraphNet" target="_blank">MedGraphNet</a></td>
+    </tr>
+  </table>
+</section>
+
+<i>{{ _("Last updated") }}: {{ _("June 2025") }}</i>
+
+{% endblock%}
