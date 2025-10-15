@@ -29,4 +29,10 @@ sandwich_text("bah", placeholder = c("b", "h"), add_dup = FALSE)
 sandwich_text("bah", placeholder = "h", add_dup = FALSE)
 
 }
+\seealso{
+Other general utilities: 
+\code{\link{length_sort}()},
+\code{\link{max_paren_depth}()},
+\code{\link{suggest_regex}()}
+}
 \concept{general utilities}

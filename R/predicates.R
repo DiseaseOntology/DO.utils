@@ -1,3 +1,18 @@
+#' Identify all duplicates
+#'
+#' Built on [base::duplicated()] but, unlike `base::duplicated()`,
+#' identifies all duplicates _including_ the first occurrence.
+#'
+#' @inheritParams base::duplicated
+#'
+#' @family predicates
+#' @export
+all_duplicated <- function (x, ...)
+{
+    duplicated(x, ...) | duplicated(x, fromLast = TRUE, ...)
+}
+
+
 #' Test if an Object is Invariant
 #'
 #' Test if an object is invariant (_i.e._ all values are equal, within a given
@@ -96,7 +111,7 @@ is_missing <- function(x) {
 #' desired (whether integer or double) instead of [base::is.integer] or the
 #' [rlang::is_integer] family because those test the data type no the value.
 #'
-#' @inheritParams char_val_predicates
+#' @param x vector to be tested
 #' @param tol value specifiying precision desired (see [.Machine] or [double]
 #' for more info)
 #'
@@ -138,7 +153,7 @@ is_scalar_whole_number <- function(x, tol = .Machine$double.eps)  {
 #' This predicate is designed to identify boolean vectors (i.e. length 1 logical
 #' vectors).
 #'
-#' @inheritParams char_val_predicates
+#' @param x vector to be tested
 #'
 #' @family type_predicates
 #' @family predicates
@@ -298,6 +313,7 @@ is_curie <- function(x, def = "obo_generic") {
 #' `TRUE` or `FALSE`. When `FALSE`, `missing` and/or `extra` attributes will be
 #' included to assist in identifying non-conformity.
 #'
+#' @family predicates
 #' @export
 iff_all_vals <- function(x, values) {
     vals_present <- values %in% x

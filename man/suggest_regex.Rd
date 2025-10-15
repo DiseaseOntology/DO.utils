@@ -38,3 +38,10 @@ suggest_regex(x)
 suggest_regex(x, "long")
 
 }
+\seealso{
+Other general utilities: 
+\code{\link{length_sort}()},
+\code{\link{max_paren_depth}()},
+\code{\link{sandwich_text}()}
+}
+\concept{general utilities}

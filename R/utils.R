@@ -96,6 +96,7 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
 #' length_order(x, c("y", "z"))
 #' length_order(x, c("y", "z"), decreasing = TRUE)
 #'
+#' @family general utilities
 #' @export
 length_sort <- function(x, by_name = FALSE, ...) {
     if (by_name) {
@@ -129,67 +130,6 @@ length_order <- function(data, cols, ...) {
 }
 
 
-#' Identify all duplicates
-#'
-#' Built on [base::duplicated()] but, unlike `base::duplicated()`,
-#' identifies all duplicates _including_ the first occurrence.
-#'
-#' @inheritParams base::duplicated
-#'
-#' @export
-all_duplicated <- function (x, ...)
-{
-    duplicated(x, ...) | duplicated(x, fromLast = TRUE, ...)
-}
-
-
-#' Match Length-2+ Vector Arguments
-#'
-#' Matches arguments with several inputs allowed against a set of choices.
-#' Similar to [base::match.arg()] with `several.ok = TRUE` _EXCEPT_
-#' `match_arg_several()` will signal an error for unmatching values in `arg` instead
-#' of silently dropping them.
-#'
-#' @param arg Function argument, as a character vector, or `NULL`.
-#' @param choices Candidate values, as a character vector.
-#'
-#' @keywords internal
-match_arg_several <- function(arg, choices) {
-    arg_nm <- rlang::as_string(rlang::enexpr(arg))
-    arg_missing <- !arg %in% choices
-
-    if (any(arg_missing)) {
-        if (is.character(choices)) {
-            choices <- sandwich_text(choices, '"')
-        }
-
-        msg <- paste0(
-            "`", arg_nm, "` must be one of: ",
-            vctr_to_string(choices, ", ")
-        )
-        arg_err <- arg[arg_missing]
-        if (is.character(arg)) {
-            arg_err <- sandwich_text(arg[arg_missing], '"')
-        }
-        x_err <- wrap_onscreen(
-            paste0(
-                "Not ",
-                paste0(
-                    arg_err, " (pos: ", which(arg_missing), ")",
-                    collapse = ", "
-                )
-            ),
-            exdent = 0
-        )
-        rlang::abort(
-            c(msg, x = x_err),
-            call = parent.frame()
-        )
-    }
-
-    arg
-}
-
 
 #' Suggest a Regular Expression That Will Match All Input
 #'
@@ -218,6 +158,7 @@ match_arg_several <- function(arg, choices) {
 #' suggest_regex(x)
 #' suggest_regex(x, "long")
 #'
+#' @family general utilities
 #' @export
 suggest_regex <- function(x, pivot = "wide") {
     pivot <- match.arg(pivot, choices = c("wide", "long"))
@@ -352,6 +293,54 @@ arabic_to_roman <- function(x) {
     replace_vctr <- as.character(utils::as.roman(numbers))
     names(replace_vctr) <- numbers
     stringr::str_replace_all(x, replace_vctr)
+}
+
+
+#' Match Length-2+ Vector Arguments
+#'
+#' Matches arguments with several inputs allowed against a set of choices.
+#' Similar to [base::match.arg()] with `several.ok = TRUE` _EXCEPT_
+#' `match_arg_several()` will signal an error for unmatching values in `arg` instead
+#' of silently dropping them.
+#'
+#' @param arg Function argument, as a character vector, or `NULL`.
+#' @param choices Candidate values, as a character vector.
+#'
+#' @keywords internal
+match_arg_several <- function(arg, choices) {
+    arg_nm <- rlang::as_string(rlang::enexpr(arg))
+    arg_missing <- !arg %in% choices
+
+    if (any(arg_missing)) {
+        if (is.character(choices)) {
+            choices <- sandwich_text(choices, '"')
+        }
+
+        msg <- paste0(
+            "`", arg_nm, "` must be one of: ",
+            vctr_to_string(choices, ", ")
+        )
+        arg_err <- arg[arg_missing]
+        if (is.character(arg)) {
+            arg_err <- sandwich_text(arg[arg_missing], '"')
+        }
+        x_err <- wrap_onscreen(
+            paste0(
+                "Not ",
+                paste0(
+                    arg_err, " (pos: ", which(arg_missing), ")",
+                    collapse = ", "
+                )
+            ),
+            exdent = 0
+        )
+        rlang::abort(
+            c(msg, x = x_err),
+            call = parent.frame()
+        )
+    }
+
+    arg
 }
 
 

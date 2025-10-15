@@ -60,7 +60,9 @@ Other ID predicates:
 \code{\link{obo_ID_predicates}}
 
 Other predicates: 
+\code{\link{all_duplicated}()},
 \code{\link{char_val_predicates}},
+\code{\link{iff_all_vals}()},
 \code{\link{is_invariant}()},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},

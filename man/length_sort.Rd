@@ -20,18 +20,18 @@ boolean.}
   \describe{
     \item{\code{decreasing}}{logical.  Should the sort order be increasing or
     decreasing? For the \code{"radix"} method, this can be a vector of
-    length equal to the number of arguments in \code{\dots}. For the
-    other methods, it must be length one.}
+    length equal to the number of arguments in \code{\dots} and the
+    elements are recycled as necessary.
+    For the other methods, it must be length one.}
     \item{\code{na.last}}{for controlling the treatment of \code{NA}s.
     If \code{TRUE}, missing values in the data are put last; if
     \code{FALSE}, they are put first; if \code{NA}, they are removed
     (see \sQuote{Note}.)}
     \item{\code{method}}{the method to be used: partial matches are allowed.  The
-    default (\code{"auto"}) implies \code{"radix"} for short numeric vectors,
-    integer vectors, logical vectors and factors.
-    Otherwise, it implies \code{"shell"}.
-    For details of methods \code{"shell"}, 
-    \code{"quick"}, and \code{"radix"},
+    default (\code{"auto"}) implies \code{"radix"} for numeric vectors,
+    integer vectors, logical vectors and factors with fewer than
+    \eqn{2^{31}}{2^31} elements. Otherwise, it implies \code{"shell"}.
+    For details of methods \code{"shell"}, \code{"quick"}, and \code{"radix"},
     see the help for \code{\link[base]{sort}}.}
   }}
 
@@ -72,3 +72,10 @@ length_order(x, c("y", "z"))
 length_order(x, c("y", "z"), decreasing = TRUE)
 
 }
+\seealso{
+Other general utilities: 
+\code{\link{max_paren_depth}()},
+\code{\link{sandwich_text}()},
+\code{\link{suggest_regex}()}
+}
+\concept{general utilities}
