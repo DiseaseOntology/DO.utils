@@ -85,6 +85,32 @@ test_that("length_order() works", {
 })
 
 
+# max_paren_depth() tests -------------------------------------------------
+
+x <- c("no parens", "a (1 deep)", "((a) and (b or (3 deep)))")
+out <- setNames(c(0L, 1L, 3L), x)
+
+test_that("max_paren_depth() works", {
+    expect_equal(max_paren_depth(x), out)
+})
+
+test_that("max_paren_depth() unmatched_err arg works", {
+    uopen <- "unmatched ( paren"
+    uclose <- "unmatched ( paren ) )"
+    expect_error(max_paren_depth(uopen), regexp = stringr::str_escape(uopen))
+    expect_error(max_paren_depth(uclose), regexp = stringr::str_escape(uclose))
+
+    expect_equal(max_paren_depth(uopen, FALSE), setNames(NA_integer_, uopen))
+    expect_equal(max_paren_depth(uclose, FALSE), setNames(NA_integer_, uclose))
+
+    x[2] <- "unmatched ( paren"
+    out[2] <- NA_integer_
+    names(out) <- x
+    expect_error(max_paren_depth(x))
+    expect_equal(max_paren_depth(x, unmatched_err = FALSE), out)
+})
+
+
 # match_arg_several() tests ---------------------------------------------------
 
 test_that("match_arg_several() works for character vectors", {

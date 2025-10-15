@@ -212,6 +212,55 @@ suggest_regex <- function(x, pivot = "wide") {
 }
 
 
+#' Calculate Maximum Parentheses Depth
+#'
+#' Calculates the maximum depth of nested parentheses in a string or character
+#' vector.
+#'
+#' @param x A character vector.
+#' @param unmatched_err Whether to signal an error or return `NA` for strings
+#' with unmatched parentheses,
+#'
+#' @returns An integer vector of the same length as the input giving the maximum
+#' depth of nested parentheses in each element. `NA` will bStrings with unmatched
+#' parentheses will return `NA`
+#'
+#' @examples
+#' max_paren_depth(c("no parens", "a (1 deep)", "((a) and (b or (3 deep)))"))
+#'
+#' # errs by default
+#' max_paren_depth("unmatched ( paren")
+#'
+#' # allow `NA` output for unmatched parentheses
+#' max_paren_depth("unmatched ( paren", unmatched_err = FALSE)
+#' max_paren_depth(
+#'     c("a (1 deep)", "((a) and (b or (3 deep)))", "unmatched ( paren"),
+#'     unmatched_err = FALSE
+#' )
+#'
+#' @family general utilities
+#' @export
+max_paren_depth <- function(x, unmatched_err = TRUE) {
+    str_paren_depth <- function(s, unmatched_err = TRUE) {
+        stopifnot(
+            "`unmatched_err` must be a boolean" = rlang::is_bool(unmatched_err)
+        )
+        chars <- strsplit(s, "")[[1]]
+        paren <- ifelse(chars == "(", 1L, ifelse(chars == ")", -1L, 0L))
+        if (length(paren) == 0) return(0L)
+        cum <- cumsum(paren)
+        if (any(cum < 0) || tail(cum, 1) != 0) {
+            if (unmatched_err) {
+                stop('Unmatched parentheses detected in string: "', s, '"')
+            }
+            return(NA_integer_)
+        }
+        max(c(0L, cum))
+    }
+    vapply(x, str_paren_depth, integer(1), unmatched_err = unmatched_err)
+}
+
+
 ############################ INTERNAL UTILITIES ###############################
 
 glueV <- function(..., .envir = parent.frame()) {
