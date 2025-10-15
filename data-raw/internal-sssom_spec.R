@@ -22,3 +22,10 @@ use_data_internal(
     .sssom_mapping_slots,
     overwrite = TRUE
 )
+
+# save YAML for dev reference
+dev_dir <- "setup_docs"
+yaml_file <- file.path(dev_dir, paste0("sssom_schema-", sssom_version, ".yaml"))
+
+if (!dir.exists(dev_dir)) dir.create(dev_dir)
+download.file(sssom_yaml_path, yaml_file)
