@@ -83,16 +83,19 @@ parentheses will return <code>NA</code></p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         0                         1                         3 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># errs by default</span></span></span>
-<span class="r-in"><span><span class="fu">max_paren_depth</span><span class="op">(</span><span class="st">"unmatched ( paren"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in FUN(X[[i]], ...):</span> Unmatched parentheses detected in string: "unmatched ( paren"</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu">max_paren_depths</span><span class="op">(</span><span class="st">"unmatched ( paren"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">e</span><span class="op">$</span><span class="va">message</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "could not find function \"max_paren_depths\""</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># allow `NA` output for unmatched parentheses</span></span></span>
 <span class="r-in"><span><span class="fu">max_paren_depth</span><span class="op">(</span><span class="st">"unmatched ( paren"</span>, unmatched_err <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> unmatched ( paren </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                NA </span>
 <span class="r-in"><span><span class="fu">max_paren_depth</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a (1 deep)"</span>, <span class="st">"((a) and (b or (3 deep)))"</span>, <span class="st">"unmatched ( paren"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    unmatched_err <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"a (1 deep)"</span>, <span class="st">"((a) and (b or (3 deep)))"</span>, <span class="st">"unmatched ( paren"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  unmatched_err <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                a (1 deep) ((a) and (b or (3 deep)))         unmatched ( paren </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         1                         3                        NA </span>
