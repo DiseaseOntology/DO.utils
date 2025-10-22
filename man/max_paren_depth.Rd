@@ -25,13 +25,16 @@ vector.
 max_paren_depth(c("no parens", "a (1 deep)", "((a) and (b or (3 deep)))"))
 
 # errs by default
-max_paren_depth("unmatched ( paren")
+tryCatch(
+  max_paren_depths("unmatched ( paren"),
+  error = function(e) print(e$message)
+)
 
 # allow `NA` output for unmatched parentheses
 max_paren_depth("unmatched ( paren", unmatched_err = FALSE)
 max_paren_depth(
-    c("a (1 deep)", "((a) and (b or (3 deep)))", "unmatched ( paren"),
-    unmatched_err = FALSE
+  c("a (1 deep)", "((a) and (b or (3 deep)))", "unmatched ( paren"),
+  unmatched_err = FALSE
 )
 
 }

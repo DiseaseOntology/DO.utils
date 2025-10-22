@@ -229,13 +229,16 @@ suggest_regex <- function(x, pivot = "wide") {
 #' max_paren_depth(c("no parens", "a (1 deep)", "((a) and (b or (3 deep)))"))
 #'
 #' # errs by default
-#' max_paren_depth("unmatched ( paren")
+#' tryCatch(
+#'   max_paren_depths("unmatched ( paren"),
+#'   error = function(e) print(e$message)
+#' )
 #'
 #' # allow `NA` output for unmatched parentheses
 #' max_paren_depth("unmatched ( paren", unmatched_err = FALSE)
 #' max_paren_depth(
-#'     c("a (1 deep)", "((a) and (b or (3 deep)))", "unmatched ( paren"),
-#'     unmatched_err = FALSE
+#'   c("a (1 deep)", "((a) and (b or (3 deep)))", "unmatched ( paren"),
+#'   unmatched_err = FALSE
 #' )
 #'
 #' @family general utilities
@@ -251,7 +254,7 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
         cum <- cumsum(paren)
         if (any(cum < 0) || tail(cum, 1) != 0) {
             if (unmatched_err) {
-                stop('Unmatched parentheses detected in string: "', s, '"')
+                stop("Unmatched parentheses detected in string: '", s, "'")
             }
             return(NA_integer_)
         }
