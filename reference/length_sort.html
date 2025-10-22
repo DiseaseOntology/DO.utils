@@ -71,8 +71,9 @@ boolean.</p></dd>
 <dd><p>Arguments passed on to <code><a href="https://rdrr.io/r/base/order.html" class="external-link">base::order</a></code></p><dl><dt><code>decreasing</code></dt>
 <dd><p>logical.  Should the sort order be increasing or
     decreasing? For the <code>"radix"</code> method, this can be a vector of
-    length equal to the number of arguments in <code>...</code>. For the
-    other methods, it must be length one.</p></dd>
+    length equal to the number of arguments in <code>...</code> and the
+    elements are recycled as necessary.
+    For the other methods, it must be length one.</p></dd>
 
     <dt><code>na.last</code></dt>
 <dd><p>for controlling the treatment of <code>NA</code>s.
@@ -82,11 +83,10 @@ boolean.</p></dd>
 
     <dt><code>method</code></dt>
 <dd><p>the method to be used: partial matches are allowed.  The
-    default (<code>"auto"</code>) implies <code>"radix"</code> for short numeric vectors,
-    integer vectors, logical vectors and factors.
-    Otherwise, it implies <code>"shell"</code>.
-    For details of methods <code>"shell"</code>,
-    <code>"quick"</code>, and <code>"radix"</code>,
+    default (<code>"auto"</code>) implies <code>"radix"</code> for numeric vectors,
+    integer vectors, logical vectors and factors with fewer than
+    \(2^{31}\) elements. Otherwise, it implies <code>"shell"</code>.
+    For details of methods <code>"shell"</code>, <code>"quick"</code>, and <code>"radix"</code>,
     see the help for <code><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></code>.</p></dd>
 
 
@@ -102,6 +102,13 @@ boolean.</p></dd>
 to order by.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Other general utilities:
+<code><a href="max_paren_depth.html">max_paren_depth</a>()</code>,
+<code><a href="sandwich_text.html">sandwich_text</a>()</code>,
+<code><a href="suggest_regex.html">suggest_regex</a>()</code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
