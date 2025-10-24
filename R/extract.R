@@ -502,3 +502,87 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 
     out
 }
+
+
+#' Extract Mappings from an OBO Foundry Ontology
+#'
+#' Extract mappings from the OBO Foundry Ontology as SSSOM. .
+#'
+#' @param onto_path The path to an ontology file recognizable by
+#' [ROBOT](https://robot.obolibrary.org/), as a string.
+#' @param id A character vector of IRIs or CURIEs to filter results to or
+#' `NULL` (default) to return all mappings.
+#' @param versionIRI_as The format for `subject_source_version`, if a
+#' `versionIRI` is found, as a string. One of:
+#'
+#' * `"release"` (default): Use the ontology's release version as a string.
+#'   Assumes that the release version in the `versionIRI` follows `release/` or
+#'   `releases/`. Will return full `versionIRI` as fallback.
+#' * `"iri"`: Use the ontology's full `versionIRI`.
+#'
+#' @param output The path where output will be written, as a string, or `NULL`
+#' (default) to load data directly.
+#' @inheritParams robot_query
+#'
+#' @returns
+#' If `output` is specified, the path to the output file with the data.
+#' Otherwise, the data as a [tibble][tibble::tibble].
+#'
+#' Mappings data will be formatted according to the
+#' [SSSOM](https://github.com/mapping-commons/sssom) specification,
+#' with an additional `status` column indicating the status (active, deprecated,
+#' etc.) of each `subject_id`.
+#'
+#' `subject_source_version` will be the ontology `versionIRI` (formatted
+#' according to `version_as` or today's date if `versionIRI` is not defined.
+#'
+#' @export
+extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
+                                 output = NULL,
+                                 tidy_what = c("header", "unnest")) {
+    version_as <- match.arg(version_as, c("release", "iri"))
+    q_file <- system.file(
+        "sparql", "mapping-all-sssom.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    )
+    out <- robot_query(
+        input = onto_path,
+        query = q_file,
+        output = output,
+        tidy_what = tidy_what,
+        col_types = readr::cols(.default = readr::col_character())
+    )
+    out <- dplyr::mutate(
+        out,
+        dplyr::across(
+            c("subject_id", "predicate_id", "object_id"),
+            to_curie
+        ),
+        subject_source_version = stringr::str_remove_all(
+            .data$subject_source_version,
+            "^<|>$"
+        )
+    )
+
+    if (version_as == "release") {
+        out <- dplyr::mutate(
+            out,
+            subject_source_version = stringr::str_replace(
+                .data$subject_source_version,
+                ".*releases?/([^/]+)/.*",
+                "\\1"
+            )
+        )
+    }
+
+    if (!is.null(id)) {
+        if (any(!is_valid_obo(id))) {
+            rlang::abort("`id` must be a valid OBO Foundry ontology CURIE or IRI.")
+        }
+        curie <- to_curie(id)
+        out <- dplyr::filter(out, .data$subject_id %in% curie)
+    }
+
+    out
+}
