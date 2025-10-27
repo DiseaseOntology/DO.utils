@@ -252,7 +252,7 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
         paren <- ifelse(chars == "(", 1L, ifelse(chars == ")", -1L, 0L))
         if (length(paren) == 0) return(0L)
         cum <- cumsum(paren)
-        if (any(cum < 0) || tail(cum, 1) != 0) {
+        if (any(cum < 0) || utils::tail(cum, 1) != 0) {
             if (unmatched_err) {
                 stop("Unmatched parentheses detected in string: '", s, "'")
             }
