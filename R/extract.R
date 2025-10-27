@@ -512,7 +512,7 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 #' [ROBOT](https://robot.obolibrary.org/), as a string.
 #' @param id A character vector of IRIs or CURIEs to filter results to or
 #' `NULL` (default) to return all mappings.
-#' @param versionIRI_as The format for `subject_source_version`, if a
+#' @param version_as The format for `subject_source_version`, if a
 #' `versionIRI` is found, as a string. One of:
 #'
 #' * `"release"` (default): Use the ontology's release version as a string.
@@ -523,6 +523,9 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 #' @param output The path where output will be written, as a string, or `NULL`
 #' (default) to load data directly.
 #' @inheritParams robot_query
+#' @param split_prefix_date Whether to extract date suffixes, which may exist in
+#' some `object_id`s, out as the `object_source_version` and remove them from
+#' the `object_id`, as a boolean (default: `TRUE`).
 #'
 #' @returns
 #' If `output` is specified, the path to the output file with the data.
@@ -539,7 +542,8 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 #' @export
 extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
                                  output = NULL,
-                                 tidy_what = c("header", "unnest")) {
+                                 tidy_what = c("header", "unnest"),
+                                 split_prefix_date = TRUE) {
     version_as <- match.arg(version_as, c("release", "iri"))
     q_file <- system.file(
         "sparql", "mapping-all-sssom.rq",
@@ -565,6 +569,24 @@ extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
         )
     )
 
+    if (split_prefix_date) {
+        out <- dplyr::mutate(
+            out,
+            object_source_version = stringr::str_replace_all(
+                stringr::str_extract(
+                    .data$object_id,
+                    "\\d{4}[_-]\\d{2}[_-]\\d{2}"
+                ),
+                "_",
+                "-"
+            ),
+            object_id = stringr::str_remove(
+                .data$object_id,
+                "[_-]\\d{4}[_-]\\d{2}[_-]\\d{2}"
+            )
+        )
+    }
+
     if (version_as == "release") {
         out <- dplyr::mutate(
             out,
@@ -577,11 +599,14 @@ extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
     }
 
     if (!is.null(id)) {
-        if (any(!is_valid_obo(id))) {
-            rlang::abort("`id` must be a valid OBO Foundry ontology CURIE or IRI.")
-        }
         curie <- to_curie(id)
-        out <- dplyr::filter(out, .data$subject_id %in% curie)
+        # fallback to IRI match if not all can be converted to CURIEs
+        if (any(!is_curie(curie))) {
+            uri <- to_uri(curie)
+            out <- dplyr::filter(out, to_uri(.data$subject_id) %in% uri)
+        } else {
+            out <- dplyr::filter(out, .data$subject_id %in% curie)
+        }
     }
 
     out

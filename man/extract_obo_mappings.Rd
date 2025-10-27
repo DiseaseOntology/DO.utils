@@ -9,7 +9,8 @@ extract_obo_mappings(
   id = NULL,
   version_as = "release",
   output = NULL,
-  tidy_what = c("header", "unnest")
+  tidy_what = c("header", "unnest"),
+  split_prefix_date = TRUE
 )
 }
 \arguments{
@@ -18,6 +19,15 @@ extract_obo_mappings(
 
 \item{id}{A character vector of IRIs or CURIEs to filter results to or
 \code{NULL} (default) to return all mappings.}
+
+\item{version_as}{The format for \code{subject_source_version}, if a
+\code{versionIRI} is found, as a string. One of:
+\itemize{
+\item \code{"release"} (default): Use the ontology's release version as a string.
+Assumes that the release version in the \code{versionIRI} follows \verb{release/} or
+\verb{releases/}. Will return full \code{versionIRI} as fallback.
+\item \code{"iri"}: Use the ontology's full \code{versionIRI}.
+}}
 
 \item{output}{The path where output will be written, as a string, or \code{NULL}
 (default) to load data directly.}
@@ -39,14 +49,9 @@ in the given column.
 \item \code{"nothing"} to prevent all tidying.
 }}
 
-\item{versionIRI_as}{The format for \code{subject_source_version}, if a
-\code{versionIRI} is found, as a string. One of:
-\itemize{
-\item \code{"release"} (default): Use the ontology's release version as a string.
-Assumes that the release version in the \code{versionIRI} follows \verb{release/} or
-\verb{releases/}. Will return full \code{versionIRI} as fallback.
-\item \code{"iri"}: Use the ontology's full \code{versionIRI}.
-}}
+\item{split_prefix_date}{Whether to extract date suffixes, which may exist in
+some \code{object_id}s, out as the \code{object_source_version} and remove them from
+the \code{object_id}, as a boolean (default: \code{TRUE}).}
 }
 \value{
 If \code{output} is specified, the path to the output file with the data.
