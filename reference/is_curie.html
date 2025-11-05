@@ -89,12 +89,14 @@ still restricting to CURIE patterns found in OBO Foundry ontologies, use
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other ID predicates:
+<code><a href="is_uri.html">is_uri</a>()</code>,
 <code><a href="obo_ID_predicates.html">obo_ID_predicates</a></code></p>
 <p>Other predicates:
 <code><a href="all_duplicated.html">all_duplicated</a>()</code>,
 <code><a href="char_val_predicates.html">char_val_predicates</a></code>,
 <code><a href="iff_all_vals.html">iff_all_vals</a>()</code>,
 <code><a href="is_invariant.html">is_invariant</a>()</code>,
+<code><a href="is_uri.html">is_uri</a>()</code>,
 <code><a href="lgl_predicates.html">lgl_predicates</a></code>,
 <code><a href="num_val_predicates.html">num_val_predicates</a></code>,
 <code><a href="obo_ID_predicates.html">obo_ID_predicates</a></code></p></div>
@@ -110,8 +112,9 @@ still restricting to CURIE patterns found in OBO Foundry ontologies, use
 <span class="r-in"><span>    <span class="st">"oboInOwl:hasDbXref"</span>, <span class="st">"skos:exactMatch"</span>, <span class="co"># obo object properties</span></span></span>
 <span class="r-in"><span>    <span class="st">"alfred:LO362836C"</span>, <span class="co"># not OBO but conforms to `"obo_generic"` pattern</span></span></span>
 <span class="r-in"><span>    <span class="co">#### pass only "w3c" ####</span></span></span>
-<span class="r-in"><span>    <span class="st">"4dn.biosource:4DNSR73BT2A2"</span>, <span class="st">"aceview.worm:aap-1"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"_4dn.biosource:4DNSR73BT2A2"</span>, <span class="st">"aceview.worm:aap-1"</span>,</span></span>
 <span class="r-in"><span>    <span class="co">#### always fail ####</span></span></span>
+<span class="r-in"><span>    <span class="st">"4dn.biosource:4DNSR73BT2A2"</span>, <span class="co"># starts with a number</span></span></span>
 <span class="r-in"><span>    <span class="st">"0001816"</span>, <span class="co"># bare number without prefix</span></span></span>
 <span class="r-in"><span>    <span class="st">" obo:HP_0000001"</span>, <span class="co"># must have NO `[:space:]` characters</span></span></span>
 <span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/DOID_0001816"</span> <span class="co"># URI</span></span></span>
