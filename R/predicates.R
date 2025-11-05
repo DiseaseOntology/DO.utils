@@ -280,8 +280,9 @@ is_valid_doid <- function(x) {
 #'     "oboInOwl:hasDbXref", "skos:exactMatch", # obo object properties
 #'     "alfred:LO362836C", # not OBO but conforms to `"obo_generic"` pattern
 #'     #### pass only "w3c" ####
-#'     "4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
+#'     "_4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
 #'     #### always fail ####
+#'     "4dn.biosource:4DNSR73BT2A2", # starts with a number
 #'     "0001816", # bare number without prefix
 #'     " obo:HP_0000001", # must have NO `[:space:]` characters
 #'     "http://purl.obolibrary.org/obo/DOID_0001816" # URI
@@ -295,8 +296,8 @@ is_curie <- function(x, def = "obo_generic") {
 
     if (def == "obo") pattern <- "^[A-Za-z_]+:[[:digit:]]+$"
     if (def == "obo_generic") pattern <- "^[A-Za-z_]+:[[:alnum:]#_]+$"
-    if (def == "w3c") pattern <- "^[[:alnum:].-_]+:[[:graph:]]+$"
-    if (def == "w3c_safe") pattern <- "^\\[[[:alnum:].-_]+:[[:graph:]]+\\]$"
+    if (def == "w3c") pattern <- "^[[:alpha:]_][[:alnum:].-_]*:[[:graph:]]+$"
+    if (def == "w3c_safe") pattern <- "^\\[[[:alpha:]_][[:alnum:].-_]+:[[:graph:]]+\\]$"
 
     stringr::str_detect(x, pattern) & !stringr::str_detect(x, "^_:")
 }

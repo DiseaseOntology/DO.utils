@@ -47,8 +47,9 @@ id <- c(
     "oboInOwl:hasDbXref", "skos:exactMatch", # obo object properties
     "alfred:LO362836C", # not OBO but conforms to `"obo_generic"` pattern
     #### pass only "w3c" ####
-    "4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
+    "_4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
     #### always fail ####
+    "4dn.biosource:4DNSR73BT2A2", # starts with a number
     "0001816", # bare number without prefix
     " obo:HP_0000001", # must have NO `[:space:]` characters
     "http://purl.obolibrary.org/obo/DOID_0001816" # URI
@@ -57,6 +58,7 @@ id <- c(
 }
 \seealso{
 Other ID predicates: 
+\code{\link{is_uri}()},
 \code{\link{obo_ID_predicates}}
 
 Other predicates: 
@@ -64,6 +66,7 @@ Other predicates:
 \code{\link{char_val_predicates}},
 \code{\link{iff_all_vals}()},
 \code{\link{is_invariant}()},
+\code{\link{is_uri}()},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}
