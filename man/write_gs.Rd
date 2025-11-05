@@ -3,20 +3,31 @@
 \name{write_gs}
 \alias{write_gs}
 \alias{write_gs.omim_inventory}
+\alias{write_gs.data.frame}
 \title{Write Data to a Google Sheet}
 \usage{
-write_gs(data, ss, hyperlink_curie = NULL, ...)
+write_gs(data, ss, hyperlink_curie, sheet_nm, datestamp, ...)
 
 \method{write_gs}{omim_inventory}(
   data,
   ss,
   hyperlink_curie = c("omim", "doid"),
+  sheet_nm = "omim_inventory",
+  datestamp = "\%Y\%m\%d",
+  ...
+)
+
+\method{write_gs}{data.frame}(
+  data,
+  ss,
+  hyperlink_curie = NULL,
+  sheet_nm = "data",
   datestamp = "\%Y\%m\%d",
   ...
 )
 }
 \arguments{
-\item{data}{A specially-classed data.frame with a defined method.}
+\item{data}{A data.frame, possibly with a defined method.}
 
 \item{ss}{Something that identifies a Google Sheet:
 \itemize{
@@ -33,11 +44,13 @@ Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 \item{hyperlink_curie}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> The
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.}
 
-\item{...}{Arguments passed on to methods.}
+\item{sheet_nm}{The name of the sheet to write to, as a string.}
 
-\item{datestamp}{\code{NULL} or \code{NA} to use the default sheet name
-('omim_inventory') or a format recognized by \code{\link[=format.Date]{format.Date()}} to add a date
+\item{datestamp}{\code{NULL} to use the default sheet name for a given method,
+or a format recognized by \code{\link[=format.Date]{format.Date()}} to add today's date as a
 stamp suffix, separated by '-', to the default sheet name.}
+
+\item{...}{Arguments passed on to methods.}
 }
 \value{
 The data as written to the Google Sheet, invisibly.

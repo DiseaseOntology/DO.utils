@@ -44,34 +44,54 @@ write_graphml <- function(graph, file) {
 #' Specialized methods for writing data created by `DO.utils` to a specified
 #' Google Sheet.
 #'
-#' @param data A specially-classed data.frame with a defined method.
+#' @param data A data.frame, possibly with a defined method.
 #' @inheritParams googlesheets4::write_sheet
 #' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
+#' @param sheet_nm The name of the sheet to write to, as a string.
+#' @param datestamp `NULL` to use the default sheet name for a given method,
+#' or a format recognized by [format.Date()] to add today's date as a
+#' stamp suffix, separated by '-', to the default sheet name.
+#'
 #' @param ... Arguments passed on to methods.
 #'
 #' @returns The data as written to the Google Sheet, invisibly.
 #' @export
-write_gs <- function(data, ss, hyperlink_curie = NULL, ...) {
+write_gs <- function(data, ss, hyperlink_curie, sheet_nm, datestamp, ...) {
     UseMethod("write_gs")
 }
 
 #' @rdname write_gs
-#'
-#' @param datestamp `NULL` or `NA` to use the default sheet name
-#' ('omim_inventory') or a format recognized by [format.Date()] to add a date
-#' stamp suffix, separated by '-', to the default sheet name.
-#'
 #' @export
 write_gs.omim_inventory <- function(data, ss,
                                     hyperlink_curie = c("omim", "doid"),
+                                    sheet_nm = "omim_inventory",
                                     datestamp = "%Y%m%d", ...) {
+    .df <- write_gs.data.frame(
+        data = data,
+        ss = ss,
+        hyperlink_curie = hyperlink_curie,
+        sheet_nm = sheet_nm,
+        datestamp = datestamp,
+        ...
+    )
+
+    invisible(.df)
+}
+
+#' @rdname write_gs
+#' @export
+write_gs.data.frame <- function(data, ss, hyperlink_curie = NULL, sheet_nm = "data",
+                                datestamp = "%Y%m%d", ...) {
+    if (!rlang::is_string(sheet_nm)) {
+        rlang::abort("`sheet_nm` must be a single string.")
+    }
     hyperlink_curie <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
     )
     if (length(hyperlink_curie) > 0) {
-        data <- dplyr::mutate(
+        .df <- dplyr::mutate(
             data,
             dplyr::across(
                 .cols = {{ hyperlink_curie }},
@@ -85,16 +105,15 @@ write_gs.omim_inventory <- function(data, ss,
         )
     }
 
-    sheet_nm <- "omim_inventory"
-    if (!is.null(datestamp) && !is.na(datestamp)) {
+    if (!is.null(datestamp)) {
         sheet_nm <- paste(sheet_nm, format(Sys.Date(), datestamp), sep = "-")
     }
 
     googlesheets4::write_sheet(
-        data = data,
+        data = .df,
         ss = ss,
         sheet = sheet_nm
     )
 
-    invisible(data)
+    invisible(.df)
 }
