@@ -42,6 +42,7 @@ Other predicates:
 \code{\link{iff_all_vals}()},
 \code{\link{is_curie}()},
 \code{\link{is_invariant}()},
+\code{\link{is_uri}()},
 \code{\link{lgl_predicates}},
 \code{\link{obo_ID_predicates}}
 }

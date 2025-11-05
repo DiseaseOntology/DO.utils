@@ -237,6 +237,28 @@ test_that("is_curie(def = 'w3c') works", {
 })
 
 
+# is_uri() tests ----------------------------------------------------------
+
+test_that("is_uri() works", {
+    expect_true(is_uri("http://purl.obolibrary.org/obo/DOID_0001816"))
+    expect_true(is_uri("https://google.com"))
+    expect_true(is_uri("mailto:fake.name@blah.com"))
+    expect_true(is_uri("file://"))
+    expect_true(is_uri("mailto:"))
+    expect_false(is_uri("blah"))
+    expect_false(is_uri(""))
+    expect_error(is_valid_doid(1L))
+})
+
+test_that("is_uri() empty_ok arg works", {
+    expect_true(is_uri("https://google.com", empty_ok = FALSE))
+    expect_true(is_uri("mailto:fake.name@blah.com", empty_ok = FALSE))
+    expect_false(is_uri("ftp://", empty_ok = FALSE))
+    expect_false(is_uri("mailto:", empty_ok = FALSE))
+    expect_false(is_uri("blah", empty_ok = FALSE))
+})
+
+
 # iff_all_vals() tests ----------------------------------------------------
 
 test_that("iff_all_vals() works", {

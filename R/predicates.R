@@ -302,6 +302,52 @@ is_curie <- function(x, def = "obo_generic") {
     stringr::str_detect(x, pattern) & !stringr::str_detect(x, "^_:")
 }
 
+
+#' Test for Valid URIs
+#'
+#' This is a vectorized predicate to test if character values are valid URLs,
+#' i.e. have a scheme and at least one of: hostname or path (according to
+#' [RFC3986](https://www.rfc-editor.org/rfc/rfc3986#section-3)).
+#'
+#' @param x A character vector.
+#' @param empty_ok Whether to allow empty hosts and paths, as a boolean
+#'    (default: `TRUE`). RFC3986 allows for empty paths & hosts, potentially
+#'    making a scheme alone valid and, therefore, the default. However, it is
+#'    often desirable to validate that at least one of these is NOT empty, since
+#'    a scheme alone is rarely useful in practice.
+#'
+#' @section Notes:
+#' While all URIs are valid CURIEs (see `is_curie(def = "w3c")`), not all CURIEs
+#' are valid URIs (e.g. URIs cannot start with `_`).
+#'
+#' @examples
+#' .uri <- c(
+#'     # always TRUE
+#'     "http://purl.obolibrary.org/obo/DOID_0001816",
+#'     "https://google.com",
+#'     "mailto:fake.name@blah.com",
+#'     # TRUE, if empty_ok = FALSE
+#'     "file://",
+#'     "mailto:",
+#'     # never TRUE
+#'     "blah",
+#'     ""
+#' )
+#'
+#' is_uri(.uri)
+#' is_uri(.uri, empty_ok = FALSE)
+#'
+#' @returns A logical vector indicating which values of `x` are valid URIs.
+#'
+#' @family ID predicates
+#' @family predicates
+#' @export
+is_uri <- function(x, empty_ok = TRUE) {
+    assert_character(x)
+    purrr::map_lgl(x, ~ has_uri_reqs(.x, empty_ok))
+}
+
+
 #' Test for All Values
 #'
 #' Returns `TRUE` if, and only if, all `values` are present in `x` and ONLY
@@ -327,7 +373,9 @@ iff_all_vals <- function(x, values) {
     out
 }
 
-# Type tests for internal use only
+
+# Type tests for internal use only ----------------------------------------
+
 is_vctr_or_df <- function(x) {
     is.vector(x) || is.data.frame(x)
 }
@@ -338,4 +386,19 @@ is_DOrepo <- function(x) {
 
 is_owl_xml <- function(x) {
     class(x)[1] == "pyDOID.owl.xml"
+}
+
+has_uri_reqs <- function(x, empty_ok = TRUE) {
+    parsed <- httr::parse_url(x)
+    if (empty_ok) {
+        path_valid <- !is.null(parsed$path)
+        host_valid <- !is.null(parsed$hostname)
+    } else {
+        # httr uses "/" for empty path when any authority (including empty) is
+        # present
+        path_valid <- !is.null(parsed$path) && !parsed$path %in% c("", "/")
+        host_valid <- !is.null(parsed$hostname) && parsed$hostname != ""
+    }
+
+    !is.null(parsed$scheme) && (host_valid || path_valid)
 }

@@ -70,7 +70,8 @@ is_valid_doid(doid)
 }
 \seealso{
 Other ID predicates: 
-\code{\link{is_curie}()}
+\code{\link{is_curie}()},
+\code{\link{is_uri}()}
 
 Other predicates: 
 \code{\link{all_duplicated}()},
@@ -78,6 +79,7 @@ Other predicates:
 \code{\link{iff_all_vals}()},
 \code{\link{is_curie}()},
 \code{\link{is_invariant}()},
+\code{\link{is_uri}()},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}}
 }
