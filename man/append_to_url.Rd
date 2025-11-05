@@ -69,4 +69,8 @@ try(
     )
 )
 
+# invalid URIs return NA
+append_to_url("ha", "not_a_url")
+append_to_url("ha", "unknown.scheme:") # technically a valid URI
+
 }
