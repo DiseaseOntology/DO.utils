@@ -157,15 +157,31 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' (default: `"#"` and `"%"`).
 #'
 #' The [OMIM](https://www.omim.org/help/faq#1_3) defined MIM symbols are:
-#' | MIM symbol | MIM type                            |
-#' |------------|-------------------------------------|
-#' | `*`        |  gene                               |
-#' | `+`        |  gene, includes phenotype           |
-#' | `#`        |  phenotype                          |
-#' | `%`        |  phenotype, unknown molecular basis |
-#' | `^`        |  deprecated                         |
-#' | `none`     |  phenotype, suspected/overlap       |
+#' | MIM symbol | MIM type                                                  |
+#' |------------|-----------------------------------------------------------|
+#' | `*`        |  gene                                                     |
+#' | `+`        |  gene, includes phenotype                                 |
+#' | `#`        |  descriptive entry, not unique locus; usually a phenotype |
+#' | `%`        |  phenotype / phenotypic locus, unknown molecular basis    |
+#' | `^`        |  deprecated                                               |
+#' | `none`     |  phenotype (usually), suspected or possibly overlapping   |
 #' @inheritDotParams read_delim_auto -show_col_types
+#'
+#' @section Meaning of additional OMIM shorthand:
+#' Along with symbols used to indicate MIM entry types, OMIM uses additional
+#' shorthand, as follows (from \url{https://www.omim.org/help/faq}):
+#'
+#' ## Name-based shorthand
+#' * Brackets (`[` `]`): "nondiseases"
+#' * Braces (`{` `}`): susceptibility
+#' * Leading question mark (`?`): provisional phenotype-gene relationship
+#'
+#' ## Phenotype mapping numbers
+#'
+#' * `1`: disorder was positioned by mapping of the
+#' * `2`: disease phenotype was mapped
+#' * `3`: disorder with known molecular basis
+#' * `4`: chromosome deletion or duplication syndrome
 #'
 #' @returns An `omim_tbl` (tibble) with an `omim` column containing OMIM CURIEs
 #' as formatted in DO xrefs, followed by complete OMIM data arranged as seen on
