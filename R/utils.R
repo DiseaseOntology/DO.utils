@@ -139,11 +139,15 @@ length_order <- function(data, cols, ...) {
 #' position.
 #'
 #' @param x A character vector.
-#' @param pivot Whether the resulting `tibble` should be in "wide" (default) or
-#' "long" format.
+#' @param pivot Whether the details `tibble` should be in "wide" (default) or
+#' "long" format. See Details.
 #'
-#' @returns When `pivot = "long"`, a tidy `tibble` with 3 columns and as many
-#' rows as the string length of the longest input:
+#' @returns A string of class `suggested_regex`, including detailed information
+#' in a `details` attribute, which is displayed when printed.
+#'
+#' @section Details:
+#' When `pivot = "long"`, details will be formatted as a tidy `tibble` with 3
+#' columns and as many rows as the string length of the longest input:
 #' 1. `position`: indicating the position of the character set in the input.
 #' 2. `regex`: giving the character set (in brackets),
 #' 3. `n`: the count of input strings that have a character at that `position`.
@@ -159,15 +163,16 @@ length_order <- function(data, cols, ...) {
 #' suggest_regex(x, "long")
 #'
 #' @family general utilities
+#' @seealso [print.suggested_regex()] for the print method.
 #' @export
 suggest_regex <- function(x, pivot = "wide") {
     pivot <- match.arg(pivot, choices = c("wide", "long"))
-    out <- tibble::tibble(position = stringr::str_length(x)) |>
+    details <- tibble::tibble(position = stringr::str_length(x)) |>
         dplyr::count(.data$position)
-    max_len <- max(out$position)
-    missing_pos <- (1:max_len)[!1:max_len %in% out$position]
-    out <- out |>
-        tibble::add_row(position = missing_pos, n = max(out$n)) |>
+    max_len <- max(details$position)
+    missing_pos <- (1:max_len)[!1:max_len %in% details$position]
+    details <- details |>
+        tibble::add_row(position = missing_pos, n = max(details$n)) |>
         dplyr::arrange(.data$position)
 
     xsplit <- stringr::str_split(x, "")
@@ -179,22 +184,27 @@ suggest_regex <- function(x, pivot = "wide") {
         invert_sublists() |>
         purrr::map_chr(
             function(.x) {
-                unlist(.x) |>
-                    sort() |>
+                candidates <- sort(unique(unlist(.x)))
+                if (length(candidates) == 1) return(candidates)
+                sandwich_text(
                     collapse_to_string(
+                        candidates,
                         delim = "",
                         na.rm = TRUE,
                         unique = TRUE
-                    )
+                    ),
+                    c("[", "]")
+                )
             }
-        ) |>
-        sandwich_text(c("[", "]"))
+        )
 
-    out <- out |>
+    details <- details |>
         dplyr::mutate(regex = chr_at_pos, .after = "position")
 
+    out <- paste0(details$regex, collapse = "")
+
     if (pivot == "wide") {
-        out <- out |>
+        details <- details |>
             dplyr::mutate(n = as.character(.data$n)) |>
             dplyr::rename(pos = "position") |>
             tidyr::pivot_longer(
@@ -207,7 +217,8 @@ suggest_regex <- function(x, pivot = "wide") {
                 values_from = "value"
             )
     }
-
+    class(out) <- c("suggested_regex", class(out))
+    attr(out, "details") <- details
     out
 }
 

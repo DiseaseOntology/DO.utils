@@ -9,12 +9,23 @@ suggest_regex(x, pivot = "wide")
 \arguments{
 \item{x}{A character vector.}
 
-\item{pivot}{Whether the resulting \code{tibble} should be in "wide" (default) or
-"long" format.}
+\item{pivot}{Whether the details \code{tibble} should be in "wide" (default) or
+"long" format. See Details.}
 }
 \value{
-When \code{pivot = "long"}, a tidy \code{tibble} with 3 columns and as many
-rows as the string length of the longest input:
+A string of class \code{suggested_regex}, including detailed information
+in a \code{details} attribute, which is displayed when printed.
+}
+\description{
+Collects the full set of characters found at each position across all strings
+in \code{x} and returns it as a quasi-regular expression. Letter and numbers will
+not be condensed to ranges in output, even if the full sets are present at a
+position.
+}
+\section{Details}{
+
+When \code{pivot = "long"}, details will be formatted as a tidy \code{tibble} with 3
+columns and as many rows as the string length of the longest input:
 \enumerate{
 \item \code{position}: indicating the position of the character set in the input.
 \item \code{regex}: giving the character set (in brackets),
@@ -25,12 +36,7 @@ When \code{pivot = "wide"} (default), a \code{tibble} with the same information
 organized into rows (1 header and 2 normal rows) corresponding to the 3
 columns described.
 }
-\description{
-Collects the full set of characters found at each position across all strings
-in \code{x} and returns it as a quasi-regular expression. Letter and numbers will
-not be condensed to ranges in output, even if the full sets are present at a
-position.
-}
+
 \examples{
 x <- c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")
 
@@ -39,6 +45,8 @@ suggest_regex(x, "long")
 
 }
 \seealso{
+\code{\link[=print.suggested_regex]{print.suggested_regex()}} for the print method.
+
 Other general utilities: 
 \code{\link{length_sort}()},
 \code{\link{max_paren_depth}()},
