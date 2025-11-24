@@ -630,6 +630,7 @@ extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
 #' One of:
 #' * `"label"` (default): Use labels, quoting as needed.
 #' * `"id"`: Use OBO IDs (CURIEs).
+#' @inheritParams robot
 #'
 #' @returns A tibble with the columns: `id`, `data_type`, and `value`, where `value`
 #' is the axiom in Manchester syntax rendered according to `format`.
@@ -639,7 +640,7 @@ extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
 #'
 #' @export
 extract_obo_anon <- function(obo_ont, prefix = NULL, id = NULL,
-                             render = "label") {
+                             render = "label", .robot_path = NULL) {
     render <- match.arg(render, c("label", "id"))
 
     temp <- tempfile(fileext = ".tsv")
@@ -648,19 +649,20 @@ extract_obo_anon <- function(obo_ont, prefix = NULL, id = NULL,
         i = obo_ont,
         header = '"ID|LABEL|Equivalent Class [ANON ID]|SubClass Of [ANON ID]|Disjoint With [ANON ID]"',
         include = '"classes properties"',
-        export = temp
+        export = temp,
+        .robot_path = .robot_path
     )
     .df <- readr::read_tsv(
         temp,
-        col_names = c("id", "label", "eq class anon", "subclass anon", "disjoint class anon"),
+        col_names = c("id", "label", "owl:equivalentClass", "rdfs:subClassOf", "owl:disjointWith"),
         skip = 1,
         show_col_types = FALSE
     )
 
     if (!is.null(id)) {
-        out <- dplyr::filter(.df, .data$id %in% id)
+        out <- dplyr::filter(.df, .data$id %in% .env$id)
     } else if (!is.null(prefix)) {
-        pattern <- paste0(prefix, collapse = "|")
+        pattern <- sandwich_text(paste0(prefix, collapse = "|"), c("^(", ")"))
         out <- dplyr::filter(
             .df,
             stringr::str_detect(.data$id, pattern)
@@ -671,8 +673,8 @@ extract_obo_anon <- function(obo_ont, prefix = NULL, id = NULL,
 
     out <- tidyr::pivot_longer(
         out,
-        cols = c("eq class anon", "subclass anon", "disjoint class anon"),
-        names_to = "data_type",
+        cols = c("owl:equivalentClass", "rdfs:subClassOf", "owl:disjointWith"),
+        names_to = "predicate",
         values_to = "value",
         values_drop_na = TRUE
     )
