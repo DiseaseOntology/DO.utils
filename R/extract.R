@@ -608,3 +608,89 @@ extract_obo_anon <- function(obo_ont, prefix = NULL, id = NULL,
     ### FUTURE WORK -- identify subclass anon subtypes? ###
     lengthen_col(out, value)
 }
+
+#' Extract OBO Foundry Ontology Data
+#'
+#' Extracts data from an OBO Foundry ontology.
+#'
+#' @param obo_ont The path to an ontology file, as a string.
+#' @param prefix A character vector of OBO prefixes (aka ID spaces) to filter
+#' results to, or `NULL` (default) to return all axioms. _Ignored if `id` is_
+#' _provided._
+#' @param id A character vector of OBO IDs (CURIEs) to filter results to or
+#' `NULL` (default) to return all entities with logical relations.
+#' @param include_anon Whether to include anonymous relationships
+#'    (logical/complex) in the output, as a boolean (default: `TRUE`). See
+#'    [extract_obo_anon()].
+#' @inheritDotParams extract_obo_anon
+#' @inheritParams robot
+#'
+#' @returns A tibble of class `obo_data` with the columns: `id`, `predicate`,
+#' `value`, `axiom predicate`, and `axiom value`. An additional class is added
+#' to indicate the file the data came from (without extension or directories).
+#'
+#' @section NOTES:
+#' Uses [ROBOT query](https://robot.obolibrary.org/query) internally.
+#'
+#' @export
+extract_obo_data <- function(obo_ont, prefix = NULL, id = NULL,
+                             include_anon = TRUE, ..., .robot_path = NULL) {
+    query <- system.file(
+        "sparql",
+        "obo-data.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    ) |>
+        readr::read_file()
+
+    if (!is.null(id)) {
+        iri <- to_uri(id) |>
+            sandwich_text(c("<", ">"))
+        values_stmt <- paste0(iri, collapse = " ") |>
+            sandwich_text(c("VALUES ?id { ", " }"))
+        query <- glue::glue(
+            query,
+            values = values_stmt,
+            filter = "",
+            .open = "#@",
+            .close = "#"
+        )
+    } else if (!is.null(prefix)) {
+        filter_stmt <- paste0(prefix, collapse = "|") |>
+            sandwich_text(c('FILTER(CONTAINS(str(?id), "', '_")'))
+        query <- glue::glue(
+            query,
+            values = "",
+            filter = filter_stmt,
+            .open = "#@",
+            .close = "#"
+        )
+    }
+
+    qres <- robot_query(
+        input = obo_ont,
+        query = query,
+        tidy_what = c("header", "uri_to_curie"),
+        col_types = readr::cols(.default = readr::col_character()),
+        .robot_path = .robot_path
+    )
+
+    if (!include_anon) {
+        out <- qres
+    } else {
+        anon <- extract_obo_anon(
+            obo_ont,
+            prefix = prefix,
+            id = id,
+            ...,
+            .robot_path = .robot_path
+        ) |>
+            dplyr::select("id", "predicate", "value")
+
+        out <- dplyr::bind_rows(qres, anon)
+    }
+
+    ont_src <- tools::file_path_sans_ext(basename(obo_ont))
+    class(out) <- c(ont_src, "obo_data", class(out))
+    out
+}
