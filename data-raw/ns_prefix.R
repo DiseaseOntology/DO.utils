@@ -38,16 +38,21 @@ names(not_obo_prefix) <- dplyr::recode(
 obo_general <- prefix[stringr::str_detect(prefix, "/obo(/|InOwl#)$")] %>%
     sort(decreasing = TRUE)
 
-obo_prefix <- prefix[stringr::str_detect(prefix, "/obo/.")] %>%
+obo_ont_prefix <- prefix[stringr::str_detect(prefix, "/obo/.")] %>%
     sort()
 
 
 # Common OBO property prefix ----------------------------------------------
 
-obo_prop_prefix <- obo_prefix %>%
+obo_prop_prefix <- obo_ont_prefix %>%
     stringr::str_to_lower() %>%
     stringr::str_replace("_$", "#")
-names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prefix))
+names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prop_prefix))
+
+
+# All OBO prefixes --------------------------------------------------------
+
+obo_prefix <- c(obo_ont_prefix, obo_ont_prop_prefix, obo_general)
 
 
 # All prefixes ------------------------------------------------------------
@@ -55,13 +60,12 @@ names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prefix))
 
 ns_prefix <- c(
     obo_prefix,
-    obo_prop_prefix,
-    obo_general,
     not_obo_prefix
 )
 
 usethis::use_data(not_obo_prefix, overwrite = TRUE)
 usethis::use_data(obo_prefix, overwrite = TRUE)
+usethis::use_data(obo_ont_prefix, overwrite = TRUE)
 usethis::use_data(obo_prop_prefix, overwrite = TRUE)
 usethis::use_data(ns_prefix, overwrite = TRUE)
 usethis::use_r("data", open = TRUE)
