@@ -110,39 +110,49 @@ NULL
 #' Namespace Prefixes
 #'
 #' Prefixes for namespaces, primarily sourced from
-#' [ROBOT](http://robot.obolibrary.org/), that cover most uses in OBO Foundry
+#' [`ROBOT`](http://robot.obolibrary.org/), that cover most uses in OBO Foundry
 #' ontologies, with slight modification to match the prefixes as used in the
 #' Human Disease Ontology and a few additional prefixes for cross-references and
-#' DO-related SPARQL query support.
+#' DO-related SPARQL query support. These prefixes _should_ be up-to-date with
+#' the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51).
 #'
 #' @format
 #' Character vectors of namespaces named by their corresponding prefix:
 #'
-#' `ns_prefix`: Superset of all `r length(ns_prefix)` objects listed below.
+#' `ns_prefix`: Superset of all `r length(ns_prefix)` prefix/namespaces listed
+#' below.
 #'
-#' @source `ROBOT` (v1.9.4) via data-raw/ns_prefix.R; last updated 2023-06-12.
+#' @source `ROBOT export-prefixes` (v1.9.8) via `data-raw/ns_prefix.R`; last
+#' updated 2025-12-09.
 "ns_prefix"
 
-#' @format `obo_prefix`: `r length(obo_prefix)` _standard_ OBO Foundry
-#' namespaces
-#' (e.g.`r paste0('\ua0', utils::head(names(obo_prefix), 1), '\ua0=\ua0"', utils::head(obo_prefix, 1), '"')`).
-#' @rdname ns_prefix
-"obo_prefix"
-
-#' @format `obo_prop_prefix`: `r length(obo_prop_prefix)` OBO Foundry _property_
-#' namespaces; _these may not all be in actual use_
-#' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
-#' @rdname ns_prefix
-"obo_prop_prefix"
-
-#' @format `not_obo_prefix`: `r length(not_obo_prefix)` namespaces outside but
-#' commonly used in the OBO Foundry
+#' @format `not_obo_prefix`: `r length(not_obo_prefix)` prefix/namespaces
+#' outside but commonly used in the OBO Foundry
 #' (e.g.`r paste0('\ua0', names(not_obo_prefix["dc"]), '\ua0=\ua0"', not_obo_prefix["dc"], '"')`),
 #' or in federated SPARQL queries with the DO
 #' (e.g.`r paste0('\ua0', names(not_obo_prefix["up"]), '\ua0=\ua0"', not_obo_prefix["up"], '"')`).
 #'
 #' @rdname ns_prefix
 "not_obo_prefix"
+
+#' @format `obo_prefix`: Superset of all `r length(obo_prefix)` OBO Foundry
+#' prefix/namespaces, including those listed below and, additionally, including
+#' `obo` and `oboInOwl`.
+#' @rdname ns_prefix
+"obo_prefix"
+
+#' @format `obo_ont_prefix`: `r length(obo_ont_prefix)` OBO Foundry ontology
+#' _primary_ prefix/namespaces
+#' (e.g.`r paste0('\ua0', utils::head(names(obo_ont_prefix), 1), '\ua0=\ua0"', utils::head(obo_ont_prefix, 1), '"')`).
+#' @rdname ns_prefix
+"obo_ont_prefix"
+
+#' @format `obo_prop_prefix`: `r length(obo_prop_prefix)` OBO Foundry ontology
+#' _property_ namespaces; _these may not all be in actual use_
+#' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
+#' @rdname ns_prefix
+"obo_prop_prefix"
+
 
 
 # all possible extensions of OBO Foundry ontologies

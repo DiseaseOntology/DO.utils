@@ -3,46 +3,56 @@
 \docType{data}
 \name{ns_prefix}
 \alias{ns_prefix}
-\alias{obo_prefix}
-\alias{obo_prop_prefix}
 \alias{not_obo_prefix}
+\alias{obo_prefix}
+\alias{obo_ont_prefix}
+\alias{obo_prop_prefix}
 \title{Namespace Prefixes}
 \format{
 Character vectors of namespaces named by their corresponding prefix:
 
-\code{ns_prefix}: Superset of all 533 objects listed below.
+\code{ns_prefix}: Superset of all 543 prefix/namespaces listed
+below.
 
-\code{obo_prefix}: 255 \emph{standard} OBO Foundry
-namespaces
-(e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").
-
-\code{obo_prop_prefix}: 255 OBO Foundry \emph{property}
-namespaces; \emph{these may not all be in actual use}
-(e.g. aao = "http://purl.obolibrary.org/obo/aao#")
-
-\code{not_obo_prefix}: 21 namespaces outside but
-commonly used in the OBO Foundry
+\code{not_obo_prefix}: 21 prefix/namespaces
+outside but commonly used in the OBO Foundry
 (e.g. dc = "http://purl.org/dc/elements/1.1/"),
 or in federated SPARQL queries with the DO
 (e.g. up = "http://purl.uniprot.org/core/").
+
+\code{obo_prefix}: Superset of all 522 OBO Foundry
+prefix/namespaces, including those listed below and, additionally, including
+\code{obo} and \code{oboInOwl}.
+
+\code{obo_ont_prefix}: 260 OBO Foundry ontology
+\emph{primary} prefix/namespaces
+(e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").
+
+\code{obo_prop_prefix}: 260 OBO Foundry ontology
+\emph{property} namespaces; \emph{these may not all be in actual use}
+(e.g. aao = "http://purl.obolibrary.org/obo/aao#")
 }
 \source{
-\code{ROBOT} (v1.9.4) via data-raw/ns_prefix.R; last updated 2023-06-12.
+\verb{ROBOT export-prefixes} (v1.9.6) via \code{data-raw/ns_prefix.R}; last
+updated 2025-11-24.
 }
 \usage{
 ns_prefix
 
+not_obo_prefix
+
 obo_prefix
 
-obo_prop_prefix
+obo_ont_prefix
 
-not_obo_prefix
+obo_prop_prefix
 }
 \description{
 Prefixes for namespaces, primarily sourced from
-\href{http://robot.obolibrary.org/}{ROBOT}, that cover most uses in OBO Foundry
+\href{http://robot.obolibrary.org/}{\code{ROBOT}}, that cover most uses in OBO Foundry
 ontologies, with slight modification to match the prefixes as used in the
 Human Disease Ontology and a few additional prefixes for cross-references and
-DO-related SPARQL query support.
+DO-related SPARQL query support. These prefixes \emph{should} be up-to-date with
+the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51).
 }
 \keyword{datasets}
