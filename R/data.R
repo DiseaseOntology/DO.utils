@@ -113,7 +113,8 @@ NULL
 #' [`ROBOT`](http://robot.obolibrary.org/), that cover most uses in OBO Foundry
 #' ontologies, with slight modification to match the prefixes as used in the
 #' Human Disease Ontology and a few additional prefixes for cross-references and
-#' DO-related SPARQL query support.
+#' DO-related SPARQL query support. These prefixes _should_ be up-to-date with
+#' the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51).
 #'
 #' @format
 #' Character vectors of namespaces named by their corresponding prefix:
@@ -121,7 +122,8 @@ NULL
 #' `ns_prefix`: Superset of all `r length(ns_prefix)` prefix/namespaces listed
 #' below.
 #'
-#' @source `ROBOT` (v1.9.6) via `data-raw/ns_prefix.R`; last updated 2025-11-24.
+#' @source `ROBOT export-prefixes` (v1.9.8) via `data-raw/ns_prefix.R`; last
+#' updated 2025-12-09.
 "ns_prefix"
 
 #' @format `not_obo_prefix`: `r length(not_obo_prefix)` prefix/namespaces

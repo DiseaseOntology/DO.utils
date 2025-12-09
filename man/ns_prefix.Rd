@@ -33,7 +33,8 @@ prefix/namespaces, including those listed below and, additionally, including
 (e.g. aao = "http://purl.obolibrary.org/obo/aao#")
 }
 \source{
-\code{ROBOT} (v1.9.6) via \code{data-raw/ns_prefix.R}; last updated 2025-11-24.
+\verb{ROBOT export-prefixes} (v1.9.6) via \code{data-raw/ns_prefix.R}; last
+updated 2025-11-24.
 }
 \usage{
 ns_prefix
@@ -51,6 +52,7 @@ Prefixes for namespaces, primarily sourced from
 \href{http://robot.obolibrary.org/}{\code{ROBOT}}, that cover most uses in OBO Foundry
 ontologies, with slight modification to match the prefixes as used in the
 Human Disease Ontology and a few additional prefixes for cross-references and
-DO-related SPARQL query support.
+DO-related SPARQL query support. These prefixes \emph{should} be up-to-date with
+the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51).
 }
 \keyword{datasets}

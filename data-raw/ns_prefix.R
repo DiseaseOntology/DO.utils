@@ -52,7 +52,7 @@ names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prop_prefix))
 
 # All OBO prefixes --------------------------------------------------------
 
-obo_prefix <- c(obo_ont_prefix, obo_ont_prop_prefix, obo_general)
+obo_prefix <- c(obo_ont_prefix, obo_prop_prefix, obo_general)
 
 
 # All prefixes ------------------------------------------------------------
