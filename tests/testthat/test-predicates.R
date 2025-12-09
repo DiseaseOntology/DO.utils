@@ -1,73 +1,209 @@
+# is_valid_obo() tests ----------------------------------------------------
+obo <- c(
+    ### may pass, according to format & ns_type ###
+    curie = "DOID:14566",             #1
+    curie = "so:has_origin",          #2
+    obo_curie = "obo:DOID_14566",     #3
+    obo_curie = "obo:so#has_origin",  #4
+    uri = "http://purl.obolibrary.org/obo/DOID_0001816",       #5
+    uri = "http://purl.obolibrary.org/obo/so#has_origin",      #6
+    "<uri>" = "<http://purl.obolibrary.org/obo/CL_0000066>",   #7
+    ns.lui = "DOID_14566",            #8
+    ns.lui = "so#has_origin",         #9
+    ### 9-17 should always be FALSE ###
+    # lui
+    "0001816",
+    "has_origin",
+    # wrong separator
+    "obo:DOID:14566",
+    # bracketed curie
+    "<obo:DOID_14566>",
+    # spaces
+    "obo:DOID_14566 ",
+    "obo: DOID_14566",
+    # non-OBO
+    "foaf:Person",
+    "http://xmlns.com/foaf/0.1/Person"
+)
+
 test_that("is_valid_obo() works", {
-    expect_true(is_valid_obo("http://purl.obolibrary.org/obo/DOID_0001816"))
-    expect_true(is_valid_obo("<http://purl.obolibrary.org/obo/CL_0000066>"))
-    expect_true(is_valid_obo("obo:DOID_14566"))
+    # curie
     expect_true(is_valid_obo("DOID:14566"))
+    expect_true(is_valid_obo("so:has_origin"))
+    # obo_curie
+    expect_true(is_valid_obo("obo:DOID_14566"))
+    expect_true(is_valid_obo("obo:so#has_origin"))
+    # uri
+    expect_true(is_valid_obo("http://purl.obolibrary.org/obo/DOID_0001816"))
+    expect_true(is_valid_obo("http://purl.obolibrary.org/obo/so#has_origin"))
+    # <uri>
+    expect_true(is_valid_obo("<http://purl.obolibrary.org/obo/CL_0000066>"))
+    # ns.lui, must be specifically requested
+    expect_false(is_valid_obo("DOID_14566"))
+    # multiple inputs
+    expect_equal(is_valid_obo(c("DOID:14566", "obo:DOID_14566")), c(TRUE, TRUE))
+    expect_equal(is_valid_obo(c("DOID:14566", "DOID_14566")), c(TRUE, FALSE))
+
+    ### OTHER = always FALSE ###
     expect_false(is_valid_obo("0001816")) # no prefix
     expect_false(is_valid_obo("obo:DOID:14566")) # wrong separator
     expect_false(is_valid_obo("<obo:DOID_14566>")) # curie brackets not allowed
-    # properties not allowed
-    expect_false(is_valid_obo("http://purl.obolibrary.org/obo/so#has_origin"))
-    expect_false(is_valid_obo("obo:so#has_origin"))
-    # has space
+      # has space
     expect_false(is_valid_obo("obo:DOID_14566 "))
     expect_false(is_valid_obo("obo: DOID_14566"))
-    # non-character input
+
+    # ERROR: non-character input
     expect_error(is_valid_obo(1L))
 })
 
-test_that("is_valid_obo_prop() works", {
-    expect_true(is_valid_obo_prop("http://purl.obolibrary.org/obo/so#has_origin"))
-    expect_true(is_valid_obo_prop("<http://purl.obolibrary.org/obo/so#has_origin>"))
-    expect_true(is_valid_obo_prop("obo:so#has_origin"))
-    expect_true(is_valid_obo_prop("doid:14566"))
-    # only properties allowed
-    expect_false(is_valid_obo_prop("http://purl.obolibrary.org/obo/DOID_0001816"))
-    expect_false(is_valid_obo_prop("<http://purl.obolibrary.org/obo/CL_0000066>"))
-    expect_false(is_valid_obo_prop("obo:DOID_14566"))
-    expect_false(is_valid_obo_prop("DOID:14566"))
-    expect_false(is_valid_obo_prop("0001816")) # no prefix
-    expect_false(is_valid_obo_prop("obo:DOID#14566")) # capitalized namespace
-    expect_false(is_valid_obo_prop("obo:doid_14566 ")) # wrong separator
-    expect_false(is_valid_obo_prop("obo: doid#14566")) # has space
-    # non-character input
-    expect_error(is_valid_obo_prop(1L))
+test_that("is_valid_obo() format arg works", {
+    expect_is_valid_obo_format <- function(x, format) {
+        res <- setNames(rep(F, length(x)), names(x))
+        if ("standard" %in% format) {
+            format <- union(
+                setdiff(format, "standard"),
+                c("curie", "obo_curie", "uri", "<uri>")
+            )
+        }
+        res[names(x) %in% format] <- T
+        expect_equal(
+            is_valid_obo(x, format = format),
+            res,
+            info = paste0("format argument: ", paste(format, collapse = ", "))
+        )
+    }
+
+    expect_is_valid_obo_format(obo, format = "standard")
+    expect_is_valid_obo_format(obo, format = "curie")
+    expect_is_valid_obo_format(obo, format = "obo_curie")
+    expect_is_valid_obo_format(obo, format = "uri")
+    expect_is_valid_obo_format(obo, format = "<uri>")
+    expect_is_valid_obo_format(obo, format = "ns.lui")
+    # multiple inputs accepted
+    expect_is_valid_obo_format(obo, format = c("standard", "ns.lui"))
+    expect_is_valid_obo_format(obo, format = c("uri", "<uri>"))
+    expect_is_valid_obo_format(obo, format = c("obo_curie", "ns.lui"))
+    expect_is_valid_obo_format(obo, format = c("curie", "<uri>"))
 })
+
+test_that("is_valid_obo(ns_type = 'ont') works", {
+    expect_true(is_valid_obo("http://purl.obolibrary.org/obo/DOID_0001816", ns_type = "ont"))
+    expect_true(is_valid_obo("<http://purl.obolibrary.org/obo/CL_0000066>", ns_type = "ont"))
+    expect_true(is_valid_obo("obo:DOID_14566", ns_type = "ont"))
+    expect_true(is_valid_obo("DOID:14566", ns_type = "ont"))
+    # only primary ontology namespaces allowed
+    expect_false(is_valid_obo("http://purl.obolibrary.org/obo/so#has_origin", ns_type = "ont"))
+    expect_false(is_valid_obo("<http://purl.obolibrary.org/obo/so#has_origin>", ns_type = "ont"))
+    expect_false(is_valid_obo("obo:so#has_origin", ns_type = "ont"))
+    expect_false(is_valid_obo("doid:14566", ns_type = "ont"))
+    expect_false(is_valid_obo("0001816", ns_type = "ont")) # no prefix
+    expect_false(is_valid_obo("obo:DOID#14566", ns_type = "ont")) # capitalized namespace
+    expect_false(is_valid_obo("obo:doid_14566 ", ns_type = "ont")) # wrong separator
+    expect_false(is_valid_obo("obo: doid#14566", ns_type = "ont")) # has space
+    # non-character input
+    expect_error(is_valid_obo(1L, ns_type = "ont"))
+})
+
+test_that("is_valid_obo(ns_type = 'prop') works & replaces is_valid_obo_prop()", {
+    # these are all the original tests for is_valid_obo_prop() converted to use
+    # is_valid_obo() with ns_type = "prop" --> all work the same
+    expect_true(is_valid_obo("http://purl.obolibrary.org/obo/so#has_origin", ns_type = "prop"))
+    expect_true(is_valid_obo("<http://purl.obolibrary.org/obo/so#has_origin>", ns_type = "prop"))
+    expect_true(is_valid_obo("obo:so#has_origin", ns_type = "prop"))
+    expect_true(is_valid_obo("doid:14566", ns_type = "prop"))
+    # only properties allowed
+    expect_false(is_valid_obo("http://purl.obolibrary.org/obo/DOID_0001816", ns_type = "prop"))
+    expect_false(is_valid_obo("<http://purl.obolibrary.org/obo/CL_0000066>", ns_type = "prop"))
+    expect_false(is_valid_obo("obo:DOID_14566", ns_type = "prop"))
+    expect_false(is_valid_obo("DOID:14566", ns_type = "prop"))
+    expect_false(is_valid_obo("0001816", ns_type = "prop")) # no prefix
+    expect_false(is_valid_obo("obo:DOID#14566", ns_type = "prop")) # capitalized namespace
+    expect_false(is_valid_obo("obo:doid_14566 ", ns_type = "prop")) # wrong separator
+    expect_false(is_valid_obo("obo: doid#14566", ns_type = "prop")) # has space
+    # non-character input
+    expect_error(is_valid_obo(1L, ns_type = "prop"))
+})
+
+
+# is_valid_doid() tests ---------------------------------------------------
 
 test_that("is_valid_doid() works", {
     expect_true(is_valid_doid("http://purl.obolibrary.org/obo/DOID_0001816"))
     expect_true(is_valid_doid("DOID:4"))
     expect_true(is_valid_doid("obo:DOID_14566"))
-    expect_true(is_valid_doid("DOID_0040001"))
+    expect_true(is_valid_doid("obo:doid#DO_IEDB_slim"))
+    expect_false(is_valid_doid("DOID_0040001")) # ns.lui (non-standard)
     expect_false(is_valid_doid("0001816")) # no prefix
     expect_false(is_valid_doid("obo:DOID:14566")) # wrong separator
     expect_false(is_valid_doid(" DOID_0040001")) # has space
     expect_false(is_valid_doid("DOID _0040001")) # has space
-    # properties not allowed
-    expect_false(is_valid_doid("obo:doid#DO_IEDB_slim"))
     # non-character input
     expect_error(is_valid_doid(1L))
 })
 
-test_that("is_valid_doid() works", {
-    expect_true(
-        is_valid_doid(
-            "http://purl.obolibrary.org/obo/DOID_0001816",
-            strict = TRUE
+test_that("is_valid_doid() format arg works", {
+    expect_is_valid_doid_format <- function(x, format) {
+        res <- setNames(rep(F, length(x)), names(x))
+        if ("standard" %in% format) {
+            format <- union(
+                setdiff(format, "standard"),
+                c("curie", "obo_curie", "uri", "<uri>")
+            )
+        }
+        res[
+            names(x) %in% format &
+                stringr::str_detect(x, stringr::coll("doid", ignore_case = TRUE))
+        ] <- T
+        expect_equal(
+            is_valid_doid(x, format = format),
+            res,
+            info = paste0("format argument: ", paste(format, collapse = ", "))
         )
+    }
+
+    doid <- c(
+        ### may pass, according to format & ns_type ###
+        curie = "DOID:14566",             #1
+        obo_curie = "obo:DOID_14566",     #2
+        uri = "http://purl.obolibrary.org/obo/DOID_0001816",         #3
+        "<uri>" = "<http://purl.obolibrary.org/obo/DOID_0000066>",   #4
+        ns.lui = "DOID_14566",            #5
+        ns.lui = "doid#chebi",            #6
+        ### 7-19 should always be FALSE ###
+        # non-DOID but valid OBO formats
+        curie = "so:has_origin",          #7
+        obo_curie = "obo:so#has_origin",  #8
+        uri = "http://purl.obolibrary.org/obo/so#has_origin",      #9
+        "<uri>" = "<http://purl.obolibrary.org/obo/CL_0000066>",   #10
+        ns.lui = "so#has_origin",         #11
+        # lui
+        "0001816",
+        "chebi",
+        # wrong separator
+        "obo:DOID:14566",
+        # bracketed curie
+        "<obo:DOID_14566>",
+        # spaces
+        "obo:DOID_14566 ",
+        "obo: DOID_14566",
+        # non-OBO
+        "foaf:Person",
+        "http://xmlns.com/foaf/0.1/Person"
     )
-    expect_true(is_valid_doid("DOID:4", strict = TRUE))
-    expect_true(is_valid_doid("obo:DOID_14566", strict = TRUE))
-    expect_false(is_valid_doid("DOID_0040001", strict = TRUE))
-    expect_false(is_valid_doid("0001816", strict = TRUE)) # no prefix
-    expect_false(is_valid_doid("obo:DOID:14566", strict = TRUE)) # wrong separator
-    expect_false(is_valid_doid(" DOID:0040001", strict = TRUE)) # has space
-    expect_false(is_valid_doid("DOID :0040001", strict = TRUE)) # has space
-    # properties not allowed
-    expect_false(is_valid_doid("obo:doid#DO_IEDB_slim", strict = TRUE))
-    # non-character input
-    expect_error(is_valid_doid(1L, strict = TRUE))
+
+    expect_is_valid_doid_format(doid, format = "standard")
+    expect_is_valid_doid_format(doid, format = "curie")
+    expect_is_valid_doid_format(doid, format = "obo_curie")
+    expect_is_valid_doid_format(doid, format = "uri")
+    expect_is_valid_doid_format(doid, format = "<uri>")
+    expect_is_valid_doid_format(doid, format = "ns.lui")
+    # multiple inputs accepted
+    expect_is_valid_doid_format(doid, format = c("standard", "ns.lui"))
+    expect_is_valid_doid_format(doid, format = c("uri", "<uri>"))
+    expect_is_valid_doid_format(doid, format = c("obo_curie", "ns.lui"))
+    expect_is_valid_doid_format(doid, format = c("curie", "<uri>"))
 })
+
 
 # is_invariant() tests ----------------------------------------------------
 
