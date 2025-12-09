@@ -3,22 +3,24 @@
 \name{obo_ID_predicates}
 \alias{obo_ID_predicates}
 \alias{is_valid_obo}
-\alias{is_valid_obo_prop}
 \alias{is_valid_doid}
 \title{OBO ID predicates}
 \usage{
-is_valid_obo(x)
+is_valid_obo(x, format = "standard", ns_type = "any")
 
-is_valid_obo_prop(x)
-
-is_valid_doid(x, strict = FALSE)
+is_valid_doid(x, format = "standard", ns_type = "any")
 }
 \arguments{
 \item{x}{A set of IDs, as a character vector.}
 
-\item{strict}{Whether to enforce the DOID format strictly, as a boolean. If
-\code{FALSE} (default), the \code{DOID_4} format without the \verb{obo:} prefix will be
-allowed.}
+\item{format}{The OBO ID format(s) to validate against; as a character
+vector. One or more of: \code{"standard"} (default; all except \code{"ns.lui"}),
+\code{"curie"}, \code{"obo_curie"}, \code{"uri"}, \code{"<uri>"}, or \code{"ns.lui"} (i.e. an
+OBO CURIE without \verb{obo:}).}
+
+\item{ns_type}{The type of OBO namespaces to validate against; as a character
+vector. One of: \code{"any"} (default), \code{"ont"} (ontology primary namespaces
+only), or \code{"prop"} (ontology property namespaces only; may not be exhaustive).}
 }
 \description{
 These predicates are designed to identify and validate common ID formats
@@ -38,24 +40,24 @@ These predicates \emph{do not} attempt to confirm any ID actually exists in an
 OBO Foundry ontology, but only test if the IDs are syntactically formatted
 correctly (see \href{https://obofoundry.org/id-policy}{OBO Foundry ID Policy} and
 \href{https://owlcollab.github.io/oboformat/doc/obo-syntax.html}{OBO File Specification})
-\emph{AND} correspond to a known namespace of an OBO Foundry ontology (as provided
-by ROBOT \href{https://robot.obolibrary.org/export-prefixes}{export-prefixes}.
-These prefixes \emph{should} be up-to-date with the latest OBO Foundry ontologies
-(https://github.com/ontodev/robot/issues/51).
-
-Not all OBO formats are valid DOID formats, but all valid DOID formats \emph{ARE}
-valid OBO formats.
+\emph{AND} correspond to a known namespace of an OBO Foundry ontology (see
+\link{obo_prefix}).
 }
 
 \examples{
 # OBO formats
 obo_id <- c(
-    #### valid ####
+    #### valid by default ####
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
-    "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
-    "obo:DOID_4", # CURIE, standard version
+    "<http://purl.obolibrary.org/obo/CL_0000066>", # angle-bracketed URI
+    "DOID:4", # CURIE, standard version
+    "obo:CL_0000066", # OBO CURIE
     #### valid OBO property ####
-    "obo:so#has_origin", # '#' separator ~ OBO annotation properties
+    "so:has_origin", # standard CURIE ~ OBO annotation property
+    "obo:so#has_origin", # '#' separator ~ OBO annotation property
+    ### conditionally valid -- only if "ns.lui" in `format` ###
+    "DOID_0040001", # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed)
+    "so#has_origin", # namespace-lui separator must be '#' for properties
     #### invalid ####
     "0001816", # bare number without prefix
     "obo:DOID:14566", # namespace-lui separator must be '_' ('#' for properties)
@@ -63,6 +65,7 @@ obo_id <- c(
 )
 
 is_valid_obo(obo_id)
+is_valid_obo(obo_id, format = c("standard", "ns.lui"))
 
 # DOID formats
 doid <- c(
@@ -70,16 +73,19 @@ doid <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
     "DOID:4", # CURIE, standard version
     "obo:DOID_4", # OBO CURIE, less common
-    "DOID_0040001", # basename (OBO prefix removed)
+    # properties are recognized as valid (unless ns_type = 'ont')
+    "doid:DO_IEDB_slim",
+    "obo:doid#DO_IEDB_slim",
+    # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed);
+    #   only valid if specified in
+    "DOID_0040001",
     #### invalid ####
     "0001816", # bare number without prefix
-    "obo:DOID_21 ", # must have NO `[:space:]` characters
-    # properties are NOT recognized as valid
-    "doid:DO_IEDB_slim",
-    "obo:doid#DO_IEDB_slim"
+    "obo:DOID_21 " # must have NO `[:space:]` characters
 )
 
 is_valid_doid(doid)
+is_valid_doid(doid, ns_type = "ont")
 
 }
 \seealso{
