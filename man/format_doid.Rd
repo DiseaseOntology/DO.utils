@@ -24,10 +24,6 @@ DOIDs, \code{TRUE} or \code{FALSE} (default).}
 \item{validate_input}{Whether to ensure only valid DOIDs are included in \code{x},
 \code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-DOID input will be
 returned unchanged.}
-
-\item{strict}{Whether to enforce the DOID format strictly, as a boolean. If
-\code{FALSE} (default), the \code{DOID_4} format without the \verb{obo:} prefix will be
-allowed.}
 }
 \description{
 Convert valid DOIDs and/or bare numbers to a specified DOID format. Input

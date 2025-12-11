@@ -63,8 +63,10 @@ bracketed_uri <- c("<http://purl.obolibrary.org/obo/DOID_0001816>",
                    "<http://purl.obolibrary.org/obo/CL_0000066>",
                    "<http://purl.obolibrary.org/obo/so#has_origin>",
                    "<http://purl.obolibrary.org/obo/SYMP_0000000>")
+obo_curie <- c("obo:DOID_0001816", "obo:CL_0000066", "obo:so#has_origin",
+              "obo:SYMP_0000000")
 ns_lui <- c("DOID_0001816", "CL_0000066", "so#has_origin", "SYMP_0000000")
-ns <- c("DOID", "CL", "so#", "SYMP")
+ns <- c("DOID", "CL", "so", "SYMP")
 
 # tests
 test_that("format_obo() works", {

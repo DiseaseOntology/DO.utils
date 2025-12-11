@@ -15,7 +15,9 @@ formats are possible options:
 \item \code{"CURIE"} (default)
 \item \code{"URI"}
 \item \code{"bracketed_URI"}: e.g. \code{"<http://purl.obolibrary.org/obo/CL_0000066>"}
-\item \code{"ns_lui"}: namespace with local unique identifier (preserves separator).
+\item \code{"obo_curie"}: e.g. \code{"obo:CL_0000066"}
+\item \code{"ns_lui"}: same as \code{"obo_curie"} without the \verb{obo:} prefix (e.g.
+\code{CL_0000066})
 \item \code{"ns"}: namespace of ontology only
 }
 
@@ -25,7 +27,7 @@ formats and cannot be formatted again by \code{format_obo()}.}
 
 \item{validate_input}{Whether to ensure only valid OBO IDs are included in
 \code{x},\code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-OBO ID input will
-\emph{most likely} be returned unchanged.}
+vary depending on \code{as} (see \verb{Non-OBO URI's} section).}
 
 \item{allow_prop}{Whether OBO properties are allowed in the input (default:
 \code{TRUE}). Only used if \code{validate_input = TRUE}.}
@@ -35,10 +37,19 @@ Convert valid OBO Foundry ontology IDs to a specified format. Input
 \emph{may} be tested to ensure it matches a valid OBO ID format but no attempt is
 made to confirm IDs match actual terms in any OBO Foundry ontology.
 }
-\section{Caution}{
+\section{Non-OBO CURIE/URIs}{
 
-Be extra cautious when using \code{format_obo()} with \code{validate_input = FALSE} as
-unexpected text conversion may occur.
+Be extra cautious when using \code{format_obo()} with non-OBO Foundry CURIE/URIs
+(i.e. \code{validate_input = FALSE}). In an effort to allow meaningful
+pass-through in some situations, some standardization, dependent on the input
+to \code{as}, is included. \emph{It is not guaranteed}.
+
+For the \code{as} inputs the output will \emph{hopefully} returned as follows:
+\itemize{
+\item \code{"CURIE"}, \code{"URI"}, \code{"obo_curie"}, or \code{"ns_lui"}: unchanged
+\item \code{"bracketed_URI"}: bracketed original input
+\item \code{"ns"}: \code{NA}
+}
 }
 
 \examples{
@@ -46,13 +57,18 @@ x <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816",
     "<http://purl.obolibrary.org/obo/CL_0000066>",
     "obo:SYMP_0000000",
-    "obo:so#has_origin"
+    "obo:so#has_origin",
+    "DOID:4",
+    # not OBO Foundry IDs (ignored if `validate_input = TRUE`)
+    "foaf:Person",
+    "<http://xmlns.com/foaf/0.1/Person>"
 )
 
 # reversible
 format_obo(x, as = "CURIE")
 format_obo(x, as = "URI")
 format_obo(x, as = "bracketed_URI")
+format_obo(x, as = "obo_curie")
 
 # irreversible
 format_obo(x, as = "ns_lui")

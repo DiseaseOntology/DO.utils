@@ -7,7 +7,8 @@
 all_duplicated(x, ...)
 }
 \arguments{
-\item{x}{a vector or a data frame or an array or \code{NULL}.}
+\item{x}{a (generalized, see \code{\link[base]{is.vector}}) vector, a data
+    frame,  an array or \code{NULL}.}
 
 \item{...}{arguments for particular methods.}
 }

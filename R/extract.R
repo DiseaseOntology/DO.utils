@@ -694,3 +694,12 @@ extract_obo_data <- function(obo_ont, prefix = NULL, id = NULL,
     class(out) <- c(ont_src, "obo_data", class(out))
     out
 }
+
+identify_data_type <- function(x) {
+
+}
+
+simplify_syn_scope <- function(synonym_scope) {
+    tolower(stringr::str_match(synonym_scope, "has(.+)Synonym")[,2])
+}
+

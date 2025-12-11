@@ -93,7 +93,10 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
 #'
 #' * `"bracketed_URI"`: e.g. `"<http://purl.obolibrary.org/obo/CL_0000066>"`
 #'
-#' * `"ns_lui"`: namespace with local unique identifier (preserves separator).
+#' * `"obo_curie"`: e.g. `"obo:CL_0000066"`
+#'
+#' * `"ns_lui"`: same as `"obo_curie"` without the `obo:` prefix (e.g.
+#' `CL_0000066`)
 #'
 #' * `"ns"`: namespace of ontology only
 #'
@@ -103,26 +106,41 @@ format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
 #'
 #' @param validate_input Whether to ensure only valid OBO IDs are included in
 #'     `x`,`TRUE` (default) or `FALSE`. When `FALSE`, non-OBO ID input will
-#'     _most likely_ be returned unchanged.
+#'     vary depending on `as` (see `Non-OBO URI's` section).
 #' @param allow_prop Whether OBO properties are allowed in the input (default:
 #'     `TRUE`). Only used if `validate_input = TRUE`.
 #'
-#' @section Caution:
-#' Be extra cautious when using `format_obo()` with `validate_input = FALSE` as
-#' unexpected text conversion may occur.
+#' @section Non-OBO CURIE/URIs:
+#' Be extra cautious when using `format_obo()` with non-OBO Foundry CURIE/URIs
+#' (i.e. `validate_input = FALSE`). In an effort to allow meaningful
+#' pass-through in some situations, some standardization, dependent on the input
+#' to `as`, is included. _It is not guaranteed_.
+#'
+#' For the `as` inputs the output will _hopefully_ returned as follows:
+#'
+#' * `"CURIE"`, `"URI"`, `"obo_curie"`, or `"ns_lui"`: unchanged
+#'
+#' * `"bracketed_URI"`: bracketed original input
+#'
+#' * `"ns"`: `NA`
 #'
 #' @examples
 #' x <- c(
 #'     "http://purl.obolibrary.org/obo/DOID_0001816",
 #'     "<http://purl.obolibrary.org/obo/CL_0000066>",
 #'     "obo:SYMP_0000000",
-#'     "obo:so#has_origin"
+#'     "obo:so#has_origin",
+#'     "DOID:4",
+#'     # not OBO Foundry IDs (ignored if `validate_input = TRUE`)
+#'     "foaf:Person",
+#'     "<http://xmlns.com/foaf/0.1/Person>"
 #' )
 #'
 #' # reversible
 #' format_obo(x, as = "CURIE")
 #' format_obo(x, as = "URI")
 #' format_obo(x, as = "bracketed_URI")
+#' format_obo(x, as = "obo_curie")
 #'
 #' # irreversible
 #' format_obo(x, as = "ns_lui")
@@ -140,6 +158,11 @@ format_obo <- function(x, as = "CURIE", validate_input = TRUE,
         as,
         choices = c("CURIE", "URI", "bracketed_URI", "ns_lui", "ns")
     )
+    if (allow_prop) {
+        prefixes <- obo_prefix
+    } else {
+        prefixes <- obo_ont_prefix
+    }
 
     if (validate_input) {
         if (allow_prop) {
@@ -149,10 +172,36 @@ format_obo <- function(x, as = "CURIE", validate_input = TRUE,
         }
     }
 
-    obo_pattern <- "^.*obo[/:]([A-Za-z_]+)(_[[:alnum:]_]+)>?$|^.*obo[/:]([A-Za-z_]+#)([[:alnum:]_]+)>?$"
+    obo_pattern <- paste0(
+        "^(?:.*obo[/:])?(?<ns>",
+        paste0(names(obo_prefix), collapse = "|"),
+        ")[:_#](?<lui>[[:alnum:]_]+)>?$"
+    )
+    id_parts <- tibble::as_tibble(stringr::str_match(x, obo_pattern)[, 2:3])
+    if (as == "ns") return(id_parts$ns)
+
+    # confirm OBO Foundry namespaces
+    if (as %in% c("URI", "bracketed_URI")) {
+        id_parts <- dplyr::mutate(
+            id_parts,
+            ns = dplyr::recode(.data$ns, !!!obo_prefix)
+        )
+    }
+    # if ()
+    id_parts <- dplyr::mutate(
+        id_parts,
+        ns = dplyr::if_else(
+            .data$ns %in% names(obo_prefix),
+            .data$ns,
+            NA_character_
+        )
+    )
+
+    # if
+
     obo_replacement <- switch(
         as,
-        URI = "http://purl.obolibrary.org/obo/\\1\\2\\3\\4",
+        URI = "http://purl.obolibrary.org/obo/{ns",
         CURIE = "obo:\\1\\2\\3\\4",
         bracketed_URI = "<http://purl.obolibrary.org/obo/\\1\\2\\3\\4>",
         ns_lui = "\\1\\2\\3\\4",
