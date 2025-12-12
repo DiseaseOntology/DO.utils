@@ -72,12 +72,14 @@ Requirements" for details), or downloaded with <code><a href="download_omim.html
 <dd><p>[<strong>OMIM search data only</strong>] The MIM symbols representing
 the data types to keep, as a character vector, or <code>NULL</code> to retain all
 (default: <code>"#"</code> and <code>"%"</code>).</p>
-<p>The <a href="https://www.omim.org/help/faq#1_3" class="external-link">OMIM</a> defined MIM symbols are:</p><table class="table table"><tr><td>MIM symbol</td><td>MIM type</td></tr><tr><td><code>*</code></td><td>gene</td></tr><tr><td><code>+</code></td><td>gene, includes phenotype</td></tr><tr><td><code>#</code></td><td>phenotype</td></tr><tr><td><code>%</code></td><td>phenotype, unknown molecular basis</td></tr><tr><td><code>^</code></td><td>deprecated</td></tr><tr><td><code>none</code></td><td>phenotype, suspected/overlap</td></tr></table></dd>
+<p>The <a href="https://www.omim.org/help/faq#1_3" class="external-link">OMIM</a> defined MIM symbols are:</p><table class="table table"><tr><td>MIM symbol</td><td>MIM type</td></tr><tr><td><code>*</code></td><td>gene</td></tr><tr><td><code>+</code></td><td>gene, includes phenotype</td></tr><tr><td><code>#</code></td><td>descriptive entry, not unique locus; usually a phenotype</td></tr><tr><td><code>%</code></td><td>phenotype / phenotypic locus, unknown molecular basis</td></tr><tr><td><code>^</code></td><td>deprecated</td></tr><tr><td><code>none</code></td><td>phenotype (usually), suspected or possibly overlapping</td></tr></table></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="read_delim_auto.html">read_delim_auto</a></code></p><dl><dt><code></code></dt>
-<dd></dd>
+<dd><p>Arguments passed on to <code><a href="read_delim_auto.html">read_delim_auto</a></code></p><dl><dt><code>strict</code></dt>
+<dd><p>Whether delimiter should be found in all lines (default:
+<code>TRUE</code>), or just a majority of lines. If <code>FALSE</code>, an attempt is made to guess
+the delimiter for data that may not be entirely delimited.</p></dd>
 
 
 </dl></dd>
@@ -129,6 +131,29 @@ reading with <code>read_omim()</code>.</p>
 <li><p>Direct: <a href="https://www.omim.org/static/omim/data/mim2gene.txt" class="external-link">https://www.omim.org/static/omim/data/mim2gene.txt</a></p></li>
 </ul></li>
 </ol><p>Additional data is available with an approved API key.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="meaning-of-additional-omim-shorthand">Meaning of additional OMIM shorthand<a class="anchor" aria-label="anchor" href="#meaning-of-additional-omim-shorthand"></a></h2>
+
+
+<p>Along with symbols used to indicate MIM entry types, OMIM uses additional
+shorthand, as follows (from <a href="https://www.omim.org/help/faq" class="external-link">https://www.omim.org/help/faq</a>):</p><div class="section">
+<h3 id="name-based-shorthand">Name-based shorthand<a class="anchor" aria-label="anchor" href="#name-based-shorthand"></a></h3>
+
+<ul><li><p>Brackets (<code>[</code> <code>]</code>): "nondiseases"</p></li>
+<li><p>Braces (<code>{</code> <code>}</code>): susceptibility</p></li>
+<li><p>Leading question mark (<code>?</code>): provisional phenotype-gene relationship</p></li>
+</ul></div>
+
+<div class="section">
+<h3 id="phenotype-mapping-numbers">Phenotype mapping numbers<a class="anchor" aria-label="anchor" href="#phenotype-mapping-numbers"></a></h3>
+
+<ul><li><p><code>1</code>: disorder was positioned by mapping of the</p></li>
+<li><p><code>2</code>: disease phenotype was mapped</p></li>
+<li><p><code>3</code>: disorder with known molecular basis</p></li>
+<li><p><code>4</code>: chromosome deletion or duplication syndrome</p></li>
+</ul></div>
+
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

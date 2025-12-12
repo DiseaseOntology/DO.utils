@@ -31,22 +31,26 @@ read_omim(file, keep_mim = c("#", "%"), ...)
 
   The [OMIM](https://www.omim.org/help/faq#1_3) defined MIM symbols are:
 
-  |            |                                    |
-  |------------|------------------------------------|
-  | MIM symbol | MIM type                           |
-  | `*`        | gene                               |
-  | `+`        | gene, includes phenotype           |
-  | `#`        | phenotype                          |
-  | `%`        | phenotype, unknown molecular basis |
-  | `^`        | deprecated                         |
-  | `none`     | phenotype, suspected/overlap       |
+  |            |                                                          |
+  |------------|----------------------------------------------------------|
+  | MIM symbol | MIM type                                                 |
+  | `*`        | gene                                                     |
+  | `+`        | gene, includes phenotype                                 |
+  | `#`        | descriptive entry, not unique locus; usually a phenotype |
+  | `%`        | phenotype / phenotypic locus, unknown molecular basis    |
+  | `^`        | deprecated                                               |
+  | `none`     | phenotype (usually), suspected or possibly overlapping   |
 
 - ...:
 
   Arguments passed on to
   [`read_delim_auto`](https://allenbaron.github.io/DO.utils/reference/read_delim_auto.md)
 
-  :   
+  `strict`
+
+  :   Whether delimiter should be found in all lines (default: `TRUE`),
+      or just a majority of lines. If `FALSE`, an attempt is made to
+      guess the delimiter for data that may not be entirely delimited.
 
 ## Value
 
@@ -105,3 +109,26 @@ Some data are available for download without an API key. This includes:
     - Direct: <https://www.omim.org/static/omim/data/mim2gene.txt>
 
 Additional data is available with an approved API key.
+
+## Meaning of additional OMIM shorthand
+
+Along with symbols used to indicate MIM entry types, OMIM uses
+additional shorthand, as follows (from <https://www.omim.org/help/faq>):
+
+### Name-based shorthand
+
+- Brackets (`[` `]`): "nondiseases"
+
+- Braces (`{` `}`): susceptibility
+
+- Leading question mark (`?`): provisional phenotype-gene relationship
+
+### Phenotype mapping numbers
+
+- `1`: disorder was positioned by mapping of the
+
+- `2`: disease phenotype was mapped
+
+- `3`: disorder with known molecular basis
+
+- `4`: chromosome deletion or duplication syndrome
