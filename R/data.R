@@ -137,7 +137,7 @@ NULL
 
 #' @format `obo_prefix`: Superset of all `r length(obo_prefix)` OBO Foundry
 #' prefix/namespaces, including those listed below and, additionally, including
-#' `obo` and `oboInOwl`.
+#' the general `obo` prefix.
 #' @rdname ns_prefix
 "obo_prefix"
 
@@ -147,8 +147,9 @@ NULL
 #' @rdname ns_prefix
 "obo_ont_prefix"
 
-#' @format `obo_prop_prefix`: `r length(obo_prop_prefix)` OBO Foundry ontology
-#' _property_ namespaces; _these may not all be in actual use_
+#' @format `obo_prop_prefix`: `oboInOwl` (along with the common prefix variant
+#' `oio`) and `r length(obo_prop_prefix) - 1` OBO  Foundry ontology _property_
+#' namespaces (_these may not all be in actual use_)
 #' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
 #' @rdname ns_prefix
 "obo_prop_prefix"

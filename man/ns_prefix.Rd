@@ -11,7 +11,7 @@
 \format{
 Character vectors of namespaces named by their corresponding prefix:
 
-\code{ns_prefix}: Superset of all 543 prefix/namespaces listed
+\code{ns_prefix}: Superset of all 546 prefix/namespaces listed
 below.
 
 \code{not_obo_prefix}: 21 prefix/namespaces
@@ -20,21 +20,22 @@ outside but commonly used in the OBO Foundry
 or in federated SPARQL queries with the DO
 (e.g. up = "http://purl.uniprot.org/core/").
 
-\code{obo_prefix}: Superset of all 522 OBO Foundry
+\code{obo_prefix}: Superset of all 525 OBO Foundry
 prefix/namespaces, including those listed below and, additionally, including
-\code{obo} and \code{oboInOwl}.
+the general \code{obo} prefix.
 
-\code{obo_ont_prefix}: 260 OBO Foundry ontology
+\code{obo_ont_prefix}: 261 OBO Foundry ontology
 \emph{primary} prefix/namespaces
 (e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").
 
-\code{obo_prop_prefix}: 260 OBO Foundry ontology
-\emph{property} namespaces; \emph{these may not all be in actual use}
+\code{obo_prop_prefix}: \code{oboInOwl} (along with the common prefix variant
+\code{oio}) and 262 OBO  Foundry ontology \emph{property}
+namespaces (\emph{these may not all be in actual use})
 (e.g. aao = "http://purl.obolibrary.org/obo/aao#")
 }
 \source{
-\verb{ROBOT export-prefixes} (v1.9.6) via \code{data-raw/ns_prefix.R}; last
-updated 2025-11-24.
+\verb{ROBOT export-prefixes} (v1.9.8) via \code{data-raw/ns_prefix.R}; last
+updated 2025-12-09.
 }
 \usage{
 ns_prefix
