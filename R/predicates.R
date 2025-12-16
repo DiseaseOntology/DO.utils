@@ -265,18 +265,6 @@ is_valid_obo <- function(x, allow = "standard", ns_type = "obo") {
     stringr::str_detect(x, obo_regex)
 }
 
-#' OBO Property ID Predicate _(DEPRECATED)_
-#'
-#' **_DEPRECATED_** -- Use `is_valid_obo(x, ns_type = 'prop')` instead.
-#' @param x A set of IDs, as a character vector.
-#'
-#' @export
-is_valid_obo_prop <- function(x) {
-    rlang::abort("`is_valid_obo_prop()` is deprecated. Use `is_valid_obo(ns_type = 'prop')` instead.",
-                 class = "deprecated_function"
-    )
-}
-
 #' @rdname obo_ID_predicates
 #' @export
 is_valid_doid <- function(x, allow = "standard", ns_type = "obo") {
