@@ -14,9 +14,14 @@ is_valid_doid(x, allow = "standard", ns_type = "obo")
 \item{x}{A set of IDs, as a character vector.}
 
 \item{allow}{The OBO ID format(s) to consider valid; as a character vector.
-One or more of: \code{"standard"} (default; all except \code{"ns.lui"}), \code{"curie"},
-\code{"obo_curie"}, \code{"uri"}, \code{"<uri>"}, or \code{"ns.lui"} (i.e. an OBO CURIE without
-\verb{obo:}).}
+One or more of: \code{"curie"}, \code{"obo_curie"} (e.g. \code{obo:DOID_4}), \code{"uri"},
+\code{"<uri>"} (URI in angle brackets), or \code{"ns.lui"} (i.e. an OBO CURIE without
+\verb{obo:}).
+
+\code{"standard"} (default) is a generic grouping that represents syntactically
+correct formats (\code{"curie"}, \code{"obo_curie"}, \code{"uri"} and \code{"<uri>"}).
+
+\code{"ns.lui"} will only be included if explicitly specified.}
 
 \item{ns_type}{The type of OBO namespaces to consider valid; as a character
 vector. One of: \code{"obo"} (default), \code{"ont"} (ontology primary namespaces
@@ -28,10 +33,8 @@ defined within OBO Foundry ontologies.
 }
 \details{
 \itemize{
-\item \code{is_valid_obo()} to determine if identifiers match the OBO Foundry IRI
-pattern or are an obo:LUI CURIE.
-\item \code{is_valid_doid()} to determine if identifiers match DO's IRI or CURIE
-pattern.
+\item \code{is_valid_obo()} to determine if identifiers match an OBO Foundry ID.
+\item \code{is_valid_doid()} to determine if identifiers match a DOID/doid.
 }
 }
 \section{Notes}{

@@ -124,6 +124,20 @@ test_that("is_valid_obo(ns_type = 'prop') works & replaces is_valid_obo_prop()",
     expect_error(is_valid_obo(1L, ns_type = "prop"))
 })
 
+test_that("is_valid_obo() can handle oboInOwl", {
+    expect_true(is_valid_obo("oboInOwl:hasDbXref"))
+    expect_true(is_valid_obo("http://www.geneontology.org/formats/oboInOwl#id"))
+    expect_true(is_valid_obo("<http://www.geneontology.org/formats/oboInOwl#id>"))
+    # special handling for obo_curie
+    expect_true(is_valid_obo("oboInOwl:hasDbXref", allow = "obo_curie"))
+    # excluded from primary ontology namespaces
+    expect_false(is_valid_obo("oboInOwl:hasDbXref", ns_type = "ont"))
+    # included in "property" namespaces
+    expect_true(is_valid_obo("oboInOwl:hasDbXref", ns_type = "prop"))
+    # NS-SEP-LUI
+    expect_false(is_valid_obo("oboInOwl#hasDbXref"))
+    expect_true(is_valid_obo("oboInOwl#hasDbXref", allow = "ns.lui"))
+})
 
 # is_valid_doid() tests ---------------------------------------------------
 
@@ -137,6 +151,9 @@ test_that("is_valid_doid() works", {
     expect_false(is_valid_doid("obo:DOID:14566")) # wrong separator
     expect_false(is_valid_doid(" DOID_0040001")) # has space
     expect_false(is_valid_doid("DOID _0040001")) # has space
+    # non-DOID OBO IDs
+    expect_false(is_valid_doid("oboInOwl:id"))
+    expect_false(is_valid_doid("GENO:0000001"))
     # non-character input
     expect_error(is_valid_doid(1L))
 })
