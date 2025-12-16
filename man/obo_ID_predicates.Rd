@@ -6,20 +6,20 @@
 \alias{is_valid_doid}
 \title{OBO ID predicates}
 \usage{
-is_valid_obo(x, format = "standard", ns_type = "any")
+is_valid_obo(x, allow = "standard", ns_type = "obo")
 
-is_valid_doid(x, format = "standard", ns_type = "any")
+is_valid_doid(x, allow = "standard", ns_type = "obo")
 }
 \arguments{
 \item{x}{A set of IDs, as a character vector.}
 
-\item{format}{The OBO ID format(s) to validate against; as a character
-vector. One or more of: \code{"standard"} (default; all except \code{"ns.lui"}),
-\code{"curie"}, \code{"obo_curie"}, \code{"uri"}, \code{"<uri>"}, or \code{"ns.lui"} (i.e. an
-OBO CURIE without \verb{obo:}).}
+\item{allow}{The OBO ID format(s) to consider valid; as a character vector.
+One or more of: \code{"standard"} (default; all except \code{"ns.lui"}), \code{"curie"},
+\code{"obo_curie"}, \code{"uri"}, \code{"<uri>"}, or \code{"ns.lui"} (i.e. an OBO CURIE without
+\verb{obo:}).}
 
-\item{ns_type}{The type of OBO namespaces to validate against; as a character
-vector. One of: \code{"any"} (default), \code{"ont"} (ontology primary namespaces
+\item{ns_type}{The type of OBO namespaces to consider valid; as a character
+vector. One of: \code{"obo"} (default), \code{"ont"} (ontology primary namespaces
 only), or \code{"prop"} (ontology property namespaces only; may not be exhaustive).}
 }
 \description{
@@ -55,7 +55,7 @@ obo_id <- c(
     #### valid OBO property ####
     "so:has_origin", # standard CURIE ~ OBO annotation property
     "obo:so#has_origin", # '#' separator ~ OBO annotation property
-    ### conditionally valid -- only if "ns.lui" in `format` ###
+    ### conditionally valid -- only if "ns.lui" in `allow` ###
     "DOID_0040001", # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed)
     "so#has_origin", # namespace-lui separator must be '#' for properties
     #### invalid ####
@@ -65,7 +65,7 @@ obo_id <- c(
 )
 
 is_valid_obo(obo_id)
-is_valid_obo(obo_id, format = c("standard", "ns.lui"))
+is_valid_obo(obo_id, allow = c("standard", "ns.lui"))
 
 # DOID formats
 doid <- c(

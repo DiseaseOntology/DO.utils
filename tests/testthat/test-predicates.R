@@ -1,6 +1,6 @@
 # is_valid_obo() tests ----------------------------------------------------
 obo <- c(
-    ### may pass, according to format & ns_type ###
+    ### may pass, according to allow & ns_type ###
     curie = "DOID:14566",             #1
     curie = "so:has_origin",          #2
     obo_curie = "obo:DOID_14566",     #3
@@ -56,34 +56,34 @@ test_that("is_valid_obo() works", {
     expect_error(is_valid_obo(1L))
 })
 
-test_that("is_valid_obo() format arg works", {
-    expect_is_valid_obo_format <- function(x, format) {
+test_that("is_valid_obo() allow arg works", {
+    expect_is_valid_obo_format <- function(x, allow) {
         res <- setNames(rep(F, length(x)), names(x))
-        if ("standard" %in% format) {
-            format <- union(
-                setdiff(format, "standard"),
+        if ("standard" %in% allow) {
+            allow <- union(
+                setdiff(allow, "standard"),
                 c("curie", "obo_curie", "uri", "<uri>")
             )
         }
-        res[names(x) %in% format] <- T
+        res[names(x) %in% allow] <- T
         expect_equal(
-            is_valid_obo(x, format = format),
+            is_valid_obo(x, allow = allow),
             res,
-            info = paste0("format argument: ", paste(format, collapse = ", "))
+            info = paste0("allow argument: ", paste(allow, collapse = ", "))
         )
     }
 
-    expect_is_valid_obo_format(obo, format = "standard")
-    expect_is_valid_obo_format(obo, format = "curie")
-    expect_is_valid_obo_format(obo, format = "obo_curie")
-    expect_is_valid_obo_format(obo, format = "uri")
-    expect_is_valid_obo_format(obo, format = "<uri>")
-    expect_is_valid_obo_format(obo, format = "ns.lui")
+    expect_is_valid_obo_format(obo, allow = "standard")
+    expect_is_valid_obo_format(obo, allow = "curie")
+    expect_is_valid_obo_format(obo, allow = "obo_curie")
+    expect_is_valid_obo_format(obo, allow = "uri")
+    expect_is_valid_obo_format(obo, allow = "<uri>")
+    expect_is_valid_obo_format(obo, allow = "ns.lui")
     # multiple inputs accepted
-    expect_is_valid_obo_format(obo, format = c("standard", "ns.lui"))
-    expect_is_valid_obo_format(obo, format = c("uri", "<uri>"))
-    expect_is_valid_obo_format(obo, format = c("obo_curie", "ns.lui"))
-    expect_is_valid_obo_format(obo, format = c("curie", "<uri>"))
+    expect_is_valid_obo_format(obo, allow = c("standard", "ns.lui"))
+    expect_is_valid_obo_format(obo, allow = c("uri", "<uri>"))
+    expect_is_valid_obo_format(obo, allow = c("obo_curie", "ns.lui"))
+    expect_is_valid_obo_format(obo, allow = c("curie", "<uri>"))
 })
 
 test_that("is_valid_obo(ns_type = 'ont') works", {
@@ -141,28 +141,28 @@ test_that("is_valid_doid() works", {
     expect_error(is_valid_doid(1L))
 })
 
-test_that("is_valid_doid() format arg works", {
-    expect_is_valid_doid_format <- function(x, format) {
+test_that("is_valid_doid() allow arg works", {
+    expect_is_valid_doid_format <- function(x, allow) {
         res <- setNames(rep(F, length(x)), names(x))
-        if ("standard" %in% format) {
-            format <- union(
-                setdiff(format, "standard"),
+        if ("standard" %in% allow) {
+            allow <- union(
+                setdiff(allow, "standard"),
                 c("curie", "obo_curie", "uri", "<uri>")
             )
         }
         res[
-            names(x) %in% format &
+            names(x) %in% allow &
                 stringr::str_detect(x, stringr::coll("doid", ignore_case = TRUE))
         ] <- T
         expect_equal(
-            is_valid_doid(x, format = format),
+            is_valid_doid(x, allow = allow),
             res,
-            info = paste0("format argument: ", paste(format, collapse = ", "))
+            info = paste0("allow argument: ", paste(allow, collapse = ", "))
         )
     }
 
     doid <- c(
-        ### may pass, according to format & ns_type ###
+        ### may pass, according to allow & ns_type ###
         curie = "DOID:14566",             #1
         obo_curie = "obo:DOID_14566",     #2
         uri = "http://purl.obolibrary.org/obo/DOID_0001816",         #3
@@ -191,17 +191,17 @@ test_that("is_valid_doid() format arg works", {
         "http://xmlns.com/foaf/0.1/Person"
     )
 
-    expect_is_valid_doid_format(doid, format = "standard")
-    expect_is_valid_doid_format(doid, format = "curie")
-    expect_is_valid_doid_format(doid, format = "obo_curie")
-    expect_is_valid_doid_format(doid, format = "uri")
-    expect_is_valid_doid_format(doid, format = "<uri>")
-    expect_is_valid_doid_format(doid, format = "ns.lui")
+    expect_is_valid_doid_format(doid, allow = "standard")
+    expect_is_valid_doid_format(doid, allow = "curie")
+    expect_is_valid_doid_format(doid, allow = "obo_curie")
+    expect_is_valid_doid_format(doid, allow = "uri")
+    expect_is_valid_doid_format(doid, allow = "<uri>")
+    expect_is_valid_doid_format(doid, allow = "ns.lui")
     # multiple inputs accepted
-    expect_is_valid_doid_format(doid, format = c("standard", "ns.lui"))
-    expect_is_valid_doid_format(doid, format = c("uri", "<uri>"))
-    expect_is_valid_doid_format(doid, format = c("obo_curie", "ns.lui"))
-    expect_is_valid_doid_format(doid, format = c("curie", "<uri>"))
+    expect_is_valid_doid_format(doid, allow = c("standard", "ns.lui"))
+    expect_is_valid_doid_format(doid, allow = c("uri", "<uri>"))
+    expect_is_valid_doid_format(doid, allow = c("obo_curie", "ns.lui"))
+    expect_is_valid_doid_format(doid, allow = c("curie", "<uri>"))
 })
 
 # all_duplicated() tests --------------------------------------------------

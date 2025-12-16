@@ -186,12 +186,12 @@ is_boolean <- function(x) {
 #' [obo_prefix]).
 #'
 #' @param x A set of IDs, as a character vector.
-#' @param format The OBO ID format(s) to validate against; as a character
-#' vector. One or more of: `"standard"` (default; all except `"ns.lui"`),
-#' `"curie"`, `"obo_curie"`, `"uri"`, `"<uri>"`, or `"ns.lui"` (i.e. an
-#' OBO CURIE without `obo:`).
-#' @param ns_type The type of OBO namespaces to validate against; as a character
-#' vector. One of: `"any"` (default), `"ont"` (ontology primary namespaces
+#' @param allow The OBO ID format(s) to consider valid; as a character vector.
+#' One or more of: `"standard"` (default; all except `"ns.lui"`), `"curie"`,
+#' `"obo_curie"`, `"uri"`, `"<uri>"`, or `"ns.lui"` (i.e. an OBO CURIE without
+#' `obo:`).
+#' @param ns_type The type of OBO namespaces to consider valid; as a character
+#' vector. One of: `"obo"` (default), `"ont"` (ontology primary namespaces
 #' only), or `"prop"` (ontology property namespaces only; may not be exhaustive).
 #'
 #' @examples
@@ -205,7 +205,7 @@ is_boolean <- function(x) {
 #'     #### valid OBO property ####
 #'     "so:has_origin", # standard CURIE ~ OBO annotation property
 #'     "obo:so#has_origin", # '#' separator ~ OBO annotation property
-#'     ### conditionally valid -- only if "ns.lui" in `format` ###
+#'     ### conditionally valid -- only if "ns.lui" in `allow` ###
 #'     "DOID_0040001", # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed)
 #'     "so#has_origin", # namespace-lui separator must be '#' for properties
 #'     #### invalid ####
@@ -215,7 +215,7 @@ is_boolean <- function(x) {
 #' )
 #'
 #' is_valid_obo(obo_id)
-#' is_valid_obo(obo_id, format = c("standard", "ns.lui"))
+#' is_valid_obo(obo_id, allow = c("standard", "ns.lui"))
 #'
 #' # DOID formats
 #' doid <- c(
@@ -244,12 +244,12 @@ NULL
 
 #' @rdname obo_ID_predicates
 #' @export
-is_valid_obo <- function(x, format = "standard", ns_type = "any") {
+is_valid_obo <- function(x, allow = "standard", ns_type = "obo") {
     assert_character(x)
-    ns_type <- match.arg(ns_type, c("any", "ont", "prop"))
+    ns_type <- match.arg(ns_type, c("obo", "ont", "prop"))
     prefixes <- switch(
         ns_type,
-        any = obo_prefix,
+        obo = obo_prefix,
         ont = obo_ont_prefix,
         prop = obo_prop_prefix
     )
@@ -261,7 +261,7 @@ is_valid_obo <- function(x, format = "standard", ns_type = "any") {
         lui <- "[[:alnum:]_]+"
     }
 
-    obo_regex <- build_obo_regex(ns_sep, lui, format = format)
+    obo_regex <- build_obo_regex(ns_sep, lui, allow = allow)
     stringr::str_detect(x, obo_regex)
 }
 
@@ -279,13 +279,13 @@ is_valid_obo_prop <- function(x) {
 
 #' @rdname obo_ID_predicates
 #' @export
-is_valid_doid <- function(x, format = "standard", ns_type = "any") {
+is_valid_doid <- function(x, allow = "standard", ns_type = "obo") {
     assert_character(x)
-    ns_type <- match.arg(ns_type, c("any", "ont", "prop"))
+    ns_type <- match.arg(ns_type, c("obo", "ont", "prop"))
 
     ns_sep <- switch(
         ns_type,
-        any = c("DOID_", "doid#"),
+        obo = c("DOID_", "doid#"),
         ont = "DOID_",
         prop = "doid#"
     )
@@ -296,7 +296,7 @@ is_valid_doid <- function(x, format = "standard", ns_type = "any") {
         lui <- "[[:alnum:]_]+"
     }
 
-    doid_regex <- build_obo_regex(ns_sep, lui, format = format)
+    doid_regex <- build_obo_regex(ns_sep, lui, allow = allow)
     stringr::str_detect(x, doid_regex)
 }
 
@@ -463,10 +463,11 @@ has_uri_reqs <- function(x, empty_ok = TRUE) {
     !is.null(parsed$scheme) && (host_valid || path_valid)
 }
 
-# obo_ID_predicates helper
-build_obo_regex <- function(ns_sep, lui, format = "standard") {
-    format <- match.arg(
-        format,
+# Builds a regex pattern to match OBO IDs in various formats using the desired
+# namespaces and local unique identifiers (LUIs) of interest as inputs.
+build_obo_regex <- function(ns_sep, lui, allow = "standard") {
+    allow <- match.arg(
+        allow,
         choices = c("standard", "curie", "obo_curie", "uri", "<uri>", "ns.lui"),
         several.ok = TRUE
     )
@@ -485,21 +486,21 @@ build_obo_regex <- function(ns_sep, lui, format = "standard") {
     )
 
     # add <uri> as appropriate
-    if ("standard" %in% format || all(c("uri", "<uri>") %in% format)) {
+    if ("standard" %in% allow || all(c("uri", "<uri>") %in% allow)) {
         formats["uri"] <- sandwich_text(formats["uri"], c("<?", ">?"))
-    } else if ("<uri>" %in% format) {
+    } else if ("<uri>" %in% allow) {
         formats["<uri>"] <- sandwich_text(formats["uri"], c("<", ">"))
     }
 
     # add ns.lui as appropriate
-    if ("ns.lui" %in% format && any(c("standard", "obo_curie") %in% format)) {
+    if ("ns.lui" %in% allow && any(c("standard", "obo_curie") %in% allow)) {
         formats["obo_curie"] <- "(obo:)?{.ns_sep}{lui}"
-    } else if ("ns.lui" %in% format) {
+    } else if ("ns.lui" %in% allow) {
         formats["ns.lui"] <- "{.ns_sep}{lui}"
     }
 
-    if (!"standard" %in% format) {
-        formats <- stats::na.omit(formats[format])
+    if (!"standard" %in% allow) {
+        formats <- stats::na.omit(formats[allow])
     }
 
     obo_regex <- sandwich_text(
