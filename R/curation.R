@@ -104,11 +104,18 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
 
 # helpers --------------------------------------------------------------------
 
-# define expected columns for curation template (in order)
+### define expected columns for curation template (in order) ###
+# subset of SSSOM columns to include
+sssom_cur_cols <- c(
+    "predicate_modifier", "curation_rule", "comment", "object_source_version"
+)
+# full set of curations columns
 curation_cols <- c(
   "id", "data_type", "value", "action", "curation_notes", "links",
-  "action_notes"
+  "action_notes",
+  paste0("SSSOM-", sssom_cur_cols)
 )
+
 
 #' Curation Action
 #'
@@ -143,6 +150,14 @@ set_curation_validation <- function(cur_df, ss, sheet) {
     # add action validation
     action_range <- spreadsheet_range(cur_df, "action", sheet = sheet)
     range_add_dropdown(ss, action_range, values = curation_action)
+
+    # add SSSOM-curation_rule validation
+    sssom_rule_range <- spreadsheet_range(
+        cur_df,
+        "SSSOM-curation_rule",
+        sheet = sheet
+    )
+    range_add_dropdown(ss, sssom_rule_range, values = .sssom_cur_rules)
 
     # freeze first two columns
     googlesheets4::with_gs4_quiet(
