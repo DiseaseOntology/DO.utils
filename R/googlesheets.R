@@ -27,7 +27,8 @@ NULL
 
 #' @rdname range_add_validation
 #' @keywords internal
-range_add_checkbox <- function(ss, range, msg = "Value must be TRUE or FALSE",
+range_add_checkbox <- function(ss, sheet = NULL, range,
+                               msg = "Value must be TRUE or FALSE",
                                quiet = TRUE) {
   rule <- googlesheets4:::new(
     "DataValidationRule",
@@ -47,12 +48,16 @@ range_add_checkbox <- function(ss, range, msg = "Value must be TRUE or FALSE",
     }
   }
 
-  .fn(ss = ss, range = range, rule = rule)
+  .fn(ss = ss, sheet = sheet, range = range, rule = rule)
 }
 
 #' @rdname range_add_validation
+#' @section Limitations of the Google Sheets API/`googlesheets4`:
+#' - The API does not support chipset multi-selection in dropdowns:
+#' https://stackoverflow.com/questions/79653536/how-to-enable-multiple-selection-in-data-validation-dropdown-using-google-sheets
 #' @keywords internal
-range_add_dropdown <- function(ss, range, values, msg = "Choose a valid value",
+range_add_dropdown <- function(ss, sheet = NULL, range, values,
+                               msg = "Choose a valid value",
                                reject_input = TRUE, display_arrow = TRUE,
                                quiet = TRUE) {
   rule <- googlesheets4:::new(
@@ -76,7 +81,7 @@ range_add_dropdown <- function(ss, range, values, msg = "Choose a valid value",
     }
   }
 
-  .fn(ss = ss, range = range, rule = rule)
+  .fn(ss = ss, sheet = sheet, range = range, rule = rule)
 }
 
 

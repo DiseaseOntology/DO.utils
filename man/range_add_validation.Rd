@@ -8,6 +8,7 @@
 \usage{
 range_add_checkbox(
   ss,
+  sheet = NULL,
   range,
   msg = "Value must be TRUE or FALSE",
   quiet = TRUE
@@ -15,6 +16,7 @@ range_add_checkbox(
 
 range_add_dropdown(
   ss,
+  sheet = NULL,
   range,
   values,
   msg = "Choose a valid value",
@@ -35,6 +37,8 @@ returns
 }
 
 Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
+
+\item{sheet}{Sheet to write into, in the sense of "worksheet" or "tab". You can identify a sheet by name, with a string, or by position, with a number. Ignored if the sheet is specified via \code{range}. If neither argument specifies the sheet, defaults to the first visible sheet.}
 
 \item{range}{Cells to apply data validation to. This \code{range} argument has
 important similarities and differences to \code{range} elsewhere (e.g.
@@ -62,4 +66,12 @@ value violates the data validation rule or "Show a warning" (\code{FALSE}).}
 \description{
 Add data validation to a Google Sheet range.
 }
+\section{Limitations of the Google Sheets API/\code{googlesheets4}}{
+
+\itemize{
+\item The API does not support chipset multi-selection in dropdowns:
+https://stackoverflow.com/questions/79653536/how-to-enable-multiple-selection-in-data-validation-dropdown-using-google-sheets
+}
+}
+
 \keyword{internal}
