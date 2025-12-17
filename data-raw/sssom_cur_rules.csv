@@ -1,0 +1,42 @@
+group,rule_name,text
+NA,multi-rule,"Subject mapped to object based on multiple rules. Each rule should be specified in the 'comment' slot, prefaced by ""Rules:"" and separated by commas; rule qualifiers may appear in parentheses (example: ""Rules: map1 (NCI:00000), label-label"")."
+NA,NA,NA
+"clear_cut, positive/negative",NA,"All rules in this group must NOT have ambiguous or conflicting information when comparing a subject and object, as determined by a curator."
+NA,label-label,"Subject label (mis)matches object label, may be approximate based on judgment of curator. Label matches alone should generally only be made where other supporting information is not available (as is often the case for ICD9/10)."
+NA,label-synonym,"Subject label (mis)matches object synonym, may be approximate based on judgment of curator."
+NA,synonym-label,"Subject synonym (mis)matches object label, may be approximate based on judgment of curator."
+NA,multi-label-synonym,"Multiple (mis)matches between subject label and/or synonyms and object label and/or synonyms, may be approximate based on judgment of curator. Mixed matches/mismatches between label & synonyms can exist but should overwhelmingly support either the positive or negative match (i.e. it should not be ambiguous)."
+NA,NA,NA
+"clear_cut, positive",NA,"All rules in this group must NOT have ambiguous or conflicting information when comparing a subject and object, as determined by a curator."
+NA,authoritative,Subject mapped to object based on authoritative nature of object.
+NA,definition,"Subject mapped to object with matching definition, as judged by curator."
+NA,hierarchy (sc),"Subject mapped to object based on subClassOf (sc) relationships in object_source, as judged by a curator."
+NA,logical_def,"Subject mapped to object based on logical axiom-based definition, as judged by a curator."
+NA,map1,Subject mapped to object based on one shared mapping.
+NA,map2plus,Subject mapped to object based on two or more shared mappings.
+NA,NA,NA
+"clear cut, negative",NA,NA
+NA,not_disease,"Subject mapped to object that is NOT a disease. Any mapping in the subject should have its predicate negated to force exclusion. Evidence should be included in the 'comment' slot. Additionally, a new mapping should be created between the subject_source (e.g. subject_id = obo:doid) and the object_id using the predicate doid:OutOfScope."
+NA,phen_diff,"Subject should NOT be mapped to object because the phenotype of object is sufficiently distinct, as determined by a curator."
+NA,gen_diff,Subject should NOT be mapped to object because the genetic cause differs.
+NA,other_map,"Subject should NOT be mapped to object because a better mapping between a term from the subject source exists with this object. May be used on a correct mapping, possibly in conjunction with rules supporting positive association, but overall result should be exclusion. Use exclude = TRUE for mapping unless mapping is incorrect, then use Not in predicate modifier slot."
+NA,NA,NA
+NA,NA,NA
+ambiguous,NA,NA
+NA,def_broader,Subject mapped to object where the object definition may imply broader inclusion of a term. This rule does NOT require use of the skos:broadMatch predicate. The predicate should be added based on the curators best judgment.
+NA,phen-gen_cross-match,Indicates that one provider defines the disease by phenotype while the other defines the disease by genotype and these diseases cross-match (not clear 1-to-1 relationship)
+NA,phen_aggregate,Indicates that subject disease is an aggregate of genotype-defined diseases from the object provider
+NA,map_mismatch,Subject and object have one or more mapping(s) to different sources that call into question this mapping.
+NA,map_def_conflict,"Definition on object conflicts with definition on another mapping to this subject, calling into question this mapping. The mapping with the conflict should be specified in the comment field."
+NA,no_lit_support,"Object should be excluded because it's existence is not currently supported by literature, as determined by a curator."
+NA,nos,Object should be excluded because it is a Not Otherwise Specified disease category.
+NA,rare_result,"Object can result from subject in rare cases. These should be reciprocal skos:relatedMatch, if they exist, but would be better expressed in logical axioms (how)"
+NA,nonclinical_group,Disease is not a disease grouping that is likely not recognized by a broad community of clinicians; may be ontological in nature
+NA,from_skos,"A mapping via SKOS exists to this term, and this is its equivalent oboInOwl:hasDbXref; makes NO statement about type of relationship.
+- [NOTE 2025-10-11]: Lynn's latest comments state that all SKOS mapping should have an xref equivalent... but that's likely too broad a rule to follow and conflicts with prior decisions"
+NA,communication,Communication with someone supports the mapping record. Details should be included in a comment.
+NA,existing_xref,"Indicates that a mapping existed in the ontology before SSSOM record creation; only applies to oboInOwl:hasDbXref mappings; makes no statement about correctness of mapping
+--> may be better to create a column indicating xref in DO (maybe status column indicating active/deprecated with source version???)"
+NA,other_map_except,Same condition as other_map rule (Subject should NOT be mapped to object because a better mapping between a term from the subject source exists with this object) but included anyway. Curator MUST include why exception was made in comment.
+NA,NA,NA
+NA,name mismatch with preferred source,NA
