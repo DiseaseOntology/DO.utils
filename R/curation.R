@@ -106,24 +106,24 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
 
 # define expected columns for curation template (in order)
 curation_cols <- c(
-  "id", "data_type", "value", "status", "curation_notes", "links",
-  "status_notes"
+  "id", "data_type", "value", "action", "curation_notes", "links",
+  "action_notes"
 )
 
-#' Curation 'Status'
+#' Curation Action
 #'
-#' Values used to establish `status` data validation in Google Sheets
+#' Values used to establish `action` data validation in Google Sheets
 #' [curation templates][curation_template()].
 #'
 #' * `retain`: data already in ontology that should be kept; this is the default
-#' `status` for existing data when creating a [curation_template()]
+#' `action` for existing data when creating a [curation_template()]
 #'
 #' * `add`: new data that should be added
 #'
 #' * `remove`: existing ontology data that should be removed
 #'
 #' * `exclude`: data relevant to the ontology that should be actively excluded
-#' (e.g. an incorrect mapping) -- details should be included in `status_notes`
+#' (e.g. an incorrect mapping) -- details should be included in `action_notes`
 #'
 #' * `ignore`: data not for active inclusion or exclusion that should be ignored
 #' (e.g. dubious synonyms, incomplete curation data)
@@ -131,7 +131,7 @@ curation_cols <- c(
 #' * `restore`: data that was removed from the ontology and should be added back
 #'
 #' @keywords internal
-curation_status <- c("retain", "add", "remove", "exclude", "ignore", "restore")
+curation_action <- c("retain", "add", "remove", "exclude", "ignore", "restore")
 
 
 #' Set Data Validation for Curation Templates
@@ -140,9 +140,9 @@ set_curation_validation <- function(cur_df, ss, sheet) {
     dt_range <- spreadsheet_range(cur_df, "data_type", sheet = sheet)
     range_add_dropdown(ss, dt_range, values = .curation_opts$data_type)
 
-    # add status validation
-    status_range <- spreadsheet_range(cur_df, "status", sheet = sheet)
-    range_add_dropdown(ss, status_range, values = curation_status)
+    # add action validation
+    action_range <- spreadsheet_range(cur_df, "action", sheet = sheet)
+    range_add_dropdown(ss, action_range, values = curation_action)
 
     # freeze first two columns
     googlesheets4::with_gs4_quiet(
