@@ -37,6 +37,70 @@ curation_template.NULL <- function(ss = NULL, sheet = NULL, ..., nrow = 50) {
   invisible(gs_info)
 }
 
+#' @export
+curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
+                                       n_max = 20) {
+    cur_df <- .data |>
+        # need smarter indexing... I think
+        dplyr::mutate(
+            index = dplyr::dense_rank(paste0(.data$predicate, .data$value)),
+            .by = "id",
+            .before = "id"
+        ) |>
+        dplyr::mutate(
+            predicate = dplyr::if_else(
+                !is.na(.data$axiom_predicate) & .data$axiom_predicate == "oboInOwl:hasSynonymType",
+                paste0(.data$predicate, "-", .data$axiom_value),
+                .data$predicate
+            ),
+            axiom_predicate = dplyr::if_else(
+                !is.na(.data$axiom_predicate) & .data$axiom_predicate != "oboInOwl:hasSynonymType",
+                paste0(.data$predicate, "-", .data$axiom_predicate),
+                NA_character_
+            ),
+            # removes axiom value where predicate is updated (redundant)
+            axiom_value = dplyr::if_else(
+                is.na(.data$axiom_predicate),
+                NA_character_,
+                .data$axiom_value
+            )
+        ) |>
+        tidyr::pivot_longer(
+            cols = -c("index", "id"),
+            names_to = ".value",
+            names_prefix = "^axiom_",
+            values_drop_na = TRUE
+        ) |>
+        dplyr::arrange(
+            .data$id,
+            .data$index,
+            stringr::str_length(.data$predicate)
+        ) |>
+        dplyr::rename(data_type = "predicate", "curation_notes" = "extra") |>
+        # for now, just remove index --> need to use for sorting at some point
+        dplyr::select(-"index") |>
+        unique() |>
+        # collapse_col(value) |> # does nothing... probably don't want to collapse
+        dplyr::mutate(
+            data_type = dplyr::coalesce(
+                .sparql_dt_motif[.data$data_type],
+                .data$data_type
+            ),
+            id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id)
+        ) |>
+        append_empty_col(curation_cols, order = TRUE)
+
+
+  class(cur_df) <- c("curation_template", class(cur_df))
+  if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
+  gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
+
+  if (is.null(ss)) ss <- gs_info
+  set_curation_validation(cur_df, ss, sheet)
+
+  invisible(gs_info)
+}
+
 
 # helpers --------------------------------------------------------------------
 
