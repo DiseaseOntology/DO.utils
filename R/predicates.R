@@ -7,8 +7,7 @@
 #'
 #' @family predicates
 #' @export
-all_duplicated <- function (x, ...)
-{
+all_duplicated <- function (x, ...) {
     duplicated(x, ...) | duplicated(x, fromLast = TRUE, ...)
 }
 

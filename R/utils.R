@@ -130,7 +130,6 @@ length_order <- function(data, cols, ...) {
 }
 
 
-
 #' Suggest a Regular Expression That Will Match All Input
 #'
 #' Collects the full set of characters found at each position across all strings
@@ -509,7 +508,7 @@ list_to_man <- function(x, ordered = FALSE) {
         rlang::abort("All elements in `x` must be named.")
     }
     list_item <- if (ordered) {
-        paste0(1:length(names(x)), ". ")
+        paste0(seq_along(names(x)), ". ")
     } else {
         "* "
     }
