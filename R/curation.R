@@ -75,7 +75,7 @@ spreadsheet_range <- function(.data, .col, sheet = NULL, rows = NULL,
                                  n_header = 1) {
   col_letter <- LETTERS[which(names(.data) == .col)]
   if (length(col_letter) != 1) {
-    rlange::abort("Exactly one column must be specified in `.col`")
+    rlang::abort("Exactly one column must be specified in `.col`")
   }
 
   if (is.null(rows)) {
