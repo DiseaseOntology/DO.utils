@@ -85,8 +85,98 @@ range_add_dropdown <- function(ss, sheet = NULL, range, values,
 }
 
 
-# microbenchmark(
-#   cur_cols %>% purrr::map_dfc(setNames, object = list(logical())),
-#   cur_cols %>% purrr::map_dfc(~ tibble::tibble(!!.x := logical())),
+#' Set Google Sheets Range Fill Color
+#'
+#' Sets the fill color for one or more ranges in a Google Sheet.
+#'
+#' @inheritParams curation_template
+#' @param ranges A character vector of ranges to set the background color for,
+#' as recognized by [googlesheets4::range_flood()].
+#'
+#' @section NOTE:
+#' This function relies on internal functions from the `googlesheets4` package
+#' and may break if the package is updated. See examples of
+#' [googlesheets4::range_flood()] for reference.
+#'
+#' @family Google Sheets Formatting functions
+#'
+#' @keywords internal
+set_gs_fill <- function(ss, sheet, ranges, colors) {
+  stopifnot(
+    "`ranges` and `colors` must be same length" =
+      length(ranges) == length(colors),
+  )
+  color_mat <- gs_col2rgb(colors)
 
-# )
+  gs_fill <- purrr::map(
+    seq_along(ranges),
+    function(.i) {
+      googlesheets4:::CellData(
+        userEnteredFormat = googlesheets4:::new(
+          "CellFormat",
+          backgroundColor = googlesheets4:::new(
+            "Color",
+            red = color_mat[1, .i] / 255,
+            green = color_mat[2, .i] / 255,
+            blue = color_mat[3, .i] / 255
+          )
+        )
+      )
+    }
+  )
+
+  purrr::walk2(
+    ranges,
+    gs_fill,
+    ~ googlesheets4::range_flood(ss, sheet, range = .x, cell = .y)
+  )
+}
+
+
+#' Convert Google Sheets Colors to RGB
+#'
+#' Converts one or more Google Sheets color names or hex codes to RGB values.
+#'
+#' @param colors A character vector of hex codes or one of the following color
+#' names from Google Sheets `r paste0(names(gs_color), collapse = ", ")`.
+#' @return A 3 x `length(colors)` matrix with `Red`, `Green`, & `Blue` rows in
+#' 1 column for each color in `colors`.
+#'
+#' @family Google Sheets Formatting functions
+#'
+#' @keywords internal
+gs_col2rgb <- function(colors) {
+  hex <- is_hex_color(colors)
+  stopifnot(
+    "`colors` must be one or more hex code(s) or recognized DO.utils:::gs_color name(s)" =
+      all(hex | colors %in% names(gs_color))
+  )
+  color_data <- ifelse(hex, colors, gs_color[colors])
+
+  col2rgb(color_data)
+}
+
+
+# Google Sheets colors defined in DO.utils
+gs_color <- c(
+  "red" = "#ff0000",
+  "orange" = "#ff9900",
+  "yellow" = "#ffff00",
+  "green" = "#00ff00",
+  "cyan" = "#00ffff",
+  "blue" = "#0000ff",
+  "purple" = "#9900ff",
+  "magenta" = "#ff00ff",
+  "light red 3" = "#f4cccc",
+  "light orange 3" = "#fce5cd",
+  "light yellow 3" = "#fff2cc",
+  "light green 3" = "#d9ead3",
+  "light cyan 3" = "#d0e0e3",
+  "light blue 3" = "#cfe2f3",
+  "light purple 3" = "#d9d2e9",
+  "light magenta 3" = "#ead1dc",
+  "white" = "#ffffff",
+  "black" = "#000000",
+  "dark grey 1" = "#b7b7b7",
+  "light grey 2" = "#efefef"
+)

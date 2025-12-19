@@ -65,6 +65,7 @@ Other predicates:
 \code{\link{all_duplicated}()},
 \code{\link{char_val_predicates}},
 \code{\link{iff_all_vals}()},
+\code{\link{is_hex_color}()},
 \code{\link{is_invariant}()},
 \code{\link{is_uri}()},
 \code{\link{lgl_predicates}},

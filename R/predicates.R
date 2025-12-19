@@ -455,6 +455,21 @@ iff_all_vals <- function(x, values) {
 }
 
 
+#' Test for Hexadecimal Colors
+#'
+#' Tests whether values in a character vector are valid hexadecimal color codes.
+#' Will _NOT_ recognize [abbreviated hex codes](https://en.wikipedia.org/wiki/Web_colors#Shorthand_hexadecimal_form)
+#' (e.g. `#fff`).
+#'
+#' @param x A character vector.
+#'
+#' @family predicates
+#' @export
+is_hex_color <- function(x) {
+    stringr::str_detect(x, "^#([0-9a-fA-F]{2}){3,4}$")
+}
+
+
 # Type tests for internal use only ----------------------------------------
 
 is_vctr_or_df <- function(x) {
