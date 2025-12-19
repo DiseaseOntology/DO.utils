@@ -46,9 +46,9 @@ defined within OBO Foundry ontologies.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">is_valid_obo</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">is_valid_obo</span><span class="op">(</span><span class="va">x</span>, allow <span class="op">=</span> <span class="st">"standard"</span>, ns_type <span class="op">=</span> <span class="st">"obo"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">is_valid_doid</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">is_valid_doid</span><span class="op">(</span><span class="va">x</span>, allow <span class="op">=</span> <span class="st">"standard"</span>, ns_type <span class="op">=</span> <span class="st">"obo"</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -58,14 +58,28 @@ defined within OBO Foundry ontologies.</p>
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>A set of IDs, as a character vector.</p></dd>
 
+
+<dt id="arg-allow">allow<a class="anchor" aria-label="anchor" href="#arg-allow"></a></dt>
+<dd><p>The OBO ID format(s) to consider valid; as a character vector.
+One or more of: <code>"curie"</code>, <code>"obo_curie"</code> (e.g. <code>obo:DOID_4</code>), <code>"uri"</code>,
+<code>"&lt;uri&gt;"</code> (URI in angle brackets), or <code>"ns.lui"</code> (i.e. an OBO CURIE without
+<code>obo:</code>).</p>
+<p><code>"standard"</code> (default) is a generic grouping that represents syntactically
+correct formats (<code>"curie"</code>, <code>"obo_curie"</code>, <code>"uri"</code> and <code>"&lt;uri&gt;"</code>).</p>
+<p><code>"ns.lui"</code> will only be included if explicitly specified.</p></dd>
+
+
+<dt id="arg-ns-type">ns_type<a class="anchor" aria-label="anchor" href="#arg-ns-type"></a></dt>
+<dd><p>The type of OBO namespaces to consider valid; as a character
+vector. One of: <code>"obo"</code> (default), <code>"ont"</code> (ontology primary namespaces
+only), or <code>"prop"</code> (ontology property namespaces only; may not be exhaustive).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
-<ul><li><p><code>is_valid_obo()</code> to determine if identifiers match the OBO Foundry IRI
-pattern or are an obo:LUI CURIE.</p></li>
-<li><p><code>is_valid_doid()</code> to determine if identifiers match DO's IRI or CURIE
-pattern.</p></li>
+<ul><li><p><code>is_valid_obo()</code> to determine if identifiers match an OBO Foundry ID.</p></li>
+<li><p><code>is_valid_doid()</code> to determine if identifiers match a DOID/doid.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="notes">Notes<a class="anchor" aria-label="anchor" href="#notes"></a></h2>
@@ -74,8 +88,9 @@ pattern.</p></li>
 <p>These predicates <em>do not</em> attempt to confirm any ID actually exists in an
 OBO Foundry ontology, but only test if the IDs are syntactically formatted
 correctly (see <a href="https://obofoundry.org/id-policy" class="external-link">OBO Foundry ID Policy</a> and
-<a href="https://owlcollab.github.io/oboformat/doc/obo-syntax.html" class="external-link">OBO File Specification</a>).</p>
-<p>Not all OBO formats are valid DOID formats and vice versa.</p>
+<a href="https://owlcollab.github.io/oboformat/doc/obo-syntax.html" class="external-link">OBO File Specification</a>)
+<em>AND</em> correspond to a known namespace of an OBO Foundry ontology (see
+<a href="ns_prefix.html">obo_prefix</a>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -97,19 +112,27 @@ correctly (see <a href="https://obofoundry.org/id-policy" class="external-link">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># OBO formats</span></span></span>
 <span class="r-in"><span><span class="va">obo_id</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="co">#### valid ####</span></span></span>
+<span class="r-in"><span>    <span class="co">#### valid by default ####</span></span></span>
 <span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/DOID_0001816"</span>, <span class="co"># URI</span></span></span>
-<span class="r-in"><span>    <span class="st">"&lt;http://purl.obolibrary.org/obo/CL_0000066&gt;"</span>, <span class="co"># bracketed_URI</span></span></span>
-<span class="r-in"><span>    <span class="st">"obo:DOID_4"</span>, <span class="co"># CURIE, standard version</span></span></span>
-<span class="r-in"><span>    <span class="st">"obo:so#has_origin"</span>, <span class="co"># '#' separator ~ OBO annotation properties</span></span></span>
+<span class="r-in"><span>    <span class="st">"&lt;http://purl.obolibrary.org/obo/CL_0000066&gt;"</span>, <span class="co"># angle-bracketed URI</span></span></span>
+<span class="r-in"><span>    <span class="st">"DOID:4"</span>, <span class="co"># CURIE, standard version</span></span></span>
+<span class="r-in"><span>    <span class="st">"obo:CL_0000066"</span>, <span class="co"># OBO CURIE</span></span></span>
+<span class="r-in"><span>    <span class="co">#### valid OBO property ####</span></span></span>
+<span class="r-in"><span>    <span class="st">"so:has_origin"</span>, <span class="co"># standard CURIE ~ OBO annotation property</span></span></span>
+<span class="r-in"><span>    <span class="st">"obo:so#has_origin"</span>, <span class="co"># '#' separator ~ OBO annotation property</span></span></span>
+<span class="r-in"><span>    <span class="co">### conditionally valid -- only if "ns.lui" in `allow` ###</span></span></span>
+<span class="r-in"><span>    <span class="st">"DOID_0040001"</span>, <span class="co"># namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed)</span></span></span>
+<span class="r-in"><span>    <span class="st">"so#has_origin"</span>, <span class="co"># namespace-lui separator must be '#' for properties</span></span></span>
 <span class="r-in"><span>    <span class="co">#### invalid ####</span></span></span>
 <span class="r-in"><span>    <span class="st">"0001816"</span>, <span class="co"># bare number without prefix</span></span></span>
-<span class="r-in"><span>    <span class="st">"obo:DOID:14566"</span>, <span class="co"># namespace-lui separator must be '_' or '#'</span></span></span>
+<span class="r-in"><span>    <span class="st">"obo:DOID:14566"</span>, <span class="co"># namespace-lui separator must be '_' ('#' for properties)</span></span></span>
 <span class="r-in"><span>    <span class="st">" obo:HP_0000001"</span> <span class="co"># must have NO `[:space:]` characters</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">is_valid_obo</span><span class="op">(</span><span class="va">obo_id</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE</span>
+<span class="r-in"><span><span class="fu">is_valid_obo</span><span class="op">(</span><span class="va">obo_id</span>, allow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"standard"</span>, <span class="st">"ns.lui"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># DOID formats</span></span></span>
 <span class="r-in"><span><span class="va">doid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
@@ -117,16 +140,22 @@ correctly (see <a href="https://obofoundry.org/id-policy" class="external-link">
 <span class="r-in"><span>    <span class="st">"http://purl.obolibrary.org/obo/DOID_0001816"</span>, <span class="co"># URI</span></span></span>
 <span class="r-in"><span>    <span class="st">"DOID:4"</span>, <span class="co"># CURIE, standard version</span></span></span>
 <span class="r-in"><span>    <span class="st">"obo:DOID_4"</span>, <span class="co"># OBO CURIE, less common</span></span></span>
-<span class="r-in"><span>    <span class="st">"DOID_0040001"</span>, <span class="co"># basename (OBO prefix removed)</span></span></span>
+<span class="r-in"><span>    <span class="co"># properties are recognized as valid (unless ns_type = 'ont')</span></span></span>
+<span class="r-in"><span>    <span class="st">"doid:DO_IEDB_slim"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"obo:doid#DO_IEDB_slim"</span>,</span></span>
+<span class="r-in"><span>    <span class="co"># namespace-separator-LUI (valid if 'ns.lui' included in `allow`)</span></span></span>
+<span class="r-in"><span>    <span class="st">"DOID_0040001"</span>,</span></span>
 <span class="r-in"><span>    <span class="co">#### invalid ####</span></span></span>
 <span class="r-in"><span>    <span class="st">"0001816"</span>, <span class="co"># bare number without prefix</span></span></span>
-<span class="r-in"><span>    <span class="st">"doid#DO_IEDB_slim"</span>, <span class="co"># namespace-lui separator must be '_'</span></span></span>
-<span class="r-in"><span>    <span class="st">"obo:doid#DO_IEDB_slim"</span>,</span></span>
 <span class="r-in"><span>    <span class="st">"obo:DOID_21 "</span> <span class="co"># must have NO `[:space:]` characters</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">is_valid_doid</span><span class="op">(</span><span class="va">doid</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE</span>
+<span class="r-in"><span><span class="fu">is_valid_doid</span><span class="op">(</span><span class="va">doid</span>, ns_type <span class="op">=</span> <span class="st">"ont"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE</span>
+<span class="r-in"><span><span class="fu">is_valid_doid</span><span class="op">(</span><span class="va">doid</span>, allow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"standard"</span>, <span class="st">"ns.lui"</span><span class="op">)</span>, ns_type <span class="op">=</span> <span class="st">"ont"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  TRUE  TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

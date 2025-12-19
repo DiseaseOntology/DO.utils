@@ -3,11 +3,13 @@
 ROBOT, that cover most uses in OBO Foundry
 ontologies, with slight modification to match the prefixes as used in the
 Human Disease Ontology and a few additional prefixes for cross-references and
-DO-related SPARQL query support."><meta property="og:description" content="Prefixes for namespaces, primarily sourced from
+DO-related SPARQL query support. These prefixes should be up-to-date with
+the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51)."><meta property="og:description" content="Prefixes for namespaces, primarily sourced from
 ROBOT, that cover most uses in OBO Foundry
 ontologies, with slight modification to match the prefixes as used in the
 Human Disease Ontology and a few additional prefixes for cross-references and
-DO-related SPARQL query support."></head><body>
+DO-related SPARQL query support. These prefixes should be up-to-date with
+the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51)."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -47,42 +49,51 @@ DO-related SPARQL query support."></head><body>
 
     <div class="ref-description section level2">
     <p>Prefixes for namespaces, primarily sourced from
-<a href="http://robot.obolibrary.org/" class="external-link">ROBOT</a>, that cover most uses in OBO Foundry
+<a href="http://robot.obolibrary.org/" class="external-link"><code>ROBOT</code></a>, that cover most uses in OBO Foundry
 ontologies, with slight modification to match the prefixes as used in the
 Human Disease Ontology and a few additional prefixes for cross-references and
-DO-related SPARQL query support.</p>
+DO-related SPARQL query support. These prefixes <em>should</em> be up-to-date with
+the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51).</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="va">ns_prefix</span></span>
 <span></span>
+<span><span class="va">not_obo_prefix</span></span>
+<span></span>
 <span><span class="va">obo_prefix</span></span>
 <span></span>
-<span><span class="va">obo_prop_prefix</span></span>
+<span><span class="va">obo_ont_prefix</span></span>
 <span></span>
-<span><span class="va">not_obo_prefix</span></span></code></pre></div>
+<span><span class="va">obo_prop_prefix</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
     <p>Character vectors of namespaces named by their corresponding prefix:</p>
-<p><code>ns_prefix</code>: Superset of all 533 objects listed below.</p>
-<p><code>obo_prefix</code>: 255 <em>standard</em> OBO Foundry
-namespaces
-(e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").</p>
-<p><code>obo_prop_prefix</code>: 255 OBO Foundry <em>property</em>
-namespaces; <em>these may not all be in actual use</em>
-(e.g. aao = "http://purl.obolibrary.org/obo/aao#")</p>
-<p><code>not_obo_prefix</code>: 21 namespaces outside but
-commonly used in the OBO Foundry
+<p><code>ns_prefix</code>: Superset of all 546 prefix/namespaces listed
+below.</p>
+<p><code>not_obo_prefix</code>: 21 prefix/namespaces
+outside but commonly used in the OBO Foundry
 (e.g. dc = "http://purl.org/dc/elements/1.1/"),
 or in federated SPARQL queries with the DO
 (e.g. up = "http://purl.uniprot.org/core/").</p>
+<p><code>obo_prefix</code>: Superset of all 525 OBO Foundry
+prefix/namespaces, including those listed below and, additionally, including
+the general <code>obo</code> prefix.</p>
+<p><code>obo_ont_prefix</code>: 261 OBO Foundry ontology
+<em>primary</em> prefix/namespaces
+(e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").</p>
+<p><code>obo_prop_prefix</code>: <code>oboInOwl</code> (along with the common prefix variant
+<code>oio</code>) and 262 OBO Foundry ontology <em>property</em>
+namespaces (<em>these may not all be in actual use</em>)
+(e.g. aao = "http://purl.obolibrary.org/obo/aao#")</p>
     </div>
     <div class="section level2">
     <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a></h2>
-    <p><code>ROBOT</code> (v1.9.4) via data-raw/ns_prefix.R; last updated 2023-06-12.</p>
+    <p><code>ROBOT export-prefixes</code> (v1.9.8) via <code>data-raw/ns_prefix.R</code>; last
+updated 2025-12-09.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

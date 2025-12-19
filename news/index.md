@@ -445,7 +445,7 @@ disease-ontology.org was moved from the ‘Collaborators’ page to the new
 names.
 
 **Formatters** \*
-[`format_doid()`](https://allenbaron.github.io/DO.utils/reference/format_doid.md)
+[`format_doid()`](https://allenbaron.github.io/DO.utils/reference/format_obo.md)
 parameters changed: \* `allow_bare` renamed to `convert_bare` \*
 `validate_input` added to allow invalid input to pass-through without
 modification.
@@ -682,7 +682,7 @@ If improvements are made they will likely facilitate one or more of:
   - [`is_valid_doid()`](https://allenbaron.github.io/DO.utils/reference/obo_ID_predicates.md)
     tests whether inputs are valid DOIDs. Note that mutliple formats are
     considered valid.
-  - [`format_doid()`](https://allenbaron.github.io/DO.utils/reference/format_doid.md)
+  - [`format_doid()`](https://allenbaron.github.io/DO.utils/reference/format_obo.md)
     converts between valid DOID formats.
 
 ### Updates

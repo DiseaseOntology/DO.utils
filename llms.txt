@@ -281,13 +281,11 @@ including, for example, those that assist with:
 - [`format_axiom()`](https://allenbaron.github.io/DO.utils/reference/format_axiom.md)
   : Format Logical Axioms
 
-- [`format_doid()`](https://allenbaron.github.io/DO.utils/reference/format_doid.md)
-  : Format DOIDs
-
 - [`format_hyperlink()`](https://allenbaron.github.io/DO.utils/reference/format_hyperlink.md)
   : Format URLs as Hyperlinks
 
 - [`format_obo()`](https://allenbaron.github.io/DO.utils/reference/format_obo.md)
+  [`format_doid()`](https://allenbaron.github.io/DO.utils/reference/format_obo.md)
   : Format OBO Foundry IDs
 
 - [`format_subtree()`](https://allenbaron.github.io/DO.utils/reference/format_subtree.md)
@@ -352,9 +350,10 @@ including, for example, those that assist with:
   : Calculate Maximum Parentheses Depth
 
 - [`ns_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
-  [`obo_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
-  [`obo_prop_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
   [`not_obo_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
+  [`obo_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
+  [`obo_ont_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
+  [`obo_prop_prefix`](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
   : Namespace Prefixes
 
 - [`is_positive()`](https://allenbaron.github.io/DO.utils/reference/num_val_predicates.md)
