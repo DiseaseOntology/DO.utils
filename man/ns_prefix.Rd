@@ -29,7 +29,7 @@ the general \code{obo} prefix.
 (e.g. AAO = "http://purl.obolibrary.org/obo/AAO_").
 
 \code{obo_prop_prefix}: \code{oboInOwl} (along with the common prefix variant
-\code{oio}) and 262 OBO  Foundry ontology \emph{property}
+\code{oio}) and 262 OBO Foundry ontology \emph{property}
 namespaces (\emph{these may not all be in actual use})
 (e.g. aao = "http://purl.obolibrary.org/obo/aao#")
 }

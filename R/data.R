@@ -151,7 +151,7 @@ NULL
 "obo_ont_prefix"
 
 #' @format `obo_prop_prefix`: `oboInOwl` (along with the common prefix variant
-#' `oio`) and `r length(obo_prop_prefix) - 1` OBO  Foundry ontology _property_
+#' `oio`) and `r length(obo_prop_prefix) - 1` OBO Foundry ontology _property_
 #' namespaces (_these may not all be in actual use_)
 #' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
 #' @rdname ns_prefix

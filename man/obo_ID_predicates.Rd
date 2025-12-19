@@ -79,8 +79,7 @@ doid <- c(
     # properties are recognized as valid (unless ns_type = 'ont')
     "doid:DO_IEDB_slim",
     "obo:doid#DO_IEDB_slim",
-    # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed);
-    #   only valid if specified in
+    # namespace-separator-LUI (valid if 'ns.lui' included in `allow`)
     "DOID_0040001",
     #### invalid ####
     "0001816", # bare number without prefix
@@ -89,6 +88,7 @@ doid <- c(
 
 is_valid_doid(doid)
 is_valid_doid(doid, ns_type = "ont")
+is_valid_doid(doid, allow = c("standard", "ns.lui"), ns_type = "ont")
 
 }
 \seealso{

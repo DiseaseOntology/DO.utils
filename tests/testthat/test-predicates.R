@@ -10,7 +10,7 @@ obo <- c(
     "<uri>" = "<http://purl.obolibrary.org/obo/CL_0000066>",   #7
     ns.lui = "DOID_14566",            #8
     ns.lui = "so#has_origin",         #9
-    ### 9-17 should always be FALSE ###
+    ### 10-17 should always be FALSE ###
     # lui
     "0001816",
     "has_origin",
@@ -97,8 +97,8 @@ test_that("is_valid_obo(ns_type = 'ont') works", {
     expect_false(is_valid_obo("obo:so#has_origin", ns_type = "ont"))
     expect_false(is_valid_obo("doid:14566", ns_type = "ont"))
     expect_false(is_valid_obo("0001816", ns_type = "ont")) # no prefix
-    expect_false(is_valid_obo("obo:DOID#14566", ns_type = "ont")) # capitalized namespace
-    expect_false(is_valid_obo("obo:doid_14566 ", ns_type = "ont")) # wrong separator
+    expect_false(is_valid_obo("obo:DOID#14566", ns_type = "ont")) # wrong separator
+    expect_false(is_valid_obo("obo:doid_14566", ns_type = "ont")) # lowercase namespace (property)
     expect_false(is_valid_obo("obo: doid#14566", ns_type = "ont")) # has space
     # non-character input
     expect_error(is_valid_obo(1L, ns_type = "ont"))

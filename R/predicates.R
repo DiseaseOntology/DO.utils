@@ -229,8 +229,7 @@ is_boolean <- function(x) {
 #'     # properties are recognized as valid (unless ns_type = 'ont')
 #'     "doid:DO_IEDB_slim",
 #'     "obo:doid#DO_IEDB_slim",
-#'     # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed);
-#'     #   only valid if specified in
+#'     # namespace-separator-LUI (valid if 'ns.lui' included in `allow`)
 #'     "DOID_0040001",
 #'     #### invalid ####
 #'     "0001816", # bare number without prefix
@@ -239,6 +238,7 @@ is_boolean <- function(x) {
 #'
 #' is_valid_doid(doid)
 #' is_valid_doid(doid, ns_type = "ont")
+#' is_valid_doid(doid, allow = c("standard", "ns.lui"), ns_type = "ont")
 #'
 #' @family ID predicates
 #' @family predicates
@@ -340,7 +340,7 @@ is_valid_doid <- function(x, allow = "standard", ns_type = "obo") {
 #' perfect implementation, e.g. U+3000 non-breaking space is not accepted). Note
 #' that by definition URIs will be identified as CURIEs. If it is desirable to
 #' distinguish these use `def = "w3c_safe"` and wrap CURIEs in square brackets
-#' (as defined in the standard. Alternatively, use the stricter OBO
+#' (as defined in the standard). Alternatively, use the stricter OBO
 #' Foundry-based standards (as stated in that standard, more strict definitions
 #' for CURIEs can be defined).
 #'

@@ -13,7 +13,7 @@
 #' brackets), `"ns.lui"` (i.e. an OBO CURIE without `obo:`).
 #' @param validate Whether to ensure only valid OBO IDs are included in
 #' `x`, `TRUE` (default) or `FALSE`. When `FALSE`, non-OBO ID input will
-#' be handled differently depending on `as` (see `Non-OBO URI's` section).
+#' be handled differently depending on `as` (see `Non-OBO URIs` section).
 #' @inheritParams obo_ID_predicates
 #'
 #' @section Note on `ns_type`:
