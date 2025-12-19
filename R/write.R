@@ -109,7 +109,7 @@ write_gs.data.frame <- function(data, ss, sheet = "data-%Y%m%d",
         data <- dplyr::mutate(
             data,
             dplyr::across(
-                .cols = {{ hyperlink_col }},
+                .cols = dplyr::all_of(hyperlink_col),
                 .fns = ~ hyperlink_curie(.x, as = "gs")
             )
         )
