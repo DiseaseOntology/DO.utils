@@ -33,7 +33,7 @@ returns
 
 Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 
-\item{sheet}{The name to use for the sheet to write into (i.e the tab name
+\item{sheet}{The name to use for the sheet to write into (i.e. the tab name
 in a worksheet). If a date format recognized by \code{\link[=format.Date]{format.Date()}} is
 included in the string, today's date will be added in the specified format
 and location.

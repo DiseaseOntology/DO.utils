@@ -46,7 +46,7 @@ write_graphml <- function(graph, file) {
 #'
 #' @param data A data.frame, possibly with a defined method.
 #' @inheritParams googlesheets4::write_sheet
-#' @param sheet The name to use for the sheet to write into (i.e the tab name
+#' @param sheet The name to use for the sheet to write into (i.e. the tab name
 #' in a worksheet). If a date format recognized by [format.Date()] is
 #' included in the string, today's date will be added in the specified format
 #' and location.
