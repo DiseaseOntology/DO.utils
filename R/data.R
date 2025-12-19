@@ -1,6 +1,9 @@
 utils::globalVariables(
-    names = c("DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
-              "ns_prefix")
+    names = c(
+        "DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
+        "ns_prefix", "not_obo_prefix", "obo_prefix", "obo_ont_prefix",
+        "obo_prop_prefix"
+    )
 )
 
 #' @keywords internal
