@@ -6,27 +6,19 @@ specified Google Sheet.
 ## Usage
 
 ``` r
-write_gs(data, ss, hyperlink_curie, sheet_nm, datestamp, ...)
+write_gs(data, ss, sheet = NULL, hyperlink_curie = NULL, ...)
 
 # S3 method for class 'omim_inventory'
 write_gs(
   data,
   ss,
+  sheet = "omim_inventory-%Y%m%d",
   hyperlink_curie = c("omim", "doid"),
-  sheet_nm = "omim_inventory",
-  datestamp = "%Y%m%d",
   ...
 )
 
 # S3 method for class 'data.frame'
-write_gs(
-  data,
-  ss,
-  hyperlink_curie = NULL,
-  sheet_nm = "data",
-  datestamp = "%Y%m%d",
-  ...
-)
+write_gs(data, ss, sheet = "data-%Y%m%d", hyperlink_curie = NULL, ...)
 ```
 
 ## Arguments
@@ -55,22 +47,25 @@ write_gs(
   Processed through
   [`as_sheets_id()`](https://googlesheets4.tidyverse.org/reference/sheets_id.html).
 
+- sheet:
+
+  The name to use for the sheet to write into (i.e. the tab name in a
+  worksheet). If a date format recognized by
+  [`format.Date()`](https://rdrr.io/r/base/as.Date.html) is included in
+  the string, today's date will be added in the specified format and
+  location.
+
+  For each method, the default is a method-specific term appended with a
+  date format lacking separators (e.g. 20250101 for 2025-01-01).
+
+  ***WARNING:*** If a sheet with the same name exists in the Google
+  Sheet file it will be overwritten.
+
 - hyperlink_curie:
 
   \<[`tidy-select`](https://tidyr.tidyverse.org/reference/tidyr_tidy_select.html)\>
   The columns with CURIEs to convert to hyperlinks when written in
   Google Sheets.
-
-- sheet_nm:
-
-  The name of the sheet to write to, as a string.
-
-- datestamp:
-
-  `NULL` to use the default sheet name for a given method, or a format
-  recognized by [`format.Date()`](https://rdrr.io/r/base/as.Date.html)
-  to add today's date as a stamp suffix, separated by '-', to the
-  default sheet name.
 
 - ...:
 
@@ -78,4 +73,10 @@ write_gs(
 
 ## Value
 
-The data as written to the Google Sheet, invisibly.
+The input `ss`, as an instance of
+[googlesheets4::sheets_id](https://googlesheets4.tidyverse.org/reference/sheets_id.html).
+
+## Deprecated arguments
+
+`sheet_nm` and `datestamp` have been deprecated in favor of `sheet`
+which supports more flexible naming, including names without dates.
