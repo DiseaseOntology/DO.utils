@@ -48,10 +48,6 @@ it will be overwritten.}
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.}
 
 \item{...}{Arguments passed on to methods.}
-
-\item{sheet_nm}{\emph{DEPRECATED}, use \code{sheet} instead.}
-
-\item{datestamp}{\emph{DEPRECATED}, use \code{sheet} instead.}
 }
 \value{
 The input \code{ss}, as an instance of \link[googlesheets4:sheets_id]{googlesheets4::sheets_id}.
@@ -60,3 +56,9 @@ The input \code{ss}, as an instance of \link[googlesheets4:sheets_id]{googleshee
 Specialized methods for writing data created by \code{DO.utils} to a specified
 Google Sheet.
 }
+\section{Deprecated arguments}{
+
+\code{sheet_nm} and \code{datestamp} have been deprecated in favor of \code{sheet} which
+supports more flexible naming, including names without dates.
+}
+

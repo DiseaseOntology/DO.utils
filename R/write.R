@@ -60,8 +60,10 @@ write_graphml <- function(graph, file) {
 #' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
 #' @param ... Arguments passed on to methods.
-#' @param sheet_nm _DEPRECATED_, use `sheet` instead.
-#' @param datestamp _DEPRECATED_, use `sheet` instead.
+#'
+#' @section Deprecated arguments:
+#' `sheet_nm` and `datestamp` have been deprecated in favor of `sheet` which
+#' supports more flexible naming, including names without dates.
 #'
 #' @returns The input `ss`, as an instance of [googlesheets4::sheets_id].
 #'
