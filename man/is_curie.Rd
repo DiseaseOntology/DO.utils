@@ -24,10 +24,10 @@ The \href{https://www.w3.org/TR/2010/NOTE-curie-20101216/}{W3C CURIE Syntax 1.0}
 standard defines the most general CURIE syntax allowed (\code{def = "w3c"}; not a
 perfect implementation, e.g. U+3000 non-breaking space is not accepted). Note
 that by definition URIs will be identified as CURIEs. If it is desirable to
-distinguish these use \code{def = "w3c_safe"} and wrap CURIEs in brackets (as
-defined in the standard. Alternatively, use the stricter OBO Foundry-based
-standards (as stated in that standard, more strict definitions for CURIEs can
-be defined).
+distinguish these use \code{def = "w3c_safe"} and wrap CURIEs in square brackets
+(as defined in the standard). Alternatively, use the stricter OBO
+Foundry-based standards (as stated in that standard, more strict definitions
+for CURIEs can be defined).
 
 \code{"obo"} corresponds to the official OBO Foundry definition of a CURIE as
 stated in the \href{http://obofoundry.org/id-policy.html}{OBO Foundry ID Policy}.

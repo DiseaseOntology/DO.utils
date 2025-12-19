@@ -1,157 +1,134 @@
-#' Format DOIDs
-#'
-#' Convert valid DOIDs and/or bare numbers to a specified DOID format. Input
-#' _may_ be tested to ensure it matches a valid DOID format but no attempt is
-#' made to confirm bare numbers or DOIDs match actual diseases in the ontology.
-#'
-#' @inheritParams obo_ID_predicates
-#' @param as The format to convert the DOIDs to, as a string. All valid formats
-#'     are possible options: "CURIE" (default), "URI", "obo_CURIE", "basename".
-#' @param convert_bare Whether bare numbers should be converted to canonical
-#'     DOIDs, `TRUE` or `FALSE` (default).
-#' @param validate_input Whether to ensure only valid DOIDs are included in `x`,
-#'     `TRUE` (default) or `FALSE`. When `FALSE`, non-DOID input will be
-#'     returned unchanged.
-#'
-#' @section Caution:
-#' Be extra cautious when using `format_doid()` with `validate_input = FALSE` as
-#' unexpected text conversion may occur.
-#'
-#' @examples
-#' x <- c(
-#'     "http://purl.obolibrary.org/obo/DOID_0001816",
-#'     "DOID:4",
-#'     "obo:DOID_14566",
-#'     "DOID_0040001"
-#' )
-#'
-#' format_doid(x, as = "URI")
-#' format_doid(x, as = "CURIE")
-#' format_doid(x, as = "obo_CURIE")
-#' format_doid(x, as = "basename")
-#'
-#' # bare numbers can be converted to canonical DOIDs, if desired
-#' w_bare <- c(x, "0050117")
-#' format_doid(w_bare, convert_bare = TRUE)
-#'
-#' # non-DOIDs can be passed as input, if desired
-#' mixed_input <- c(x, "random_text", "obo:SYMP_0000000", "0050117")
-#' format_doid(mixed_input, validate_input = FALSE)
-#' format_doid(mixed_input, convert_bare = TRUE, validate_input = FALSE)
-#'
-#' @family format IDs
-#' @export
-format_doid <- function(x, as = "CURIE", convert_bare = FALSE,
-                        validate_input = TRUE) {
-    as <- match.arg(as, choices = c("URI", "CURIE", "obo_CURIE", "basename"))
-    prefix <- switch(
-        as,
-        URI = "http://purl.obolibrary.org/obo/DOID_",
-        CURIE = "DOID:",
-        obo_CURIE = "obo:DOID_",
-        basename = "DOID_"
-    )
-
-    if (convert_bare) {
-        bare_number <- stringr::str_detect(x, "^[0-9]{1,7}$")
-        if (validate_input) {
-            assertthat::assert_that(all(is_valid_doid(x) | bare_number))
-        }
-
-        formatted <- dplyr::if_else(
-            bare_number,
-            paste0(prefix, x),
-            stringr::str_replace(x, "^.*DOID[:_]", prefix)
-        )
-    } else {
-        if (validate_input) {
-            assertthat::assert_that(all(is_valid_doid(x)))
-        }
-
-        formatted <- stringr::str_replace(x, "^.*DOID[:_]", prefix)
-    }
-
-    formatted
-}
-
-
 #' Format OBO Foundry IDs
 #'
+#' @description
 #' Convert valid OBO Foundry ontology IDs to a specified format. Input
 #' _may_ be tested to ensure it matches a valid OBO ID format but no attempt is
 #' made to confirm IDs match actual terms in any OBO Foundry ontology.
 #'
+#' `format_doid` is a convenience function focused solely on DOIDs.
+#'
+#' @param as The format to convert the OBO IDs to, as a string.  One of:
+#' `"curie"` (default), `"obo_curie"` (e.g. `obo:DOID_4`,
+#' `obo:doid#DO_rare_slim`), `"uri"`, `"<uri>"` (URI surrounded by angle
+#' brackets), `"ns.lui"` (i.e. an OBO CURIE without `obo:`).
+#' @param validate Whether to ensure only valid OBO IDs are included in
+#' `x`, `TRUE` (default) or `FALSE`. When `FALSE`, non-OBO ID input will
+#' be handled differently depending on `as` (see `Non-OBO CURIE/URIs` section).
 #' @inheritParams obo_ID_predicates
-#' @param as The format to convert the OBO IDs to, as a string. The following
-#'     formats are possible options:
 #'
-#' * `"CURIE"` (default)
+#' @section Note on `ns_type`:
+#' The `ns_type` argument affects both validation _AND_ formatting.
 #'
-#' * `"URI"`
-#'
-#' * `"bracketed_URI"`: e.g. `"<http://purl.obolibrary.org/obo/CL_0000066>"`
-#'
-#' * `"ns_lui"`: namespace with local unique identifier (preserves separator).
-#'
-#' * `"ns"`: namespace of ontology only
-#'
-#' As valid OBO formats, the first three formats may be modified repeatedly
-#' by `format_obo()`. The 'ns' formats, on the other hand, are not valid OBO
-#' formats and cannot be formatted again by `format_obo()`.
-#'
-#' @param validate_input Whether to ensure only valid OBO IDs are included in
-#'     `x`,`TRUE` (default) or `FALSE`. When `FALSE`, non-OBO ID input will
-#'     _most likely_ be returned unchanged.
-#'
-#' @section Caution:
-#' Be extra cautious when using `format_obo()` with `validate_input = FALSE` as
-#' unexpected text conversion may occur.
+#' @section Non-OBO CURIE/URIs:
+#' Be extra cautious when using `format_obo()` with non-OBO Foundry CURIE/URIs
+#' (i.e. `validate = FALSE`). In an effort to allow meaningful
+#' pass-through in some situations, non-OBO CURIE/URIs are returned unchanged,
+#' except when `as = "uri"` or `"<uri>"`, in which case the original input is
+#' assumed to be URIs and is either stripped or surrounded by angle brackets.
 #'
 #' @examples
 #' x <- c(
 #'     "http://purl.obolibrary.org/obo/DOID_0001816",
 #'     "<http://purl.obolibrary.org/obo/CL_0000066>",
 #'     "obo:SYMP_0000000",
-#'     "obo:so#has_origin"
+#'     "obo:so#has_origin",
+#'     "DOID:4"
 #' )
 #'
-#' # reversible
-#' format_obo(x, as = "CURIE")
-#' format_obo(x, as = "URI")
-#' format_obo(x, as = "bracketed_URI")
+#' format_obo(x, as = "curie")
+#' format_obo(x, as = "uri")
+#' format_obo(x, as = "<uri>")
+#' format_obo(x, as = "obo_curie")
+#' format_obo(x, as = "ns.lui")
 #'
-#' # irreversible
-#' format_obo(x, as = "ns_lui")
-#' format_obo(x, as = "ns")
+#' # ns.lui input can be validated, if explicitly specified
+#' try(format_obo(c(x, "DOID_0001816"), allow = "standard"))
+#' format_obo(c(x, "DOID_0001816"), allow = c("standard", "ns.lui"))
 #'
 #' # non-OBO IDs can be passed as input with caution, if desired
-#' mixed_input <- c(x, "random_text", "0050117", "obo:SYMP:0000000")
-#' format_obo(mixed_input, validate_input = FALSE)
+#' mixed_input <- c(
+#'     x, "rdfs:label", "<http://xmlns.com/foaf/0.1/Person>",
+#'     "random_text", "0050117", "obo:SYMP:0000000"
+#' )
+#' format_obo(mixed_input, validate = FALSE)
 #'
-#' @family format IDs
+#' # ns_type will influence output, even when validate = FALSE
+#' # e.g. only obo:so#has_origin (property) is converted to a CURIE (so:has_origin)
+#' format_obo(x, as = "curie", validate = FALSE, ns_type = "prop")
+#'
 #' @export
-format_obo <- function(x, as = "CURIE", validate_input = TRUE) {
+format_obo <- function(x, as = "curie", validate = TRUE,
+                       allow = "standard", ns_type = "obo") {
     as <- match.arg(
         as,
-        choices = c("CURIE", "URI", "bracketed_URI", "ns_lui", "ns")
+        choices = c("curie", "obo_curie", "uri", "<uri>", "ns.lui")
     )
 
-    if (validate_input) {
-        assertthat::assert_that(all(is_valid_obo(x)))
+    if (validate) {
+        valid_obo <- is_valid_obo(x, allow, ns_type)
+        assertthat::assert_that(all(valid_obo))
+    } else {
+        # to reliably identify non-OBO IDs
+        valid_obo <- is_valid_obo(x, allow = c("standard", "ns.lui"), ns_type)
     }
 
-    obo_pattern <- "^.*obo[/:]([A-Za-z_]+)(_[[:alnum:]_]+)>?$|^.*obo[/:]([A-Za-z_]+#)([[:alnum:]_]+)>?$"
-    obo_replacement <- switch(
-        as,
-        URI = "http://purl.obolibrary.org/obo/\\1\\2\\3\\4",
-        CURIE = "obo:\\1\\2\\3\\4",
-        bracketed_URI = "<http://purl.obolibrary.org/obo/\\1\\2\\3\\4>",
-        ns_lui = "\\1\\2\\3\\4",
-        ns = "\\1\\3"
-    )
-    formatted <- stringr::str_replace(x, obo_pattern, obo_replacement)
+    if (ns_type == "ont") {
+        prefixes <- obo_ont_prefix
+    } else if (ns_type == "prop") {
+        prefixes <- obo_prop_prefix
+    } else {
+        prefixes <- obo_prefix[names(obo_prefix) != "obo"]
+    }
 
-    formatted
+    out <- reformat_obo_id(x, valid_obo, as, prefixes)
+    out
+}
+
+#' @examples
+#' # format_doid() works the same
+#' x <- c(
+#'     "http://purl.obolibrary.org/obo/DOID_0001816",
+#'     "DOID:4",
+#'     "obo:DOID_14566",
+#'     "<http://purl.obolibrary.org/obo/DOID_156>"
+#' )
+#'
+#' format_doid(x, as = "curie")
+#'
+#' # ...but other OBO Foundry ontology IDs will error on validation
+#' try(format_doid(c(x, "obo:CL_0000066")))
+#'
+#' # though they can be passed through if validation is turned off
+#' mixed_input <- c(x, "obo:SYMP_0000000", "foaf:Person", "random_text", "0050117")
+#' format_doid(mixed_input, validate = FALSE)
+#'
+#' @rdname format_obo
+#' @export
+format_doid <- function(x, as = "curie", validate = TRUE,
+                       allow = "standard", ns_type = "obo") {
+    as <- match.arg(
+        as,
+        choices = c("curie", "obo_curie", "uri", "<uri>", "ns.lui")
+    )
+
+    if (validate) {
+        valid_doid <- is_valid_doid(x, allow, ns_type)
+        assertthat::assert_that(all(valid_doid))
+    } else {
+        # to reliably identify non-OBO IDs
+        valid_doid <- is_valid_doid(x, allow = c("standard", "ns.lui"), ns_type)
+    }
+
+    if (ns_type == "ont") {
+        prefixes <- obo_ont_prefix["DOID"]
+    } else if (ns_type == "prop") {
+        prefixes <- obo_prop_prefix["doid"]
+    } else {
+        prefixes <- obo_prefix[c("DOID", "doid")]
+    }
+
+    out <- reformat_obo_id(x, valid_doid, as, prefixes)
+    out
 }
 
 
@@ -175,7 +152,7 @@ format_obo <- function(x, as = "CURIE", validate_input = TRUE) {
 #' @export
 format_subtree <- function(subtree_df, top_node) {
     rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")
-    top_class <- format_doid(top_node, as = "CURIE")
+    top_class <- format_doid(top_node, as = "curie")
     tg <- as_subtree_tidygraph(subtree_df, top_class)
     formatted <- pivot_subtree(tg, top_class)
 
@@ -408,4 +385,50 @@ format_hyperlink <- function(url, as, ..., text = NULL, preserve = "url") {
     }
 
     formatted
+}
+
+
+# format_obo()/format_doid() helpers --------------------------------------
+
+reformat_obo_id <- function(x, valid, as, prefixes) {
+    prefixes <- length_sort(prefixes, by_name = TRUE, decreasing = TRUE)
+    prefix_regex <- paste0(names(prefixes), collapse = "|")
+    ns <- stringr::str_match(x, paste0("(?:^|.*[/:])(", prefix_regex, ")"))[, 2]
+    lui <- purrr::map2_chr(
+        x,
+        ns,
+        ~ stringr::str_remove_all(.x, paste0(".*", .y, "[:_#]|>?$"))
+    )
+    # set up namespace & separator
+    if (as == "curie") {
+        first <- paste0(ns, ":")
+    } else {
+        # all other formats are modified URIs
+        first <- prefixes[ns]
+    }
+
+    if (as %in% c("obo_curie", "ns.lui")) {
+        first <- stringr::str_remove(first, ".*/")
+    }
+    if (as == "obo_curie") {
+        # with special handling for oboInOwl IDs (do NOT have standard OBO PURLs)
+        first <- dplyr::if_else(
+            ns == "oboInOwl",
+            "oboInOwl:",
+            paste0("obo:", first)
+        )
+    }
+
+    # create full output
+    out <- paste0(first, lui)
+
+    # restore non-OBO IDs and add/remove angle brackets
+    out[!valid] <- x[!valid]
+    if (as == "uri") {
+        out <- stringr::str_remove_all(out, "^<|>$")
+    } else if (as == "<uri>") {
+        out <- stringr::str_replace_all(out, c("^<?" = "<", ">?$" = ">"))
+    }
+
+    out
 }

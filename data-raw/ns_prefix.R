@@ -2,14 +2,14 @@
 
 #### REQUIRES program: robot (any version; see http://robot.obolibrary.org/)
 prefix_json <- system2("robot", args = "export-prefixes", stdout = TRUE)
-prefix <- jsonlite::fromJSON(prefix_json)[[1]] %>%
+prefix <- jsonlite::fromJSON(prefix_json)[[1]] |>
     unlist()
 
 
 # non-OBO prefixes --------------------------------------------------------
 
 not_obo_prefix <- prefix[!stringr::str_detect(prefix, "/obo")]
-not_obo_prefix <- not_obo_prefix %>%
+not_obo_prefix <- not_obo_prefix |>
     append(
         c(
             EFO = "http://www.ebi.ac.uk/efo/EFO_",
@@ -20,7 +20,7 @@ not_obo_prefix <- not_obo_prefix %>%
             up_keywords = "http://purl.uniprot.org/keywords/",
             up_disease = "http://purl.uniprot.org/diseases/"
         )
-    ) %>%
+    ) |>
     sort()
 
 # switch prefixes to match use in DO
@@ -35,19 +35,29 @@ names(not_obo_prefix) <- dplyr::recode(
 
 # ROBOT prefixes should stay up-to-date as new ontologies are added to the OBO
 # Foundry, see https://github.com/ontodev/robot/issues/51
-obo_general <- prefix[stringr::str_detect(prefix, "/obo(/|InOwl#)$")] %>%
-    sort(decreasing = TRUE)
 
-obo_prefix <- prefix[stringr::str_detect(prefix, "/obo/.")] %>%
+obo_ont_prefix <- prefix[stringr::str_detect(prefix, "/obo/.")] |>
     sort()
 
 
 # Common OBO property prefix ----------------------------------------------
 
-obo_prop_prefix <- obo_prefix %>%
-    stringr::str_to_lower() %>%
-    stringr::str_replace("_$", "#")
-names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prefix))
+obo_prop_prefix <- obo_ont_prefix |>
+    stringr::str_to_lower() |>
+    stringr::str_replace("_$", "#") |>
+    sort()
+names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prop_prefix))
+
+obo_prop_prefix <- c(
+    obo_prop_prefix,
+    prefix["oboInOwl"],
+    oio = unname(prefix["oboInOwl"])
+)
+
+
+# All OBO prefixes --------------------------------------------------------
+
+obo_prefix <- c(obo_ont_prefix, obo_prop_prefix, prefix["obo"])
 
 
 # All prefixes ------------------------------------------------------------
@@ -55,13 +65,12 @@ names(obo_prop_prefix) <- stringr::str_to_lower(names(obo_prefix))
 
 ns_prefix <- c(
     obo_prefix,
-    obo_prop_prefix,
-    obo_general,
     not_obo_prefix
 )
 
 usethis::use_data(not_obo_prefix, overwrite = TRUE)
 usethis::use_data(obo_prefix, overwrite = TRUE)
+usethis::use_data(obo_ont_prefix, overwrite = TRUE)
 usethis::use_data(obo_prop_prefix, overwrite = TRUE)
 usethis::use_data(ns_prefix, overwrite = TRUE)
 usethis::use_r("data", open = TRUE)
