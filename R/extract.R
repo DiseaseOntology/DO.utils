@@ -306,7 +306,7 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
     owl <- access_owl_xml(x)
     assert_string(top_node)
 
-    top_class <- format_doid(top_node, as = "obo_CURIE")
+    top_class <- format_doid(top_node, as = "obo_curie")
     q <- glue::glue(subtree_query_glue)
     subtree <- owl$query(q, reload = reload) %>%
         tibble::as_tibble()

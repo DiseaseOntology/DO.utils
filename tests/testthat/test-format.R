@@ -1,87 +1,237 @@
-# format_doid() -----------------------------------------------------------
-
-# valid DOID input & expected output
-x <- c("http://purl.obolibrary.org/obo/DOID_0001816", "DOID:4",
-       "obo:DOID_14566", "DOID_0040001")
-
-curie <- c("DOID:0001816", "DOID:4", "DOID:14566", "DOID:0040001")
-uri <- c("http://purl.obolibrary.org/obo/DOID_0001816",
-         "http://purl.obolibrary.org/obo/DOID_4",
-         "http://purl.obolibrary.org/obo/DOID_14566",
-         "http://purl.obolibrary.org/obo/DOID_0040001")
-obo_curie <- c("obo:DOID_0001816", "obo:DOID_4", "obo:DOID_14566",
-               "obo:DOID_0040001")
-basename <- c("DOID_0001816", "DOID_4", "DOID_14566", "DOID_0040001")
-
-
-# tests
-test_that("format_doid() works", {
-    expect_identical(format_doid(x, as = "URI"), uri)
-    expect_identical(format_doid(x, as = "CURIE"), curie)
-    expect_identical(format_doid(x, as = "obo_CURIE"), obo_curie)
-    expect_identical(format_doid(x, as = "basename"), basename)
-})
-
-test_that("format_doid() convert_bare switch works", {
-    w_bare <- c(x, "0050117")
-    bare_expected <- c(curie, "DOID:0050117")
-
-    expect_error(format_doid(w_bare))
-    expect_identical(format_doid(w_bare, convert_bare = TRUE), bare_expected)
-})
-
-test_that("format_doid() validate_input switch works", {
-    not_valid <- c("blah", "obo:SYMP_0000000")
-    mixed <- c(x, not_valid, "0050117")
-
-    expect_identical(
-        format_doid(mixed, validate_input = FALSE),
-        c(curie, not_valid, "0050117")
-    )
-    expect_identical(
-        format_doid(mixed, convert_bare = TRUE, validate_input = FALSE),
-        c(curie, not_valid, "DOID:0050117")
-    )
-})
-
-
 # format_obo() ------------------------------------------------------------
 
-# valid OBO input & expected output
-x <- c("http://purl.obolibrary.org/obo/DOID_0001816",
-       "<http://purl.obolibrary.org/obo/CL_0000066>",
-       "obo:so#has_origin",
-       "obo:SYMP_0000000")
+# valid OBO input
+all_obo <- c(
+    # primary namespaces
+    curie = "DOID:4",
+    uri = "http://purl.obolibrary.org/obo/CL_0001816",
+    "<uri>" = "<http://purl.obolibrary.org/obo/GENO_0014566>",
+    obo_curie = "obo:UBERON_14566",
+    ns.lui = "HP_0040001",
+    # secondary namespaces
+    curie = "doid:DO_rad_slim",
+    obo_curie = "obo:so#has_origin",
+    uri = "http://www.geneontology.org/formats/oboInOwl#id",
+    "<uri>" = "<http://purl.obolibrary.org/obo/mondo#something_here>",
+    ns.lui = "foodon#00002403"
+)
+non_obo <- c(
+    curie = "foaf:Person",
+    uri = "http://purl.org/dc/elements/1.1/type",
+    "<uri>" = "<http://www.w3.org/2004/02/skos/core#exactMatch>",
+    ns.lui = "owl#Class"
+)
 
-curie <- c("obo:DOID_0001816", "obo:CL_0000066", "obo:so#has_origin",
-           "obo:SYMP_0000000")
-uri <- c("http://purl.obolibrary.org/obo/DOID_0001816",
-         "http://purl.obolibrary.org/obo/CL_0000066",
-         "http://purl.obolibrary.org/obo/so#has_origin",
-         "http://purl.obolibrary.org/obo/SYMP_0000000")
-bracketed_uri <- c("<http://purl.obolibrary.org/obo/DOID_0001816>",
-                   "<http://purl.obolibrary.org/obo/CL_0000066>",
-                   "<http://purl.obolibrary.org/obo/so#has_origin>",
-                   "<http://purl.obolibrary.org/obo/SYMP_0000000>")
-ns_lui <- c("DOID_0001816", "CL_0000066", "so#has_origin", "SYMP_0000000")
-ns <- c("DOID", "CL", "so#", "SYMP")
+std_obo <- all_obo[!names(all_obo) == "ns.lui"]
+all_id <- c(all_obo, non_obo)
+
+# expected output
+all_curie <- c(
+    # primary namespaces
+    curie = "DOID:4",
+    uri = "CL:0001816",
+    "<uri>" = "GENO:0014566",
+    obo_curie = "UBERON:14566",
+    ns.lui = "HP:0040001",
+    # secondary namespaces
+    curie = "doid:DO_rad_slim",
+    obo_curie = "so:has_origin",
+    uri = "oboInOwl:id",
+    "<uri>" = "mondo:something_here",
+    ns.lui = "foodon:00002403"
+)
+
+all_obo_curie <- c(
+    # primary namespaces
+    curie = "obo:DOID_4",
+    uri = "obo:CL_0001816",
+    "<uri>" = "obo:GENO_0014566",
+    obo_curie = "obo:UBERON_14566",
+    ns.lui = "obo:HP_0040001",
+    # secondary namespaces
+    curie = "obo:doid#DO_rad_slim",
+    obo_curie = "obo:so#has_origin",
+    uri = "oboInOwl:id",
+    "<uri>" = "obo:mondo#something_here",
+    ns.lui = "obo:foodon#00002403"
+)
+
+all_uri <- c(
+    # primary namespaces
+    curie = "http://purl.obolibrary.org/obo/DOID_4",
+    uri = "http://purl.obolibrary.org/obo/CL_0001816",
+    "<uri>" = "http://purl.obolibrary.org/obo/GENO_0014566",
+    obo_curie = "http://purl.obolibrary.org/obo/UBERON_14566",
+    ns.lui = "http://purl.obolibrary.org/obo/HP_0040001",
+    # secondary namespaces
+    curie = "http://purl.obolibrary.org/obo/doid#DO_rad_slim",
+    obo_curie = "http://purl.obolibrary.org/obo/so#has_origin",
+    uri = "http://www.geneontology.org/formats/oboInOwl#id",
+    "<uri>" = "http://purl.obolibrary.org/obo/mondo#something_here",
+    ns.lui = "http://purl.obolibrary.org/obo/foodon#00002403"
+)
+
+all_ns.lui <- c(
+    # primary namespaces
+    curie = "DOID_4",
+    uri = "CL_0001816",
+    "<uri>" = "GENO_0014566",
+    obo_curie = "UBERON_14566",
+    ns.lui = "HP_0040001",
+    # secondary namespaces
+    curie = "doid#DO_rad_slim",
+    obo_curie = "so#has_origin",
+    uri = "oboInOwl#id",
+    "<uri>" = "mondo#something_here",
+    ns.lui = "foodon#00002403"
+)
 
 # tests
-test_that("format_obo() works", {
-    expect_identical(format_obo(x, as = "CURIE"), curie)
-    expect_identical(format_obo(x, as = "URI"), uri)
-    expect_identical(format_obo(x, as = "bracketed_URI"), bracketed_uri)
-    expect_identical(format_obo(x, as = "ns_lui"), ns_lui)
-    expect_identical(format_obo(x, as = "ns"), ns)
+test_that("format_obo(), with defaults, works", {
+    curie <- unname(all_curie[!names(all_curie) == "ns.lui"])
+    obo_curie <- unname(all_obo_curie[!names(all_obo_curie) == "ns.lui"])
+    uri <- unname(all_uri[!names(all_uri) == "ns.lui"])
+    bracketed_uri <- paste0("<", uri, ">")
+    ns.lui <- unname(all_ns.lui[!names(all_ns.lui) == "ns.lui"])
+
+    expect_identical(format_obo(std_obo, as = "curie"), curie)
+    expect_identical(format_obo(std_obo, as = "obo_curie"), obo_curie)
+    expect_identical(format_obo(std_obo, as = "uri"), uri)
+    expect_identical(format_obo(std_obo, as = "<uri>"), bracketed_uri)
+    expect_identical(format_obo(std_obo, as = "ns.lui"), ns.lui)
 })
 
-test_that("format_obo() validate_input switch works", {
-    not_valid <- c("blah", "obo:SYMP:0000000")
-    mixed <- c(x, not_valid, "0050117")
-
+test_that("format_obo() validate switch works", {
+    expect_error(format_obo(all_obo))
+    expect_error(format_obo(all_id))
     expect_identical(
-        format_obo(mixed, validate_input = FALSE),
-        c(curie, not_valid, "0050117")
+        format_obo(all_id, validate = FALSE),
+        unname(c(all_curie, non_obo))
+    )
+    expect_identical(
+        format_obo(all_id, as = "uri", validate = FALSE),
+        unname(c(all_uri, stringr::str_remove_all(non_obo, "^<|>$")))
+    )
+    expect_identical(
+        format_obo(all_id, as = "<uri>", validate = FALSE),
+        unname(
+            c(
+                paste0("<", all_uri, ">"),
+                stringr::str_replace_all(non_obo, c("^<?" = "<", ">?$" = ">"))
+            )
+        )
+    )
+})
+
+# format_doid() ------------------------------------------------------------
+
+# valid DOID input
+all_doid <- c(
+    # primary namespaces
+    curie = "DOID:4",
+    uri = "http://purl.obolibrary.org/obo/DOID_0001816",
+    "<uri>" = "<http://purl.obolibrary.org/obo/DOID_0014566>",
+    obo_curie = "obo:DOID_14566",
+    ns.lui = "DOID_0040001",
+    # secondary namespaces
+    curie = "doid:DO_rad_slim",
+    obo_curie = "obo:doid#has_origin",
+    uri = "http://purl.obolibrary.org/obo/doid#id",
+    "<uri>" = "<http://purl.obolibrary.org/obo/doid#something_here>",
+    ns.lui = "doid#00002403"
+)
+non_doid <- c(
+    curie = "foaf:Person",
+    uri = "http://www.geneontology.org/formats/oboInOwl#id",
+    "<uri>" = "<http://www.w3.org/2004/02/skos/core#exactMatch>",
+    ns.lui = "CL_0001816"
+)
+
+std_doid <- all_doid[!names(all_doid) == "ns.lui"]
+all_id <- c(all_doid, non_doid)
+
+# expected output
+all_curie <- c(
+    # primary namespaces
+    curie = "DOID:4",
+    uri = "DOID:0001816",
+    "<uri>" = "DOID:0014566",
+    obo_curie = "DOID:14566",
+    ns.lui = "DOID:0040001",
+    # secondary namespaces
+    curie = "doid:DO_rad_slim",
+    obo_curie = "doid:has_origin",
+    uri = "doid:id",
+    "<uri>" = "doid:something_here",
+    ns.lui = "doid:00002403"
+)
+
+all_obo_curie <- c(
+    # primary namespaces
+    curie = "obo:DOID_4",
+    uri = "obo:DOID_0001816",
+    "<uri>" = "obo:DOID_0014566",
+    obo_curie = "obo:DOID_14566",
+    ns.lui = "obo:DOID_0040001",
+    # secondary namespaces
+    curie = "obo:doid#DO_rad_slim",
+    obo_curie = "obo:doid#has_origin",
+    uri = "obo:doid#id",
+    "<uri>" = "obo:doid#something_here",
+    ns.lui = "obo:doid#00002403"
+)
+
+all_uri <- c(
+    # primary namespaces
+    curie = "http://purl.obolibrary.org/obo/DOID_4",
+    uri = "http://purl.obolibrary.org/obo/DOID_0001816",
+    "<uri>" = "http://purl.obolibrary.org/obo/DOID_0014566",
+    obo_curie = "http://purl.obolibrary.org/obo/DOID_14566",
+    ns.lui = "http://purl.obolibrary.org/obo/DOID_0040001",
+    # secondary namespaces
+    curie = "http://purl.obolibrary.org/obo/doid#DO_rad_slim",
+    obo_curie = "http://purl.obolibrary.org/obo/doid#has_origin",
+    uri = "http://purl.obolibrary.org/obo/doid#id",
+    "<uri>" = "http://purl.obolibrary.org/obo/doid#something_here",
+    ns.lui = "http://purl.obolibrary.org/obo/doid#00002403"
+)
+
+all_ns.lui <- stringr::str_remove(all_obo_curie, "obo:")
+
+# tests
+test_that("format_doid(), with defaults, works", {
+    curie <- unname(all_curie[!names(all_curie) == "ns.lui"])
+    obo_curie <- unname(all_obo_curie[!names(all_obo_curie) == "ns.lui"])
+    uri <- unname(all_uri[!names(all_uri) == "ns.lui"])
+    bracketed_uri <- paste0("<", uri, ">")
+    ns.lui <- unname(all_ns.lui[!names(all_ns.lui) == "ns.lui"])
+
+    expect_identical(format_doid(std_doid, as = "curie"), curie)
+    expect_identical(format_doid(std_doid, as = "obo_curie"), obo_curie)
+    expect_identical(format_doid(std_doid, as = "uri"), uri)
+    expect_identical(format_doid(std_doid, as = "<uri>"), bracketed_uri)
+    expect_identical(format_doid(std_doid, as = "ns.lui"), ns.lui)
+})
+
+test_that("format_doid() validate switch works", {
+    expect_error(format_doid(all_doid))
+    expect_error(format_doid(all_id))
+    expect_identical(
+        format_doid(all_id, validate = FALSE),
+        unname(c(all_curie, non_doid))
+    )
+    expect_identical(
+        format_doid(all_id, as = "uri", validate = FALSE),
+        unname(c(all_uri, stringr::str_remove_all(non_doid, "^<|>$")))
+    )
+    expect_identical(
+        format_doid(all_id, as = "<uri>", validate = FALSE),
+        unname(
+            c(
+                paste0("<", all_uri, ">"),
+                stringr::str_replace_all(non_doid, c("^<?" = "<", ">?$" = ">"))
+            )
+        )
     )
 })
 

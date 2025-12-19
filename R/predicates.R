@@ -171,37 +171,54 @@ is_boolean <- function(x) {
 #' These predicates are designed to identify and validate common ID formats
 #' defined within OBO Foundry ontologies.
 #'
-#' * `is_valid_obo()` to determine if identifiers match the OBO Foundry IRI
-#' pattern or are an obo:LUI CURIE.
+#' * `is_valid_obo()` to determine if identifiers match an OBO Foundry ID.
 #'
-#' * `is_valid_doid()` to determine if identifiers match DO's IRI or CURIE
-#' pattern.
+#' * `is_valid_doid()` to determine if identifiers match a DOID/doid.
 #'
 #' @section Notes:
 #' These predicates _do not_ attempt to confirm any ID actually exists in an
 #' OBO Foundry ontology, but only test if the IDs are syntactically formatted
 #' correctly (see [OBO Foundry ID Policy](https://obofoundry.org/id-policy) and
-#' [OBO File Specification](https://owlcollab.github.io/oboformat/doc/obo-syntax.html)).
-#'
-#' Not all OBO formats are valid DOID formats and vice versa.
+#' [OBO File Specification](https://owlcollab.github.io/oboformat/doc/obo-syntax.html))
+#' _AND_ correspond to a known namespace of an OBO Foundry ontology (see
+#' [obo_prefix]).
 #'
 #' @param x A set of IDs, as a character vector.
+#' @param allow The OBO ID format(s) to consider valid; as a character vector.
+#' One or more of: `"curie"`, `"obo_curie"` (e.g. `obo:DOID_4`), `"uri"`,
+#' `"<uri>"` (URI in angle brackets), or `"ns.lui"` (i.e. an OBO CURIE without
+#' `obo:`).
+#'
+#' `"standard"` (default) is a generic grouping that represents syntactically
+#' correct formats (`"curie"`, `"obo_curie"`, `"uri"` and `"<uri>"`).
+#'
+#' `"ns.lui"` will only be included if explicitly specified.
+#' @param ns_type The type of OBO namespaces to consider valid; as a character
+#' vector. One of: `"obo"` (default), `"ont"` (ontology primary namespaces
+#' only), or `"prop"` (ontology property namespaces only; may not be exhaustive).
 #'
 #' @examples
 #' # OBO formats
 #' obo_id <- c(
-#'     #### valid ####
+#'     #### valid by default ####
 #'     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
-#'     "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
-#'     "obo:DOID_4", # CURIE, standard version
-#'     "obo:so#has_origin", # '#' separator ~ OBO annotation properties
+#'     "<http://purl.obolibrary.org/obo/CL_0000066>", # angle-bracketed URI
+#'     "DOID:4", # CURIE, standard version
+#'     "obo:CL_0000066", # OBO CURIE
+#'     #### valid OBO property ####
+#'     "so:has_origin", # standard CURIE ~ OBO annotation property
+#'     "obo:so#has_origin", # '#' separator ~ OBO annotation property
+#'     ### conditionally valid -- only if "ns.lui" in `allow` ###
+#'     "DOID_0040001", # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed)
+#'     "so#has_origin", # namespace-lui separator must be '#' for properties
 #'     #### invalid ####
 #'     "0001816", # bare number without prefix
-#'     "obo:DOID:14566", # namespace-lui separator must be '_' or '#'
+#'     "obo:DOID:14566", # namespace-lui separator must be '_' ('#' for properties)
 #'     " obo:HP_0000001" # must have NO `[:space:]` characters
 #' )
 #'
 #' is_valid_obo(obo_id)
+#' is_valid_obo(obo_id, allow = c("standard", "ns.lui"))
 #'
 #' # DOID formats
 #' doid <- c(
@@ -209,15 +226,19 @@ is_boolean <- function(x) {
 #'     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
 #'     "DOID:4", # CURIE, standard version
 #'     "obo:DOID_4", # OBO CURIE, less common
-#'     "DOID_0040001", # basename (OBO prefix removed)
+#'     # properties are recognized as valid (unless ns_type = 'ont')
+#'     "doid:DO_IEDB_slim",
+#'     "obo:doid#DO_IEDB_slim",
+#'     # namespace-separator-LUI (valid if 'ns.lui' included in `allow`)
+#'     "DOID_0040001",
 #'     #### invalid ####
 #'     "0001816", # bare number without prefix
-#'     "doid#DO_IEDB_slim", # namespace-lui separator must be '_'
-#'     "obo:doid#DO_IEDB_slim",
 #'     "obo:DOID_21 " # must have NO `[:space:]` characters
 #' )
 #'
 #' is_valid_doid(doid)
+#' is_valid_doid(doid, ns_type = "ont")
+#' is_valid_doid(doid, allow = c("standard", "ns.lui"), ns_type = "ont")
 #'
 #' @family ID predicates
 #' @family predicates
@@ -226,17 +247,78 @@ NULL
 
 #' @rdname obo_ID_predicates
 #' @export
-is_valid_obo <- function(x) {
+is_valid_obo <- function(x, allow = "standard", ns_type = "obo") {
     assert_character(x)
-    obo_regex <- "^<?http://purl.obolibrary.org/obo/[A-Za-z_]+[_#][[:alnum:]_]+>?$|^obo:[A-Za-z_]+[_#][[:alnum:]_]+$"
-    stringr::str_detect(x, obo_regex)
+    ns_type <- match.arg(ns_type, c("obo", "ont", "prop"))
+    prefixes <- switch(
+        ns_type,
+        obo = obo_prefix,
+        ont = obo_ont_prefix,
+        prop = obo_prop_prefix
+    )
+    ns_sep <- stringr::str_remove(prefixes, "^.*/")
+
+    if (ns_type == "ont") {
+        lui <- "[0-9]+"
+    } else {
+        lui <- "[[:alnum:]_]+"
+    }
+
+    # special handling for oboInOwl IDs
+    is_oio <- stringr::str_detect(ns_sep, "oboInOwl")
+    if (!any(is_oio)) {
+        oio_regex <- NULL
+    } else {
+        ns_sep <- ns_sep[!is_oio]
+
+        oio_format <- c(
+            curie = "oboInOwl:[A-z]+",
+            obo_curie = "oboInOwl:[A-z]+",
+            uri = "http://www.geneontology.org/formats/oboInOwl#[A-z]+"
+        )
+        if ("standard" %in% allow || all(c("uri", "<uri>") %in% allow)) {
+            oio_format["uri"] <- sandwich_text(oio_format["uri"], c("<?", ">?"))
+        } else if ("<uri>" %in% allow) {
+            oio_format["<uri>"] <- sandwich_text(oio_format["uri"], c("<", ">"))
+        }
+
+        if ("ns.lui" %in% allow && any(c("standard", "obo_curie") %in% allow)) {
+            oio_format["obo_curie"] <- "oboInOwl[:#][A-z]+"
+        } else if ("ns.lui" %in% allow) {
+            oio_format["ns.lui"] <- "oboInOwl#[A-z]+"
+        }
+
+        if (!"standard" %in% allow) {
+            oio_format <- stats::na.omit(oio_format[allow])
+        }
+        oio_regex <- paste0("|^(", vctr_to_string(oio_format), ")$")
+    }
+
+    obo_regex <- build_obo_regex(ns_sep, lui, allow = allow)
+    final_regex <- paste0(obo_regex, oio_regex)
+    stringr::str_detect(x, final_regex)
 }
 
 #' @rdname obo_ID_predicates
 #' @export
-is_valid_doid <- function(x) {
+is_valid_doid <- function(x, allow = "standard", ns_type = "obo") {
     assert_character(x)
-    doid_regex <- "^(http://purl.obolibrary.org/obo/|obo:)?DOID_[0-9]{1,7}$|^DOID:[0-9]{1,7}$"
+    ns_type <- match.arg(ns_type, c("obo", "ont", "prop"))
+
+    ns_sep <- switch(
+        ns_type,
+        obo = c("DOID_", "doid#"),
+        ont = "DOID_",
+        prop = "doid#"
+    )
+
+    if (ns_type == "ont") {
+        lui <- "[0-9]+"
+    } else {
+        lui <- "[[:alnum:]_]+"
+    }
+
+    doid_regex <- build_obo_regex(ns_sep, lui, allow = allow)
     stringr::str_detect(x, doid_regex)
 }
 
@@ -257,10 +339,10 @@ is_valid_doid <- function(x) {
 #' standard defines the most general CURIE syntax allowed (`def = "w3c"`; not a
 #' perfect implementation, e.g. U+3000 non-breaking space is not accepted). Note
 #' that by definition URIs will be identified as CURIEs. If it is desirable to
-#' distinguish these use `def = "w3c_safe"` and wrap CURIEs in brackets (as
-#' defined in the standard. Alternatively, use the stricter OBO Foundry-based
-#' standards (as stated in that standard, more strict definitions for CURIEs can
-#' be defined).
+#' distinguish these use `def = "w3c_safe"` and wrap CURIEs in square brackets
+#' (as defined in the standard). Alternatively, use the stricter OBO
+#' Foundry-based standards (as stated in that standard, more strict definitions
+#' for CURIEs can be defined).
 #'
 #' `"obo"` corresponds to the official OBO Foundry definition of a CURIE as
 #' stated in the [OBO Foundry ID Policy](http://obofoundry.org/id-policy.html).
@@ -387,6 +469,7 @@ is_owl_xml <- function(x) {
     class(x)[1] == "pyDOID.owl.xml"
 }
 
+# is_uri() helper
 has_uri_reqs <- function(x, empty_ok = TRUE) {
     parsed <- httr::parse_url(x)
     if (empty_ok) {
@@ -400,4 +483,49 @@ has_uri_reqs <- function(x, empty_ok = TRUE) {
     }
 
     !is.null(parsed$scheme) && (host_valid || path_valid)
+}
+
+# Builds a regex pattern to match OBO IDs in various formats using the desired
+# namespaces and local unique identifiers (LUIs) of interest as inputs.
+build_obo_regex <- function(ns_sep, lui, allow = "standard") {
+    allow <- match.arg(
+        allow,
+        choices = c("standard", "curie", "obo_curie", "uri", "<uri>", "ns.lui"),
+        several.ok = TRUE
+    )
+    ns_sep <- drop_blank(ns_sep)
+    .ns <- paste0(
+        "(",
+        paste0(stringr::str_remove(ns_sep, ".$"), collapse = "|"),
+        ")"
+    )
+    .ns_sep <- paste0("(", paste0(ns_sep, collapse = "|"), ")")
+
+    formats <- c(
+        curie = "{.ns}:{lui}",
+        obo_curie = "obo:{.ns_sep}{lui}",
+        uri = "http://purl.obolibrary.org/obo/{.ns_sep}{lui}"
+    )
+
+    # add <uri> as appropriate
+    if ("standard" %in% allow || all(c("uri", "<uri>") %in% allow)) {
+        formats["uri"] <- sandwich_text(formats["uri"], c("<?", ">?"))
+    } else if ("<uri>" %in% allow) {
+        formats["<uri>"] <- sandwich_text(formats["uri"], c("<", ">"))
+    }
+
+    # add ns.lui as appropriate
+    if ("ns.lui" %in% allow && any(c("standard", "obo_curie") %in% allow)) {
+        formats["obo_curie"] <- "(obo:)?{.ns_sep}{lui}"
+    } else if ("ns.lui" %in% allow) {
+        formats["ns.lui"] <- "{.ns_sep}{lui}"
+    }
+
+    if (!"standard" %in% allow) {
+        formats <- stats::na.omit(formats[allow])
+    }
+
+    regex_pattern <- paste0("^(", vctr_to_string(formats), ")$")
+    full_regex <- glue::glue(regex_pattern)
+    full_regex
 }

@@ -6,12 +6,26 @@
 \alias{is_valid_doid}
 \title{OBO ID predicates}
 \usage{
-is_valid_obo(x)
+is_valid_obo(x, allow = "standard", ns_type = "obo")
 
-is_valid_doid(x)
+is_valid_doid(x, allow = "standard", ns_type = "obo")
 }
 \arguments{
 \item{x}{A set of IDs, as a character vector.}
+
+\item{allow}{The OBO ID format(s) to consider valid; as a character vector.
+One or more of: \code{"curie"}, \code{"obo_curie"} (e.g. \code{obo:DOID_4}), \code{"uri"},
+\code{"<uri>"} (URI in angle brackets), or \code{"ns.lui"} (i.e. an OBO CURIE without
+\verb{obo:}).
+
+\code{"standard"} (default) is a generic grouping that represents syntactically
+correct formats (\code{"curie"}, \code{"obo_curie"}, \code{"uri"} and \code{"<uri>"}).
+
+\code{"ns.lui"} will only be included if explicitly specified.}
+
+\item{ns_type}{The type of OBO namespaces to consider valid; as a character
+vector. One of: \code{"obo"} (default), \code{"ont"} (ontology primary namespaces
+only), or \code{"prop"} (ontology property namespaces only; may not be exhaustive).}
 }
 \description{
 These predicates are designed to identify and validate common ID formats
@@ -19,10 +33,8 @@ defined within OBO Foundry ontologies.
 }
 \details{
 \itemize{
-\item \code{is_valid_obo()} to determine if identifiers match the OBO Foundry IRI
-pattern or are an obo:LUI CURIE.
-\item \code{is_valid_doid()} to determine if identifiers match DO's IRI or CURIE
-pattern.
+\item \code{is_valid_obo()} to determine if identifiers match an OBO Foundry ID.
+\item \code{is_valid_doid()} to determine if identifiers match a DOID/doid.
 }
 }
 \section{Notes}{
@@ -30,26 +42,33 @@ pattern.
 These predicates \emph{do not} attempt to confirm any ID actually exists in an
 OBO Foundry ontology, but only test if the IDs are syntactically formatted
 correctly (see \href{https://obofoundry.org/id-policy}{OBO Foundry ID Policy} and
-\href{https://owlcollab.github.io/oboformat/doc/obo-syntax.html}{OBO File Specification}).
-
-Not all OBO formats are valid DOID formats and vice versa.
+\href{https://owlcollab.github.io/oboformat/doc/obo-syntax.html}{OBO File Specification})
+\emph{AND} correspond to a known namespace of an OBO Foundry ontology (see
+\link{obo_prefix}).
 }
 
 \examples{
 # OBO formats
 obo_id <- c(
-    #### valid ####
+    #### valid by default ####
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
-    "<http://purl.obolibrary.org/obo/CL_0000066>", # bracketed_URI
-    "obo:DOID_4", # CURIE, standard version
-    "obo:so#has_origin", # '#' separator ~ OBO annotation properties
+    "<http://purl.obolibrary.org/obo/CL_0000066>", # angle-bracketed URI
+    "DOID:4", # CURIE, standard version
+    "obo:CL_0000066", # OBO CURIE
+    #### valid OBO property ####
+    "so:has_origin", # standard CURIE ~ OBO annotation property
+    "obo:so#has_origin", # '#' separator ~ OBO annotation property
+    ### conditionally valid -- only if "ns.lui" in `allow` ###
+    "DOID_0040001", # namespace-separator-LUI (i.e. OBO CURIE w/'obo:' prefix removed)
+    "so#has_origin", # namespace-lui separator must be '#' for properties
     #### invalid ####
     "0001816", # bare number without prefix
-    "obo:DOID:14566", # namespace-lui separator must be '_' or '#'
+    "obo:DOID:14566", # namespace-lui separator must be '_' ('#' for properties)
     " obo:HP_0000001" # must have NO `[:space:]` characters
 )
 
 is_valid_obo(obo_id)
+is_valid_obo(obo_id, allow = c("standard", "ns.lui"))
 
 # DOID formats
 doid <- c(
@@ -57,15 +76,19 @@ doid <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816", # URI
     "DOID:4", # CURIE, standard version
     "obo:DOID_4", # OBO CURIE, less common
-    "DOID_0040001", # basename (OBO prefix removed)
+    # properties are recognized as valid (unless ns_type = 'ont')
+    "doid:DO_IEDB_slim",
+    "obo:doid#DO_IEDB_slim",
+    # namespace-separator-LUI (valid if 'ns.lui' included in `allow`)
+    "DOID_0040001",
     #### invalid ####
     "0001816", # bare number without prefix
-    "doid#DO_IEDB_slim", # namespace-lui separator must be '_'
-    "obo:doid#DO_IEDB_slim",
     "obo:DOID_21 " # must have NO `[:space:]` characters
 )
 
 is_valid_doid(doid)
+is_valid_doid(doid, ns_type = "ont")
+is_valid_doid(doid, allow = c("standard", "ns.lui"), ns_type = "ont")
 
 }
 \seealso{

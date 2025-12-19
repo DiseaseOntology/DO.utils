@@ -46,74 +46,78 @@ write_graphml <- function(graph, file) {
 #'
 #' @param data A data.frame, possibly with a defined method.
 #' @inheritParams googlesheets4::write_sheet
+#' @param sheet The name to use for the sheet to write into (i.e. the tab name
+#' in a worksheet). If a date format recognized by [format.Date()] is
+#' included in the string, today's date will be added in the specified format
+#' and location.
+#'
+#' For each method, the default is a method-specific term appended with a date
+#' format lacking separators (e.g. 20250101 for 2025-01-01).
+#'
+#' **_WARNING:_** If a sheet with the same name exists in the Google Sheet file
+#' it will be overwritten.
+#'
 #' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
-#' @param sheet_nm The name of the sheet to write to, as a string.
-#' @param datestamp `NULL` to use the default sheet name for a given method,
-#' or a format recognized by [format.Date()] to add today's date as a
-#' stamp suffix, separated by '-', to the default sheet name.
-#'
 #' @param ... Arguments passed on to methods.
 #'
-#' @returns The data as written to the Google Sheet, invisibly.
+#' @section Deprecated arguments:
+#' `sheet_nm` and `datestamp` have been deprecated in favor of `sheet` which
+#' supports more flexible naming, including names without dates.
+#'
+#' @returns The input `ss`, as an instance of [googlesheets4::sheets_id].
+#'
 #' @export
-write_gs <- function(data, ss, hyperlink_curie, sheet_nm, datestamp, ...) {
+write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
+    stopifnot(
+        "`sheet` must be a character string or `NULL`" =
+            is.null(sheet) || rlang::is_string(sheet)
+    )
+    dot_nm <- names(list(...))
+    if (any(dot_nm %in% c("sheet_nm", "datestamp"))) {
+        rlang::abort(
+            "`sheet_nm` and `datestamp` are deprecated; use `sheet` instead.",
+            class = "deprecated"
+        )
+    }
     UseMethod("write_gs")
 }
 
 #' @rdname write_gs
 #' @export
-write_gs.omim_inventory <- function(data, ss,
-                                    hyperlink_curie = c("omim", "doid"),
-                                    sheet_nm = "omim_inventory",
-                                    datestamp = "%Y%m%d", ...) {
-    .df <- write_gs.data.frame(
+write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
+                                    hyperlink_curie = c("omim", "doid"), ...) {
+    gs_info <- write_gs.data.frame(
         data = data,
         ss = ss,
+        sheet = sheet,
         hyperlink_curie = hyperlink_curie,
-        sheet_nm = sheet_nm,
-        datestamp = datestamp,
         ...
     )
-
-    invisible(.df)
+    invisible(gs_info)
 }
 
 #' @rdname write_gs
 #' @export
-write_gs.data.frame <- function(data, ss, hyperlink_curie = NULL, sheet_nm = "data",
-                                datestamp = "%Y%m%d", ...) {
-    if (!rlang::is_string(sheet_nm)) {
-        rlang::abort("`sheet_nm` must be a single string.")
-    }
-    hyperlink_curie <- tidyselect::eval_select(
+write_gs.data.frame <- function(data, ss, sheet = "data-%Y%m%d",
+                                hyperlink_curie = NULL, ...) {
+    if (!is.null(sheet)) sheet <- format(Sys.Date(), sheet)
+
+    hyperlink_col <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
     )
-    if (length(hyperlink_curie) > 0) {
-        .df <- dplyr::mutate(
+    if (length(hyperlink_col) > 0) {
+        data <- dplyr::mutate(
             data,
             dplyr::across(
-                .cols = {{ hyperlink_curie }},
-                .fns = ~ build_hyperlink(
-                    x = stringr::str_remove(.x, ".*:"),
-                    url = stringr::str_remove(.x, ":.*"),
-                    text = .x,
-                    as = "gs"
-                )
+                .cols = dplyr::all_of(hyperlink_col),
+                .fns = ~ hyperlink_curie(.x, as = "gs")
             )
         )
     }
 
-    if (!is.null(datestamp)) {
-        sheet_nm <- paste(sheet_nm, format(Sys.Date(), datestamp), sep = "-")
-    }
+    gs_info <- googlesheets4::write_sheet(data, ss, sheet)
 
-    googlesheets4::write_sheet(
-        data = .df,
-        ss = ss,
-        sheet = sheet_nm
-    )
-
-    invisible(.df)
+    invisible(gs_info)
 }
