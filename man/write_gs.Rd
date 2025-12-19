@@ -13,19 +13,10 @@ write_gs(data, ss, sheet = NULL, hyperlink_curie = NULL, ...)
   ss,
   sheet = "omim_inventory-\%Y\%m\%d",
   hyperlink_curie = c("omim", "doid"),
-  sheet_nm = "omim_inventory",
-  datestamp = "\%Y\%m\%d",
   ...
 )
 
-\method{write_gs}{data.frame}(
-  data,
-  ss,
-  hyperlink_curie = NULL,
-  sheet_nm = "data",
-  datestamp = "\%Y\%m\%d",
-  ...
-)
+\method{write_gs}{data.frame}(data, ss, sheet = "data-\%Y\%m\%d", hyperlink_curie = NULL, ...)
 }
 \arguments{
 \item{data}{A data.frame, possibly with a defined method.}
@@ -42,27 +33,25 @@ returns
 
 Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 
-\item{sheet}{The name to use for the sheet to write into, in the sense of
-"worksheet" or "tab". If a date format recognized by \code{\link[=format.Date]{format.Date()}} is
+\item{sheet}{The name to use for the sheet to write into (i.e the tab name
+in a worksheet). If a date format recognized by \code{\link[=format.Date]{format.Date()}} is
 included in the string, today's date will be added in the specified format
-and location. If \code{NULL}, the sheet name will be the default for the
-underlying method.
+and location.
 
-\strong{\emph{WARNING:}} If a sheet with the same name exists it will be overwritten.}
+For each method, the default is a method-specific term appended with a date
+format lacking separators (e.g. 20250101 for 2025-01-01).
+
+\strong{\emph{WARNING:}} If a sheet with the same name exists in the Google Sheet file
+it will be overwritten.}
 
 \item{hyperlink_curie}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> The
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.}
 
 \item{...}{Arguments passed on to methods.}
 
-\item{sheet_nm}{The name of the sheet to write to, as a string.}
+\item{sheet_nm}{\emph{DEPRECATED}, use \code{sheet} instead.}
 
-\item{datestamp}{\strong{DEPRECATED} Use \code{sheet} instead.
-
-Previously \code{NULL} or \code{NA} would default to the sheet name 'omim_inventory',
-while a format recognized by \code{\link[=format.Date]{format.Date()}} would add an additional date
-stamp suffix, separated by '-', to the default sheet name. This behavior is
-retained for backward compatibility and invoked when \code{sheet = NULL}.}
+\item{datestamp}{\emph{DEPRECATED}, use \code{sheet} instead.}
 }
 \value{
 The input \code{ss}, as an instance of \link[googlesheets4:sheets_id]{googlesheets4::sheets_id}.

@@ -46,52 +46,50 @@ write_graphml <- function(graph, file) {
 #'
 #' @param data A data.frame, possibly with a defined method.
 #' @inheritParams googlesheets4::write_sheet
-#' @param sheet The name to use for the sheet to write into, in the sense of
-#' "worksheet" or "tab". If a date format recognized by [format.Date()] is
+#' @param sheet The name to use for the sheet to write into (i.e the tab name
+#' in a worksheet). If a date format recognized by [format.Date()] is
 #' included in the string, today's date will be added in the specified format
-#' and location. If `NULL`, the sheet name will be the default for the
-#' underlying method.
+#' and location.
 #'
-#' **_WARNING:_** If a sheet with the same name exists it will be overwritten.
+#' For each method, the default is a method-specific term appended with a date
+#' format lacking separators (e.g. 20250101 for 2025-01-01).
+#'
+#' **_WARNING:_** If a sheet with the same name exists in the Google Sheet file
+#' it will be overwritten.
+#'
 #' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
-#' @param sheet_nm The name of the sheet to write to, as a string.
-#' @param datestamp `NULL` to use the default sheet name for a given method,
-#' or a format recognized by [format.Date()] to add today's date as a
-#' stamp suffix, separated by '-', to the default sheet name.
-#'
 #' @param ... Arguments passed on to methods.
+#' @param sheet_nm _DEPRECATED_, use `sheet` instead.
+#' @param datestamp _DEPRECATED_, use `sheet` instead.
 #'
 #' @returns The input `ss`, as an instance of [googlesheets4::sheets_id].
 #'
 #' @export
 write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
     stopifnot(
-        "`sheet` must be a character string or `NULL`." =
+        "`sheet` must be a character string or `NULL`" =
             is.null(sheet) || rlang::is_string(sheet)
     )
+    dot_nm <- names(list(...))
+    if (any(dot_nm %in% c("sheet_nm", "datestamp"))) {
+        rlang::abort(
+            "`sheet_nm` and `datestamp` are deprecated; use `sheet` instead.",
+            class = "deprecated"
+        )
+    }
     UseMethod("write_gs")
 }
 
 #' @rdname write_gs
-#' @param datestamp **DEPRECATED** Use `sheet` instead.
-#'
-#' Previously `NULL` or `NA` would default to the sheet name 'omim_inventory',
-#' while a format recognized by [format.Date()] would add an additional date
-#' stamp suffix, separated by '-', to the default sheet name. This behavior is
-#' retained for backward compatibility and invoked when `sheet = NULL`.
-#'
 #' @export
 write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
-                                    hyperlink_curie = c("omim", "doid"),
-                                    sheet_nm = "omim_inventory",
-                                    datestamp = "%Y%m%d", ...) {
+                                    hyperlink_curie = c("omim", "doid"), ...) {
     gs_info <- write_gs.data.frame(
         data = data,
         ss = ss,
+        sheet = sheet,
         hyperlink_curie = hyperlink_curie,
-        sheet_nm = sheet_nm,
-        datestamp = datestamp,
         ...
     )
     invisible(gs_info)
@@ -99,11 +97,10 @@ write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
 
 #' @rdname write_gs
 #' @export
-write_gs.data.frame <- function(data, ss, hyperlink_curie = NULL, sheet_nm = "data",
-                                datestamp = "%Y%m%d", ...) {
-    if (!rlang::is_string(sheet_nm)) {
-        rlang::abort("`sheet_nm` must be a single string.")
-    }
+write_gs.data.frame <- function(data, ss, sheet = "data-%Y%m%d",
+                                hyperlink_curie = NULL, ...) {
+    if (!is.null(sheet)) sheet <- format(Sys.Date(), sheet)
+
     hyperlink_col <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
@@ -118,19 +115,7 @@ write_gs.data.frame <- function(data, ss, hyperlink_curie = NULL, sheet_nm = "da
         )
     }
 
-    if (is.null(sheet)) {
-        sheet_nm <- "omim_inventory"
-        if (!is.null(datestamp) && !is.na(datestamp)) {
-            rlang::warn(
-                "The `datestamp` argument is deprecated. Use `sheet` instead or set `datestamp` to `NULL`."
-            )
-            sheet_nm <- paste(sheet_nm, format(Sys.Date(), datestamp), sep = "-")
-        }
-    } else {
-        sheet_nm <- format(Sys.Date(), sheet)
-    }
-
-    gs_info <- googlesheets4::write_sheet(data, ss, sheet_nm)
+    gs_info <- googlesheets4::write_sheet(data, ss, sheet)
 
     invisible(gs_info)
 }
