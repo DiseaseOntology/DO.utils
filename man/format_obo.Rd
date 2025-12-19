@@ -31,7 +31,7 @@ brackets), \code{"ns.lui"} (i.e. an OBO CURIE without \verb{obo:}).}
 
 \item{validate}{Whether to ensure only valid OBO IDs are included in
 \code{x}, \code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-OBO ID input will
-be handled differently depending on \code{as} (see \verb{Non-OBO URIs} section).}
+be handled differently depending on \code{as} (see \verb{Non-OBO CURIE/URIs} section).}
 
 \item{allow}{The OBO ID format(s) to consider valid; as a character vector.
 One or more of: \code{"curie"}, \code{"obo_curie"} (e.g. \code{obo:DOID_4}), \code{"uri"},
