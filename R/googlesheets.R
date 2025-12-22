@@ -8,11 +8,11 @@
 #' @inheritParams googlesheets4::range_write
 #' @param range Cells to apply data validation to. This `range` argument has
 #'   important similarities and differences to `range` elsewhere (e.g.
-#'   [range_read()]):
+#'   [googlesheets4::range_read()]):
 #'   * Similarities: Can be a cell range, using A1 notation ("A1:D3") or using
-#'     the helpers in [`cell-specification`]. Can combine sheet name and cell
-#'     range ("Sheet1!A5:A") or refer to a sheet by name (`range = "Sheet1"`,
-#'     although `sheet = "Sheet1"` is preferred for clarity).
+#'     the helpers in [googlesheets4::cell-specification]. Can combine sheet
+#'     name and cell range ("Sheet1!A5:A") or refer to a sheet by name
+#'     (`range = "Sheet1"`, although `sheet = "Sheet1"` is preferred for clarity).
 #'   * Difference: Can NOT be a named range.
 #' @param msg The message to display when the user types in a value that
 #' violates the data validation rule. For `range_add_dropdown()`, only displayed
@@ -83,10 +83,3 @@ range_add_dropdown <- function(ss, sheet = NULL, range, values,
 
   .fn(ss = ss, sheet = sheet, range = range, rule = rule)
 }
-
-
-# microbenchmark(
-#   cur_cols %>% purrr::map_dfc(setNames, object = list(logical())),
-#   cur_cols %>% purrr::map_dfc(~ tibble::tibble(!!.x := logical())),
-
-# )

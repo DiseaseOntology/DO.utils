@@ -8,6 +8,7 @@
 #' @param sheet (OPTIONAL) The sheet name, as a string. If `NULL` (default), the
 #' sheet name will default to "curation-" with today's date appended (formatted
 #' as "%Y%m%d"; see [format.Date()]).
+#' @param ... Additional arguments passed to methods.
 #'
 #' @returns The Google Sheet info (`ss`), as a [googlesheets4::sheets_id].
 #'
@@ -21,7 +22,8 @@ curation_template <- function(.data = NULL, ss = NULL, sheet = NULL, ...) {
 #'
 #' @export
 #' @rdname curation_template
-curation_template.NULL <- function(ss = NULL, sheet = NULL, ..., nrow = 50) {
+curation_template.NULL <- function(.data = NULL, ss = NULL, sheet = NULL, ...,
+                                   nrow = 50) {
   val <- rep(NA, nrow)
 
   # inspired by https://stackoverflow.com/a/60495352/6938922
@@ -134,7 +136,7 @@ curation_cols <- c(
 curation_action <- c("retain", "add", "remove", "exclude", "ignore", "restore")
 
 
-#' Set Data Validation for Curation Templates
+# Set Data Validation for Curation Templates
 set_curation_validation <- function(cur_df, ss, sheet) {
     # add data_type validation
     dt_range <- spreadsheet_range(cur_df, "data_type", sheet = sheet)
@@ -180,7 +182,7 @@ spreadsheet_range <- function(.data, .col, sheet = NULL, rows = NULL,
         c("`rows` must be one continuous range", x = collapsed_range)
       )
     }
-    row_ends <- c(rows[1], tail(rows, 1)) + n_header
+    row_ends <- c(rows[1], utils::tail(rows, 1)) + n_header
   } else {
     row_ends <- as.integer(stringr::str_split(row_ends, ":")[[1]]) + n_header
   }

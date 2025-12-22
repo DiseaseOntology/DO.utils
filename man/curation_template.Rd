@@ -7,7 +7,7 @@
 \usage{
 curation_template(.data = NULL, ss = NULL, sheet = NULL, ...)
 
-\method{curation_template}{`NULL`}(ss = NULL, sheet = NULL, ..., nrow = 50)
+\method{curation_template}{`NULL`}(.data = NULL, ss = NULL, sheet = NULL, ..., nrow = 50)
 }
 \arguments{
 \item{.data}{Data to add to the curation sheet. If \code{NULL} (default), an empty
@@ -28,6 +28,8 @@ Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 \item{sheet}{(OPTIONAL) The sheet name, as a string. If \code{NULL} (default), the
 sheet name will default to "curation-" with today's date appended (formatted
 as "\%Y\%m\%d"; see \code{\link[=format.Date]{format.Date()}}).}
+
+\item{...}{Additional arguments passed to methods.}
 
 \item{nrow}{The number of rows to create in the curation template when
 \code{.data = NULL} (default: \code{50}).}

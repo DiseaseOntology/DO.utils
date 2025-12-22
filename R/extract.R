@@ -715,7 +715,7 @@ extract_obo_anon <- function(obo_ont, prefix = NULL, id = NULL,
     }
 
     ### FUTURE WORK -- identify subclass anon subtypes? ###
-    lengthen_col(out, value)
+    lengthen_col(out, "value")
 }
 
 #' Extract OBO Foundry Ontology Data

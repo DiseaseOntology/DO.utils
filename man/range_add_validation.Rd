@@ -42,12 +42,12 @@ Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 
 \item{range}{Cells to apply data validation to. This \code{range} argument has
 important similarities and differences to \code{range} elsewhere (e.g.
-\code{\link[=range_read]{range_read()}}):
+\code{\link[googlesheets4:range_read]{googlesheets4::range_read()}}):
 \itemize{
 \item Similarities: Can be a cell range, using A1 notation ("A1:D3") or using
-the helpers in \code{\link{cell-specification}}. Can combine sheet name and cell
-range ("Sheet1!A5:A") or refer to a sheet by name (\code{range = "Sheet1"},
-although \code{sheet = "Sheet1"} is preferred for clarity).
+the helpers in \link[googlesheets4:cell-specification]{googlesheets4::cell-specification}. Can combine sheet
+name and cell range ("Sheet1!A5:A") or refer to a sheet by name
+(\code{range = "Sheet1"}, although \code{sheet = "Sheet1"} is preferred for clarity).
 \item Difference: Can NOT be a named range.
 }}
 
