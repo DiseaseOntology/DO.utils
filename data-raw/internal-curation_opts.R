@@ -7,8 +7,7 @@ curation_opts <- googlesheets4::read_sheet(
   sheet = "template_options",
   col_types = "c"
 ) |>
-  dplyr::mutate(deprecated = readr::parse_logical(.data$deprecated)) |>
-  dplyr::filter(!is.na(.data$template) & !.data$deprecated)
+  dplyr::filter(!is.na(.data$template) & !.data$inclusion == "deprecated")
 
 
 # SPARQL set identifying curation data types ------------------------------
