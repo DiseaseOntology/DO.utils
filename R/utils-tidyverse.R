@@ -29,6 +29,7 @@ NULL
 #' @name rlang_imports
 #' @noRd
 #' @importFrom rlang .data
+#' @importFrom rlang .env
 #' @importFrom rlang :=
 NULL
 

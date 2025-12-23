@@ -4,6 +4,7 @@
 \alias{write_gs}
 \alias{write_gs.omim_inventory}
 \alias{write_gs.data.frame}
+\alias{write_gs.curation_template}
 \title{Write Data to a Google Sheet}
 \usage{
 write_gs(data, ss, sheet = NULL, hyperlink_curie = NULL, ...)
@@ -17,6 +18,8 @@ write_gs(data, ss, sheet = NULL, hyperlink_curie = NULL, ...)
 )
 
 \method{write_gs}{data.frame}(data, ss, sheet = "data-\%Y\%m\%d", hyperlink_curie = NULL, ...)
+
+\method{write_gs}{curation_template}(data, ss = NULL, sheet = "curation-\%Y\%m\%d", ...)
 }
 \arguments{
 \item{data}{A data.frame, possibly with a defined method.}
