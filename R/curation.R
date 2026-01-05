@@ -139,12 +139,12 @@ curation_action <- c("retain", "add", "remove", "exclude", "ignore", "restore")
 # Set Data Validation for Curation Templates
 set_curation_validation <- function(cur_df, ss, sheet) {
     # add data_type validation
-    dt_range <- spreadsheet_range(cur_df, "data_type", sheet = sheet)
-    range_add_dropdown(ss, dt_range, values = .curation_opts$data_type)
+    dt_range <- spreadsheet_range(cur_df, "data_type")
+    range_add_dropdown(ss, sheet, dt_range, values = .curation_opts$data_type)
 
     # add action validation
-    action_range <- spreadsheet_range(cur_df, "action", sheet = sheet)
-    range_add_dropdown(ss, action_range, values = curation_action)
+    action_range <- spreadsheet_range(cur_df, "action")
+    range_add_dropdown(ss, sheet, action_range, values = curation_action)
 
     # freeze first two columns
     googlesheets4::with_gs4_quiet(
