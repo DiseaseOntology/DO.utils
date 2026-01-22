@@ -152,9 +152,15 @@ format_doid <- function(x, as = "curie", validate = TRUE,
 #' @export
 format_subtree <- function(subtree_df, top_node) {
     rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")
+    if ("extracted_subclass" %in% class(subtree_df)) {
+        id_string <- "iri"
+    } else {
+        id_string <- "id"
+    }
+
     top_class <- format_doid(top_node, as = "curie")
-    tg <- as_subtree_tidygraph(subtree_df, top_class)
-    formatted <- pivot_subtree(tg, top_class)
+    tg <- as_subtree_tidygraph(subtree_df, top_class, id_string)
+    formatted <- pivot_subtree(tg, top_class, id_string)
 
     formatted
 }

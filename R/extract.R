@@ -369,6 +369,8 @@ extract_subclass <- function(input, class, method = "descendants",
         tidy_what = tidy_what
     )
 
+    class(out) <- c("extracted_subclass", class(out))
+
     out
 }
 

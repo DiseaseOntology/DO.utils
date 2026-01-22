@@ -8,33 +8,31 @@
 #' [disease-ontology.org](https://disease-ontology.org/).
 #'
 #' @inheritParams format_subtree
+#' @param parent_col The column with 'parent' class IDs.
 #'
 #' @family format_subtree() helpers
 #' @noRd
-as_subtree_tidygraph <- function(subtree_df, top_node) {
+as_subtree_tidygraph <- function(subtree_df, top_node, id_string) {
+    parent_col <- paste0("parent_", id_string)
     # keep all parent info in labels
-    label_df <- collapse_col_flex(
-        subtree_df,
-        "parent_id",
-        "parent_label"
-    )
+    label_df <- collapse_col(subtree_df, c(parent_col, "parent_label"))
 
     # exclude parents which are not subclasses of top_node (usually due to
     #   multi-parentage)
-    df <- dplyr::filter(subtree_df, .data$parent_id %in% .data$id)
+    df <- dplyr::filter(subtree_df, .data[[parent_col]] %in% .data[[id_string]])
 
     # fill in subclasses where multi-parentage is within tree
-    df <- fill_subclass(df)
+    df <- fill_subclass(df, id_string)
 
     # create tidygraph
     tg <- df %>%
-        dplyr::select("id", "parent_id") %>%
+        dplyr::select(dplyr::all_of(c(id_string, parent_col))) %>%
         tidygraph::as_tbl_graph() %>%
         # fix needed for labels to match correctly
         tidygraph::activate("nodes") %>%
         dplyr::mutate(
             name = dplyr::if_else(
-                .data$name %in% label_df$id,
+                .data$name %in% label_df[[id_string]],
                 .data$name,
                 stringr::str_remove(.data$name, "-[0-9]+$")
             )
@@ -42,7 +40,7 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
         # add labels
         tidygraph::left_join(
             label_df,
-            by = c("name" = "id")
+            by = c("name" = id_string)
         )
 
     tg
@@ -57,10 +55,12 @@ as_subtree_tidygraph <- function(subtree_df, top_node) {
 #'
 #' @param subtree_tg A subtree tidygraph from [as_subtree_tidygraph()].
 #' @inheritParams format_subtree
+#' @inheritParams as_subtree_tidygraph
 #'
 #' @family format_subtree() helpers
 #' @noRd
-pivot_subtree <- function(subtree_tg, top_node) {
+pivot_subtree <- function(subtree_tg, top_node, id_string) {
+    parent_col <- paste0("parent_", id_string)
 
     # ensure alphabetical order of classes to match disease-ontology.org
     tg <- tidygraph::arrange(subtree_tg, .data$label)
@@ -90,7 +90,7 @@ pivot_subtree <- function(subtree_tg, top_node) {
         dplyr::mutate(duplicated = all_duplicated(.data$name)) %>%
         # mv supporting info to left & tree to right
         dplyr::select(
-            "parent_id", "parent_label", id = "name",
+            dplyr::all_of(parent_col), "parent_label", id = "name",
             dplyr::everything()
         ) %>%
         tidyr::pivot_wider(
@@ -110,12 +110,12 @@ pivot_subtree <- function(subtree_tg, top_node) {
 #' ensures that the subclasses appear each time their parent/superclass does.
 #'
 #' @inheritParams as_subtree_tidygraph
-#'
+#' @inheritParams as_subtree_tidygraph
 #' @family format_subtree() > as_subtree_tidygraph() helpers
 #' @noRd
-fill_subclass <- function(subtree_df) {
-
-    not_dup <- dplyr::filter(subtree_df, !duplicated(.data$id))
+fill_subclass <- function(subtree_df, id_string) {
+    parent_col <- paste0("parent_", id_string)
+    not_dup <- dplyr::filter(subtree_df, !duplicated(.data[[id_string]]))
 
     lvl <- 1
     res_n <- 1L
@@ -124,14 +124,14 @@ fill_subclass <- function(subtree_df) {
     while (res_n > 0) {
         if (lvl == 1) {
             new_rows[[lvl]] <- subtree_df %>%
-                dplyr::filter(duplicated(.data$id)) %>%
-                dplyr::mutate(id_new = paste(.data$id, lvl, sep = "-"))
+                dplyr::filter(duplicated(.data[[id_string]])) %>%
+                dplyr::mutate(id_new = paste(.data[[id_string]], lvl, sep = "-"))
         } else {
             new_rows[[lvl]] <- subtree_df %>%
-                dplyr::filter(.data$parent_id %in% new_rows[[lvl - 1]]$id) %>%
+                dplyr::filter(.data[[parent_col]] %in% new_rows[[lvl - 1]]$id) %>%
                 dplyr::mutate(
-                    id_new = paste(.data$id, lvl, sep = "-"),
-                    parent_id_new = paste(.data$parent_id, lvl - 1, sep = "-")
+                    id_new = paste(.data[[id_string]], lvl, sep = "-"),
+                    parent_id_new = paste(.data[[parent_col]], lvl - 1, sep = "-")
                 )
         }
         res_n <- nrow(new_rows[[lvl]])
@@ -149,14 +149,18 @@ fill_subclass <- function(subtree_df) {
             #   https://github.com/tidyverse/funs/issues/54#issuecomment-892377998
             id = do.call(
                 dplyr::coalesce,
-                rev(dplyr::across(dplyr::starts_with("id")))
+                rev(dplyr::across(dplyr::starts_with(id_string)))
             ),
             parent_id = do.call(
                 dplyr::coalesce,
-                rev(dplyr::across(dplyr::starts_with("parent_id")))
+                rev(dplyr::across(dplyr::starts_with(parent_col)))
             )
         ) %>%
-        dplyr::select("id", "label", "parent_id", "parent_label")
+        dplyr::select(
+            dplyr::all_of(
+                c(id_string, "label", parent_col, "parent_label")
+            )
+        )
 
     filled_df
 }
