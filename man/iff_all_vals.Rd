@@ -19,3 +19,15 @@ included to assist in identifying non-conformity.
 Returns \code{TRUE} if, and only if, all \code{values} are present in \code{x} and ONLY
 those \code{values} are present in \code{x}.
 }
+\seealso{
+Other predicates: 
+\code{\link{all_duplicated}()},
+\code{\link{char_val_predicates}},
+\code{\link{is_curie}()},
+\code{\link{is_invariant}()},
+\code{\link{is_uri}()},
+\code{\link{lgl_predicates}},
+\code{\link{num_val_predicates}},
+\code{\link{obo_ID_predicates}}
+}
+\concept{predicates}

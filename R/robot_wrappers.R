@@ -31,7 +31,13 @@ convert_to_ofn <- function(path, out_path = NULL, gzip = FALSE,
     }
 
     tools::file_ext(out_path)
-    robot("convert", i = path, o = out_path, format = "ofn", .path = .robot_path)
+    robot(
+        "convert",
+        i = path,
+        o = out_path,
+        format = "ofn",
+        .robot_path = .robot_path
+    )
     invisible(out_path)
 }
 

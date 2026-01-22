@@ -28,3 +28,17 @@ print.oieb <- function(x, ...) {
     print(omim, quote = FALSE, ...)
     print(doid, quote = FALSE, ...)
 }
+
+
+#' Print Method for Suggested Regex
+#'
+#' Prints suggested regex along with details from `suggest_regex()`.
+#'
+#' @param x An object of class `suggested_regex`.
+#' @inheritDotParams base::print.default
+#'
+#' @export
+print.suggested_regex <- function(x, ...) {
+    cat("Suggested regex: ", x, "\n", "Details:\n", sep = "")
+    print(attr(x, "details"), ...)
+}

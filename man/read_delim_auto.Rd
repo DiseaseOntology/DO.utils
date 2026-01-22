@@ -4,7 +4,7 @@
 \alias{read_delim_auto}
 \title{Automatically Identify & Read TSV/CSV files (INTERNAL)}
 \usage{
-read_delim_auto(file, ..., show_col_types = FALSE)
+read_delim_auto(file, ..., strict = TRUE, show_col_types = FALSE)
 }
 \arguments{
 \item{file}{Either a path to a file, a connection, or literal data
@@ -72,7 +72,7 @@ character represents one column:
 
 By default, reading a file without a column specification will print a
 message showing what \code{readr} guessed they were. To remove this message,
-set \code{show_col_types = FALSE} or set `options(readr.show_col_types = FALSE).}
+set \code{show_col_types = FALSE} or set \code{options(readr.show_col_types = FALSE)}.}
     \item{\code{col_select}}{Columns to include in the results. You can use the same
 mini-language as \code{dplyr::select()} to refer to the columns by name. Use
 \code{c()} to use more than one selection expression. Although this
@@ -106,9 +106,11 @@ supported:
 \itemize{
 \item \code{"minimal"}: No name repair or checks, beyond basic existence of names.
 \item \code{"unique"} (default value): Make sure names are unique and not empty.
-\item \code{"check_unique"}: no name repair, but check they are \code{unique}.
+\item \code{"check_unique"}: No name repair, but check they are \code{unique}.
+\item \code{"unique_quiet"}: Repair with the \code{unique} strategy, quietly.
 \item \code{"universal"}: Make the names \code{unique} and syntactic.
-\item A function: apply custom name repair (e.g., \code{name_repair = make.names}
+\item \code{"universal_quiet"}: Repair with the \code{universal} strategy, quietly.
+\item A function: Apply custom name repair (e.g., \code{name_repair = make.names}
 for names in the style of base R).
 \item A purrr-style anonymous function, see \code{\link[rlang:as_function]{rlang::as_function()}}.
 }
@@ -139,6 +141,10 @@ Learn more in \code{\link[readr:should_read_lazy]{should_read_lazy()}} and in th
 \code{altrep} argument of \code{\link[vroom:vroom]{vroom::vroom()}}.}
   }}
 
+\item{strict}{Whether delimiter should be found in all lines (default:
+\code{TRUE}), or just a majority of lines. If \code{FALSE}, an attempt is made to guess
+the delimiter for data that may not be entirely delimited.}
+
 \item{show_col_types}{If \code{FALSE}, do not show the guessed column types. If
 \code{TRUE} always show the column types, even if they are supplied. If \code{NULL}
 (the default) only show the column types if they are not explicitly supplied
@@ -146,7 +152,8 @@ by the \code{col_types} argument.}
 }
 \description{
 A light wrapper around \code{\link[readr:read_delim]{readr::read_delim()}} that automatically identifies
-the delimiter based on file extension (can include compression extensions).
+the delimiter based on file extension (can include compression extensions),
+or for literal data by identifying the most likely delimiter.
 }
 \details{
 Note that this function is primarily intended for internal use; therefore,

@@ -46,7 +46,7 @@
 #' @export
 robot <- function(..., .robot_path = NULL) {
     check_robot(.robot_path)
-    dots <- list(...)
+    dots <- convert_robot_tf(...)
     args <- stringr::str_trim(names(dots))
 
     if (length(args) == 0) {
@@ -241,4 +241,18 @@ robot_error <- function(msg = NULL, class = NULL) {
 
     class <- append(class, values = "robot_error")
     rlang::abort(msg, class, .frame = parent.frame())
+}
+
+# convert TRUE/FALSE to robot-compatible "true"/"false"
+convert_robot_tf <- function(...) {
+    x <- list(...)
+    purrr::map(
+        x,
+        function(.x) {
+            if (!.x %in% c(TRUE, FALSE) & !.x %in% c("TRUE", "FALSE")) {
+                return(.x)
+            }
+            tolower(.x)
+        }
+    )
 }

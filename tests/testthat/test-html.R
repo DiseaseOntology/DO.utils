@@ -1,3 +1,5 @@
+# build_hyperlink() tests -------------------------------------------------
+
 test_that("build_hyperlink() example works", {
     expect_equal(
         build_hyperlink(
@@ -36,5 +38,104 @@ test_that("build_hyperlink() works with vectors", {
             sep = c("_", "?ui=")
         ),
         gs_expect
+    )
+})
+
+
+# html_in_rows() tests ----------------------------------------------------
+
+test_that("html_in_rows() works", {
+    expect_equal(
+        html_in_rows(c("<b>Hi!</b>", "", "", "What's", "your", "name")),
+        c(
+            "    <tr>",
+            "      <td><b>Hi!</b></td>",
+            "      <td></td>",
+            "      <td></td>",
+            "    </tr>",
+            "    <tr>",
+            "      <td>What's</td>",
+            "      <td>your</td>",
+            "      <td>name</td>",
+            "    </tr>"
+        )
+    )
+    expect_equal(
+        html_in_rows(
+            c("<b>Hi!</b>", "", "", "What's", "your", "name"),
+            row_attr = c(class = "hiyah"),
+            cell_attr = c(class = "special")
+        ),
+        c(
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\"><b>Hi!</b></td>",
+            "      <td class=\"special\"></td>",
+            "      <td class=\"special\"></td>",
+            "    </tr>",
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\">What's</td>",
+            "      <td class=\"special\">your</td>",
+            "      <td class=\"special\">name</td>",
+            "    </tr>"
+        )
+    )
+    expect_equal(
+        html_in_rows(
+            c("<b>Hi!</b>", "", "", "What's", "your", "name"),
+            row_attr = c(class = "hiyah"),
+            cell_attr = c(class = "special"),
+            per_row = 2
+        ),
+        c(
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\"><b>Hi!</b></td>",
+            "      <td class=\"special\"></td>",
+            "    </tr>",
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\"></td>",
+            "      <td class=\"special\">What's</td>",
+            "    </tr>",
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\">your</td>",
+            "      <td class=\"special\">name</td>",
+            "    </tr>"
+        )
+    )
+    expect_equal(
+        html_in_rows(
+            c("<b>Hi!</b>", "", "", "What's", "your", "name"),
+            row_attr = c(class = "hiyah"),
+            cell_attr = c(class = "special"),
+            per_row = 2
+        ),
+        c(
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\"><b>Hi!</b></td>",
+            "      <td class=\"special\"></td>",
+            "    </tr>",
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\"></td>",
+            "      <td class=\"special\">What's</td>",
+            "    </tr>",
+            "    <tr class=\"hiyah\">",
+            "      <td class=\"special\">your</td>",
+            "      <td class=\"special\">name</td>",
+            "    </tr>"
+        )
+    )
+    expect_equal(
+        html_in_rows(c("<b>Hi!</b>", "", "", "What's", "your", "name"), indent_n = 4),
+        c(
+            "        <tr>",
+            "          <td><b>Hi!</b></td>",
+            "          <td></td>",
+            "          <td></td>",
+            "        </tr>",
+            "        <tr>",
+            "          <td>What's</td>",
+            "          <td>your</td>",
+            "          <td>name</td>",
+            "        </tr>"
+        )
     )
 })

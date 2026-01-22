@@ -374,7 +374,7 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
     owl <- access_owl_xml(x)
     assert_string(top_node)
 
-    top_class <- format_doid(top_node, as = "obo_CURIE")
+    top_class <- format_doid(top_node, as = "obo_curie")
     q <- glue::glue(subtree_query_glue)
     subtree <- owl$query(q, reload = reload) %>%
         tibble::as_tibble()
@@ -567,6 +567,115 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
         tidy_what = tidy_what,
         col_types = readr::cols(.default = readr::col_character())
     )
+
+    out
+}
+
+
+#' Extract Mappings from an OBO Foundry Ontology
+#'
+#' Extract mappings from the OBO Foundry Ontology as SSSOM. .
+#'
+#' @param onto_path The path to an ontology file recognizable by
+#' [ROBOT](https://robot.obolibrary.org/), as a string.
+#' @param id A character vector of IRIs or CURIEs to filter results to or
+#' `NULL` (default) to return all mappings.
+#' @param version_as The format for `subject_source_version`, if a
+#' `versionIRI` is found, as a string. One of:
+#'
+#' * `"release"` (default): Use the ontology's release version as a string.
+#'   Assumes that the release version in the `versionIRI` follows `release/` or
+#'   `releases/`. Will return full `versionIRI` as fallback.
+#' * `"iri"`: Use the ontology's full `versionIRI`.
+#'
+#' @param output The path where output will be written, as a string, or `NULL`
+#' (default) to load data directly.
+#' @inheritParams robot_query
+#' @param split_prefix_date Whether to extract date suffixes, which may exist in
+#' some `object_id`s, out as the `object_source_version` and remove them from
+#' the `object_id`, as a boolean (default: `TRUE`).
+#'
+#' @returns
+#' If `output` is specified, the path to the output file with the data.
+#' Otherwise, the data as a [tibble][tibble::tibble].
+#'
+#' Mappings data will be formatted according to the
+#' [SSSOM](https://github.com/mapping-commons/sssom) specification,
+#' with an additional `status` column indicating the status (active, deprecated,
+#' etc.) of each `subject_id`.
+#'
+#' `subject_source_version` will be the ontology `versionIRI` (formatted
+#' according to `version_as` or today's date if `versionIRI` is not defined.
+#'
+#' @export
+extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
+                                 output = NULL,
+                                 tidy_what = c("header", "unnest"),
+                                 split_prefix_date = TRUE) {
+    version_as <- match.arg(version_as, c("release", "iri"))
+    q_file <- system.file(
+        "sparql", "mapping-all-sssom.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    )
+    out <- robot_query(
+        input = onto_path,
+        query = q_file,
+        output = output,
+        tidy_what = tidy_what,
+        col_types = readr::cols(.default = readr::col_character())
+    )
+    out <- dplyr::mutate(
+        out,
+        dplyr::across(
+            c("subject_id", "predicate_id", "object_id"),
+            to_curie
+        ),
+        subject_source_version = stringr::str_remove_all(
+            .data$subject_source_version,
+            "^<|>$"
+        )
+    )
+
+    if (split_prefix_date) {
+        out <- dplyr::mutate(
+            out,
+            object_source_version = stringr::str_replace_all(
+                stringr::str_extract(
+                    .data$object_id,
+                    "\\d{4}[_-]\\d{2}[_-]\\d{2}"
+                ),
+                "_",
+                "-"
+            ),
+            object_id = stringr::str_remove(
+                .data$object_id,
+                "[_-]\\d{4}[_-]\\d{2}[_-]\\d{2}"
+            )
+        )
+    }
+
+    if (version_as == "release") {
+        out <- dplyr::mutate(
+            out,
+            subject_source_version = stringr::str_replace(
+                .data$subject_source_version,
+                ".*releases?/([^/]+)/.*",
+                "\\1"
+            )
+        )
+    }
+
+    if (!is.null(id)) {
+        curie <- to_curie(id)
+        # fallback to IRI match if not all can be converted to CURIEs
+        if (any(!is_curie(curie))) {
+            uri <- to_uri(curie)
+            out <- dplyr::filter(out, to_uri(.data$subject_id) %in% uri)
+        } else {
+            out <- dplyr::filter(out, .data$subject_id %in% curie)
+        }
+    }
 
     out
 }

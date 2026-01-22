@@ -145,3 +145,10 @@ test_that("append_to_url() can handle missing values", {
         )
     )
 })
+
+
+test_that("append_to_url() outputs `NA` instead of non-URL", {
+    expect_equal(append_to_url("ha", "not_a_url"), NA_character_)
+    # not going to be perfect for unrecognized schemes --> limit to http(s)/ftp?
+    expect_equal(append_to_url("ha", "unknown.scheme:"), "unknown.scheme:ha")
+})

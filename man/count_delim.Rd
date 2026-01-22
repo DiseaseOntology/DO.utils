@@ -17,8 +17,8 @@ count_delim(
 \arguments{
 \item{data}{A data.frame.}
 
-\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Variables to group
-by.}
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Variables to first
+lengthen, then count by.}
 
 \item{delim}{A delimiter to split elements within specified columns by
 (default: "|").}
@@ -40,4 +40,27 @@ numeric or logical. NOTE: "NA" strings will \emph{always} be converted to \code{
 }
 \description{
 Counts columns when values within them are delimited.
+}
+\examples{
+.df <- tibble::tibble(
+    x = 1:3,
+    y = c("1|2", "1|3", "2"),
+    z = c("1", "2|3", "1|3")
+)
+
+# counts undelimited columns like dplyr::count()
+count_delim(.df, x)
+
+# counts all delimited values
+count_delim(.df, y)
+
+# works for multiple columns that use the same delimiter
+count_delim(.df, y, z)
+
+# but not those that use different delimiters
+.df2 <- dplyr::mutate(.df, z = stringr::str_replace(z, "\\\\|", "\%"))
+.df2
+
+count_delim(.df2, y, z, delim = "\%")
+
 }

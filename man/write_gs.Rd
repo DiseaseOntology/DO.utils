@@ -3,20 +3,23 @@
 \name{write_gs}
 \alias{write_gs}
 \alias{write_gs.omim_inventory}
+\alias{write_gs.data.frame}
 \title{Write Data to a Google Sheet}
 \usage{
-write_gs(data, ss, hyperlink_curie = NULL, ...)
+write_gs(data, ss, sheet = NULL, hyperlink_curie = NULL, ...)
 
 \method{write_gs}{omim_inventory}(
   data,
   ss,
+  sheet = "omim_inventory-\%Y\%m\%d",
   hyperlink_curie = c("omim", "doid"),
-  datestamp = "\%Y\%m\%d",
   ...
 )
+
+\method{write_gs}{data.frame}(data, ss, sheet = "data-\%Y\%m\%d", hyperlink_curie = NULL, ...)
 }
 \arguments{
-\item{data}{A specially-classed data.frame with a defined method.}
+\item{data}{A data.frame, possibly with a defined method.}
 
 \item{ss}{Something that identifies a Google Sheet:
 \itemize{
@@ -30,19 +33,32 @@ returns
 
 Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 
+\item{sheet}{The name to use for the sheet to write into (i.e. the tab name
+in a worksheet). If a date format recognized by \code{\link[=format.Date]{format.Date()}} is
+included in the string, today's date will be added in the specified format
+and location.
+
+For each method, the default is a method-specific term appended with a date
+format lacking separators (e.g. 20250101 for 2025-01-01).
+
+\strong{\emph{WARNING:}} If a sheet with the same name exists in the Google Sheet file
+it will be overwritten.}
+
 \item{hyperlink_curie}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> The
 columns with CURIEs to convert to hyperlinks when written in Google Sheets.}
 
 \item{...}{Arguments passed on to methods.}
-
-\item{datestamp}{\code{NULL} or \code{NA} to use the default sheet name
-('omim_inventory') or a format recognized by \code{\link[=format.Date]{format.Date()}} to add a date
-stamp suffix, separated by '-', to the default sheet name.}
 }
 \value{
-The data as written to the Google Sheet, invisibly.
+The input \code{ss}, as an instance of \link[googlesheets4:sheets_id]{googlesheets4::sheets_id}.
 }
 \description{
 Specialized methods for writing data created by \code{DO.utils} to a specified
 Google Sheet.
 }
+\section{Deprecated arguments}{
+
+\code{sheet_nm} and \code{datestamp} have been deprecated in favor of \code{sheet} which
+supports more flexible naming, including names without dates.
+}
+

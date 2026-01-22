@@ -11,3 +11,6 @@ setup_docs/*pseudocode*
 setup_docs/benchmarks/*reprex*
 __pycache__
 /.idea
+
+# Mac files
+.DS_Store

@@ -1,3 +1,59 @@
+
+# read_omim() tests -------------------------------------------------------
+
+##################################################
+# For official API (aka generated) downloads
+##################################################
+
+test_that("read_omim() works for key-required phenotypicSeries.txt downloads", {
+    expected <- structure(
+        list(
+            phenotypic_series_number = c("PS100070", "PS100070", "PS100070",
+                                         "PS100070"),
+            mim_number = c(NA, 100070, 609782, 611891),
+            phenotype = c("Aortic aneurysm, familial abdominal",
+                          "Aortic aneurysm, familial abdominal 1",
+                          "Aortic aneurysm, familial abdominal 2",
+                          "{Aneurysm, familial abdominal 3}")
+        ),
+        row.names = c(NA, -4L),
+        class = c("omim_PS_complete", "omim_tbl", "spec_tbl_df", "tbl_df",
+                  "tbl", "data.frame"),
+        omim_official = TRUE
+    )
+
+    expect_equal(read_omim("data/omim/omim-ps_complete.txt"), expected)
+})
+
+
+##################################################
+# For official website downloads
+##################################################
+
+# PS titles can be downloaded from https://www.omim.org/phenotypicSeriesTitles/
+test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES", {
+    expected <- structure(
+        list(
+            omim = c(
+                "MIM:PS605552", "MIM:PS200600", "MIM:PS142690", "MIM:PS101800"
+            ),
+            phenotypic_series_title = c(
+                "Abdominal obesity-metabolic syndrome", "Achondrogenesis",
+                "Acne inversa", "Acrodysostosis"
+            ),
+            phenotypic_series_number = c(
+                "PS605552", "PS200600", "PS142690", "PS101800"
+            )
+        ),
+        row.names = c(NA, -4L),
+        class = c("omim_PS_titles", "omim_tbl", "tbl_df", "tbl", "data.frame"),
+        omim_official = TRUE
+    )
+
+    expect_equal(read_omim("data/omim/omim-dl-ps_titles.tsv"), expected)
+})
+
+# search downloads
 search_expected <- structure(
     list(
         omim = c(
@@ -66,45 +122,24 @@ search_expected <- structure(
 
 test_that("read_omim() works for OFFICIAL download of SEARCH results", {
     expect_equal(
-        read_omim("data/omim/omim-search_dl.tsv"),
+        read_omim("data/omim/omim-dl-search.tsv"),
         dplyr::filter(search_expected, mim_symbol %in% c("#", "%"))
     )
 })
 
 test_that("read_omim() keep_mim arg works", {
     expect_equal(
-        read_omim("data/omim/omim-search_dl.tsv", keep_mim = "none"),
+        read_omim("data/omim/omim-dl-search.tsv", keep_mim = "none"),
         dplyr::filter(search_expected, mim_symbol == "none")
     )
     expect_equal(
-        read_omim("data/omim/omim-search_dl.tsv", keep_mim = NULL),
+        read_omim("data/omim/omim-dl-search.tsv", keep_mim = NULL),
         search_expected
     )
-    expect_error(read_omim("data/omim/omim-search_dl.tsv", keep_mim = "@"))
+    expect_error(read_omim("data/omim/omim-dl-search.tsv", keep_mim = "@"))
 })
 
-test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES", {
-    expected <- structure(
-        list(
-            omim = c(
-                "MIM:PS605552", "MIM:PS200600", "MIM:PS142690", "MIM:PS101800"
-            ),
-            phenotypic_series_title = c(
-                "Abdominal obesity-metabolic syndrome", "Achondrogenesis",
-                "Acne inversa", "Acrodysostosis"
-            ),
-            phenotypic_series_number = c(
-                "PS605552", "PS200600", "PS142690", "PS101800"
-            )
-        ),
-        row.names = c(NA, -4L),
-        class = c("omim_PS_titles", "omim_tbl", "tbl_df", "tbl", "data.frame"),
-        omim_official = TRUE
-    )
-
-    expect_equal(read_omim("data/omim/omim-ps_titles_dl.tsv"), expected)
-})
-
+# phenotypic series downloads
 ps_df <- structure(
     list(
         omim = c("MIM:PS613135", "MIM:619738", "MIM:613135", "MIM:618049"),
@@ -131,8 +166,13 @@ ps_df <- structure(
 )
 
 test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES", {
-  expect_equal(read_omim("data/omim/omim-ps_dl.tsv"), ps_df)
+  expect_equal(read_omim("data/omim/omim-dl-ps.tsv"), ps_df)
 })
+
+
+##################################################
+# For copy-pasted data
+##################################################
 
 test_that("read_omim() works for COPIED data (PS or with entry info)", {
     ps_df_cp <- ps_df %>%
@@ -141,27 +181,6 @@ test_that("read_omim() works for COPIED data (PS or with entry info)", {
     attr(ps_df_cp, "omim_official") <- FALSE
     class(ps_df_cp) <- class(ps_df)[-1]
 
-    expect_equal(read_omim("data/omim/omim-ps_cp-ps_page.csv"), ps_df_cp)
-    # expect_snapshot(read_omim("data/omim/omim-ps_cp-ps_page_w_ps.csv")) # not supported
-    expect_equal(read_omim("data/omim/omim-ps_cp-entry_page.csv"), ps_df_cp)
-    # expect_snapshot(read_omim("data/omim/omim-ps_cp-entry_page_w_ps.csv")) # not supported
-})
-
-test_that("read_omim() works for key-required phenotypicSeries.txt downloads", {
-    expected <- structure(
-        list(
-            phenotypic_series_number = c("PS100070", "PS100070", "PS100070",
-                                         "PS100070"),
-            mim_number = c(NA, 100070, 609782, 611891),
-            phenotype = c("Aortic aneurysm, familial abdominal",
-                          "Aortic aneurysm, familial abdominal 1",
-                          "Aortic aneurysm, familial abdominal 2",
-                          "{Aneurysm, familial abdominal 3}")
-        ),
-        row.names = c(NA, -4L),
-        class = c("omim_PS_complete", "omim_tbl", "spec_tbl_df", "tbl_df",
-                  "tbl", "data.frame")
-    )
-
-    expect_equal(read_omim("data/omim/omim-ps_complete.txt"), expected)
+    expect_equal(read_omim("data/omim/omim-cp-ps.csv"), ps_df_cp)
+    expect_equal(read_omim("data/omim/omim-cp-entry-p-ps.csv"), ps_df_cp)
 })

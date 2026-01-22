@@ -44,57 +44,80 @@ write_graphml <- function(graph, file) {
 #' Specialized methods for writing data created by `DO.utils` to a specified
 #' Google Sheet.
 #'
-#' @param data A specially-classed data.frame with a defined method.
+#' @param data A data.frame, possibly with a defined method.
 #' @inheritParams googlesheets4::write_sheet
+#' @param sheet The name to use for the sheet to write into (i.e. the tab name
+#' in a worksheet). If a date format recognized by [format.Date()] is
+#' included in the string, today's date will be added in the specified format
+#' and location.
+#'
+#' For each method, the default is a method-specific term appended with a date
+#' format lacking separators (e.g. 20250101 for 2025-01-01).
+#'
+#' **_WARNING:_** If a sheet with the same name exists in the Google Sheet file
+#' it will be overwritten.
+#'
 #' @param hyperlink_curie <[`tidy-select`][tidyr::tidyr_tidy_select]> The
 #' columns with CURIEs to convert to hyperlinks when written in Google Sheets.
 #' @param ... Arguments passed on to methods.
 #'
-#' @returns The data as written to the Google Sheet, invisibly.
+#' @section Deprecated arguments:
+#' `sheet_nm` and `datestamp` have been deprecated in favor of `sheet` which
+#' supports more flexible naming, including names without dates.
+#'
+#' @returns The input `ss`, as an instance of [googlesheets4::sheets_id].
+#'
 #' @export
-write_gs <- function(data, ss, hyperlink_curie = NULL, ...) {
+write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
+    stopifnot(
+        "`sheet` must be a character string or `NULL`" =
+            is.null(sheet) || rlang::is_string(sheet)
+    )
+    dot_nm <- names(list(...))
+    if (any(dot_nm %in% c("sheet_nm", "datestamp"))) {
+        rlang::abort(
+            "`sheet_nm` and `datestamp` are deprecated; use `sheet` instead.",
+            class = "deprecated"
+        )
+    }
     UseMethod("write_gs")
 }
 
 #' @rdname write_gs
-#'
-#' @param datestamp `NULL` or `NA` to use the default sheet name
-#' ('omim_inventory') or a format recognized by [format.Date()] to add a date
-#' stamp suffix, separated by '-', to the default sheet name.
-#'
 #' @export
-write_gs.omim_inventory <- function(data, ss,
-                                    hyperlink_curie = c("omim", "doid"),
-                                    datestamp = "%Y%m%d", ...) {
-    hyperlink_curie <- tidyselect::eval_select(
+write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
+                                    hyperlink_curie = c("omim", "doid"), ...) {
+    gs_info <- write_gs.data.frame(
+        data = data,
+        ss = ss,
+        sheet = sheet,
+        hyperlink_curie = hyperlink_curie,
+        ...
+    )
+    invisible(gs_info)
+}
+
+#' @rdname write_gs
+#' @export
+write_gs.data.frame <- function(data, ss, sheet = "data-%Y%m%d",
+                                hyperlink_curie = NULL, ...) {
+    if (!is.null(sheet)) sheet <- format(Sys.Date(), sheet)
+
+    hyperlink_col <- tidyselect::eval_select(
         tidyselect::enquo(hyperlink_curie),
         data
     )
-    if (length(hyperlink_curie) > 0) {
+    if (length(hyperlink_col) > 0) {
         data <- dplyr::mutate(
             data,
             dplyr::across(
-                .cols = {{ hyperlink_curie }},
-                .fns = ~ build_hyperlink(
-                    x = stringr::str_remove(.x, ".*:"),
-                    url = stringr::str_remove(.x, ":.*"),
-                    text = .x,
-                    as = "gs"
-                )
+                .cols = dplyr::all_of(hyperlink_col),
+                .fns = ~ hyperlink_curie(.x, as = "gs")
             )
         )
     }
 
-    sheet_nm <- "omim_inventory"
-    if (!is.null(datestamp) && !is.na(datestamp)) {
-        sheet_nm <- paste(sheet_nm, format(Sys.Date(), datestamp), sep = "-")
-    }
+    gs_info <- googlesheets4::write_sheet(data, ss, sheet)
 
-    googlesheets4::write_sheet(
-        data = data,
-        ss = ss,
-        sheet = sheet_nm
-    )
-
-    invisible(data)
+    invisible(gs_info)
 }

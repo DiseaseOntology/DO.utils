@@ -11,12 +11,13 @@ Description: Generally useful tools to assess use of public resources in
 License: CC0
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Imports:
     assertthat,
     dplyr (>= 1.1.0),
     ggplot2,
+    git2r,
     glue,
     googlesheets4,
     httr,
@@ -64,7 +65,7 @@ Config/reticulate:
         )
     )
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Remotes: allenbaron/rentrez
 VignetteBuilder: knitr
 URL: https://diseaseontology.github.io/DO.utils/

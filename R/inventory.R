@@ -56,19 +56,12 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
     }
 
     # get DO-OMIM mappings
-    q_out <- tempfile(fileext = ".tsv")
     q <- system.file(
         "sparql", "mapping-all.rq",
         package = "DO.utils",
         mustWork = TRUE
     )
-    res <- robot("query", i = onto_path, query = q, q_out)
-    do_mappings <- readr::read_tsv(
-        q_out,
-        name_repair = ~ stringr::str_remove(.x, "^\\?"),
-        show_col_types = FALSE
-    ) %>%
-        tidy_sparql()
+    do_mappings <- robot_query(onto_path, q, tidy_what = "everything")
 
     do_omim <- do_mappings %>%
         dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) %>%
@@ -182,7 +175,7 @@ multimaps <- function(x, pred, y,
     pi_split <- split(p_incl, x)
     y_split <- split(y, x)
     multimaps <- vapply(
-        1:length(y_split),
+        seq_along(y_split),
         function(i) {
             y_in <- y_split[[i]][pi_split[[i]]]
             dplyr::n_distinct(y_in, na.rm = TRUE) > 1

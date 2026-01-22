@@ -96,6 +96,7 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
 #' length_order(x, c("y", "z"))
 #' length_order(x, c("y", "z"), decreasing = TRUE)
 #'
+#' @family general utilities
 #' @export
 length_sort <- function(x, by_name = FALSE, ...) {
     if (by_name) {
@@ -129,68 +130,6 @@ length_order <- function(data, cols, ...) {
 }
 
 
-#' Identify all duplicates
-#'
-#' Built on [base::duplicated()] but, unlike `base::duplicated()`,
-#' identifies all duplicates _including_ the first occurrence.
-#'
-#' @inheritParams base::duplicated
-#'
-#' @export
-all_duplicated <- function (x, ...)
-{
-    duplicated(x, ...) | duplicated(x, fromLast = TRUE, ...)
-}
-
-
-#' Match Length-2+ Vector Arguments
-#'
-#' Matches arguments with several inputs allowed against a set of choices.
-#' Similar to [base::match.arg()] with `several.ok = TRUE` _EXCEPT_
-#' `match_arg_several()` will signal an error for unmatching values in `arg` instead
-#' of silently dropping them.
-#'
-#' @param arg Function argument, as a character vector, or `NULL`.
-#' @param choices Candidate values, as a character vector.
-#'
-#' @keywords internal
-match_arg_several <- function(arg, choices) {
-    arg_nm <- rlang::as_string(rlang::enexpr(arg))
-    arg_missing <- !arg %in% choices
-
-    if (any(arg_missing)) {
-        if (is.character(choices)) {
-            choices <- sandwich_text(choices, '"')
-        }
-
-        msg <- paste0(
-            "`", arg_nm, "` must be one of: ",
-            vctr_to_string(choices, ", ")
-        )
-        arg_err <- arg[arg_missing]
-        if (is.character(arg)) {
-            arg_err <- sandwich_text(arg[arg_missing], '"')
-        }
-        x_err <- wrap_onscreen(
-            paste0(
-                "Not ",
-                paste0(
-                    arg_err, " (pos: ", which(arg_missing), ")",
-                    collapse = ", "
-                )
-            ),
-            exdent = 0
-        )
-        rlang::abort(
-            c(msg, x = x_err),
-            call = parent.frame()
-        )
-    }
-
-    arg
-}
-
-
 #' Suggest a Regular Expression That Will Match All Input
 #'
 #' Collects the full set of characters found at each position across all strings
@@ -199,11 +138,15 @@ match_arg_several <- function(arg, choices) {
 #' position.
 #'
 #' @param x A character vector.
-#' @param pivot Whether the resulting `tibble` should be in "wide" (default) or
-#' "long" format.
+#' @param pivot Whether the details `tibble` should be in "wide" (default) or
+#' "long" format. See Details.
 #'
-#' @returns When `pivot = "long"`, a tidy `tibble` with 3 columns and as many
-#' rows as the string length of the longest input:
+#' @returns A string of class `suggested_regex`, including detailed information
+#' in a `details` attribute, which is displayed when printed.
+#'
+#' @section Details:
+#' When `pivot = "long"`, details will be formatted as a tidy `tibble` with 3
+#' columns and as many rows as the string length of the longest input:
 #' 1. `position`: indicating the position of the character set in the input.
 #' 2. `regex`: giving the character set (in brackets),
 #' 3. `n`: the count of input strings that have a character at that `position`.
@@ -218,15 +161,17 @@ match_arg_several <- function(arg, choices) {
 #' suggest_regex(x)
 #' suggest_regex(x, "long")
 #'
+#' @family general utilities
+#' @seealso [print.suggested_regex()] for the print method.
 #' @export
 suggest_regex <- function(x, pivot = "wide") {
     pivot <- match.arg(pivot, choices = c("wide", "long"))
-    out <- tibble::tibble(position = stringr::str_length(x)) |>
+    details <- tibble::tibble(position = stringr::str_length(x)) |>
         dplyr::count(.data$position)
-    max_len <- max(out$position)
-    missing_pos <- (1:max_len)[!1:max_len %in% out$position]
-    out <- out |>
-        tibble::add_row(position = missing_pos, n = max(out$n)) |>
+    max_len <- max(details$position)
+    missing_pos <- (1:max_len)[!1:max_len %in% details$position]
+    details <- details |>
+        tibble::add_row(position = missing_pos, n = max(details$n)) |>
         dplyr::arrange(.data$position)
 
     xsplit <- stringr::str_split(x, "")
@@ -238,22 +183,27 @@ suggest_regex <- function(x, pivot = "wide") {
         invert_sublists() |>
         purrr::map_chr(
             function(.x) {
-                unlist(.x) |>
-                    sort() |>
+                candidates <- sort(unique(unlist(.x)))
+                if (length(candidates) == 1) return(candidates)
+                sandwich_text(
                     collapse_to_string(
+                        candidates,
                         delim = "",
                         na.rm = TRUE,
                         unique = TRUE
-                    )
+                    ),
+                    c("[", "]")
+                )
             }
-        ) |>
-        sandwich_text(c("[", "]"))
+        )
 
-    out <- out |>
+    details <- details |>
         dplyr::mutate(regex = chr_at_pos, .after = "position")
 
+    out <- paste0(details$regex, collapse = "")
+
     if (pivot == "wide") {
-        out <- out |>
+        details <- details |>
             dplyr::mutate(n = as.character(.data$n)) |>
             dplyr::rename(pos = "position") |>
             tidyr::pivot_longer(
@@ -266,8 +216,61 @@ suggest_regex <- function(x, pivot = "wide") {
                 values_from = "value"
             )
     }
-
+    class(out) <- c("suggested_regex", class(out))
+    attr(out, "details") <- details
     out
+}
+
+
+#' Calculate Maximum Parentheses Depth
+#'
+#' Calculates the maximum depth of nested parentheses in a string or character
+#' vector.
+#'
+#' @param x A character vector.
+#' @param unmatched_err Whether to signal an error or return `NA` for strings
+#' with unmatched parentheses,
+#'
+#' @returns An integer vector of the same length as the input giving the maximum
+#' depth of nested parentheses in each element. `NA` will bStrings with unmatched
+#' parentheses will return `NA`
+#'
+#' @examples
+#' max_paren_depth(c("no parens", "a (1 deep)", "((a) and (b or (3 deep)))"))
+#'
+#' # errs by default
+#' tryCatch(
+#'   max_paren_depths("unmatched ( paren"),
+#'   error = function(e) print(e$message)
+#' )
+#'
+#' # allow `NA` output for unmatched parentheses
+#' max_paren_depth("unmatched ( paren", unmatched_err = FALSE)
+#' max_paren_depth(
+#'   c("a (1 deep)", "((a) and (b or (3 deep)))", "unmatched ( paren"),
+#'   unmatched_err = FALSE
+#' )
+#'
+#' @family general utilities
+#' @export
+max_paren_depth <- function(x, unmatched_err = TRUE) {
+    str_paren_depth <- function(s, unmatched_err = TRUE) {
+        stopifnot(
+            "`unmatched_err` must be a boolean" = rlang::is_bool(unmatched_err)
+        )
+        chars <- strsplit(s, "")[[1]]
+        paren <- ifelse(chars == "(", 1L, ifelse(chars == ")", -1L, 0L))
+        if (length(paren) == 0) return(0L)
+        cum <- cumsum(paren)
+        if (any(cum < 0) || utils::tail(cum, 1) != 0) {
+            if (unmatched_err) {
+                stop("Unmatched parentheses detected in string: '", s, "'")
+            }
+            return(NA_integer_)
+        }
+        max(c(0L, cum))
+    }
+    vapply(x, str_paren_depth, integer(1), unmatched_err = unmatched_err)
 }
 
 
@@ -352,6 +355,54 @@ arabic_to_roman <- function(x) {
     replace_vctr <- as.character(utils::as.roman(numbers))
     names(replace_vctr) <- numbers
     stringr::str_replace_all(x, replace_vctr)
+}
+
+
+#' Match Length-2+ Vector Arguments
+#'
+#' Matches arguments with several inputs allowed against a set of choices.
+#' Similar to [base::match.arg()] with `several.ok = TRUE` _EXCEPT_
+#' `match_arg_several()` will signal an error for unmatching values in `arg` instead
+#' of silently dropping them.
+#'
+#' @param arg Function argument, as a character vector, or `NULL`.
+#' @param choices Candidate values, as a character vector.
+#'
+#' @keywords internal
+match_arg_several <- function(arg, choices) {
+    arg_nm <- rlang::as_string(rlang::enexpr(arg))
+    arg_missing <- !arg %in% choices
+
+    if (any(arg_missing)) {
+        if (is.character(choices)) {
+            choices <- sandwich_text(choices, '"')
+        }
+
+        msg <- paste0(
+            "`", arg_nm, "` must be one of: ",
+            vctr_to_string(choices, ", ")
+        )
+        arg_err <- arg[arg_missing]
+        if (is.character(arg)) {
+            arg_err <- sandwich_text(arg[arg_missing], '"')
+        }
+        x_err <- wrap_onscreen(
+            paste0(
+                "Not ",
+                paste0(
+                    arg_err, " (pos: ", which(arg_missing), ")",
+                    collapse = ", "
+                )
+            ),
+            exdent = 0
+        )
+        rlang::abort(
+            c(msg, x = x_err),
+            call = parent.frame()
+        )
+    }
+
+    arg
 }
 
 
@@ -457,7 +508,7 @@ list_to_man <- function(x, ordered = FALSE) {
         rlang::abort("All elements in `x` must be named.")
     }
     list_item <- if (ordered) {
-        paste0(1:length(names(x)), ". ")
+        paste0(seq_along(names(x)), ". ")
     } else {
         "* "
     }

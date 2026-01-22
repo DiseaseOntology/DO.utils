@@ -85,44 +85,29 @@ test_that("length_order() works", {
 })
 
 
-# all_duplicated() tests --------------------------------------------------
+# max_paren_depth() tests -------------------------------------------------
 
-na_dup <- c(NA, 1, 1:7, NA)
-df_dup <- data.frame(
-    x = c(NA, 1, 1:7, NA),
-    y = c(NA, 1, 1:7, NA)
-)
+x <- c("no parens", "a (1 deep)", "((a) and (b or (3 deep)))")
+out <- setNames(c(0L, 1L, 3L), x)
 
-test_that("all_duplicated() works", {
-    expect_equal(all_duplicated(1:10), rep(FALSE, 10))
-    expect_equal(
-        all_duplicated(c(1, 1:8, 1)),
-        c(TRUE, TRUE, rep(FALSE, 7), TRUE)
-    )
-    expect_equal(
-        all_duplicated(na_dup),
-        c(rep(TRUE, 3), rep(FALSE, 6), TRUE)
-    )
-    expect_equal(
-        all_duplicated(df_dup),
-        c(rep(TRUE, 3), rep(FALSE, 6), TRUE)
-    )
+test_that("max_paren_depth() works", {
+    expect_equal(max_paren_depth(x), out)
 })
 
-test_that("all_duplicated(incomparables = NA) works", {
-    expect_equal(
-        all_duplicated(1:10, incomparables = NA),
-        rep(FALSE, 10)
-    )
-    expect_equal(
-        all_duplicated(na_dup, incomparables = NA),
-        c(FALSE, rep(TRUE, 2), rep(FALSE, 6), FALSE)
-    )
-    # not implemented for data.frames
-    # expect_equal(
-    #     all_duplicated(df_dup, incomparables = NA),
-    #     c(FALSE, rep(TRUE, 2), rep(FALSE, 6), FALSE)
-    # )
+test_that("max_paren_depth() unmatched_err arg works", {
+    uopen <- "unmatched ( paren"
+    uclose <- "unmatched ( paren ) )"
+    expect_error(max_paren_depth(uopen), regexp = stringr::str_escape(uopen))
+    expect_error(max_paren_depth(uclose), regexp = stringr::str_escape(uclose))
+
+    expect_equal(max_paren_depth(uopen, FALSE), setNames(NA_integer_, uopen))
+    expect_equal(max_paren_depth(uclose, FALSE), setNames(NA_integer_, uclose))
+
+    x[2] <- "unmatched ( paren"
+    out[2] <- NA_integer_
+    names(out) <- x
+    expect_error(max_paren_depth(x))
+    expect_equal(max_paren_depth(x, unmatched_err = FALSE), out)
 })
 
 
@@ -163,12 +148,41 @@ test_that("match_arg_several() works for integer vectors", {
 
 # suggest_regex() tests ---------------------------------------------------
 
+test_that("suggest_regex() works", {
+    x <- c("a1b", "a2b", "a3c")
+    expect <- "a[123][bc]"
+    class(expect) <- c("suggested_regex", "character")
+    attr(expect, "details") <- tibble::tibble(
+        position = c("regex", "n"),
+        `1` = c("a", "3"),
+        `2` = c("[123]", "3"),
+        `3` = c("[bc]", "3")
+    )
+    expect_equal(suggest_regex(x), expect)
+
+    # checking only output
+    equal_output_only <- function(object, expected) {
+        expect_equal(object, expected, ignore_attr = TRUE)
+    }
+    equal_output_only(suggest_regex(LETTERS), "[ABCDEFGHIJKLMNOPQRSTUVWXYZ]")
+    equal_output_only(
+        suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")),
+        "[5ADMT][2ACHN][0ACDP][12]"
+    )
+    equal_output_only(
+        suggest_regex(
+            c("GENO:0000146", "GENO:0000147", "GENO:0000930", "GENO:0000932")
+        ),
+        "GENO:0000[19][34][0267]"
+    )
+})
+
 test_that("suggest_regex(pivot = 'wide') works (default)", {
     expected <- tibble::tibble(
         position = c("regex", "n"),
         `1` = c("[ABCDEFGHIJKLMNOPQRSTUVWXYZ]", "26")
     )
-    expect_equal(suggest_regex(LETTERS), expected)
+    expect_equal(attr(suggest_regex(LETTERS), "details"), expected)
 
     expected <- tibble::tibble(
         position = c("regex", "n"),
@@ -178,7 +192,10 @@ test_that("suggest_regex(pivot = 'wide') works (default)", {
         `4` = c("[12]", "2")
     )
     expect_equal(
-        suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")),
+        attr(
+            suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD")),
+            "details"
+        ),
         expected
     )
 
@@ -197,8 +214,11 @@ test_that("suggest_regex(pivot = 'wide') works (default)", {
         `25` = c("[Yy]", "2"), `26` = c("[Zz]", "2")
     )
     expect_equal(
-        suggest_regex(
-            c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = ""))
+        attr(
+            suggest_regex(
+                c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = ""))
+            ),
+            "details"
         ),
         expected
     )
@@ -210,7 +230,7 @@ test_that("suggest_regex(pivot = 'long') works", {
         regex = "[ABCDEFGHIJKLMNOPQRSTUVWXYZ]",
         n = 26
     )
-    expect_equal(suggest_regex(LETTERS, "long"), expected)
+    expect_equal(attr(suggest_regex(LETTERS, "long"), "details"), expected)
 
     expected <- tibble::tibble(
         position = 1:4,
@@ -218,7 +238,10 @@ test_that("suggest_regex(pivot = 'long') works", {
         n = c(4, 4, 4, 2)
     )
     expect_equal(
-        suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD"), "long"),
+        attr(
+            suggest_regex(c("DNA", "MHC", "TAP1", "TAP2", "520", "ACD"), "long"),
+            "details"
+        ),
         expected
     )
 
@@ -236,9 +259,12 @@ test_that("suggest_regex(pivot = 'long') works", {
               2, 2, 2, 2)
     )
     expect_equal(
-        suggest_regex(
-            c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = "")),
-            "long"
+        attr(
+            suggest_regex(
+                c(paste0(LETTERS, collapse = ""), paste0(letters, collapse = "")),
+                "long"
+            ),
+            "details"
         ),
         expected
     )

@@ -43,6 +43,8 @@ html_col_sort.default <- function(x, cols) {
 #' @family make_use_case_html() > html_col_sort() helpers
 #' @noRd
 create_row_index <- function(len, cols) {
+    if (len < cols) return(rep(1, len))
+
     in_last_row <- len %% cols
     if (in_last_row == 0) in_last_row <- cols
     rows <- round_up(len / cols, 0)
@@ -62,22 +64,20 @@ create_row_index <- function(len, cols) {
 #' `replace_html_counts()` is the primary workhorse supporting the more
 #' generalized [update_website_count_tables()].
 #'
-#' @param DO_repo A `pyDOID.repo.DOrepo` object (see [DOrepo()]).
-#' @param svn_repo The local path to the DO website svn directory, as a string.
-#'     The correct directory will include a Dockerfile and the
-#'     'disease_ontology' directory.
-#' @param page The disease-ontology.org in which to replace counts, as a string.
-#'     Either "imports" or "slims".
-#' @param reload Whether to reload the RDF/OWL file prior to executing a SPARQL
-#'     query, as a boolean.
-#'
+#' @param DO_repo The local path to the HumanDiseaseOntology repository, as a
+#' string.
+#' @param svn_repo The local path to the DO website svn trunk, as a string.
+#' @param page The disease-ontology.org page in which to replace counts, as a
+#' string; either "imports" or "slims".
+#' @param reload _DEPRECATED_. This argument is now ignored and will be
+#'     removed in a future release.
 #' @returns
 #' Updated counts directly in the html of the svn repo for the specified page,
-#' _as well as_, the old and new counts for comparison (invisibly).
+#' as well as the old and new counts for comparison (invisibly, as a tibble).
 #'
 #' @family update_website_count_tables() helpers
-#' @noRd
-replace_html_counts <- function(DO_repo, svn_repo, page, reload = FALSE) {
+#' @keywords internal
+replace_html_counts <- function(DO_repo, svn_repo, page, reload = NULL) {
     page <- match.arg(page, choices = c("imports", "slims"))
     page_path <- switch(
         page,
@@ -98,7 +98,11 @@ replace_html_counts <- function(DO_repo, svn_repo, page, reload = FALSE) {
         imports = file.path(sparql_dir, "website-imports.rq"),
         slims = file.path(sparql_dir, "website-slims.rq")
     )
-    data_df <- DO_repo$doid_merged$query(query, reload = reload)
+    data_df <- DO.utils::robot_query(
+        input = file.path(DO_repo, "src/ontology/doid-merged.owl"),
+        query = query,
+        tidy_what = "header"
+    )
     txt_count <- format(data_df$count, big.mark = ",", trim = TRUE)
 
     # identify replacement positions in html
@@ -172,14 +176,15 @@ find_count_pos <- function(page_html, data_df, page) {
     }
 
     data_pattern <- paste0("<td>[^/]*", id)
+    tdnum_pos <- which(stringr::str_detect(page_html, "<td> *[0-9,.]+ *</td>"))
     pos <- purrr::map_dbl(
         data_pattern,
         function(.p) {
-            match_pos <- which(stringr::str_detect(page_html, .p)) + 2
+            match_pos <- which(stringr::str_detect(page_html, .p))
             if (length(match_pos) == 0) {
                 0
             } else {
-                match_pos
+                tdnum_pos[tdnum_pos > match_pos][1]
             }
         }
     )

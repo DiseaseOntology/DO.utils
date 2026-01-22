@@ -22,85 +22,87 @@ preprocess_omim_dl <- function(file, ...) {
             stringr::regex("generated", ignore_case = TRUE)
         )
     )
-    if (is_official && was_generated) {
-        # get header
-        header_n <- identify_omim_header_row(.lines)
-        header <- .lines[header_n] %>%
-            stringr::str_remove("^# *") %>%
-            stringr::str_split_1("\t")
+    if (is_official) {
+        if (was_generated) {
+            # get header
+            header_n <- identify_omim_header_row(.lines)
+            header <- .lines[header_n] %>%
+                stringr::str_remove("^# *") %>%
+                stringr::str_split_1("\t")
 
-        # determine official download type: PS_complete, etc.
-        ps_complete_col_nm <- c("Phenotypic Series Number", "MIM Number", "Phenotype")
-        if (isTRUE(all(header %in% ps_complete_col_nm))) {
-            dl_type <- "PS_complete"
+            # determine official download type: PS_complete, etc.
+            ps_complete_col_nm <- c("Phenotypic Series Number", "MIM Number", "Phenotype")
+            if (isTRUE(all(header %in% ps_complete_col_nm))) {
+                dl_type <- "PS_complete"
 
-            # fix lines with PS labels - add tab to push label to Phenotype col
-            pos_replace <- dplyr::if_else(
-                stringr::str_detect(.lines, "^PS[0-9]+\t[0-9]{6}"),
-                "\\1\t",
-                "\\1\t\t"
-            )
-            .lines <- stringr::str_replace(
-                .lines,
-                "^(PS[0-9]+)\t",
-                pos_replace
+                # fix lines with PS labels - add tab to push label to Phenotype col
+                pos_replace <- dplyr::if_else(
+                    stringr::str_detect(.lines, "^PS[0-9]+\t[0-9]{6}"),
+                    "\\1\t",
+                    "\\1\t\t"
+                )
+                .lines <- stringr::str_replace(
+                    .lines,
+                    "^(PS[0-9]+)\t",
+                    pos_replace
+                )
+            } else {
+                dl_type <- NA
+            }
+
+            df <- readr::read_tsv(
+                file = I(.lines),
+                comment = "#",
+                col_names = header,
+                show_col_types = FALSE,
+                ...
             )
         } else {
-            dl_type <- NA
+            # determine official, manual download type: search, PS, or PS_titles
+            dl_type <- stringr::str_extract(
+                .lines[1],
+                stringr::regex(
+                    "search|phenotypic series( titles)?",
+                    ignore_case = TRUE
+                )
+            ) %>%
+                stringr::str_to_lower() %>%
+                stringr::str_replace_all(
+                    c("phenotypic series" = "PS", " " = "_")
+                )
+
+            # determine location of the table & read
+            header_n <- identify_omim_header_row(.lines)
+            blank_.lines <- which(stringr::str_detect(.lines, "^[[:space:]]*$"))
+            include <- blank_.lines[blank_.lines > header_n][1] - header_n - 1
+
+            df <- read_delim_auto(
+                file,
+                skip = header_n - 1,
+                n_max = include,
+                name_repair = "minimal",
+                trim_ws = TRUE,
+                col_types = readr::cols(.default = readr::col_character()),
+                ...
+            )
+
+            if (dl_type == "PS") {
+                ps <- purrr::set_names(
+                    stringr::str_split(.lines[header_n - 1], " +- +")[[1]][1:2],
+                    c("Phenotype", "Phenotype MIM number")
+                )
+                df <- dplyr::add_row(df, !!!ps, .before = 1)
+            }
+
+            if (dl_type == "search") {
+                df <- dplyr::mutate(
+                    df,
+                    search = stringr::str_match(.lines[1], "^[^']+'(.+)'.*")[, 2],
+                    search = stringr::str_trim(search)
+                )
+            }
         }
-
-        df <- readr::read_tsv(
-            file = I(.lines),
-            comment = "#",
-            col_names = header,
-            show_col_types = FALSE,
-            ...
-        )
-    } else if (is_official) {
-        # determine official, manual download type: search, PS, or PS_titles
-        dl_type <- stringr::str_extract(
-            .lines[1],
-            stringr::regex(
-                "search|phenotypic series( titles)?",
-                ignore_case = TRUE
-            )
-        ) %>%
-            stringr::str_to_lower() %>%
-            stringr::str_replace_all(
-                c("phenotypic series" = "PS", " " = "_")
-            )
-
-        # determine location of the table & read
-        header_n <- identify_omim_header_row(.lines)
-        blank_.lines <- which(stringr::str_detect(.lines, "^[[:space:]]*$"))
-        include <- blank_.lines[blank_.lines > header_n][1] - header_n - 1
-
-        df <- read_delim_auto(
-            file,
-            skip = header_n - 1,
-            n_max = include,
-            name_repair = "minimal",
-            trim_ws = TRUE,
-            col_types = readr::cols(.default = readr::col_character()),
-            ...
-        )
         attr(df, "omim_official") <- TRUE
-
-        if (dl_type == "PS") {
-            ps <- purrr::set_names(
-                stringr::str_split(.lines[header_n - 1], " +- +")[[1]][1:2],
-                c("Phenotype", "Phenotype MIM number")
-            )
-            df <- dplyr::add_row(df, !!!ps, .before = 1)
-        }
-
-        if (dl_type == "search") {
-            df <- dplyr::mutate(
-                df,
-                search = stringr::str_match(.lines[1], "^[^']+'(.+)'.*")[, 2],
-                search = stringr::str_trim(search)
-            )
-        }
     } else {
         dl_type <- NA
         df <- read_delim_auto(
@@ -112,7 +114,10 @@ preprocess_omim_dl <- function(file, ...) {
         )
 
         # fix headers
-        header_in_df <- purrr::pmap_lgl(df, function(...) sum(is.na(c(...))) > 3)
+        header_in_df <- purrr::pmap_lgl(
+            df,
+            function(...) sum(is.na(c(...))) > 2
+        )
         if (sum(header_in_df) > 3) {
             rlang::abort("Copied OMIM data in unexpected format.")
         }
@@ -167,4 +172,45 @@ identify_omim_header_row <- function(.lines) {
 
     header_n <- which(tab_separated & mim_number)[1]
     header_n
+}
+
+#' Guess Data Delimiter
+#'
+#' Identifies the delimiter of data as being the greater of "," or "\\t" present
+#' in all or most lines.
+#'
+#' @param x String or character data for which to guess delimiter.
+#' @param strict Whether delimiter should be found in all lines (default:
+#' `TRUE`), or just a majority of lines. If `FALSE`, an attempt is made to guess
+#' the delimiter for data that may not be entirely delimited.
+#'
+#' @keywords internal
+guess_delim <- function(x, strict = TRUE) {
+    # avoid incorrect counts for quoted data by dropping quoted strings
+    .x <- stringr::str_remove_all(x, '"[^"]*"')
+
+    # ensure all data in individual lines
+    .x <- unlist(stringr::str_split(.x, "\n"))
+
+    # ensure one type exists and is more prevalent in rows
+    comma_n <- stringr::str_count(.x, ",")
+    tab_n <- stringr::str_count(.x, "\t")
+    row_delim_prop <- max(sum(comma_n > 0), sum(tab_n > 0)) / length(.x)
+    if (strict) {
+        if (row_delim_prop != 1) {
+            stop("Delimiter could not be guessed. Consider using `strict = FALSE`, if not all lines are delimited.")
+        }
+    } else if (row_delim_prop <= 0.5) {
+        stop("Delimiter could not be guessed. Is this tab- or comma-delimited data?")
+    }
+
+    if (sum(comma_n > tab_n) / length(.x) > 0.5) return(",")
+    "\t"
+}
+
+# add delimiters to end of lines to bring each line to max # of delim
+equalize_delim <- function(x, delim) {
+    x_delim <- lengths(strsplit(x, delim)) - 1
+    max_delim <- max(x_delim)
+    paste0(x, strrep(delim, max_delim - x_delim))
 }

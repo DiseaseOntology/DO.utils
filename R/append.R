@@ -104,6 +104,10 @@ append_empty_col <- function(df, col, order = FALSE) {
 #'     )
 #' )
 #'
+#' # invalid URIs return NA
+#' append_to_url("ha", "not_a_url")
+#' append_to_url("ha", "unknown.scheme:") # technically a valid URI
+#'
 #' @export
 append_to_url <- function(x, url, sep = "") {
     if (length(url) > 1) {
@@ -144,6 +148,8 @@ append_to_url <- function(x, url, sep = "") {
         )
     }
 
-    new_url[is.na(x) | is.na(url)] <- NA
+    # ensure output are valid URLs; otherwise return NA
+    not_url <- !is_uri(new_url, empty_ok = FALSE)
+    new_url[is.na(x) | is.na(url) | not_url] <- NA
     new_url
 }

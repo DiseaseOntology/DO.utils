@@ -24,10 +24,10 @@ The \href{https://www.w3.org/TR/2010/NOTE-curie-20101216/}{W3C CURIE Syntax 1.0}
 standard defines the most general CURIE syntax allowed (\code{def = "w3c"}; not a
 perfect implementation, e.g. U+3000 non-breaking space is not accepted). Note
 that by definition URIs will be identified as CURIEs. If it is desirable to
-distinguish these use \code{def = "w3c_safe"} and wrap CURIEs in brackets (as
-defined in the standard. Alternatively, use the stricter OBO Foundry-based
-standards (as stated in that standard, more strict definitions for CURIEs can
-be defined).
+distinguish these use \code{def = "w3c_safe"} and wrap CURIEs in square brackets
+(as defined in the standard). Alternatively, use the stricter OBO
+Foundry-based standards (as stated in that standard, more strict definitions
+for CURIEs can be defined).
 
 \code{"obo"} corresponds to the official OBO Foundry definition of a CURIE as
 stated in the \href{http://obofoundry.org/id-policy.html}{OBO Foundry ID Policy}.
@@ -47,8 +47,9 @@ id <- c(
     "oboInOwl:hasDbXref", "skos:exactMatch", # obo object properties
     "alfred:LO362836C", # not OBO but conforms to `"obo_generic"` pattern
     #### pass only "w3c" ####
-    "4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
+    "_4dn.biosource:4DNSR73BT2A2", "aceview.worm:aap-1",
     #### always fail ####
+    "4dn.biosource:4DNSR73BT2A2", # starts with a number
     "0001816", # bare number without prefix
     " obo:HP_0000001", # must have NO `[:space:]` characters
     "http://purl.obolibrary.org/obo/DOID_0001816" # URI
@@ -57,11 +58,15 @@ id <- c(
 }
 \seealso{
 Other ID predicates: 
+\code{\link{is_uri}()},
 \code{\link{obo_ID_predicates}}
 
 Other predicates: 
+\code{\link{all_duplicated}()},
 \code{\link{char_val_predicates}},
+\code{\link{iff_all_vals}()},
 \code{\link{is_invariant}()},
+\code{\link{is_uri}()},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}

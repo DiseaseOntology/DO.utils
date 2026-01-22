@@ -8,8 +8,8 @@ read_omim(file, keep_mim = c("#", "\%"), ...)
 }
 \arguments{
 \item{file}{The path to a file (possibly compressed) with copy/pasted or
-manually downloaded from https://omim.org/ (see "Manual Input Requirements"
-for details), or downloaded with \code{\link[=download_omim]{download_omim()}}.}
+manually downloaded data from https://omim.org/ (see "Manual Input
+Requirements" for details), or downloaded with \code{\link[=download_omim]{download_omim()}}.}
 
 \item{keep_mim}{[\strong{OMIM search data only}] The MIM symbols representing
 the data types to keep, as a character vector, or \code{NULL} to retain all
@@ -19,16 +19,18 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
    MIM symbol \tab MIM type \cr
    \code{*} \tab gene \cr
    \code{+} \tab gene, includes phenotype \cr
-   \verb{#} \tab phenotype \cr
-   \verb{\%} \tab phenotype, unknown molecular basis \cr
+   \verb{#} \tab descriptive entry, not unique locus; usually a phenotype \cr
+   \verb{\%} \tab phenotype / phenotypic locus, unknown molecular basis \cr
    \code{^} \tab deprecated \cr
-   \code{none} \tab phenotype, suspected/overlap \cr
+   \code{none} \tab phenotype (usually), suspected or possibly overlapping \cr
 }}
 
 \item{...}{
   Arguments passed on to \code{\link[=read_delim_auto]{read_delim_auto}}
   \describe{
-    \item{\code{}}{}
+    \item{\code{strict}}{Whether delimiter should be found in all lines (default:
+\code{TRUE}), or just a majority of lines. If \code{FALSE}, an attempt is made to guess
+the delimiter for data that may not be entirely delimited.}
   }}
 }
 \value{
@@ -57,13 +59,63 @@ entries but column are ordered differently.
 Reads and formats OMIM data copied or manually downloaded from
 https://omim.org/, or downloaded with \code{\link[=download_omim]{download_omim()}} (permission
 required), and appends columns to speed up subsequent curation activities.
+\code{read_omim()} will attempt to process and correct headers including fixing
+multi-line or misarranged column headers, and will trim whitespace.
 }
 \section{Manual Input Requirements}{
 
-The \code{file} with OMIM data copied or downloaded must include headers at the
-top. These data can be left \emph{as copied & pasted from omim.org} even if they
-are not formatted correctly, as \code{read_omim()} will process and correct
-headers, which includes fixing multi-line or misarranged column headers,
-and will trim whitespace.
+The \code{file} with OMIM data copied or manually downloaded must include column
+headers at the top and should be tab- or comma-separated. If the data \emph{is}
+\emph{copied & pasted from omim.org} either to a spreadsheet program or to a text
+file, the data will \emph{likely} be tab-separated. To improve parsing success, it
+is recommended that the copy-pasted data include both the copmlete table and
+the table type (e.g. "Phenotype-Gene Relationships"), which is usually
+directly above the table on a given omim.org entry. In most casees, there
+should not be a need to fix data copy/pasted from OMIM manually prior to
+reading with \code{read_omim()}.
+}
+
+\section{Available downloads}{
+
+Some data are available for download without an API key. This includes:
+\enumerate{
+\item The full list of phenotypic series titles
+(\url{https://www.omim.org/phenotypicSeriesTitles/})
+\item Any complete phenotypic series, from its PS page
+(https://www.omim.org/phenotypicSeries/\{PS number\})
+\itemize{
+\item Example: Achondrogenesis, MIM:PS200600
+(\url{https://www.omim.org/phenotypicSeries/PS200600})
+}
+\item OMIM gene entry ID relationships to external gene IDs, mim2gene.txt.
+\itemize{
+\item From downloads page: \url{https://www.omim.org/downloads/}
+\item Direct: \url{https://www.omim.org/static/omim/data/mim2gene.txt}
+}
+}
+
+Additional data is available with an approved API key.
+}
+
+\section{Meaning of additional OMIM shorthand}{
+
+Along with symbols used to indicate MIM entry types, OMIM uses additional
+shorthand, as follows (from \url{https://www.omim.org/help/faq}):
+\subsection{Name-based shorthand}{
+\itemize{
+\item Brackets (\code{[} \verb{]}): "nondiseases"
+\item Braces (\verb{\{} \verb{\}}): susceptibility
+\item Leading question mark (\verb{?}): provisional phenotype-gene relationship
+}
+}
+
+\subsection{Phenotype mapping numbers}{
+\itemize{
+\item \code{1}: disorder was positioned by mapping of the
+\item \code{2}: disease phenotype was mapped
+\item \code{3}: disorder with known molecular basis
+\item \code{4}: chromosome deletion or duplication syndrome
+}
+}
 }
 
