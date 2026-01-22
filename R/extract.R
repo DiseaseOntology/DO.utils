@@ -283,7 +283,97 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 }
 
 
-#' Extract Subtree
+#' Extract OBO Classes with Parents
+#'
+#' Extracts the classes and their `rdfs:subClassOf` _asserted_ parents from an
+#' OBO ontology.
+#'
+#' @inheritParams robot_query
+#' @param class One or more valid OBO classes (see [is_valid_obo()] for
+#' valid input formats). Accepted values may depend on `method`.
+#' @param method The method to use when extracting classes. Options include:
+#'
+#' * `"self"`: Extract the class(es) only.
+#'
+#' * `"parents"`: Extract the class(es) and _asserted_ parent(s).
+#'
+#' * `"descendants"` (default): Extract the class(es) and all descendants.
+#'
+#' * `"ancestors"`: Extract the class(es) and all ancestors.
+#'
+#' * `"common_ancestor"`: Extract the class(es) and all ancestors up to a common
+#' ancestor. The common ancestor could be in the set.
+#' @inheritDotParams is_valid_obo allow ns_type
+#'
+#' @examples
+#' \dontrun{
+#' # Extract all descendants of 'diabetes mellitus'
+#' doid_path <- "<path to doid.owl>"
+#' extract_subclass(doid_path, "DOID:9351")
+#'
+#' # Extract all ancestors of 'diabetes mellitus'
+#' extract_subclass(doid_path, "DOID:9351", method = "ancestors")
+#'
+#' # Extract all classes of appendicitis (DOID:8337), alcoholic gastritis
+#' (DOID:8680), and viral esophagitis (DOID:6297) up to a common ancestor
+#' extract_subclass(
+#'     doid_path,
+#'     c("DOID:8337", "DOID:8680", "DOID:6297"),
+#'     method = "common_ancestor"
+#' )
+#' }
+#'
+#' @returns
+#' A [tibble][tibble::tibble] with the columns: `id`, `label`, `parent_id`,
+#' and `parent_label`.
+#'
+#' @seealso [format_subtree()] to arrange data in a tree structure similar to
+#' ontology browsers.
+#'
+#' @export
+extract_subclass <- function(input, class, method = "descendants",
+                             .robot_path = NULL,
+                             tidy_what = c("header", "uri_to_curie"),
+                             ...) {
+    invalid_obo <- !is_valid_obo(class, ...)
+    if (any(invalid_obo)) {
+        invalid_n <- sum(invalid_obo)
+        invalid_pos <- which(invalid_obo)
+        if (invalid_n > 5) {
+            invalid_id <- paste0(
+                invalid_n,
+                " identifiers are invalid, e.g. positions ",
+                paste0(invalid_pos[1:3], collapse = ", "),
+                ", etc."
+            )
+        } else {
+            invalid_id <- paste0(
+                class[invalid_obo], " (pos ", invalid_pos, ")"
+            )
+        }
+
+        rlang::abort(
+            c(
+                "`class` inputs must all be valid OBO identifiers",
+                purrr::set_names(invalid_id, rlang::rep_along(invalid_id, "x"))
+            )
+        )
+    }
+    obo_class <- format_obo(class, "obo_curie", ...)
+
+    query <- prep_extract_query(obo_class, method)
+    out <- robot_query(
+        input,
+        query,
+        .robot_path = .robot_path,
+        tidy_what = tidy_what
+    )
+
+    out
+}
+
+
+#' Extract Subtree (DEPRECATED)
 #'
 #' Extracts the classes and parents of a DO subtree from a `pyDOID.owl.xml`
 #' object.
@@ -299,10 +389,15 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' and `parent_label`, with one row for each unique combination for each
 #' subclass below and including `top_node`.
 #'
-#' @seealso [format_subtree()] to arrange data in a tree structure similar to
-#' ontology browsers.
+#' @seealso [extract_subclass(method = "descendants")][extract_subclass] for the
+#' same result with a single `class`. [format_subtree()] to arrange data in a
+#' tree structure similar to ontology browsers.
+#'
 #' @export
 extract_subtree <- function(x, top_node, reload = FALSE) {
+    rlang::warn(
+        "`extract_subtree()` is deprecated. Use `extract_subclass()` instead."
+    )
     owl <- access_owl_xml(x)
     assert_string(top_node)
 

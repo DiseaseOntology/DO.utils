@@ -1,0 +1,18 @@
+# Return class & parent IDs and labels for all classes in a set
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+
+SELECT DISTINCT ?iri ?label ?parent_iri ?parent_label
+WHERE {
+  VALUES ?set { !<<set>>! }
+
+  !<<sparql_selector>>!
+
+  ?iri rdfs:label ?label .
+
+  OPTIONAL{
+    ?iri rdfs:subClassOf ?parent_iri .
+    ?parent_iri rdfs:label ?parent_label .
+  }
+}

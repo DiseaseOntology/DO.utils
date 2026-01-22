@@ -21,3 +21,64 @@ subtree_query_glue <- '
             rdfs:label ?parent_label .
         FILTER(!isblank(?parent))
     }}'
+
+
+# extract_subclass() helpers -------------------------------------------------
+
+prep_extract_query <- function(class, method) {
+    sparql_stmts <- c(
+        self = "?iri rdfs:subClassOf{0} ?set .",
+        parents = "?iri ^rdfs:subClassOf{0,1} ?set .",
+        descendants = "?iri rdfs:subClassOf* ?set .",
+        ancestors = "?iri ^rdfs:subClassOf* ?set .",
+        common_ancestor = "
+        {
+          # find the nearest common ancestor
+          SELECT ?ancestor_iri (COUNT(?mid) AS ?distance)
+          WHERE {
+            ?ancestor_iri ^rdfs:subClassOf* ?mid .
+            ?mid ^rdfs:subClassOf* !<<set_list>>! .
+            FILTER(!isBlank(?ancestor_iri))
+          }
+          GROUP BY ?ancestor_iri
+          ORDER BY ?distance
+          LIMIT 1
+        }
+
+        # get info for classes in path from set to ancestor
+        VALUES ?set { !<<set>>! }
+
+        ?iri rdfs:subClassOf* ?ancestor_iri ;
+          ^rdfs:subClassOf* ?set ."
+    )
+    opts <- names(sparql_stmts)
+    if (!method %in% opts || length(method) != 1) {
+        rlang::abort(
+            c(
+                paste0(
+                    "`method` must be one of: ",
+                    paste0("'", opts, "'", collapse = ", ")),
+                x = paste0("'", method, "'", collapse = ", ")
+            )
+        )
+    }
+
+    set <- paste0(class, collapse = " ")
+    sparql_selector <- sparql_stmts[method]
+    if (method == "common_ancestor") {
+        set_list <- paste0(class, collapse = ", ")
+        sparql_selector <- glueV(sparql_selector, set_list = set_list)
+    }
+
+    q_path <- system.file(
+        "sparql", "template-subclass-set.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    )
+    query <- glueV(
+        readr::read_file(q_path),
+        sparql_selector = sparql_selector,
+        set = set
+    )
+    query
+}
