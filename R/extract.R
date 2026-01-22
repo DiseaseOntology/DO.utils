@@ -303,6 +303,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #'
 #' * `"common_ancestor"`: Extract the class(es) and all ancestors up to a common
 #' ancestor. The common ancestor could be in the set.
+#' @inheritDotParams is_valid_obo allow ns_type
 #'
 #' @examples
 #' \dontrun{
@@ -331,10 +332,36 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #'
 #' @export
 extract_subclass <- function(input, class, method = "descendants",
-                          .robot_path = NULL,
-                          tidy_what = c("header", "uri_to_curie")) {
-    stopifnot("`class` must be a valid OBO identifier" = is_valid_obo(class))
-    query <- prep_extract_query(class, method)
+                             .robot_path = NULL,
+                             tidy_what = c("header", "uri_to_curie"),
+                             ...) {
+    invalid_obo <- !is_valid_obo(class, ...)
+    if (any(invalid_obo)) {
+        invalid_n <- sum(invalid_obo)
+        invalid_pos <- which(invalid_obo)
+        if (invalid_n > 5) {
+            invalid_id <- paste0(
+                invalid_n,
+                " identifiers are invalid, e.g. positions ",
+                paste0(invalid_pos[1:3], collapse = ", "),
+                ", etc."
+            )
+        } else {
+            invalid_id <- paste0(
+                class[invalid_obo], " (pos ", invalid_pos, ")"
+            )
+        }
+
+        rlang::abort(
+            c(
+                "`class` inputs must all be valid OBO identifiers",
+                purrr::set_names(invalid_id, rlang::rep_along(invalid_id, "x"))
+            )
+        )
+    }
+    obo_class <- format_obo(class, "obo_curie", ...)
+
+    query <- prep_extract_query(obo_class, method)
     out <- robot_query(
         input,
         query,
