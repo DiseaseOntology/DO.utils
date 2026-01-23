@@ -12,6 +12,18 @@
 #'
 #' @returns The Google Sheet info (`ss`), as a [googlesheets4::sheets_id].
 #'
+#' @section Formatting Limitations:
+#' Formatting to make data more visually distinct is not currently supported due
+#' to limitations of the Google Sheets API and the `googlesheets4` package:
+#' * Google Sheets API does not support assigning colors to data validation.
+#' * `googlesheets4` does not support any formatting.
+#'
+#' An alternative approach to support some formatting could be to create a
+#' functional template with the desired formatting and copy that template with
+#' [googlesheets4::sheet_copy()]. The `data_type` could still be populated by
+#' this function (only needed to support types not in
+#' `.curation_opts$data_type`).
+#'
 #' @export
 curation_template <- function(.data = NULL, ss = NULL, sheet = NULL, ...) {
     UseMethod("curation_template", .data)
@@ -43,12 +55,13 @@ curation_template.NULL <- function(.data = NULL, ss = NULL, sheet = NULL, ...,
 curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
                                        n_max = 20) {
     cur_df <- .data |>
-        # need smarter indexing... I think
+        # need smarter indexing... I think, not currently used (see below)
         dplyr::mutate(
             index = dplyr::dense_rank(paste0(.data$predicate, .data$value)),
             .by = "id",
             .before = "id"
         ) |>
+        # convert predicate & axiom_predicate to patterns in .sparql_dt_motif
         dplyr::mutate(
             predicate = dplyr::if_else(
                 !is.na(.data$axiom_predicate) & .data$axiom_predicate == "oboInOwl:hasSynonymType",
@@ -88,7 +101,9 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
                 .sparql_dt_motif[.data$data_type],
                 .data$data_type
             ),
-            id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id)
+            id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id),
+            # set default action for existing data
+            action = "retain"
         ) |>
         append_empty_col(curation_cols, order = TRUE)
 
