@@ -1,3 +1,10 @@
+# DO.utils (development version)
+
+## Updates
+* ggplot2 dependency updated to >= 3.4.0
+* `theme_DO()` margins widened to avoid label truncation & updated internally to align with ggplot2
+changes.
+
 # DO.utils 0.3.3
 
 ## Updates

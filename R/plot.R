@@ -563,11 +563,11 @@ theme_DO <- function(base_size = 11, base_family = "",
         ggplot2::theme(
             panel.background = ggplot2::element_rect(fill = "grey60", colour = NA),
             panel.grid = ggplot2::element_line(colour = "grey50"),
-            panel.grid.major = ggplot2::element_line(size = ggplot2::rel(0.3)),
-            panel.grid.minor = ggplot2::element_line(size = ggplot2::rel(0.15)),
+            panel.grid.major = ggplot2::element_line(linewidth = ggplot2::rel(0.3)),
+            panel.grid.minor = ggplot2::element_line(linewidth = ggplot2::rel(0.15)),
             axis.ticks = ggplot2::element_line(
                 colour = "grey40",
-                size = ggplot2::rel(0.3)
+                linewidth = ggplot2::rel(0.3)
             ),
             legend.key = ggplot2::element_blank(),
             strip.background = ggplot2::element_rect(
@@ -583,6 +583,12 @@ theme_DO <- function(base_size = 11, base_family = "",
                     0.8 * half_line,
                     0.8 * half_line
                 )
+            ),
+            plot.margin = ggplot2::margin(
+                1.2 * base_size,
+                1.2 * base_size,
+                1.2 * base_size,
+                1.2 * base_size
             ),
             complete = TRUE
         )

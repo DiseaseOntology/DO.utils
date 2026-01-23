@@ -1,7 +1,7 @@
 Package: DO.utils
 Type: Package
 Title: Public Resource Utilities Designed by/for the Disease Ontology
-Version: 0.3.3
+Version: 0.3.3.9000
 Author: J. Allen Baron
 Maintainer: J. Allen Baron <allenbaron@som.umaryland.edu>
 Description: Generally useful tools to assess use of public resources in
@@ -16,7 +16,7 @@ Roxygen: list(markdown = TRUE)
 Imports:
     assertthat,
     dplyr (>= 1.1.0),
-    ggplot2,
+    ggplot2 (>= 3.4.0),
     git2r,
     glue,
     googlesheets4,
