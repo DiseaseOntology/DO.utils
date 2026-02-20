@@ -38,5 +38,6 @@ NA,communication,Communication with someone supports the mapping record. Details
 NA,existing_xref,"Indicates that a mapping existed in the ontology before SSSOM record creation; only applies to oboInOwl:hasDbXref mappings; makes no statement about correctness of mapping
 --> may be better to create a column indicating xref in DO (maybe status column indicating active/deprecated with source version???)"
 NA,other_map_except,Same condition as other_map rule (Subject should NOT be mapped to object because a better mapping between a term from the subject source exists with this object) but included anyway. Curator MUST include why exception was made in comment.
+NA,lacks_evidence,Insufficient evidence to conclude this is a real disease
 NA,NA,NA
 NA,name mismatch with preferred source,NA

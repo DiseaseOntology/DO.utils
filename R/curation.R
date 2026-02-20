@@ -152,12 +152,8 @@ set_curation_validation <- function(cur_df, ss, sheet) {
     range_add_dropdown(ss, action_range, values = curation_action)
 
     # add SSSOM-curation_rule validation
-    sssom_rule_range <- spreadsheet_range(
-        cur_df,
-        "SSSOM-curation_rule",
-        sheet = sheet
-    )
-    range_add_dropdown(ss, sssom_rule_range, values = .sssom_cur_rules)
+    sssom_rule_range <- spreadsheet_range(cur_df, "SSSOM-curation_rule")
+    range_add_dropdown(ss, sheet, sssom_rule_range, values = .sssom_cur_rules)
 
     # freeze first two columns
     googlesheets4::with_gs4_quiet(
