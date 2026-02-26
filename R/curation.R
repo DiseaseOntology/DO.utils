@@ -51,9 +51,12 @@ curation_template.NULL <- function(.data = NULL, ss = NULL, sheet = NULL, ...,
   invisible(gs_info)
 }
 
+#' @param n_id_sep The number of blank rows to insert between each `id` group
+#' (default: `2`).
+#'
 #' @export
 curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
-                                       n_max = 20) {
+                                       n_max = 20, n_id_sep = 2L) {
     cur_df <- .data |>
         # need smarter indexing... I think, not currently used (see below)
         dplyr::mutate(
@@ -108,7 +111,8 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
             # set default action for existing data
             action = "retain"
         ) |>
-        append_empty_col(curation_cols, order = TRUE)
+        append_empty_col(curation_cols, order = TRUE) |>
+        add_id_sep(n = n_id_sep)
 
 
   class(cur_df) <- c("curation_template", class(cur_df))
@@ -123,6 +127,14 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
 
 
 # helpers --------------------------------------------------------------------
+
+# Insert n blank rows between each id group (identified by non-NA id values).
+add_id_sep <- function(.data, n = 2L) {
+    grp_id <- cumsum(!is.na(.data$id))
+    groups <- split(.data, grp_id)
+    blanks <- .data[rep(NA_integer_, n), ]
+    purrr::reduce(groups[-1], ~ dplyr::bind_rows(.x, blanks, .y), .init = groups[[1]])
+}
 
 # Sort data_type values within each id group per .curation_opts ordering.
 # data_type values not found in .curation_opts are placed at the end.
