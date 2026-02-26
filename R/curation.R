@@ -51,13 +51,39 @@ curation_template.NULL <- function(.data = NULL, ss = NULL, sheet = NULL, ...,
   invisible(gs_info)
 }
 
+#' @param id_max The maximum number of unique classes to include (default: `20`).
 #' @param n_id_sep The number of blank rows to insert between each `id` group
 #' (default: `2`).
 #'
 #' @export
 curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
-                                       n_max = 20, n_id_sep = 2L) {
+                                       id_max = 20, n_id_sep = 2L) {
+    if (!is.numeric(id_max) || length(id_max) != 1L || id_max < 1L) {
+        rlang::abort("`id_max` must be a single positive integer.")
+    }
+    all_ids <- unique(.data$id)
+    incl_ids <- utils::head(all_ids, id_max)
+    excl_ids <- all_ids[!all_ids %in% incl_ids]
+    if (length(excl_ids) > 0) {
+        max_show <- 10L
+        if (length(excl_ids) <= max_show) {
+            excl_txt <- paste(excl_ids, collapse = ", ")
+        } else {
+            excl_txt <- paste0(
+                paste(utils::head(excl_ids, max_show), collapse = ", "),
+                ", ... and ", length(excl_ids) - max_show, " more"
+            )
+        }
+        rlang::inform(
+            paste0(
+                length(incl_ids), " of ", length(all_ids),
+                " unique IDs included (id_max = ", id_max, ").",
+                "\nExcluded: ", excl_txt
+            )
+        )
+    }
     cur_df <- .data |>
+        dplyr::filter(.data$id %in% incl_ids) |>
         # need smarter indexing... I think, not currently used (see below)
         dplyr::mutate(
             index = dplyr::dense_rank(paste0(.data$predicate, .data$value)),
