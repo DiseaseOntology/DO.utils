@@ -100,7 +100,10 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
             data_type = dplyr::coalesce(
                 .sparql_dt_motif[.data$data_type],
                 .data$data_type
-            ),
+            )
+        ) |>
+        sort_by_curation_dt() |>
+        dplyr::mutate(
             id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id),
             # set default action for existing data
             action = "retain"
@@ -121,7 +124,23 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
 
 # helpers --------------------------------------------------------------------
 
-# define expected columns for curation template (in order)
+# Sort data_type values within each id group per .curation_opts ordering.
+# data_type values not found in .curation_opts are placed at the end.
+# The existing order of id groups is preserved (not sorted alphabetically).
+sort_by_curation_dt <- function(.data) {
+    dt_order <- .curation_opts$data_type
+    .data |>
+        dplyr::mutate(
+            .grp = dplyr::consecutive_id(.data$id),
+            .dt_rank = match(.data$data_type, dt_order, nomatch = length(dt_order) + 1L)
+        ) |>
+        dplyr::arrange(.data$.grp, .data$.dt_rank) |>
+        dplyr::select(-c(".grp", ".dt_rank"))
+}
+
+### define expected columns for curation template (in order) ###
+
+# full set of curations columns
 curation_cols <- c(
   "id", "data_type", "value", "action", "curation_notes", "links",
   "action_notes"
