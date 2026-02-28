@@ -79,6 +79,75 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
             several.ok = TRUE
         )
     }
+    step_filtered <- filter_max_ids(.data, id_max)
+    step_pivoted <- pivot_obo_to_curation(step_filtered)
+
+    # resolve data_type values via .sparql_dt_motif
+    step_typed <- step_pivoted |>
+        # collapse_col(value) |> # does nothing... probably don't want to collapse
+        dplyr::mutate(
+            data_type = dplyr::coalesce(
+                .sparql_dt_motif[.data$data_type],
+                .data$data_type
+            )
+        )
+
+    # sort, finalise, and add id separators
+    cur_df <- step_typed |>
+        sort_by_curation_dt() |>
+        dplyr::mutate(
+            id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id),
+            # set default action for existing data
+            action = "retain"
+        ) |>
+        append_empty_col(curation_cols, order = TRUE) |>
+        add_id_sep(n = n_id_sep)
+
+    class(cur_df) <- c("curation_template", class(cur_df))
+
+    # debug paths: never write to Google Sheets
+    if (!isFALSE(debug)) {
+        types_info <- NULL
+        if ("types" %in% debug) {
+            raw_types <- unique(step_pivoted$data_type)
+            matched <- raw_types[raw_types %in% names(.sparql_dt_motif)]
+            unmatched <- raw_types[!raw_types %in% names(.sparql_dt_motif)]
+            # $matched: names are original predicates, values are resolved data_types
+            # $unmatched: predicates not in .sparql_dt_motif, used as-is
+            types_info <- list(
+                matched   = .sparql_dt_motif[matched],
+                unmatched = unmatched
+            )
+        }
+        if ("steps" %in% debug) {
+            out <- list(
+                filtered = step_filtered,
+                pivoted  = step_pivoted,
+                typed    = step_typed,
+                output   = cur_df
+            )
+            if (!is.null(types_info)) out$types <- types_info
+            return(out)
+        }
+        if ("types" %in% debug) return(types_info)
+        return(cur_df)
+    }
+
+    if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
+    gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
+
+    if (is.null(ss)) ss <- gs_info
+    set_curation_validation(cur_df, ss, sheet)
+
+    invisible(gs_info)
+}
+
+
+# helpers --------------------------------------------------------------------
+
+# Filter obo_data to the first id_max unique IDs; informs the user if any are
+# excluded, listing up to 10 by name.
+filter_max_ids <- function(.data, id_max) {
     if (!is.numeric(id_max) || length(id_max) != 1L || id_max < 1L) {
         rlang::abort("`id_max` must be a single positive integer.")
     }
@@ -103,13 +172,16 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
             )
         )
     }
+    dplyr::filter(.data, .data$id %in% incl_ids)
+}
 
-    # Step 1: filter & reshape to long format with resolved predicate strings
-    step_filtered <- .data |>
-        dplyr::filter(.data$id %in% incl_ids)
 
-    # Step 2: pivot to long format
-    step_pivoted <- step_filtered |>
+# Pivot obo_data to the long curation format: resolves compound predicate
+# strings (handling oboInOwl:hasSynonymType annotations specially), pivots
+# axiom columns into rows, arranges, renames to data_type/curation_notes,
+# and deduplicates.
+pivot_obo_to_curation <- function(.data) {
+    .data |>
         # need smarter indexing... I think, not currently used (see below)
         dplyr::mutate(
             index = dplyr::dense_rank(paste0(.data$predicate, .data$value)),
@@ -150,69 +222,8 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
         # for now, just remove index --> need to use for sorting at some point
         dplyr::select(-"index") |>
         unique()
-
-    # Step 3: resolve data_type values via .sparql_dt_motif
-    step_typed <- step_pivoted |>
-        # collapse_col(value) |> # does nothing... probably don't want to collapse
-        dplyr::mutate(
-            data_type = dplyr::coalesce(
-                .sparql_dt_motif[.data$data_type],
-                .data$data_type
-            )
-        )
-
-    # Step 4: sort, finalise, and add id separators
-    cur_df <- step_typed |>
-        sort_by_curation_dt() |>
-        dplyr::mutate(
-            id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id),
-            # set default action for existing data
-            action = "retain"
-        ) |>
-        append_empty_col(curation_cols, order = TRUE) |>
-        add_id_sep(n = n_id_sep)
-
-    class(cur_df) <- c("curation_template", class(cur_df))
-
-    # debug paths: never write to Google Sheets
-    if (!isFALSE(debug)) {
-        types_info <- NULL
-        if ("types" %in% debug) {
-            raw_types <- unique(step_pivoted$data_type)
-            matched <- raw_types[raw_types %in% names(.sparql_dt_motif)]
-            unmatched <- raw_types[!raw_types %in% names(.sparql_dt_motif)]
-            # $matched: named vector of raw predicate -> resolved data_type
-            # $unmatched: raw predicates passed through as-is
-            types_info <- list(
-                matched   = .sparql_dt_motif[matched],
-                unmatched = unmatched
-            )
-        }
-        if ("steps" %in% debug) {
-            out <- list(
-                filtered = step_filtered,
-                pivoted  = step_pivoted,
-                typed    = step_typed,
-                output   = cur_df
-            )
-            if (!is.null(types_info)) out$types <- types_info
-            return(out)
-        }
-        if ("types" %in% debug) return(types_info)
-        return(cur_df)
-    }
-
-    if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
-    gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
-
-    if (is.null(ss)) ss <- gs_info
-    set_curation_validation(cur_df, ss, sheet)
-
-    invisible(gs_info)
 }
 
-
-# helpers --------------------------------------------------------------------
 
 # Insert n blank rows between each id group (identified by non-NA id values).
 add_id_sep <- function(.data, n = 2L) {
@@ -221,6 +232,7 @@ add_id_sep <- function(.data, n = 2L) {
     blanks <- .data[rep(NA_integer_, n), ]
     purrr::reduce(groups[-1], ~ dplyr::bind_rows(.x, blanks, .y), .init = groups[[1]])
 }
+
 
 # Sort data_type values within each id group per .curation_opts ordering.
 # data_type values not found in .curation_opts are placed at the end.
@@ -235,6 +247,7 @@ sort_by_curation_dt <- function(.data) {
         dplyr::arrange(.data$.grp, .data$.dt_rank) |>
         dplyr::select(-c(".grp", ".dt_rank"))
 }
+
 
 ### define expected columns for curation template (in order) ###
 
