@@ -54,10 +54,31 @@ curation_template.NULL <- function(.data = NULL, ss = NULL, sheet = NULL, ...,
 #' @param id_max The maximum number of unique classes to include (default: `20`).
 #' @param n_id_sep The number of blank rows to insert between each `id` group
 #' (default: `2`).
+#' @param debug Controls debug output. `FALSE` (default) writes to Google Sheets
+#' normally. One or more of:
+#' * `"output"`: returns the final data frame visibly instead of writing to
+#'   Google Sheets.
+#' * `"types"`: returns a list with `$matched` (named character vector where
+#'   names are the original predicate strings and values are the resolved
+#'   `data_type` labels, as mapped by `.sparql_dt_motif`) and `$unmatched`
+#'   (character vector of predicates not in `.sparql_dt_motif`, used as-is).
+#'   When combined with `"steps"`, the list is added as `$types` in that output.
+#'   Combine with `"output"` to also return the final data frame.
+#' * `"steps"`: returns a named list of snapshots at each major pipeline step
+#'   (`filtered`, `pivoted`, `typed`, `output`); implies `"output"`. If `"types"`
+#'   is also requested, includes `$types` in the returned list.
 #'
 #' @export
 curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
-                                       id_max = 20, n_id_sep = 2L) {
+                                       id_max = 20, n_id_sep = 2L,
+                                       debug = FALSE) {
+    if (!isFALSE(debug)) {
+        debug <- match.arg(
+            debug,
+            choices = c("output", "types", "steps"),
+            several.ok = TRUE
+        )
+    }
     if (!is.numeric(id_max) || length(id_max) != 1L || id_max < 1L) {
         rlang::abort("`id_max` must be a single positive integer.")
     }
@@ -82,8 +103,13 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
             )
         )
     }
-    cur_df <- .data |>
-        dplyr::filter(.data$id %in% incl_ids) |>
+
+    # Step 1: filter & reshape to long format with resolved predicate strings
+    step_filtered <- .data |>
+        dplyr::filter(.data$id %in% incl_ids)
+
+    # Step 2: pivot to long format
+    step_pivoted <- step_filtered |>
         # need smarter indexing... I think, not currently used (see below)
         dplyr::mutate(
             index = dplyr::dense_rank(paste0(.data$predicate, .data$value)),
@@ -123,14 +149,20 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
         dplyr::rename(data_type = "predicate", "curation_notes" = "extra") |>
         # for now, just remove index --> need to use for sorting at some point
         dplyr::select(-"index") |>
-        unique() |>
+        unique()
+
+    # Step 3: resolve data_type values via .sparql_dt_motif
+    step_typed <- step_pivoted |>
         # collapse_col(value) |> # does nothing... probably don't want to collapse
         dplyr::mutate(
             data_type = dplyr::coalesce(
                 .sparql_dt_motif[.data$data_type],
                 .data$data_type
             )
-        ) |>
+        )
+
+    # Step 4: sort, finalise, and add id separators
+    cur_df <- step_typed |>
         sort_by_curation_dt() |>
         dplyr::mutate(
             id = dplyr::if_else(duplicated(.data$id), NA_character_, .data$id),
@@ -140,15 +172,43 @@ curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
         append_empty_col(curation_cols, order = TRUE) |>
         add_id_sep(n = n_id_sep)
 
+    class(cur_df) <- c("curation_template", class(cur_df))
 
-  class(cur_df) <- c("curation_template", class(cur_df))
-  if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
-  gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
+    # debug paths: never write to Google Sheets
+    if (!isFALSE(debug)) {
+        types_info <- NULL
+        if ("types" %in% debug) {
+            raw_types <- unique(step_pivoted$data_type)
+            matched <- raw_types[raw_types %in% names(.sparql_dt_motif)]
+            unmatched <- raw_types[!raw_types %in% names(.sparql_dt_motif)]
+            # $matched: named vector of raw predicate -> resolved data_type
+            # $unmatched: raw predicates passed through as-is
+            types_info <- list(
+                matched   = .sparql_dt_motif[matched],
+                unmatched = unmatched
+            )
+        }
+        if ("steps" %in% debug) {
+            out <- list(
+                filtered = step_filtered,
+                pivoted  = step_pivoted,
+                typed    = step_typed,
+                output   = cur_df
+            )
+            if (!is.null(types_info)) out$types <- types_info
+            return(out)
+        }
+        if ("types" %in% debug) return(types_info)
+        return(cur_df)
+    }
 
-  if (is.null(ss)) ss <- gs_info
-  set_curation_validation(cur_df, ss, sheet)
+    if (is.null(sheet)) sheet <- paste0("curation-", format(Sys.Date(), "%Y%m%d"))
+    gs_info <- googlesheets4::write_sheet(cur_df, ss, sheet)
 
-  invisible(gs_info)
+    if (is.null(ss)) ss <- gs_info
+    set_curation_validation(cur_df, ss, sheet)
+
+    invisible(gs_info)
 }
 
 
