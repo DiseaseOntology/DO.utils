@@ -69,6 +69,7 @@ curation_template.NULL <- function(.data = NULL, ss = NULL, sheet = NULL, ...,
 #'   is also requested, includes `$types` in the returned list.
 #'
 #' @export
+#' @rdname curation_template
 curation_template.obo_data <- function(.data, ss = NULL, sheet = NULL, ...,
                                        id_max = 20, n_id_sep = 2L,
                                        debug = FALSE) {
