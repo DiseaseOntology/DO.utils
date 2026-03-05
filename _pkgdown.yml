@@ -2,3 +2,11 @@ url: https://allenbaron.github.io/DO.utils/
 template:
   bootstrap: 5
 
+articles:
+- title: "For Maintainers"
+  contents:
+  - maintainer-guide
+- title: "Function Details"
+  contents:
+  - parse-omim-name
+

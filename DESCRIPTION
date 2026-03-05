@@ -69,3 +69,4 @@ Depends:
 Remotes: allenbaron/rentrez
 VignetteBuilder: knitr
 URL: https://diseaseontology.github.io/DO.utils/
+Config/Needs/website: rmarkdown
