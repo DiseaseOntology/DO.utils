@@ -181,6 +181,18 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #' @export
 parse_omim_name <- function(x, col = NULL, eponyms = disease_eponyms,
                             patterns = disease_cap_patterns) {
+    if (!is.null(eponyms) && !is.character(eponyms)) {
+        rlang::abort(
+            "`eponyms` must be a named character vector or NULL.",
+            call = rlang::caller_env()
+        )
+    }
+    if (!is.null(patterns) && !is.character(patterns)) {
+        rlang::abort(
+            "`patterns` must be a named character vector or NULL.",
+            call = rlang::caller_env()
+        )
+    }
     if (is.data.frame(x)) {
         if (is.null(col)) {
             rlang::abort(
@@ -194,16 +206,17 @@ parse_omim_name <- function(x, col = NULL, eponyms = disease_eponyms,
                 call = rlang::caller_env()
             )
         }
-        parsed <- lapply(x[[col]], omim_parse_one, eponyms = eponyms,
-                         patterns = patterns)
-        x[["name"]]         <- vapply(parsed, `[[`, character(1), "name")
+        parsed <- lapply(x[[col]], omim_parse_one)
+        names_lower <- vapply(parsed, `[[`, character(1), "name")
+        x[["name"]]         <- fix_disease_caps(names_lower, eponyms, patterns)
         x[["abbreviation"]] <- vapply(parsed, `[[`, character(1), "abbreviation")
         return(x)
     }
 
-    parsed <- lapply(x, omim_parse_one, eponyms = eponyms, patterns = patterns)
+    parsed <- lapply(x, omim_parse_one)
+    names_lower <- vapply(parsed, `[[`, character(1), "name")
     tibble::tibble(
-        name         = vapply(parsed, `[[`, character(1), "name"),
+        name         = fix_disease_caps(names_lower, eponyms, patterns),
         abbreviation = vapply(parsed, `[[`, character(1), "abbreviation")
     )
 }
@@ -213,50 +226,42 @@ parse_omim_name <- function(x, col = NULL, eponyms = disease_eponyms,
 
 #' Parse a single OMIM entry name string (INTERNAL)
 #' @noRd
-omim_parse_one <- function(entry, eponyms = NULL, patterns = NULL) {
-    entry <- stringr::str_trim(entry)
+omim_parse_one <- function(entry) {
+    entry <- trimws(entry)
 
     # 1. Extract abbreviation (after optional semicolon); uppercase name only
     #    so that abbreviation case is preserved for non-OMIM input sources.
-    parts <- stringr::str_split_fixed(entry, "\\s*;\\s*", n = 2)
-    name_raw <- stringr::str_to_upper(stringr::str_trim(parts[[1]]))
-    abbreviation <- if (nchar(parts[[2]]) == 0L) NA_character_ else parts[[2]]
+    parts <- strsplit(entry, "\\s*;\\s*")[[1L]]
+    name_raw <- toupper(parts[1L])
+    abbreviation <- if (length(parts) < 2L || nchar(parts[2L]) == 0L) NA_character_ else parts[2L]
 
     # 2. Split name by ", " to get comma-separated tokens
-    tokens <- stringr::str_trim(stringr::str_split(name_raw, ",\\s*")[[1]])
+    tokens <- trimws(strsplit(name_raw, ",\\s*")[[1L]])
 
-    # Simple case: no commas → just lowercase + capitalize
+    # Simple case: no commas → just lowercase
     if (length(tokens) == 1L) {
-        name <- fix_disease_caps(
-            stringr::str_to_lower(tokens),
-            eponyms,
-            patterns
-        )
-        return(list(name = name, abbreviation = abbreviation))
+        return(list(
+            name = tolower(tokens),
+            abbreviation = abbreviation
+        ))
     }
 
-    primary <- tokens[[1]]
-    remaining <- tokens[-1]
+    primary <- tokens[[1L]]
+    remaining <- tokens[-1L]
 
     # 3. Only rearrange if at least one qualifier matches a forcing pattern
     if (!omim_has_forcing(remaining)) {
-        name <- fix_disease_caps(
-            stringr::str_to_lower(paste(tokens, collapse = ", ")),
-            eponyms,
-            patterns
-        )
-        return(list(name = name, abbreviation = abbreviation))
+        return(list(
+            name = tolower(paste(tokens, collapse = ", ")),
+            abbreviation = abbreviation
+        ))
     }
 
-    # 4. Apply rearrangement, then capitalize
-    name_rearranged <- omim_rearrange(primary, remaining)
-    name <- fix_disease_caps(
-        stringr::str_to_lower(name_rearranged),
-        eponyms,
-        patterns
+    # 4. Apply rearrangement, then lowercase
+    list(
+        name = tolower(omim_rearrange(primary, remaining)),
+        abbreviation = abbreviation
     )
-
-    list(name = name, abbreviation = abbreviation)
 }
 
 
@@ -267,29 +272,23 @@ omim_parse_one <- function(entry, eponyms = NULL, patterns = NULL) {
 #' pattern, or a core set of strong adjective qualifiers.
 #' @noRd
 omim_has_forcing <- function(tokens) {
-    # Pure number or alphanumeric subtype code, e.g. "1", "4", "7A"
-    is_num <- grepl("^\\d+[A-Za-z]{0,2}$", tokens)
-    # TYPE / MULTIPLE TYPES qualifier
-    is_type <- grepl("^(TYPE|MULTIPLE TYPES?)\\b", tokens)
-    # Definitive inheritance qualifier (with optional trailing number)
-    is_def <- grepl(
+    grepl(
         paste0(
-            "^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
-            "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$"
+            # Pure number or alphanumeric subtype code, e.g. "1", "4", "7A"
+            "^\\d+[A-Za-z]{0,2}$",
+            # TYPE / MULTIPLE TYPES qualifier
+            "|^(TYPE|MULTIPLE TYPES?)\\b",
+            # Definitive inheritance qualifier (with optional trailing number)
+            "|^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
+            "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$",
+            # Core set of strong adjective/onset qualifiers
+            "|^(BILATERAL|CHILDHOOD-ONSET|CONGENITAL|EARLY-ONSET|FAMILIAL",
+            "|FOCAL|GENERALIZED|HEREDITARY|HYPOMYELINATING|ISOLATED",
+            "|JUVENILE|LATE-ONSET|NEONATAL|POSTSYNAPTIC|PRESYNAPTIC",
+            "|PROGRESSIVE|SUSCEPTIBILITY TO|UNILATERAL|VESTIBULAR)"
         ),
         tokens
-    )
-    # Core set of strong adjective/onset qualifiers used as OMIM pre-qualifiers
-    is_strong <- grepl(
-        paste0(
-            "^(BILATERAL|CHILDHOOD-ONSET|CONGENITAL|EARLY-ONSET|FAMILIAL|",
-            "FOCAL|GENERALIZED|HEREDITARY|HYPOMYELINATING|ISOLATED|",
-            "JUVENILE|LATE-ONSET|NEONATAL|POSTSYNAPTIC|PRESYNAPTIC|",
-            "PROGRESSIVE|SUSCEPTIBILITY TO|UNILATERAL|VESTIBULAR)"
-        ),
-        tokens
-    )
-    any(is_num | is_type | is_def | is_strong)
+    ) |> any()
 }
 
 
@@ -412,7 +411,7 @@ omim_rearrange <- function(primary, remaining) {
 #' Apply rules- and curation-based capitalization fixes to a lowercased disease
 #' name.
 #'
-#' @param x A lowercased name string.
+#' @param x A character vector of lowercased name strings.
 #' @param eponyms A named character vector of case-insensitive whole-word
 #'   substitutions applied after lowercasing, for proper noun (eponym)
 #'   capitalization that cannot be determined automatically. Names are the
@@ -430,7 +429,7 @@ omim_rearrange <- function(primary, remaining) {
 #'   precedence. Phrase patterns override any conflicting word-level `eponyms`
 #'   substitutions. Use `NULL` to disable.
 #'
-#' @returns A name string with capitalization fixes applied.
+#' @returns A character vector with capitalization fixes applied.
 #'
 #' @section Capitalization rules applied automatically:
 #' * Roman numerals following 'type ' (e.g. `type xi` → `type XI`).
@@ -458,23 +457,30 @@ fix_disease_caps <- function(x, eponyms = NULL, patterns = NULL) {
         ignore.case = TRUE
     )
 
-    # Word-level eponym replacements (whole-word, case-insensitive)
+    # Word-level eponym replacements: single-pass via alternation + lookup —
+    # avoids ~1000 sequential gsub calls on the full vector.
     if (!is.null(eponyms)) {
-        for (i in seq_along(eponyms)) {
-            pattern <- paste0("(?i)\\b", names(eponyms)[[i]], "\\b")
-            out <- gsub(pattern, eponyms[[i]], out, perl = TRUE)
-        }
+        ep_names_esc <- gsub(
+            "([.+*?^${}()|\\[\\]\\\\])", "\\\\\\1",
+            names(eponyms), perl = TRUE
+        )
+        alt_pat <- paste0("(?i)\\b(", paste(ep_names_esc, collapse = "|"), ")\\b")
+        lookup  <- setNames(unname(eponyms), tolower(names(eponyms)))
+        out <- stringr::str_replace_all(out, alt_pat, function(m) unname(lookup[tolower(m)]))
     }
 
-    # Phrase-level pattern replacements
+    # Phrase-level pattern replacements, longest-first.
+    # Replacements using PCRE case modifiers (\U, \L, \E) must use
+    # gsub(perl=TRUE) without ignore.case; all others run case-insensitively.
     if (!is.null(patterns) && length(patterns) > 0L) {
+        is_perl_case <- grepl("\\\\[ULE]", patterns)
         ord <- order(nchar(names(patterns)), decreasing = TRUE)
         for (i in ord) {
             out <- gsub(
                 names(patterns)[[i]],
                 patterns[[i]],
                 out,
-                ignore.case = TRUE,
+                ignore.case = !is_perl_case[[i]],
                 perl = TRUE
             )
         }
