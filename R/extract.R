@@ -611,3 +611,48 @@ extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
 
     out
 }
+
+
+#' Extract OBO Definition Cross-References
+#'
+#' Extracts cross-reference (xref) annotations from OBO ontology class
+#' definitions. These are typically URLs of references supporting the definition
+#' or curator IDs.
+#'
+#' @param onto_path The path to an ontology file recognizable by
+#' [ROBOT](https://robot.obolibrary.org/), as a string.
+#' @param output The path where output will be written, as a string, or `NULL`
+#' (default) to load data directly.
+#' @inheritParams robot_query
+#'
+#' @returns A 2 column `tibble` (cols: `id`, `def_xref`).
+#'
+#' @export
+extract_obo_def_xref <- function(onto_path, output = NULL,
+                                 tidy_what = c("header", "uri_to_curie")) {
+    query <- '
+        PREFIX owl: <http://www.w3.org/2002/07/owl#>
+        PREFIX obo: <http://purl.obolibrary.org/obo/>
+        PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+        SELECT ?id ?def_xref
+        WHERE {
+        ?id a owl:Class ;
+            obo:IAO_0000115 ?def .
+        FILTER NOT EXISTS { ?id owl:deprecated true }
+
+        ?annot owl:annotatedSource ?id ;
+            owl:annotatedProperty obo:IAO_0000115 ;
+            owl:annotatedTarget ?def ;
+            oboInOwl:hasDbXref ?def_xref .
+        }'
+
+    out <- robot_query(
+        input = onto_path,
+        query = query,
+        output = output,
+        tidy_what = tidy_what
+    )
+
+    out
+}
