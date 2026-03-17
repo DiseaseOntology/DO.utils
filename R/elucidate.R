@@ -36,7 +36,7 @@ elucidate <- function(x, type = "basic", print = TRUE, ...) {
 #' @export
 elucidate.omim_inventory <- function(x, type = "basic", print = TRUE,
                                          ...) {
-    dep <- dplyr::filter(x, isTRUE(.data$do_dep))
+    dep <- dplyr::filter(x, .data$do_dep)
     omim_to_many <- dplyr::filter(
         x,
         .data$multimaps %in% c("omim_to_doid", "both_ways")
