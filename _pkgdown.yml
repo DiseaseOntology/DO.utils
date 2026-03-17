@@ -5,7 +5,7 @@ template:
 articles:
 - title: "For Maintainers"
   contents:
-  - maintainer-guide
+  - maintainer_guide
 - title: "Function Details"
   contents:
   - parse-omim-name
