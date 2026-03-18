@@ -2,7 +2,7 @@ utils::globalVariables(
     names = c(
         "DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
         "ns_prefix", "not_obo_prefix", "obo_prefix", "obo_ont_prefix",
-        "obo_prop_prefix"
+        "obo_prop_prefix", "disease_eponyms", "disease_cap_patterns"
     )
 )
 
@@ -163,3 +163,48 @@ NULL
 ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
                   "OWL Functional" = "ofn", "Manchester" = "omn",
                   "RDF/XML" = "owl", "OWL/XML" = "owx", "Turtle" = "ttl")
+
+
+#' Disease Name Eponym Replacement Vector
+#'
+#' A named character vector for correcting proper noun (eponym) capitalization
+#' in disease entry names after they have been parsed by [parse_omim_name()].
+#' Names are the lowercase form of each word; values are the correctly
+#' capitalized replacement (e.g. `c("waardenburg" = "Waardenburg")`).
+#'
+#' [parse_omim_name()] uses this dataset as its default `eponyms` argument,
+#' applying whole-word, case-insensitive substitutions to the lowercased output.
+#'
+#' @format A named character vector. Names are lowercase words; values are
+#'   their correctly capitalized replacements. Length 0 until first curation
+#'   run.
+#'
+#' @seealso [parse_omim_name()] which uses this vector by default;
+#'   [disease_cap_patterns] for the companion phrase-level replacement vector;
+#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
+#'   for the full dataset-building and curation workflow.
+"disease_eponyms"
+
+
+#' Disease Name Capitalization Pattern Vector
+#'
+#' A named character vector of phrase-level regex substitutions applied to
+#' lowercased disease entry names by [parse_omim_name()], *after* word-level
+#' [disease_eponyms] replacements. Use `disease_cap_patterns` for words whose
+#' correct capitalization depends on context (e.g. `SHORT` as an acronym in
+#' *SHORT syndrome* vs `short` as an adjective elsewhere).
+#'
+#' Names are case-insensitive regex patterns matched against the full
+#' lowercased name; values are the replacement strings. Longer patterns take
+#' priority over shorter ones, and patterns override conflicting
+#' [disease_eponyms] substitutions.
+#'
+#' @format A named character vector. Names are case-insensitive regex
+#'   patterns; values are their replacements. Length 0 until first curation
+#'   run.
+#'
+#' @seealso [parse_omim_name()] which uses this vector by default;
+#'   [disease_eponyms] for the companion word-level replacement vector;
+#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
+#'   for the full dataset-building and curation workflow.
+"disease_cap_patterns"
