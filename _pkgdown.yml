@@ -1,12 +1,3 @@
 url: https://diseaseontology.github.io/DO.utils/
 template:
   bootstrap: 5
-
-articles:
-- title: "For Maintainers"
-  contents:
-  - maintainer_guide
-- title: "Function Details"
-  contents:
-  - parse-omim-name
-
