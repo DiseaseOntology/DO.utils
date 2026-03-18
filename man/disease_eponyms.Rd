@@ -25,7 +25,7 @@ applying whole-word, case-insensitive substitutions to the lowercased output.
 \seealso{
 \code{\link[=parse_omim_name]{parse_omim_name()}} which uses this vector by default;
 \link{disease_cap_patterns} for the companion phrase-level replacement vector;
-the \href{https://allenbaron.github.io/DO.utils/articles/maintainer_guide.html}{Maintainer Guide}
+the \href{https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html}{Maintainer Guide}
 for the full dataset-building and curation workflow.
 }
 \keyword{datasets}

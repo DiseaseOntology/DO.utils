@@ -181,7 +181,7 @@ ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
 #'
 #' @seealso [parse_omim_name()] which uses this vector by default;
 #'   [disease_cap_patterns] for the companion phrase-level replacement vector;
-#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer_guide.html)
+#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
 #'   for the full dataset-building and curation workflow.
 "disease_eponyms"
 
@@ -205,6 +205,6 @@ ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
 #'
 #' @seealso [parse_omim_name()] which uses this vector by default;
 #'   [disease_eponyms] for the companion word-level replacement vector;
-#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer_guide.html)
+#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
 #'   for the full dataset-building and curation workflow.
 "disease_cap_patterns"

@@ -41,7 +41,7 @@ This article documents workflows for maintaining and rebuilding package datasets
 
 ### Workflow
 
-1. **Mine candidates** — run a source-specific script to update `data-raw/disease_eponyms_curated.tsv`:
+1. **Mine candidates** — run a source-specific script to update `disease_eponyms_curated.tsv`:
 
     ```r
     source("data-raw/omim_eponyms.R")   # requires OMIM API key; see ?download_omim
