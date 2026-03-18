@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,13 +39,53 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="doutils-development-version">DO.utils (development version)<a class="anchor" aria-label="anchor" href="#doutils-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.3.4" id="doutils-034">DO.utils 0.3.4<a class="anchor" aria-label="anchor" href="#doutils-034"></a></h2>
 <div class="section level3">
-<h3 id="updates-development-version">Updates<a class="anchor" aria-label="anchor" href="#updates-development-version"></a></h3>
-<ul><li>ggplot2 dependency updated to &gt;= 3.4.0</li>
+<h3 id="general-0-3-4">General<a class="anchor" aria-label="anchor" href="#general-0-3-4"></a></h3>
+<div class="section level4">
+<h4 id="new-0-3-4">New<a class="anchor" aria-label="anchor" href="#new-0-3-4"></a></h4>
+<ul><li>
+<code><a href="../reference/parse_omim_name.html">parse_omim_name()</a></code> parses OMIM entry names with inverted filing convention, converting them to normalized, case-corrected names and abbreviations. Supports both character vectors and data frame input.</li>
 <li>
-<code><a href="../reference/theme_DO.html">theme_DO()</a></code> margins widened to avoid label truncation &amp; updated internally to align with ggplot2 changes.</li>
+<code><a href="../reference/is_uri.html">is_uri()</a></code> tests whether values are valid URIs, with optional checking for empty URIs.</li>
+<li>
+<code><a href="../reference/max_paren_depth.html">max_paren_depth()</a></code> calculates the maximum nesting depth of parentheses in strings, with options for handling unmatched parentheses.</li>
+<li>
+<code><a href="../reference/as_html_img.html">as_html_img()</a></code> vectorized constructor for HTML <code>img</code> tags with required <code>src</code> and <code>alt</code> attributes.</li>
+<li>
+<code><a href="../reference/build_html_element.html">build_html_element()</a></code> vectorized constructor for HTML elements with support for tags, attributes, and content, distinguishing between required and optional tags.</li>
+<li>
+<code><a href="../reference/build_hyperlink.html">hyperlink_curie()</a></code> converts CURIEs to hyperlinks formatted for Google Sheets, Excel, or HTML display, building on <code><a href="../reference/build_hyperlink.html">build_hyperlink()</a></code>.</li>
 </ul></div>
+<div class="section level4">
+<h4 id="updates-0-3-4">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-4"></a></h4>
+<ul><li>ggplot2 dependency updated to &gt;= 3.4.0 from unversioned requirement.</li>
+<li>
+<code><a href="../reference/theme_DO.html">theme_DO()</a></code> margins widened to avoid label truncation and updated internally to align with ggplot2 3.4.0+ API changes (deprecated <code>size</code> parameter).</li>
+<li>
+<code><a href="../reference/append_to_url.html">append_to_url()</a></code> now returns <code>NA</code> for non-URIs, improving consistency with the new <code><a href="../reference/is_uri.html">is_uri()</a></code> function.</li>
+<li>
+<code><a href="../reference/read_delim_auto.html">read_delim_auto()</a></code> extended to handle literal data in addition to file paths.</li>
+<li>
+<code><a href="../reference/read_omim.html">read_omim()</a></code> improved auto-identification of headers in OMIM data.</li>
+<li>
+<code><a href="../reference/write_gs.html">write_gs()</a></code> updated with new <code>data.frame</code> method alongside existing methods.</li>
+<li>
+<code><a href="../reference/elucidate.html">elucidate.omim_inventory()</a></code> fixed reporting logic for deprecated classes.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="do-management--analysis-0-3-4">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-4"></a></h3>
+<div class="section level4">
+<h4 id="new-0-3-4-1">New<a class="anchor" aria-label="anchor" href="#new-0-3-4-1"></a></h4>
+<ul><li>
+<code><a href="../reference/extract_obo_mappings.html">extract_obo_mappings()</a></code> extracts mappings from OBO Foundry ontologies in SSSOM format with optional filtering by ID. Handles version extraction and date suffix processing.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="updates-0-3-4-1">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-4-1"></a></h4>
+<ul><li>OBO formatting function validation predicates fixed and formatting functions updated.</li>
+</ul></div>
+</div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.3" id="doutils-033">DO.utils 0.3.3<a class="anchor" aria-label="anchor" href="#doutils-033"></a></h2>

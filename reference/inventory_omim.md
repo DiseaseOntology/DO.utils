@@ -43,15 +43,15 @@ inventory_omim(
 
   The [OMIM](https://www.omim.org/help/faq#1_3) defined MIM symbols are:
 
-  |            |                                    |
-  |------------|------------------------------------|
-  | MIM symbol | MIM type                           |
-  | `*`        | gene                               |
-  | `+`        | gene, includes phenotype           |
-  | `#`        | phenotype                          |
-  | `%`        | phenotype, unknown molecular basis |
-  | `^`        | deprecated                         |
-  | `none`     | phenotype, suspected/overlap       |
+  |            |                                                          |
+  |------------|----------------------------------------------------------|
+  | MIM symbol | MIM type                                                 |
+  | `*`        | gene                                                     |
+  | `+`        | gene, includes phenotype                                 |
+  | `#`        | descriptive entry, not unique locus; usually a phenotype |
+  | `%`        | phenotype / phenotypic locus, unknown molecular basis    |
+  | `^`        | deprecated                                               |
+  | `none`     | phenotype (usually), suspected or possibly overlapping   |
 
 - include_pred:
 

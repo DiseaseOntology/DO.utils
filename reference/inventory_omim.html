@@ -11,7 +11,7 @@ comparison."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,7 @@ includes OMIM data to compare against the mappings in the ontology.</p>
 <dd><p>[<strong>OMIM search data only</strong>] The MIM symbols representing
 the data types to keep, as a character vector, or <code>NULL</code> to retain all
 (default: <code>"#"</code> and <code>"%"</code>).</p>
-<p>The <a href="https://www.omim.org/help/faq#1_3" class="external-link">OMIM</a> defined MIM symbols are:</p><table class="table table"><tr><td>MIM symbol</td><td>MIM type</td></tr><tr><td><code>*</code></td><td>gene</td></tr><tr><td><code>+</code></td><td>gene, includes phenotype</td></tr><tr><td><code>#</code></td><td>phenotype</td></tr><tr><td><code>%</code></td><td>phenotype, unknown molecular basis</td></tr><tr><td><code>^</code></td><td>deprecated</td></tr><tr><td><code>none</code></td><td>phenotype, suspected/overlap</td></tr></table></dd>
+<p>The <a href="https://www.omim.org/help/faq#1_3" class="external-link">OMIM</a> defined MIM symbols are:</p><table class="table table"><tr><td>MIM symbol</td><td>MIM type</td></tr><tr><td><code>*</code></td><td>gene</td></tr><tr><td><code>+</code></td><td>gene, includes phenotype</td></tr><tr><td><code>#</code></td><td>descriptive entry, not unique locus; usually a phenotype</td></tr><tr><td><code>%</code></td><td>phenotype / phenotypic locus, unknown molecular basis</td></tr><tr><td><code>^</code></td><td>deprecated</td></tr><tr><td><code>none</code></td><td>phenotype (usually), suspected or possibly overlapping</td></tr></table></dd>
 
 
 <dt id="arg-include-pred">include_pred<a class="anchor" aria-label="anchor" href="#arg-include-pred"></a></dt>
