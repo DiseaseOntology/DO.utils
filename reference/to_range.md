@@ -3,7 +3,7 @@
 Converts vectors to a string of ranges. All vector types are accepted
 and the original values will appear in the final output range, but where
 input is not a numeric vector of [whole
-numbers](https://allenbaron.github.io/DO.utils/reference/is_whole_number()),
+numbers](https://diseaseontology.github.io/DO.utils/reference/is_whole_number()),
 a function to convert the values to integers must be provided (`int_fn`)
 for the purpose of identifying the range(s).
 
@@ -25,7 +25,7 @@ to_range(
 - x:
 
   A numeric vector of [whole
-  numbers](https://allenbaron.github.io/DO.utils/reference/is_whole_number()).
+  numbers](https://diseaseontology.github.io/DO.utils/reference/is_whole_number()).
 
 - int_fn:
 

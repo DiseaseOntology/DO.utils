@@ -21,5 +21,5 @@ extract_subclass_axiom(DO_repo)
 ## See also
 
 Other `extract_*_axiom` functions:
-[`extract_class_axiom()`](https://allenbaron.github.io/DO.utils/reference/extract_class_axiom.md),
-[`extract_eq_axiom()`](https://allenbaron.github.io/DO.utils/reference/extract_eq_axiom.md)
+[`extract_class_axiom()`](https://diseaseontology.github.io/DO.utils/reference/extract_class_axiom.md),
+[`extract_eq_axiom()`](https://diseaseontology.github.io/DO.utils/reference/extract_eq_axiom.md)

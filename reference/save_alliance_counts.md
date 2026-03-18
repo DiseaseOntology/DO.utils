@@ -14,7 +14,7 @@ save_alliance_counts(counts_tbl, file, ...)
 - counts_tbl:
 
   record counts as `alliance_tbl` (e.g. output from
-  [`count_alliance_records()`](https://allenbaron.github.io/DO.utils/reference/count_alliance_records.md))
+  [`count_alliance_records()`](https://diseaseontology.github.io/DO.utils/reference/count_alliance_records.md))
 
 - file:
 
@@ -32,6 +32,6 @@ Returns the `counts_tbl` with its version info footer invisibly.
 ## See also
 
 Other Alliance functions:
-[`count_alliance_records()`](https://allenbaron.github.io/DO.utils/reference/count_alliance_records.md),
-[`download_alliance_tsv()`](https://allenbaron.github.io/DO.utils/reference/download_alliance_tsv.md),
-[`read_alliance()`](https://allenbaron.github.io/DO.utils/reference/read_alliance.md)
+[`count_alliance_records()`](https://diseaseontology.github.io/DO.utils/reference/count_alliance_records.md),
+[`download_alliance_tsv()`](https://diseaseontology.github.io/DO.utils/reference/download_alliance_tsv.md),
+[`read_alliance()`](https://diseaseontology.github.io/DO.utils/reference/read_alliance.md)

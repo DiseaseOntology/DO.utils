@@ -33,7 +33,7 @@ plot_citedby(
 
   A named set of 7 colors, one for each of the possible publication
   types (see Colors section) or the prefix of the color set to use from
-  [DO_colors](https://allenbaron.github.io/DO.utils/reference/DO_colors.md),
+  [DO_colors](https://diseaseontology.github.io/DO.utils/reference/DO_colors.md),
   as a character vector.
 
 - retracted:
@@ -67,7 +67,7 @@ a catch all category (generally a small subset of otherwise
 uncategorized publications).
 
 Sets available in
-[DO_colors](https://allenbaron.github.io/DO.utils/reference/DO_colors.md)
+[DO_colors](https://diseaseontology.github.io/DO.utils/reference/DO_colors.md)
 include: "sat" (saturated), "accent1", "accent2", and "orange". The
 default and light versions of the specified color set will be used to
 generate a gradient.

@@ -42,6 +42,6 @@ it promotes reproducibility and ensures future access if needed.
 ## See also
 
 Other Alliance functions:
-[`count_alliance_records()`](https://allenbaron.github.io/DO.utils/reference/count_alliance_records.md),
-[`read_alliance()`](https://allenbaron.github.io/DO.utils/reference/read_alliance.md),
-[`save_alliance_counts()`](https://allenbaron.github.io/DO.utils/reference/save_alliance_counts.md)
+[`count_alliance_records()`](https://diseaseontology.github.io/DO.utils/reference/count_alliance_records.md),
+[`read_alliance()`](https://diseaseontology.github.io/DO.utils/reference/read_alliance.md),
+[`save_alliance_counts()`](https://diseaseontology.github.io/DO.utils/reference/save_alliance_counts.md)

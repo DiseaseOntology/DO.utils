@@ -37,18 +37,18 @@ CURIEs are valid URIs (e.g. URIs cannot start with `_`).
 ## See also
 
 Other ID predicates:
-[`is_curie()`](https://allenbaron.github.io/DO.utils/reference/is_curie.md),
-[`obo_ID_predicates`](https://allenbaron.github.io/DO.utils/reference/obo_ID_predicates.md)
+[`is_curie()`](https://diseaseontology.github.io/DO.utils/reference/is_curie.md),
+[`obo_ID_predicates`](https://diseaseontology.github.io/DO.utils/reference/obo_ID_predicates.md)
 
 Other predicates:
-[`all_duplicated()`](https://allenbaron.github.io/DO.utils/reference/all_duplicated.md),
-[`char_val_predicates`](https://allenbaron.github.io/DO.utils/reference/char_val_predicates.md),
-[`iff_all_vals()`](https://allenbaron.github.io/DO.utils/reference/iff_all_vals.md),
-[`is_curie()`](https://allenbaron.github.io/DO.utils/reference/is_curie.md),
-[`is_invariant()`](https://allenbaron.github.io/DO.utils/reference/is_invariant.md),
-[`lgl_predicates`](https://allenbaron.github.io/DO.utils/reference/lgl_predicates.md),
-[`num_val_predicates`](https://allenbaron.github.io/DO.utils/reference/num_val_predicates.md),
-[`obo_ID_predicates`](https://allenbaron.github.io/DO.utils/reference/obo_ID_predicates.md)
+[`all_duplicated()`](https://diseaseontology.github.io/DO.utils/reference/all_duplicated.md),
+[`char_val_predicates`](https://diseaseontology.github.io/DO.utils/reference/char_val_predicates.md),
+[`iff_all_vals()`](https://diseaseontology.github.io/DO.utils/reference/iff_all_vals.md),
+[`is_curie()`](https://diseaseontology.github.io/DO.utils/reference/is_curie.md),
+[`is_invariant()`](https://diseaseontology.github.io/DO.utils/reference/is_invariant.md),
+[`lgl_predicates`](https://diseaseontology.github.io/DO.utils/reference/lgl_predicates.md),
+[`num_val_predicates`](https://diseaseontology.github.io/DO.utils/reference/num_val_predicates.md),
+[`obo_ID_predicates`](https://diseaseontology.github.io/DO.utils/reference/obo_ID_predicates.md)
 
 ## Examples
 

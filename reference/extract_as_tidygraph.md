@@ -15,7 +15,7 @@ extract_as_tidygraph(x, query = NULL, collapse_method = "first", debug = FALSE)
 
   A 'pyDOID.owl.xml' object or the path to an OWL/RDF XML file that can
   be instantiated as such an object by
-  [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md).
+  [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md).
 
 - query:
 
@@ -42,5 +42,5 @@ expects *unique* child-parent relationships, so at a minimum the SPARQL
 `?parent` (some identifier for each child's parent(s)). All additional
 output variables specified in the SPARQL query will be treated as 'node'
 annotations and collapsed using a method from
-[`collapse_col_flex()`](https://allenbaron.github.io/DO.utils/reference/collapse_col_flex.md)
+[`collapse_col_flex()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col_flex.md)
 to prevent duplication of records.

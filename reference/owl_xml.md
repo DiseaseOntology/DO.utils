@@ -35,4 +35,4 @@ SPARQL 1.1 queries, with the following methods:
 ## See also
 
 Other pyDOID classes:
-[`DOrepo()`](https://allenbaron.github.io/DO.utils/reference/DOrepo.md)
+[`DOrepo()`](https://diseaseontology.github.io/DO.utils/reference/DOrepo.md)

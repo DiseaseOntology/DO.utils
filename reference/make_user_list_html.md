@@ -23,5 +23,5 @@ The information this was formatting for disease-ontology.org was moved
 from the "Collaborators" page to the new "Use Cases" page in mid-2022
 and was split from one section into three, making this function
 obsolete. Use
-[`make_use_case_html()`](https://allenbaron.github.io/DO.utils/reference/make_use_case_html.md)
+[`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/make_use_case_html.md)
 instead.

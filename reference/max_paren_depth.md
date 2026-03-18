@@ -29,9 +29,9 @@ unmatched parentheses will return `NA`
 ## See also
 
 Other general utilities:
-[`length_sort()`](https://allenbaron.github.io/DO.utils/reference/length_sort.md),
-[`sandwich_text()`](https://allenbaron.github.io/DO.utils/reference/sandwich_text.md),
-[`suggest_regex()`](https://allenbaron.github.io/DO.utils/reference/suggest_regex.md)
+[`length_sort()`](https://diseaseontology.github.io/DO.utils/reference/length_sort.md),
+[`sandwich_text()`](https://diseaseontology.github.io/DO.utils/reference/sandwich_text.md),
+[`suggest_regex()`](https://diseaseontology.github.io/DO.utils/reference/suggest_regex.md)
 
 ## Examples
 

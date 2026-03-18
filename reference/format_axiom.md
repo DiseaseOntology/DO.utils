@@ -72,5 +72,5 @@ namespace-prefixed types, e.g. `obo:UBERON_0001032` would become
 `UBERON:anatomy`, or namespace only. This format simplifies axioms
 making basic analysis of axiom patterns easier. *See the documentation
 for*
-*[`generify_obo()`](https://allenbaron.github.io/DO.utils/reference/generify_obo.md)
+*[`generify_obo()`](https://diseaseontology.github.io/DO.utils/reference/generify_obo.md)
 for details.*

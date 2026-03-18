@@ -20,13 +20,13 @@ Performs no CURIE validation but relies on a properly formatted CURIE
 for conversion (e.g. prefix:reference, according to the [CURIE
 standard](https://www.w3.org/TR/2010/NOTE-curie-20101216/#s_syntax)).
 Any inputs not matching a prefix of
-[ns_prefix](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
+[ns_prefix](https://diseaseontology.github.io/DO.utils/reference/ns_prefix.md)
 will be returned without modification.
 
 ## See also
 
 Other identifier converters:
-[`to_curie()`](https://allenbaron.github.io/DO.utils/reference/to_curie.md)
+[`to_curie()`](https://diseaseontology.github.io/DO.utils/reference/to_curie.md)
 
 ## Examples
 

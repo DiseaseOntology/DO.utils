@@ -21,7 +21,7 @@ pubmed_summary(input, config = NULL, version = "2.0", retmode = "xml", ...)
   One of the following: 1) A vector with unique PubMed IDs, 2) a list of
   vectors with PubMed IDs (for example, output from
   `citedby_pmid(.... by_id = TRUE)` \>
-  [`extract_pmid()`](https://allenbaron.github.io/DO.utils/reference/extract_pmid.md)),
+  [`extract_pmid()`](https://diseaseontology.github.io/DO.utils/reference/extract_pmid.md)),
   OR 3) a `web_history` object (see NCBI Entrez API documentation for
   information).
 

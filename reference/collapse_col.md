@@ -48,9 +48,9 @@ following:
 
 ## See also
 
-[`collapse_col_flex()`](https://allenbaron.github.io/DO.utils/reference/collapse_col_flex.md)
+[`collapse_col_flex()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col_flex.md)
 for a more flexible approach and
-[`lengthen_col()`](https://allenbaron.github.io/DO.utils/reference/lengthen_col.md)
+[`lengthen_col()`](https://diseaseontology.github.io/DO.utils/reference/lengthen_col.md)
 for the pseudo-reverse operation that lengthens/expands one or more
 specified columns.
 

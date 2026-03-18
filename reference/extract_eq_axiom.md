@@ -21,5 +21,5 @@ Equivalent class axioms in OWL functional format, as a character vector.
 ## See also
 
 Other `extract_*_axiom` functions:
-[`extract_class_axiom()`](https://allenbaron.github.io/DO.utils/reference/extract_class_axiom.md),
-[`extract_subclass_axiom()`](https://allenbaron.github.io/DO.utils/reference/extract_subclass_axiom.md)
+[`extract_class_axiom()`](https://diseaseontology.github.io/DO.utils/reference/extract_class_axiom.md),
+[`extract_subclass_axiom()`](https://diseaseontology.github.io/DO.utils/reference/extract_subclass_axiom.md)

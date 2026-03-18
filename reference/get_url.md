@@ -36,7 +36,7 @@ support. The prefixes are primarily for cross-references (`xrefs`) and
 are generally better for creating URLs to look up information about a
 particular entity online but they *may* overlap with official namespaces
 in
-[ns_prefix](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md),
+[ns_prefix](https://diseaseontology.github.io/DO.utils/reference/ns_prefix.md),
 which can also be accessed by `get_url()`. Where this occurs, the
 prefixes can generally be distinguished by capitalization, with xref
 prefixes in uppercase,

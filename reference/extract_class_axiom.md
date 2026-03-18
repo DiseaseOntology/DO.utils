@@ -23,5 +23,5 @@ in OWL functional format.
 ## See also
 
 Other `extract_*_axiom` functions:
-[`extract_eq_axiom()`](https://allenbaron.github.io/DO.utils/reference/extract_eq_axiom.md),
-[`extract_subclass_axiom()`](https://allenbaron.github.io/DO.utils/reference/extract_subclass_axiom.md)
+[`extract_eq_axiom()`](https://diseaseontology.github.io/DO.utils/reference/extract_eq_axiom.md),
+[`extract_subclass_axiom()`](https://diseaseontology.github.io/DO.utils/reference/extract_subclass_axiom.md)

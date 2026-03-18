@@ -61,9 +61,9 @@ length_order(data, cols, ...)
 ## See also
 
 Other general utilities:
-[`max_paren_depth()`](https://allenbaron.github.io/DO.utils/reference/max_paren_depth.md),
-[`sandwich_text()`](https://allenbaron.github.io/DO.utils/reference/sandwich_text.md),
-[`suggest_regex()`](https://allenbaron.github.io/DO.utils/reference/suggest_regex.md)
+[`max_paren_depth()`](https://diseaseontology.github.io/DO.utils/reference/max_paren_depth.md),
+[`sandwich_text()`](https://diseaseontology.github.io/DO.utils/reference/sandwich_text.md),
+[`suggest_regex()`](https://diseaseontology.github.io/DO.utils/reference/suggest_regex.md)
 
 ## Examples
 

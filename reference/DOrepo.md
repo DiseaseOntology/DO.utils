@@ -36,9 +36,9 @@ class, along with the following:
 - `DOrepo$doid` and `DOrepo$doid_merged`: Access the doid.owl and
   doid-merged.owl files of the repository. These inherit from the
   `pyDOID.owl.xml` class, see
-  [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md)
+  [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md)
   for methods. *NOTE* that, unlike
-  [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md),
+  [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md),
   doid.owl and doid-merged.owl are not loaded into memory upon
   instantiation of `DOrepo`, but are loaded automatically when the first
   `$query()` is executed or manually via `$load()`.
@@ -46,4 +46,4 @@ class, along with the following:
 ## See also
 
 Other pyDOID classes:
-[`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md)
+[`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md)

@@ -72,4 +72,4 @@ citedby_pubmed(
 ## See also
 
 Other citedby_functions:
-[`citedby_scopus()`](https://allenbaron.github.io/DO.utils/reference/citedby_scopus.md)
+[`citedby_scopus()`](https://diseaseontology.github.io/DO.utils/reference/citedby_scopus.md)

@@ -36,5 +36,5 @@ character vectors.
 ## See also
 
 Other extract_pmid documentation:
-[`extract_pmid.elink()`](https://allenbaron.github.io/DO.utils/reference/extract_pmid.elink.md),
-[`extract_pmid.elink_list()`](https://allenbaron.github.io/DO.utils/reference/extract_pmid.elink_list.md)
+[`extract_pmid.elink()`](https://diseaseontology.github.io/DO.utils/reference/extract_pmid.elink.md),
+[`extract_pmid.elink_list()`](https://diseaseontology.github.io/DO.utils/reference/extract_pmid.elink_list.md)

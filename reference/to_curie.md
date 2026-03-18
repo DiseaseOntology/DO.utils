@@ -25,14 +25,14 @@ to_curie(x, strip_angle_brackets = TRUE)
 
 Performs no URI validation, relying on simple string matching of
 namespace-prefix pairs of
-[ns_prefix](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)
+[ns_prefix](https://diseaseontology.github.io/DO.utils/reference/ns_prefix.md)
 for conversion. Any values not matching one of these will be returned
 without modification.
 
 ## See also
 
 Other identifier converters:
-[`to_uri()`](https://allenbaron.github.io/DO.utils/reference/to_uri.md)
+[`to_uri()`](https://diseaseontology.github.io/DO.utils/reference/to_uri.md)
 
 ## Examples
 

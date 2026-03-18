@@ -3,7 +3,7 @@
 Lengthens values in the column(s) specified, de-concatenating values in
 those columns, resulting in duplicated rows that differ only by values
 in `cols`. NOTE: `lengthen_col()` is not the exact reverse of
-[`collapse_col()`](https://allenbaron.github.io/DO.utils/reference/collapse_col.md);
+[`collapse_col()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col.md);
 see examples.
 
 ## Usage
@@ -45,9 +45,9 @@ A data.frame with the specified columns lengthened.
 
 ## See also
 
-[`collapse_col()`](https://allenbaron.github.io/DO.utils/reference/collapse_col.md)
+[`collapse_col()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col.md)
 or
-[`collapse_col_flex()`](https://allenbaron.github.io/DO.utils/reference/collapse_col_flex.md)
+[`collapse_col_flex()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col_flex.md)
 for pseudo-reverse operations that collapse one or more specified
 columns.
 

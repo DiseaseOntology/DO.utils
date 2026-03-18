@@ -80,6 +80,6 @@ to record counts.
 ## See also
 
 Other Alliance functions:
-[`download_alliance_tsv()`](https://allenbaron.github.io/DO.utils/reference/download_alliance_tsv.md),
-[`read_alliance()`](https://allenbaron.github.io/DO.utils/reference/read_alliance.md),
-[`save_alliance_counts()`](https://allenbaron.github.io/DO.utils/reference/save_alliance_counts.md)
+[`download_alliance_tsv()`](https://diseaseontology.github.io/DO.utils/reference/download_alliance_tsv.md),
+[`read_alliance()`](https://diseaseontology.github.io/DO.utils/reference/read_alliance.md),
+[`save_alliance_counts()`](https://diseaseontology.github.io/DO.utils/reference/save_alliance_counts.md)

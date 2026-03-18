@@ -18,7 +18,7 @@ Documentation assumes pyDOID \>= v0.1.2
 The `DOrepo` class inherits the methods & subclasses of the
 [GitPython.repo.Repo](https://gitpython.readthedocs.io/en/stable/tutorial.html#meet-the-repo-type)
 class and adds a few additional classes & methods, see
-[`DOrepo()`](https://allenbaron.github.io/DO.utils/reference/DOrepo.md)
+[`DOrepo()`](https://diseaseontology.github.io/DO.utils/reference/DOrepo.md)
 for details.
 
 ## owl.xml class
@@ -26,5 +26,5 @@ for details.
 The `owl.xml` class thinly wraps a small set of python
 [rdflib](https://rdflib.readthedocs.io/en/stable/) methods to enable
 SPARQL 1.1 queries, see
-[`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md)
+[`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md)
 for details.

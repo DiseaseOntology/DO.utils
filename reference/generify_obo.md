@@ -1,6 +1,6 @@
 # Generify OBO Classes/Properties (INTERNAL)
 
-[`format_axiom()`](https://allenbaron.github.io/DO.utils/reference/format_axiom.md)
+[`format_axiom()`](https://diseaseontology.github.io/DO.utils/reference/format_axiom.md)
 internal helper that replaces URI/CURIEs defined by OBO ontologies with
 namespace-prefixed descriptions/types, where defined internally, or just
 the namespace. Will not modify non-OBO class URI/CURIEs.

@@ -19,7 +19,7 @@ append_to_url(x, url, sep = "")
   One or more URLs or URL names recognized by this package, as a
   character vector. If only one value is provided, it will be recycled;
   otherwise the length of `url` and `x` must match. See
-  [`get_url()`](https://allenbaron.github.io/DO.utils/reference/get_url.md)
+  [`get_url()`](https://diseaseontology.github.io/DO.utils/reference/get_url.md)
   for recognized base URL names.
 
 - sep:

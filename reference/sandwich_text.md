@@ -29,9 +29,9 @@ sandwich_text(x, placeholder, add_dup = TRUE)
 ## See also
 
 Other general utilities:
-[`length_sort()`](https://allenbaron.github.io/DO.utils/reference/length_sort.md),
-[`max_paren_depth()`](https://allenbaron.github.io/DO.utils/reference/max_paren_depth.md),
-[`suggest_regex()`](https://allenbaron.github.io/DO.utils/reference/suggest_regex.md)
+[`length_sort()`](https://diseaseontology.github.io/DO.utils/reference/length_sort.md),
+[`max_paren_depth()`](https://diseaseontology.github.io/DO.utils/reference/max_paren_depth.md),
+[`suggest_regex()`](https://diseaseontology.github.io/DO.utils/reference/suggest_regex.md)
 
 ## Examples
 

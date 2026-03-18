@@ -49,7 +49,7 @@ robot(..., .robot_path = NULL)
 
 - Can use OBO Foundry ROBOT tool installed on the system path. This may
   be achieved with
-  [`install_robot()`](https://allenbaron.github.io/DO.utils/reference/install_robot.md)
+  [`install_robot()`](https://diseaseontology.github.io/DO.utils/reference/install_robot.md)
   or as described at http://robot.obolibrary.org/.
 
 - Can also use a standalone robot.jar file (`.robot_path` must be

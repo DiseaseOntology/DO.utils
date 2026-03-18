@@ -3,7 +3,7 @@
 Replaces counts in the specified page of disease-ontology.org.
 `replace_html_counts()` is the primary workhorse supporting the more
 generalized
-[`update_website_count_tables()`](https://allenbaron.github.io/DO.utils/reference/update_website_count_tables.md).
+[`update_website_count_tables()`](https://diseaseontology.github.io/DO.utils/reference/update_website_count_tables.md).
 
 ## Usage
 

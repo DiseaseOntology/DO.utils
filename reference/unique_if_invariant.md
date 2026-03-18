@@ -38,7 +38,7 @@ unique_if_invariant(x, na.rm = FALSE, incl_nm = FALSE, ...)
 ## See also
 
 For *unconditional* vector-to-string conversion methods, see the
-[`vctr_to_string()`](https://allenbaron.github.io/DO.utils/reference/vctr_to_string.md)
+[`vctr_to_string()`](https://diseaseontology.github.io/DO.utils/reference/vctr_to_string.md)
 family of functions.
 
 ## Examples

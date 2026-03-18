@@ -23,7 +23,7 @@ hyperlink_curie(curie, as, ..., def = "obo_generic")
   One or more URLs or URL names recognized by this package, as a
   character vector. If only one value is provided, it will be recycled;
   otherwise the length of `url` and `x` must match. See
-  [`get_url()`](https://allenbaron.github.io/DO.utils/reference/get_url.md)
+  [`get_url()`](https://diseaseontology.github.io/DO.utils/reference/get_url.md)
   for recognized base URL names.
 
 - as:
@@ -56,7 +56,7 @@ hyperlink_curie(curie, as, ..., def = "obo_generic")
   The value to return when `url` is `NA`, as a string. One of "url" or
   "text" (default). Note that the default for `build_hyperlink()` is
   opposite the default of
-  [`format_hyperlink()`](https://allenbaron.github.io/DO.utils/reference/format_hyperlink.md)
+  [`format_hyperlink()`](https://diseaseontology.github.io/DO.utils/reference/format_hyperlink.md)
   because `text` is provided by default.
 
 - curie:
@@ -66,15 +66,15 @@ hyperlink_curie(curie, as, ..., def = "obo_generic")
 - def:
 
   The definition to use when checking for CURIEs. See
-  [`is_curie()`](https://allenbaron.github.io/DO.utils/reference/is_curie.md)
+  [`is_curie()`](https://diseaseontology.github.io/DO.utils/reference/is_curie.md)
   for details.
 
 ## See also
 
 Functions used internally:
-[`append_to_url()`](https://allenbaron.github.io/DO.utils/reference/append_to_url.md)
+[`append_to_url()`](https://diseaseontology.github.io/DO.utils/reference/append_to_url.md)
 and
-[`format_hyperlink()`](https://allenbaron.github.io/DO.utils/reference/format_hyperlink.md).
+[`format_hyperlink()`](https://diseaseontology.github.io/DO.utils/reference/format_hyperlink.md).
 
 ## Examples
 

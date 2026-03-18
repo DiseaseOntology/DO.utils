@@ -1,7 +1,7 @@
 # Print Method for Suggested Regex
 
 Prints suggested regex along with details from
-[`suggest_regex()`](https://allenbaron.github.io/DO.utils/reference/suggest_regex.md).
+[`suggest_regex()`](https://diseaseontology.github.io/DO.utils/reference/suggest_regex.md).
 
 ## Usage
 

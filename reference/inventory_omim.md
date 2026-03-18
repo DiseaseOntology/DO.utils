@@ -2,7 +2,7 @@
 
 Assesses whether OMIM identifiers are present in the Human Disease
 Ontology as mappings (either xrefs or skos mappings). Utilizes
-[`robot()`](https://allenbaron.github.io/DO.utils/reference/robot.md)
+[`robot()`](https://diseaseontology.github.io/DO.utils/reference/robot.md)
 for comparison.
 
 ## Usage
@@ -26,10 +26,10 @@ inventory_omim(
 - omim_input:
 
   An `omim_tbl` created by
-  [`read_omim()`](https://allenbaron.github.io/DO.utils/reference/read_omim.md)
+  [`read_omim()`](https://diseaseontology.github.io/DO.utils/reference/read_omim.md)
   or the path to a .tsv or .csv file (possibly compressed) that can be
   read by
-  [`read_omim()`](https://allenbaron.github.io/DO.utils/reference/read_omim.md)
+  [`read_omim()`](https://diseaseontology.github.io/DO.utils/reference/read_omim.md)
   and includes OMIM data to compare against the mappings in the
   ontology.
 

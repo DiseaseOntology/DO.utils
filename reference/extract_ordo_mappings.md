@@ -3,7 +3,7 @@
 Extract mappings from the Orphanet Rare Disease Ontology (ORDO). ORDO
 uses `oboInOwl:hasDbXref` for mapping with annotations to indicate
 exact/broad/narrow-ness. Utilizes
-[`robot()`](https://allenbaron.github.io/DO.utils/reference/robot.md).
+[`robot()`](https://diseaseontology.github.io/DO.utils/reference/robot.md).
 
 ## Usage
 
@@ -57,11 +57,11 @@ extract_ordo_mappings(
   - `"header"` to remove leading `?` from header labels.
 
   - `"unnest"` to unnest list columns with
-    [`unnest_cross()`](https://allenbaron.github.io/DO.utils/reference/unnest_cross.md).
+    [`unnest_cross()`](https://diseaseontology.github.io/DO.utils/reference/unnest_cross.md).
 
   - `"uri_to_curie"` to convert all URIs recognized by DO.utils to
     CURIEs with
-    [`to_curie()`](https://allenbaron.github.io/DO.utils/reference/to_curie.md).
+    [`to_curie()`](https://diseaseontology.github.io/DO.utils/reference/to_curie.md).
 
   - `"lgl_NA_FALSE"` to replace `NA` in logical columns with `FALSE`.
 

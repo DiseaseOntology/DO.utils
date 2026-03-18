@@ -16,7 +16,7 @@ queue_xref_split(.DOrepo, src = "all")
 
   The path to the local HumanDiseaseOntology repository or a
   `pyDOID.repo.DOrepo` object created by
-  [`DOrepo()`](https://allenbaron.github.io/DO.utils/reference/DOrepo.md).
+  [`DOrepo()`](https://diseaseontology.github.io/DO.utils/reference/DOrepo.md).
 
 - src:
 

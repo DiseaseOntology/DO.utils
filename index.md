@@ -12,7 +12,7 @@ community** for:
       (Bibliometrics/Scientometrics)](#assess_use).
     - For a detailed description refer to the “Assessing Resource Use:
       Obtaining Use Records” tutorial included with this package
-      ([`vignette("obtain_use_records", package = "DO.utils")`](https://allenbaron.github.io/DO.utils/articles/obtain_use_records.md))
+      ([`vignette("obtain_use_records", package = "DO.utils")`](https://diseaseontology.github.io/DO.utils/articles/obtain_use_records.md))
       or the peer-reviewed article:
 
     > J. Allen Baron, Lynn M Schriml, *Assessing resource use: a case
@@ -37,9 +37,9 @@ functions as broadly useful as possible.
 
 To use DO.utils you must first install `R` from
 [CRAN](https://cran.r-project.org/). Installing
-[RStudio](https://allenbaron.github.io/DO.utils/) can also be useful but
-is not required. The `devtools` package is also required and can be
-obtain by executing `install.packages("devtools")` within R.
+[RStudio](https://diseaseontology.github.io/DO.utils/) can also be
+useful but is not required. The `devtools` package is also required and
+can be obtain by executing `install.packages("devtools")` within R.
 
 ### Installing DO.utils
 
@@ -67,24 +67,24 @@ Components that will be broadly useful to any resource can:
 1.  Identify scientific publications that use a resource from:
     1.  Citations of one or more article(s) published by the resource
         (“cited by”;
-        [`citedby_pubmed()`](https://allenbaron.github.io/DO.utils/reference/citedby_pubmed.md)
+        [`citedby_pubmed()`](https://diseaseontology.github.io/DO.utils/reference/citedby_pubmed.md)
         and
-        [`citedby_scopus()`](https://allenbaron.github.io/DO.utils/reference/citedby_scopus.md)).
+        [`citedby_scopus()`](https://diseaseontology.github.io/DO.utils/reference/citedby_scopus.md)).
     2.  PubMed or PubMed Central (PMC) search results
-        ([`search_pubmed()`](https://allenbaron.github.io/DO.utils/reference/search_pubmed.md)
+        ([`search_pubmed()`](https://diseaseontology.github.io/DO.utils/reference/search_pubmed.md)
         and
-        [`search_pmc()`](https://allenbaron.github.io/DO.utils/reference/search_pmc.md)).
+        [`search_pmc()`](https://diseaseontology.github.io/DO.utils/reference/search_pmc.md)).
     3.  A MyNCBI collection
-        ([`read_pubmed_txt()`](https://allenbaron.github.io/DO.utils/reference/read_pubmed_txt.md)).
+        ([`read_pubmed_txt()`](https://diseaseontology.github.io/DO.utils/reference/read_pubmed_txt.md)).
 2.  Identify matching publication records in different record sets (must
     be formatted data.frames; see
-    [`match_citations()`](https://allenbaron.github.io/DO.utils/reference/match_citations.md)).
+    [`match_citations()`](https://diseaseontology.github.io/DO.utils/reference/match_citations.md)).
 
 To those interested in Bioconductor package download
-statistics,[`get_bioc_pkg_stats()`](https://allenbaron.github.io/DO.utils/reference/get_bioc_pkg_stats.md)
+statistics,[`get_bioc_pkg_stats()`](https://diseaseontology.github.io/DO.utils/reference/get_bioc_pkg_stats.md)
 may be useful, while other measures of impact are designed specifically
 with the DO in mind
-(e.g. [`count_alliance_records()`](https://allenbaron.github.io/DO.utils/reference/count_alliance_records.md)).
+(e.g. [`count_alliance_records()`](https://diseaseontology.github.io/DO.utils/reference/count_alliance_records.md)).
 
 ## DO Improvement & Analysis
 
@@ -93,8 +93,8 @@ analysis:
 
 1.  Git repo management, iterative execution across git repository tags,
     and SPARQL queries implemented with wrappers
-    ([`DOrepo()`](https://allenbaron.github.io/DO.utils/reference/DOrepo.md),
-    [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md))
+    ([`DOrepo()`](https://diseaseontology.github.io/DO.utils/reference/DOrepo.md),
+    [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md))
     around the related [pyDOID](https://pypi.org/project/pyDOID/) python
     package.
 2.  Automation of [disease-ontology.org](https://disease-ontology.org/)
@@ -123,22 +123,22 @@ DO.utils includes general utilities to make programming in R easier
 including, for example, those that assist with:
 
 - Type/content testing –
-  [`is_blank()`](https://allenbaron.github.io/DO.utils/reference/char_val_predicates.md),
-  [`is_positive()`](https://allenbaron.github.io/DO.utils/reference/num_val_predicates.md),
+  [`is_blank()`](https://diseaseontology.github.io/DO.utils/reference/char_val_predicates.md),
+  [`is_positive()`](https://diseaseontology.github.io/DO.utils/reference/num_val_predicates.md),
   `is_vctr_or_df()`,
-  [`all_duplicated()`](https://allenbaron.github.io/DO.utils/reference/all_duplicated.md)
+  [`all_duplicated()`](https://diseaseontology.github.io/DO.utils/reference/all_duplicated.md)
 - Vector-to-scalar conversion –
-  [`collapse_to_string()`](https://allenbaron.github.io/DO.utils/reference/collapse_to_string.md),
-  [`unique_if_invariant()`](https://allenbaron.github.io/DO.utils/reference/unique_if_invariant.md)
+  [`collapse_to_string()`](https://diseaseontology.github.io/DO.utils/reference/collapse_to_string.md),
+  [`unique_if_invariant()`](https://diseaseontology.github.io/DO.utils/reference/unique_if_invariant.md)
 - Data reduction –
-  [`collapse_col()`](https://allenbaron.github.io/DO.utils/reference/collapse_col.md),
-  [`drop_blank()`](https://allenbaron.github.io/DO.utils/reference/drop_blank.md)
+  [`collapse_col()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col.md),
+  [`drop_blank()`](https://diseaseontology.github.io/DO.utils/reference/drop_blank.md)
 - Value replacement –
-  [`replace_null()`](https://allenbaron.github.io/DO.utils/reference/replace_null.md),
-  [`replace_blank()`](https://allenbaron.github.io/DO.utils/reference/replace_blank.md)
+  [`replace_null()`](https://diseaseontology.github.io/DO.utils/reference/replace_null.md),
+  [`replace_blank()`](https://diseaseontology.github.io/DO.utils/reference/replace_blank.md)
 - Sorting (by a specified priority)
 - Dates –
-  [`cur_yr()`](https://allenbaron.github.io/DO.utils/reference/cur_yr.md),
-  [`today_datestamp()`](https://allenbaron.github.io/DO.utils/reference/today_datestamp.md)
+  [`cur_yr()`](https://diseaseontology.github.io/DO.utils/reference/cur_yr.md),
+  [`today_datestamp()`](https://diseaseontology.github.io/DO.utils/reference/today_datestamp.md)
 - Temporary bug workarounds –
-  [`restore_names()`](https://allenbaron.github.io/DO.utils/reference/restore_names.md)
+  [`restore_names()`](https://diseaseontology.github.io/DO.utils/reference/restore_names.md)

@@ -60,6 +60,6 @@ unique_to_string(
 
 ## See also
 
-[`unique_if_invariant()`](https://allenbaron.github.io/DO.utils/reference/unique_if_invariant.md)
+[`unique_if_invariant()`](https://diseaseontology.github.io/DO.utils/reference/unique_if_invariant.md)
 for an alternative, *conditional* `unique` vector-to-string conversion
 method

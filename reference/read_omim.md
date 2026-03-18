@@ -2,7 +2,7 @@
 
 Reads and formats OMIM data copied or manually downloaded from
 https://omim.org/, or downloaded with
-[`download_omim()`](https://allenbaron.github.io/DO.utils/reference/download_omim.md)
+[`download_omim()`](https://diseaseontology.github.io/DO.utils/reference/download_omim.md)
 (permission required), and appends columns to speed up subsequent
 curation activities. `read_omim()` will attempt to process and correct
 headers including fixing multi-line or misarranged column headers, and
@@ -21,7 +21,7 @@ read_omim(file, keep_mim = c("#", "%"), ...)
   The path to a file (possibly compressed) with copy/pasted or manually
   downloaded data from https://omim.org/ (see "Manual Input
   Requirements" for details), or downloaded with
-  [`download_omim()`](https://allenbaron.github.io/DO.utils/reference/download_omim.md).
+  [`download_omim()`](https://diseaseontology.github.io/DO.utils/reference/download_omim.md).
 
 - keep_mim:
 
@@ -44,7 +44,7 @@ read_omim(file, keep_mim = c("#", "%"), ...)
 - ...:
 
   Arguments passed on to
-  [`read_delim_auto`](https://allenbaron.github.io/DO.utils/reference/read_delim_auto.md)
+  [`read_delim_auto`](https://diseaseontology.github.io/DO.utils/reference/read_delim_auto.md)
 
   `strict`
 

@@ -15,12 +15,12 @@ extract_subtree(x, top_node, reload = FALSE)
 
   A 'pyDOID.owl.xml' object or the path to an OWL/RDF XML file that can
   be instantiated as such an object by
-  [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md).
+  [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md).
 
 - top_node:
 
   The top node of the tree, as a valid DOID (see
-  [`is_valid_doid()`](https://allenbaron.github.io/DO.utils/reference/obo_ID_predicates.md)
+  [`is_valid_doid()`](https://diseaseontology.github.io/DO.utils/reference/obo_ID_predicates.md)
   for valid input formats).
 
 - reload:
@@ -36,5 +36,5 @@ for each unique combination for each subclass below and including
 
 ## See also
 
-[`format_subtree()`](https://allenbaron.github.io/DO.utils/reference/format_subtree.md)
+[`format_subtree()`](https://diseaseontology.github.io/DO.utils/reference/format_subtree.md)
 to arrange data in a tree structure similar to ontology browsers.

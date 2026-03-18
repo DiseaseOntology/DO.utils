@@ -232,9 +232,9 @@ with R) or outer single quotes must be used.
     again).
 
 2.  Search PubMed
-    ([`search_pubmed()`](https://allenbaron.github.io/DO.utils/reference/search_pubmed.md)),
+    ([`search_pubmed()`](https://diseaseontology.github.io/DO.utils/reference/search_pubmed.md)),
     PubMed Central
-    ([`search_pmc()`](https://allenbaron.github.io/DO.utils/reference/search_pmc.md)),
+    ([`search_pmc()`](https://diseaseontology.github.io/DO.utils/reference/search_pmc.md)),
     and/or Europe PMC (use `europepmc::epmc_search()` function of
     europepmc package) with desired search terms.
 
@@ -311,7 +311,7 @@ Then load a collection into R with DO.utils as follows:
         tutorial a few records from DO’s collection have been saved to
         `collection.txt` with this vignette).
 2.  Provide the local path of the saved file to
-    [`read_pubmed_txt()`](https://allenbaron.github.io/DO.utils/reference/read_pubmed_txt.md)
+    [`read_pubmed_txt()`](https://diseaseontology.github.io/DO.utils/reference/read_pubmed_txt.md)
     of DO.utils to read & parse records.
 
 ``` r
@@ -334,7 +334,7 @@ search results, it does come with some downsides.
     #> 5     5 26320941 PMC4553261 10.3402/jev.v4.27497.      5. Subramanian SL,…
 
 3.  Optionally, use
-    [`pubmed_summary()`](https://allenbaron.github.io/DO.utils/reference/pubmed_summary.md)
+    [`pubmed_summary()`](https://diseaseontology.github.io/DO.utils/reference/pubmed_summary.md)
     with the PubMed IDs to get data in the same format as “cited by” and
     search.
 
@@ -370,7 +370,7 @@ If more than one set of records are obtained, you will likely want to
 match them and merge them into one or more datasets to make review
 easier. DO.utils can match publication records using standard
 identifiers (these are identified by matching column names; see
-[`?match_citations`](https://allenbaron.github.io/DO.utils/reference/match_citations.md)
+[`?match_citations`](https://diseaseontology.github.io/DO.utils/reference/match_citations.md)
 for more details) but does not currently provide merging, which is a
 complex process due to variation in records.
 
@@ -393,7 +393,7 @@ cb_pm <- dplyr::mutate(cb_pm, record_n = dplyr::row_number())
 ```
 
 2.  Use
-    [`match_citations()`](https://allenbaron.github.io/DO.utils/reference/match_citations.md)
+    [`match_citations()`](https://diseaseontology.github.io/DO.utils/reference/match_citations.md)
     to add matching record numbers from the first set to another set.
     The identifiers used for matching are listed in the order used.
 
@@ -523,15 +523,15 @@ information for a record obtained from Scopus may be lost.
 
 **2B. No data loss, possible duplication:** Combine record sets by
 specifying columns to concatenate unique values with
-[`collapse_col()`](https://allenbaron.github.io/DO.utils/reference/collapse_col.md)
+[`collapse_col()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col.md)
 (see
-[`?collapse_col`](https://allenbaron.github.io/DO.utils/reference/collapse_col.md)
+[`?collapse_col`](https://diseaseontology.github.io/DO.utils/reference/collapse_col.md)
 for details). If values in these columns are the same, only one will be
 retained. If they differ, they will be concatenated. At a minimum,
 record number and record set identifier columns should be collapsed.
 
 > NOTE:
-> [`collapse_col()`](https://allenbaron.github.io/DO.utils/reference/collapse_col.md)
+> [`collapse_col()`](https://diseaseontology.github.io/DO.utils/reference/collapse_col.md)
 > will *only* collapse records that have identical non-collapsing
 > columns. Even small differences in punctuation or case will prevent
 > record de-duplication in favor of preserving information. Records will

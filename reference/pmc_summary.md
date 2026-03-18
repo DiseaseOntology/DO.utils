@@ -2,7 +2,7 @@
 
 Retrieves PubMed Central Summary information for specified publications.
 Acts in exactly the same manner as
-[`pubmed_summary()`](https://allenbaron.github.io/DO.utils/reference/pubmed_summary.md).
+[`pubmed_summary()`](https://diseaseontology.github.io/DO.utils/reference/pubmed_summary.md).
 *Consult* *documentation there for more details.*
 
 ## Usage

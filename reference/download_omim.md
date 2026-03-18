@@ -57,5 +57,5 @@ Unless `on_failure` includes "list_failed", the successfully downloaded
 
 ## See also
 
-[`read_omim()`](https://allenbaron.github.io/DO.utils/reference/read_omim.md)
+[`read_omim()`](https://diseaseontology.github.io/DO.utils/reference/read_omim.md)
 to read downloaded files as tibble/data.frames.

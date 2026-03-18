@@ -1,7 +1,7 @@
 # Format a Subtree
 
 Format a subtree, produced by
-[`extract_subtree()`](https://allenbaron.github.io/DO.utils/reference/extract_subtree.md),
+[`extract_subtree()`](https://diseaseontology.github.io/DO.utils/reference/extract_subtree.md),
 as a text-based tree mirroring
 [disease-ontology.org](https://disease-ontology.org/).
 
@@ -16,17 +16,17 @@ format_subtree(subtree_df, top_node)
 - subtree_df:
 
   A dataframe from
-  [`extract_subtree()`](https://allenbaron.github.io/DO.utils/reference/extract_subtree.md).
+  [`extract_subtree()`](https://diseaseontology.github.io/DO.utils/reference/extract_subtree.md).
 
 - top_node:
 
   The top node of the tree, as a valid DOID (see
-  [`is_valid_doid()`](https://allenbaron.github.io/DO.utils/reference/obo_ID_predicates.md)
+  [`is_valid_doid()`](https://diseaseontology.github.io/DO.utils/reference/obo_ID_predicates.md)
   for valid input formats).
 
 ## See also
 
-[`extract_subtree()`](https://allenbaron.github.io/DO.utils/reference/extract_subtree.md)
+[`extract_subtree()`](https://diseaseontology.github.io/DO.utils/reference/extract_subtree.md)
 
 ## Examples
 

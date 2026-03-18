@@ -15,4 +15,4 @@ access_owl_xml(x)
 
   A 'pyDOID.owl.xml' object or the path to an OWL/RDF XML file that can
   be instantiated as such an object by
-  [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md).
+  [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md).

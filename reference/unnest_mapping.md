@@ -1,7 +1,7 @@
 # Unnest Mapping
 
 Tidies
-[`pyobo_map()`](https://allenbaron.github.io/DO.utils/reference/pyobo_map.md)
+[`pyobo_map()`](https://diseaseontology.github.io/DO.utils/reference/pyobo_map.md)
 results stored in the column of a data frame in two steps:
 
 1.  Extracts mapping results from specialized `ScoredMatch` python
@@ -32,7 +32,7 @@ unnest_mapping(
 - col:
 
   The column with
-  [`pyobo_map()`](https://allenbaron.github.io/DO.utils/reference/pyobo_map.md)
+  [`pyobo_map()`](https://diseaseontology.github.io/DO.utils/reference/pyobo_map.md)
   results, as a [tidy-select
   specification](https://tidyr.tidyverse.org/reference/tidyr_tidy_select.html).
 

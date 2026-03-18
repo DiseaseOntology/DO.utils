@@ -46,13 +46,13 @@ columns described.
 
 ## See also
 
-[`print.suggested_regex()`](https://allenbaron.github.io/DO.utils/reference/print.suggested_regex.md)
+[`print.suggested_regex()`](https://diseaseontology.github.io/DO.utils/reference/print.suggested_regex.md)
 for the print method.
 
 Other general utilities:
-[`length_sort()`](https://allenbaron.github.io/DO.utils/reference/length_sort.md),
-[`max_paren_depth()`](https://allenbaron.github.io/DO.utils/reference/max_paren_depth.md),
-[`sandwich_text()`](https://allenbaron.github.io/DO.utils/reference/sandwich_text.md)
+[`length_sort()`](https://diseaseontology.github.io/DO.utils/reference/length_sort.md),
+[`max_paren_depth()`](https://diseaseontology.github.io/DO.utils/reference/max_paren_depth.md),
+[`sandwich_text()`](https://diseaseontology.github.io/DO.utils/reference/sandwich_text.md)
 
 ## Examples
 

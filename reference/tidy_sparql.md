@@ -14,12 +14,12 @@ tidy_sparql(query_res, tidy_what = "everything", ...)
 - query_res:
 
   The results of a SPARQL query, as a data.frame (usually produced by
-  [`owl_xml()`](https://allenbaron.github.io/DO.utils/reference/owl_xml.md)\$query()
+  [`owl_xml()`](https://diseaseontology.github.io/DO.utils/reference/owl_xml.md)\$query()
   or similar from
-  [`DOrepo()`](https://allenbaron.github.io/DO.utils/reference/DOrepo.md),
+  [`DOrepo()`](https://diseaseontology.github.io/DO.utils/reference/DOrepo.md),
   but can also be used to tidy results of [robot("query",
-  ...)](https://allenbaron.github.io/DO.utils/reference/robot.md) loaded
-  with `readr`).
+  ...)](https://diseaseontology.github.io/DO.utils/reference/robot.md)
+  loaded with `readr`).
 
 - tidy_what:
 
@@ -32,11 +32,11 @@ tidy_sparql(query_res, tidy_what = "everything", ...)
   - `"header"` to remove leading `?` from header labels.
 
   - `"unnest"` to unnest list columns with
-    [`unnest_cross()`](https://allenbaron.github.io/DO.utils/reference/unnest_cross.md).
+    [`unnest_cross()`](https://diseaseontology.github.io/DO.utils/reference/unnest_cross.md).
 
   - `"uri_to_curie"` to convert all URIs recognized by DO.utils to
     CURIEs with
-    [`to_curie()`](https://allenbaron.github.io/DO.utils/reference/to_curie.md).
+    [`to_curie()`](https://diseaseontology.github.io/DO.utils/reference/to_curie.md).
 
   - `"lgl_NA_FALSE"` to replace `NA` in logical columns with `FALSE`.
 
@@ -52,7 +52,7 @@ tidy_sparql(query_res, tidy_what = "everything", ...)
 - ...:
 
   Arguments passed on to
-  [`to_curie`](https://allenbaron.github.io/DO.utils/reference/to_curie.md)
+  [`to_curie`](https://diseaseontology.github.io/DO.utils/reference/to_curie.md)
 
   `strip_angle_brackets`
 

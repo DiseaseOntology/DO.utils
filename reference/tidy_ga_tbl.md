@@ -1,7 +1,7 @@
 # Tidy Google Analytics Tables (INTERNAL)
 
 Tidies Google Analytics tables loaded with
-[`read_ga()`](https://allenbaron.github.io/DO.utils/reference/read_ga.md).
+[`read_ga()`](https://diseaseontology.github.io/DO.utils/reference/read_ga.md).
 
 ## Usage
 
@@ -14,7 +14,7 @@ tidy_ga_tbl(ga_tbl, keep_total = FALSE)
 - ga_tbl:
 
   A Google analytics table loaded with
-  [`read_ga()`](https://allenbaron.github.io/DO.utils/reference/read_ga.md),
+  [`read_ga()`](https://diseaseontology.github.io/DO.utils/reference/read_ga.md),
   that needs to be tidied.
 
 - keep_total:

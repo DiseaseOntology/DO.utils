@@ -51,7 +51,7 @@ citedby_scopus(
 - insttoken:
 
   Elsevier institutional token (*REQUIRED*). See
-  [`vignette("obtain_use_records")`](https://allenbaron.github.io/DO.utils/articles/obtain_use_records.md)
+  [`vignette("obtain_use_records")`](https://diseaseontology.github.io/DO.utils/articles/obtain_use_records.md)
   for more details.
 
 - no_result:
@@ -109,4 +109,4 @@ If `by_id = TRUE`, an `id` named list of `scopus_search` result lists.
 ## See also
 
 Other citedby_functions:
-[`citedby_pubmed()`](https://allenbaron.github.io/DO.utils/reference/citedby_pubmed.md)
+[`citedby_pubmed()`](https://diseaseontology.github.io/DO.utils/reference/citedby_pubmed.md)

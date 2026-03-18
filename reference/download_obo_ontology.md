@@ -16,7 +16,7 @@ download_obo_ontology(ontology_id, dest_dir, on_failure = "warn", ...)
   A character vector of OBO Foundry ontology identifier(s) (lowercase,
   as found on http://www.obofoundry.org/). For reference, ontology
   identifiers are also provided in
-  [obofoundry_metadata](https://allenbaron.github.io/DO.utils/reference/obofoundry_metadata.md)
+  [obofoundry_metadata](https://diseaseontology.github.io/DO.utils/reference/obofoundry_metadata.md)
   within this package.
 
 - dest_dir:

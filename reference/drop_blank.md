@@ -1,7 +1,7 @@
 # Drop Blanks
 
 Drops blank values from a vector or list. See
-[`is_blank()`](https://allenbaron.github.io/DO.utils/reference/char_val_predicates.md)
+[`is_blank()`](https://diseaseontology.github.io/DO.utils/reference/char_val_predicates.md)
 for what constitutes a blank value. `drop_blank()` is a generic
 function.
 

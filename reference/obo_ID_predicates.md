@@ -51,23 +51,23 @@ formatted correctly (see [OBO Foundry ID
 Policy](https://obofoundry.org/id-policy) and [OBO File
 Specification](https://owlcollab.github.io/oboformat/doc/obo-syntax.html))
 *AND* correspond to a known namespace of an OBO Foundry ontology (see
-[obo_prefix](https://allenbaron.github.io/DO.utils/reference/ns_prefix.md)).
+[obo_prefix](https://diseaseontology.github.io/DO.utils/reference/ns_prefix.md)).
 
 ## See also
 
 Other ID predicates:
-[`is_curie()`](https://allenbaron.github.io/DO.utils/reference/is_curie.md),
-[`is_uri()`](https://allenbaron.github.io/DO.utils/reference/is_uri.md)
+[`is_curie()`](https://diseaseontology.github.io/DO.utils/reference/is_curie.md),
+[`is_uri()`](https://diseaseontology.github.io/DO.utils/reference/is_uri.md)
 
 Other predicates:
-[`all_duplicated()`](https://allenbaron.github.io/DO.utils/reference/all_duplicated.md),
-[`char_val_predicates`](https://allenbaron.github.io/DO.utils/reference/char_val_predicates.md),
-[`iff_all_vals()`](https://allenbaron.github.io/DO.utils/reference/iff_all_vals.md),
-[`is_curie()`](https://allenbaron.github.io/DO.utils/reference/is_curie.md),
-[`is_invariant()`](https://allenbaron.github.io/DO.utils/reference/is_invariant.md),
-[`is_uri()`](https://allenbaron.github.io/DO.utils/reference/is_uri.md),
-[`lgl_predicates`](https://allenbaron.github.io/DO.utils/reference/lgl_predicates.md),
-[`num_val_predicates`](https://allenbaron.github.io/DO.utils/reference/num_val_predicates.md)
+[`all_duplicated()`](https://diseaseontology.github.io/DO.utils/reference/all_duplicated.md),
+[`char_val_predicates`](https://diseaseontology.github.io/DO.utils/reference/char_val_predicates.md),
+[`iff_all_vals()`](https://diseaseontology.github.io/DO.utils/reference/iff_all_vals.md),
+[`is_curie()`](https://diseaseontology.github.io/DO.utils/reference/is_curie.md),
+[`is_invariant()`](https://diseaseontology.github.io/DO.utils/reference/is_invariant.md),
+[`is_uri()`](https://diseaseontology.github.io/DO.utils/reference/is_uri.md),
+[`lgl_predicates`](https://diseaseontology.github.io/DO.utils/reference/lgl_predicates.md),
+[`num_val_predicates`](https://diseaseontology.github.io/DO.utils/reference/num_val_predicates.md)
 
 ## Examples
 

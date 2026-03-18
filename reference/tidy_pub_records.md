@@ -16,10 +16,10 @@ tidy_pub_records(x, ...)
 - x:
 
   A publication record object, as produced by
-  [`citedby_pubmed()`](https://allenbaron.github.io/DO.utils/reference/citedby_pubmed.md),
-  [`citedby_scopus()`](https://allenbaron.github.io/DO.utils/reference/citedby_scopus.md)
+  [`citedby_pubmed()`](https://diseaseontology.github.io/DO.utils/reference/citedby_pubmed.md),
+  [`citedby_scopus()`](https://diseaseontology.github.io/DO.utils/reference/citedby_scopus.md)
   and
-  [`pubmed_summary()`](https://allenbaron.github.io/DO.utils/reference/pubmed_summary.md).
+  [`pubmed_summary()`](https://diseaseontology.github.io/DO.utils/reference/pubmed_summary.md).
 
 - ...:
 

@@ -27,5 +27,5 @@ pyobo_map(terms, namespace)
 ## Value
 
 List of results for each term. See
-[`parse_mapping()`](https://allenbaron.github.io/DO.utils/reference/parse_mapping.md)
+[`parse_mapping()`](https://diseaseontology.github.io/DO.utils/reference/parse_mapping.md)
 and dependencies for details on format of results.

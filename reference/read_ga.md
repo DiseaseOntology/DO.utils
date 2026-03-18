@@ -22,7 +22,7 @@ read_ga(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE, ...)
 - tidy:
 
   Whether tables should be tidied with
-  [`tidy_ga_tbl()`](https://allenbaron.github.io/DO.utils/reference/tidy_ga_tbl.md),
+  [`tidy_ga_tbl()`](https://diseaseontology.github.io/DO.utils/reference/tidy_ga_tbl.md),
   as a logical scalar (default: `TRUE`).
 
 - keep_total:

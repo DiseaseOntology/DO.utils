@@ -38,7 +38,7 @@ robot_query(
 
   Additional arguments to [ROBOT
   query](http://robot.obolibrary.org/query) formatted as described in
-  [`robot()`](https://allenbaron.github.io/DO.utils/reference/robot.md).
+  [`robot()`](https://diseaseontology.github.io/DO.utils/reference/robot.md).
 
 - tidy_what:
 
@@ -51,11 +51,11 @@ robot_query(
   - `"header"` to remove leading `?` from header labels.
 
   - `"unnest"` to unnest list columns with
-    [`unnest_cross()`](https://allenbaron.github.io/DO.utils/reference/unnest_cross.md).
+    [`unnest_cross()`](https://diseaseontology.github.io/DO.utils/reference/unnest_cross.md).
 
   - `"uri_to_curie"` to convert all URIs recognized by DO.utils to
     CURIEs with
-    [`to_curie()`](https://allenbaron.github.io/DO.utils/reference/to_curie.md).
+    [`to_curie()`](https://diseaseontology.github.io/DO.utils/reference/to_curie.md).
 
   - `"lgl_NA_FALSE"` to replace `NA` in logical columns with `FALSE`.
 
@@ -132,5 +132,5 @@ result. Otherwise, the query result (ASK as boolean or SELECT as
 
 ## See also
 
-[`robot()`](https://allenbaron.github.io/DO.utils/reference/robot.md)
+[`robot()`](https://diseaseontology.github.io/DO.utils/reference/robot.md)
 for underlying implementation.

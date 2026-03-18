@@ -55,11 +55,11 @@ extract_obo_mappings(
   - `"header"` to remove leading `?` from header labels.
 
   - `"unnest"` to unnest list columns with
-    [`unnest_cross()`](https://allenbaron.github.io/DO.utils/reference/unnest_cross.md).
+    [`unnest_cross()`](https://diseaseontology.github.io/DO.utils/reference/unnest_cross.md).
 
   - `"uri_to_curie"` to convert all URIs recognized by DO.utils to
     CURIEs with
-    [`to_curie()`](https://allenbaron.github.io/DO.utils/reference/to_curie.md).
+    [`to_curie()`](https://diseaseontology.github.io/DO.utils/reference/to_curie.md).
 
   - `"lgl_NA_FALSE"` to replace `NA` in logical columns with `FALSE`.
 

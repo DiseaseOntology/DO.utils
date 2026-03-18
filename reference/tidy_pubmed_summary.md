@@ -32,5 +32,5 @@ information is present and additional variables included with
 ## DEPRECATION NOTICE
 
 This function has been in favor of
-[`tidy_pub_records()`](https://allenbaron.github.io/DO.utils/reference/tidy_pub_records.md)
+[`tidy_pub_records()`](https://diseaseontology.github.io/DO.utils/reference/tidy_pub_records.md)
 and will not work on `esummary_list` objects.
