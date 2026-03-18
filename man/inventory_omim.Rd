@@ -29,10 +29,10 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
    MIM symbol \tab MIM type \cr
    \code{*} \tab gene \cr
    \code{+} \tab gene, includes phenotype \cr
-   \verb{#} \tab phenotype \cr
-   \verb{\%} \tab phenotype, unknown molecular basis \cr
+   \verb{#} \tab descriptive entry, not unique locus; usually a phenotype \cr
+   \verb{\%} \tab phenotype / phenotypic locus, unknown molecular basis \cr
    \code{^} \tab deprecated \cr
-   \code{none} \tab phenotype, suspected/overlap \cr
+   \code{none} \tab phenotype (usually), suspected or possibly overlapping \cr
 }}
 
 \item{include_pred}{The predicates to include when testing for one-to-multiple

@@ -465,7 +465,7 @@ fix_disease_caps <- function(x, eponyms = NULL, patterns = NULL) {
             names(eponyms), perl = TRUE
         )
         alt_pat <- paste0("(?i)\\b(", paste(ep_names_esc, collapse = "|"), ")\\b")
-        lookup  <- setNames(unname(eponyms), tolower(names(eponyms)))
+        lookup  <- purrr::set_names(unname(eponyms), tolower(names(eponyms)))
         out <- stringr::str_replace_all(out, alt_pat, function(m) unname(lookup[tolower(m)]))
     }
 

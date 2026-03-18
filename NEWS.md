@@ -1,9 +1,32 @@
-# DO.utils (development version)
+# DO.utils 0.3.4
 
-## Updates
-* ggplot2 dependency updated to >= 3.4.0
-* `theme_DO()` margins widened to avoid label truncation & updated internally to align with ggplot2
-changes.
+## General
+
+### New
+* `parse_omim_name()` parses OMIM entry names with inverted filing convention, converting them to normalized, case-corrected names and abbreviations. Supports both character vectors and data frame input.
+* `is_uri()` tests whether values are valid URIs, with optional checking for empty URIs.
+* `max_paren_depth()` calculates the maximum nesting depth of parentheses in strings, with options for handling unmatched parentheses.
+* `as_html_img()` vectorized constructor for HTML `img` tags with required `src` and `alt` attributes.
+* `build_html_element()` vectorized constructor for HTML elements with support for tags, attributes, and content, distinguishing between required and optional tags.
+* `hyperlink_curie()` converts CURIEs to hyperlinks formatted for Google Sheets, Excel, or HTML display, building on `build_hyperlink()`.
+
+### Updates
+* ggplot2 dependency updated to >= 3.4.0 from unversioned requirement.
+* `theme_DO()` margins widened to avoid label truncation and updated internally to align with ggplot2 3.4.0+ API changes (deprecated `size` parameter).
+* `append_to_url()` now returns `NA` for non-URIs, improving consistency with the new `is_uri()` function.
+* `read_delim_auto()` extended to handle literal data in addition to file paths.
+* `read_omim()` improved auto-identification of headers in OMIM data.
+* `write_gs()` updated with new `data.frame` method alongside existing methods.
+* `elucidate.omim_inventory()` fixed reporting logic for deprecated classes.
+
+## DO Management & Analysis
+
+### New
+* `extract_obo_mappings()` extracts mappings from OBO Foundry ontologies in SSSOM format with optional filtering by ID. Handles version extraction and date suffix processing.
+
+### Updates
+* OBO formatting function validation predicates fixed and formatting functions updated.
+
 
 # DO.utils 0.3.3
 
