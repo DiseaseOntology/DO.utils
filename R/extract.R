@@ -611,3 +611,195 @@ extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
 
     out
 }
+
+
+#' Extract Anonymous Relationships from OBO Foundry Ontology
+#'
+#' Extracts all anonymous relations (logical/complex) from any OBO Foundry
+#' Ontology in Manchester format, including equivalent classes, subclasses, and
+#' disjoint classes. `extract_obo_anon()` is designed to supplement SPARQL
+#' queries that generally cannot return anonymous relationships.
+#'
+#' @param obo_ont The path to an ontology file, as a string.
+#' @param prefix A character vector of OBO prefixes (aka ID spaces) to filter
+#' results to, or `NULL` (default) to return all axioms. _Ignored if `id` is_
+#' _provided._
+#' @param id A character vector of OBO IDs (CURIEs) to filter results to or
+#' `NULL` (default) to return all entities with logical relations.
+#' @param render The format for rendering classes & properties, as a string.
+#' One of:
+#' * `"label"` (default): Use labels, quoting as needed.
+#' * `"id"`: Use OBO IDs (CURIEs).
+#' @inheritParams robot
+#'
+#' @returns A tibble with the columns: `id`, `data_type`, and `value`, where `value`
+#' is the axiom in Manchester syntax rendered according to `format`.
+#'
+#' @section NOTES:
+#' Uses [ROBOT export](https://robot.obolibrary.org/export) internally.
+#'
+#' @export
+extract_obo_anon <- function(obo_ont, prefix = NULL, id = NULL,
+                             render = "label", .robot_path = NULL) {
+    render <- match.arg(render, c("label", "id"))
+
+    temp <- tempfile(fileext = ".tsv")
+    robot(
+        "export",
+        i = obo_ont,
+        header = '"ID|LABEL|Equivalent Class [ANON ID]|SubClass Of [ANON ID]|Disjoint With [ANON ID]"',
+        include = '"classes properties"',
+        export = temp,
+        .robot_path = .robot_path
+    )
+    .df <- readr::read_tsv(
+        temp,
+        col_names = c("id", "label", "owl:equivalentClass", "rdfs:subClassOf", "owl:disjointWith"),
+        skip = 1,
+        show_col_types = FALSE
+    )
+
+    if (!is.null(id)) {
+        out <- dplyr::filter(.df, .data$id %in% .env$id)
+    } else if (!is.null(prefix)) {
+        pattern <- sandwich_text(paste0(prefix, collapse = "|"), c("^(", ")"))
+        out <- dplyr::filter(
+            .df,
+            stringr::str_detect(.data$id, pattern)
+        )
+    } else {
+        out <- .df
+    }
+
+    out <- tidyr::pivot_longer(
+        out,
+        cols = c("owl:equivalentClass", "rdfs:subClassOf", "owl:disjointWith"),
+        names_to = "predicate",
+        values_to = "value",
+        values_drop_na = TRUE
+    )
+
+    if (render == "label") {
+        # subset to IDs actually in axioms
+        id_keep <- stringr::str_extract_all(
+            out$value,
+            "[A-Za-z0-9_]+:[A-Za-z0-9_#]+"
+        ) |>
+            unlist() |>
+            unique()
+        label_df <- .df |>
+            dplyr::select("id", "label") |>
+            dplyr::filter(.data$id %in% id_keep & !is.na(.data$label)) |>
+            dplyr::mutate(
+                label = dplyr::case_when(
+                    stringr::str_detect(.data$label, "'") ~ sandwich_text(.data$label, '"'),
+                    stringr::str_detect(.data$label, "[^[:alnum:]]") ~ sandwich_text(.data$label, "'"),
+                    TRUE ~ .data$label
+                )
+            ) |>
+            dplyr::arrange(-stringr::str_length(.data$id), .data$id)
+        label_replace <- purrr::set_names(
+            label_df$label,
+            label_df$id
+        )
+        out <- dplyr::mutate(
+            out,
+            value = stringr::str_replace_all(
+                .data$value,
+                "[A-Za-z0-9_]+:[A-Za-z0-9_#]+",
+                # direct selection via replace fxn ~200x faster than
+                # label_replace used directly; returns input if ID not found
+                function(x) dplyr::coalesce(label_replace[x], x)
+            )
+        )
+    }
+
+    ### FUTURE WORK -- identify subclass anon subtypes? ###
+    lengthen_col(out, "value")
+}
+
+#' Extract OBO Foundry Ontology Data
+#'
+#' Extracts data from an OBO Foundry ontology.
+#'
+#' @param obo_ont The path to an ontology file, as a string.
+#' @param prefix A character vector of OBO prefixes (aka ID spaces) to filter
+#' results to, or `NULL` (default) to return all axioms. _Ignored if `id` is_
+#' _provided._
+#' @param id A character vector of OBO IDs (CURIEs) to filter results to or
+#' `NULL` (default) to return all entities with logical relations.
+#' @param include_anon Whether to include anonymous relationships
+#'    (logical/complex) in the output, as a boolean (default: `TRUE`). See
+#'    [extract_obo_anon()].
+#' @inheritDotParams extract_obo_anon
+#' @inheritParams robot
+#'
+#' @returns A tibble of class `obo_data` with the columns: `id`, `predicate`,
+#' `value`, `axiom predicate`, and `axiom value`. An additional class is added
+#' to indicate the file the data came from (without extension or directories).
+#'
+#' @section NOTES:
+#' Uses [ROBOT query](https://robot.obolibrary.org/query) internally.
+#'
+#' @export
+extract_obo_data <- function(obo_ont, prefix = NULL, id = NULL,
+                             include_anon = TRUE, ..., .robot_path = NULL) {
+    query <- system.file(
+        "sparql",
+        "obo-data.rq",
+        package = "DO.utils",
+        mustWork = TRUE
+    ) |>
+        readr::read_file()
+
+    if (!is.null(id)) {
+        iri <- to_uri(id) |>
+            sandwich_text(c("<", ">"))
+        values_stmt <- paste0(iri, collapse = " ") |>
+            sandwich_text(c("VALUES ?id { ", " }"))
+        query <- glue::glue(
+            query,
+            values = values_stmt,
+            filter = "",
+            .open = "#@",
+            .close = "#"
+        )
+    } else if (!is.null(prefix)) {
+        filter_stmt <- paste0(prefix, collapse = "|") |>
+            sandwich_text(c('FILTER(CONTAINS(str(?id), "', '_")'))
+        query <- glue::glue(
+            query,
+            values = "",
+            filter = filter_stmt,
+            .open = "#@",
+            .close = "#"
+        )
+    }
+
+    qres <- robot_query(
+        input = obo_ont,
+        query = query,
+        tidy_what = c("header", "uri_to_curie"),
+        col_types = readr::cols(.default = readr::col_character()),
+        .robot_path = .robot_path
+    )
+
+    if (!include_anon) {
+        out <- qres
+    } else {
+        anon <- extract_obo_anon(
+            obo_ont,
+            prefix = prefix,
+            id = id,
+            ...,
+            .robot_path = .robot_path
+        ) |>
+            dplyr::select("id", "predicate", "value")
+
+        out <- dplyr::bind_rows(qres, anon)
+    }
+
+    ont_src <- tools::file_path_sans_ext(basename(obo_ont))
+    class(out) <- c(ont_src, "obo_data", class(out))
+    out
+}

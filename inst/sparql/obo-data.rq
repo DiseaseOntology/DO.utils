@@ -1,0 +1,34 @@
+# returns all class annotations, with any axiom annotations, and axioms to
+# named classes (no anonymous classes); with optional VALUES or FILTER clauses
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT ?id ?predicate ?value ?axiom_predicate ?axiom_value ?extra
+WHERE {
+  #@values#
+  ?id a owl:Class ;
+    ?predicate ?value .
+  FILTER(!isBlank(?id) && !isBlank(?value))
+  FILTER (?predicate NOT IN (oboInOwl:id, rdf:type))
+  #@filter#
+
+  OPTIONAL {
+    ?axiom a owl:Axiom ;
+      owl:annotatedSource ?id ;
+      owl:annotatedProperty ?predicate ;
+      owl:annotatedTarget ?value ;
+      ?axiom_predicate ?axiom_value .
+    FILTER (
+      ?axiom_predicate NOT IN (
+        rdf:type, owl:annotatedSource, owl:annotatedProperty, owl:annotatedTarget
+      )
+    )
+  }
+
+  OPTIONAL {
+    ?value rdfs:label ?extra .
+  }
+}

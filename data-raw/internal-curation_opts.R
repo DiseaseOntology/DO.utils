@@ -7,13 +7,23 @@ curation_opts <- googlesheets4::read_sheet(
   sheet = "template_options",
   col_types = "c"
 ) |>
-  dplyr::filter(!is.na(.data$template))
+  dplyr::filter(!is.na(.data$template) & !.data$inclusion == "deprecated")
+
+
+# SPARQL set identifying curation data types ------------------------------
+
+.sparql_dt_motif <- curation_opts |>
+    dplyr::filter(!is.na(.data$sparql_dt_motif)) |>
+    with(
+        purrr::set_names(data_type, sparql_dt_motif)
+    ) |>
+    length_sort(by_name = TRUE, decreasing = TRUE)
 
 readr::write_csv(curation_opts, "data-raw/curation_opts.csv")
 
 .curation_opts <- dplyr::select(
-  curation_opts,
-  tidyselect::all_of(c("header", "template", "type"))
+    curation_opts,
+    tidyselect::all_of(c("data_type", "template", "inclusion"))
 )
 
-use_data_internal(.curation_opts, overwrite = TRUE)
+use_data_internal(.sparql_dt_motif, .curation_opts, overwrite = TRUE)
