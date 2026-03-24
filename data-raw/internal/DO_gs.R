@@ -1,5 +1,9 @@
-## code to save DO Google Sheet information internally (`.DO_gs`)
-devtools::load_all()
+## code to prepare `.DO_gs` internal dataset ##
+#
+# Serves as a reference for DO-related Google Sheets and relevant sheets (tabs)
+# for data retrieval
+
+rlang::check_installed("here")
 
 .DO_gs <- list(
   users = list(
@@ -12,4 +16,8 @@ devtools::load_all()
   )
 )
 
-use_data_internal(.DO_gs, overwrite = TRUE)
+saveRDS(
+  .DO_gs,
+  file = here::here("data-raw", "internal", "DO_gs.rds"),
+  compress = "bzip2"
+)

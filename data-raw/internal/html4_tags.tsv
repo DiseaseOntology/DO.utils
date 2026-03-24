@@ -1,0 +1,97 @@
+name	start_tag	end_tag	deprecated	dtd	description
+a	required	required	FALSE		anchor
+abbr	required	required	FALSE		"abbreviated form (e.g., www, http,
+etc.)"
+acronym	required	required	FALSE		
+address	required	required	FALSE		information on author
+applet	required	required	TRUE	loose	java applet
+area	required	forbidden	FALSE		client-side image map area
+b	required	required	FALSE		bold text style
+base	required	forbidden	FALSE		document base uri
+basefont	required	forbidden	TRUE	loose	base font size
+bdo	required	required	FALSE		i18n bidi over-ride
+big	required	required	FALSE		large text style
+blockquote	required	required	FALSE		long quotation
+body	optional	optional	FALSE		document body
+br	required	forbidden	FALSE		forced line break
+button	required	required	FALSE		push button
+caption	required	required	FALSE		table caption
+center	required	required	TRUE	loose	shorthand for div align=center
+cite	required	required	FALSE		citation
+code	required	required	FALSE		computer code fragment
+col	required	forbidden	FALSE		table column
+colgroup	required	optional	FALSE		table column group
+dd	required	optional	FALSE		definition description
+del	required	required	FALSE		deleted text
+dfn	required	required	FALSE		instance definition
+dir	required	required	TRUE	loose	directory list
+div	required	required	FALSE		generic language/style container
+dl	required	required	FALSE		definition list
+dt	required	optional	FALSE		definition term
+em	required	required	FALSE		emphasis
+fieldset	required	required	FALSE		form control group
+font	required	required	TRUE	loose	local change to font
+form	required	required	FALSE		interactive form
+frame	required	forbidden	FALSE	forbidden	subwindow
+frameset	required	required	FALSE	forbidden	window subdivision
+h1	required	required	FALSE		heading
+h2	required	required	FALSE		heading
+h3	required	required	FALSE		heading
+h4	required	required	FALSE		heading
+h5	required	required	FALSE		heading
+h6	required	required	FALSE		heading
+head	optional	optional	FALSE		document head
+hr	required	forbidden	FALSE		horizontal rule
+html	optional	optional	FALSE		document root element
+i	required	required	FALSE		italic text style
+iframe	required	required	FALSE	loose	inline subwindow
+img	required	forbidden	FALSE		embedded image
+input	required	forbidden	FALSE		form control
+ins	required	required	FALSE		inserted text
+isindex	required	forbidden	TRUE	loose	single line prompt
+kbd	required	required	FALSE		text to be entered by the user
+label	required	required	FALSE		form field label text
+legend	required	required	FALSE		fieldset legend
+li	required	optional	FALSE		list item
+link	required	forbidden	FALSE		a media-independent link
+map	required	required	FALSE		client-side image map
+menu	required	required	TRUE	loose	menu list
+meta	required	forbidden	FALSE		generic metainformation
+noframes	required	required	FALSE	forbidden	"alternate content container for non
+frame-based rendering"
+noscript	required	required	FALSE		"alternate content container for non
+script-based rendering"
+object	required	required	FALSE		generic embedded object
+ol	required	required	FALSE		ordered list
+optgroup	required	required	FALSE		option group
+option	required	optional	FALSE		selectable choice
+p	required	optional	FALSE		paragraph
+param	required	forbidden	FALSE		named property value
+pre	required	required	FALSE		preformatted text
+q	required	required	FALSE		short inline quotation
+s	required	required	TRUE	loose	strike-through text style
+samp	required	required	FALSE		"sample program output, scripts,
+etc."
+script	required	required	FALSE		script statements
+select	required	required	FALSE		option selector
+small	required	required	FALSE		small text style
+span	required	required	FALSE		generic language/style container
+strike	required	required	TRUE	loose	strike-through text
+strong	required	required	FALSE		strong emphasis
+style	required	required	FALSE		style info
+sub	required	required	FALSE		subscript
+sup	required	required	FALSE		superscript
+table	required	required	FALSE		
+tbody	optional	optional	FALSE		table body
+td	required	optional	FALSE		table data cell
+textarea	required	required	FALSE		multi-line text field
+tfoot	required	optional	FALSE		table footer
+th	required	optional	FALSE		table header cell
+thead	required	optional	FALSE		table header
+title	required	required	FALSE		document title
+tr	required	optional	FALSE		table row
+tt	required	required	FALSE		teletype or monospaced text style
+u	required	required	TRUE	loose	underlined text style
+ul	required	required	FALSE		unordered list
+var	required	required	FALSE		"instance of a variable or program
+argument"
