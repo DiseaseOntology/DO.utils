@@ -298,7 +298,9 @@ get_html_indent <- function(html) {
     increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
         indent_min
     increment <- min(increments, na.rm = TRUE)
-    list(type = indent_type, min = indent_min, increment = increment)
+    out <- list(type = indent_type, min = indent_min, increment = increment)
+    class(out) <- c("html_indent", class(out))
+    out
 }
 
 #' Set HTML Attributes
