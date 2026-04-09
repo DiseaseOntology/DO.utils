@@ -23,6 +23,7 @@ Imports:
     httr,
     igraph,
     jsonlite,
+    lifecycle (>= 1.0.0),
     lubridate,
     magrittr,
     methods,

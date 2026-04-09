@@ -1,87 +1,85 @@
-#' Make HTML for DO Use Case Tables
+#' Update Table on Use Cases Page
 #'
-#' Makes the row and cell html code for the various sections/tables of the
-#' disease-ontology.org "Use Cases" page from the DO team's "DO_uses" google
-#' sheet. This function explicitly avoids including the html code for defining
-#' the table itself to provide for flexibility. The "html" output in the files
-#' specified must be manually copied and pasted into the disease-ontology.org
-#' "Use Cases" file in the appropriate section/table.
-#'
-#' @param out_dir The path to the directory where output should be saved, as a
-#' string.
-#' @param group The group(s) to generate html for, as a character vector. One or
-#' more of: "all" (default) or specific values in the `type` column of the
+#' Updates the data in the table on the "Use Cases" page of disease-ontology.org
+#' to match the curated use cases in the
 #' [DO_uses](https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/?gid=1972219724#gid=1972219724)
-#' `DO_website_user_list` sheet.
+#' google sheet.
 #'
-#' @returns
-#' One "html" file in `out_dir` for each `group` named as
-#' "DO_use_case-\{group\}.html" and the "User" data from the Google Sheet
-#' invisibly.
+#' @param use_cases_path The file path to the "Use Cases" page HTML file, as a
+#' string.
+#' @param table_id The id of the table to update in the HTML file, as a string.
+#'
+#' @returns The page's update HTML, invisibly.
 #'
 #' @export
-make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
-    # validate arguments
-    if (!rlang::is_string(out_dir) || !dir.exists(out_dir)) {
-        rlang::abort(
-            message = "`out_dir` is not a single directory or does not exist."
-        )
-    }
+update_website_use_cases <- function(use_cases_path, table_id = "use-cases") {
+    rlang::check_installed("tableHTML")
+    stopifnot(file.exists(use_cases_path))
 
-    # prep data
+    # read current HTML & table
+    html <- readr::read_file(use_cases_path)
+    uc_table <- DO.utils:::get_html_table(html, table_id)
+    uc_indent <- DO.utils:::get_html_indent(uc_table)
+
+    # get & reformat data
     use_case_gs <- googlesheets4::read_sheet(
-        ss = .DO_gs$users$ss,
-        sheet = .DO_gs$users$sheet,
-        range = "A:E",
-        col_types = "lcccc"
+        ss = .DO_gs$user$ss,
+        sheet = .DO_gs$user$sheet
     )
-    use_case_df <- use_case_gs %>%
-        dplyr::filter(!is.na(.data$added)) %>%
-        dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
 
+    use_case_df <- use_case_gs |>
+        # drop rows with missing data or w/o checkbox in 'added'f column
+        dplyr::filter(
+            !dplyr::if_any(c("added", "name", "url"), is.na)
+        ) |>
+        dplyr::arrange(.data$name) |>
+        dplyr::mutate(
+            url = stringr::str_trim(.data$url),
+            Name = DO.utils::format_hyperlink(
+                .data$url,
+                as = "html",
+                text = .data$name,
+                target = "_blank"
+            )
+        ) |>
+        dplyr::select("Name", Category = "primary_category")
 
-    possible_use_cases <- unique(use_case_df$type) |>
-        stats::na.omit()
-    group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
-    if ("all" %in% group) {
-        group <- possible_use_cases
-    }
-
-    out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
-
-    use_case_list <- purrr::map(
-        group,
-        ~ dplyr::filter(use_case_df, .data$type == .x) %>%
-            # ensure use cases are alphabetical by column
-            dplyr::arrange(.data$sort_col) %>%
-            html_col_sort(3)
-    ) %>%
-        purrr::set_names(nm = group)
-
-    # build html
-    use_case_html_list <- purrr::map(
-        use_case_list,
-        function(.df) {
-            glue::glue_data(
-                .x = .df,
-                '<a href="{url}" target="_blank">{name}</a>'
-            ) %>%
-                html_in_rows(
-                    per_row = 3,
-                    indent_n = 2,
-                    cell_attr = c(class="default")
+    use_case_html <- tableHTML::tableHTML(
+        use_case_df,
+        rownames = FALSE,
+        class = '"display"',
+        # wrapping headers for babel translation
+        headers = DO.utils::sandwich_text(
+            names(use_case_df),
+            c("{{ _(\"", "\") }}")
+        ),
+        escape = FALSE,
+        replace_NA = ""
+    ) |>
+        stringr::str_replace_all(
+            c(
+                # strip out undesired attributes & starting \n
+                "(style|id)=\"[^\"]+\"[; ]*|border=[0-9.]+" = "",
+                "< *" = "<",
+                " *>" = ">",
+                "^\n" = "",
+                # add table ID & styling
+                "<table( ?)" = paste0(
+                    '<table id="', table_id, '" style="width:100%;"\\1'
                 )
-        }
-    )
+            )
+        ) |>
+        copy_thead_to_tfoot() |>
+        add_table_indent(uc_indent)
 
-    # save files
-    purrr::walk2(
-        .x = use_case_html_list,
-        .y = out_file,
-        ~ readr::write_lines(x = .x, file = .y)
-    )
+    out <- html |>
+        stringr::str_replace(
+            stringr::str_escape(uc_table),
+            use_case_html
+        )
 
-    invisible(use_case_gs)
+    res <- readr::write_file(out, use_cases_path)
+    invisible(out)
 }
 
 
@@ -112,57 +110,6 @@ update_website_count_tables <- function(DO_repo, tag, svn_repo) {
     slims <- replace_html_counts(DO_repo, svn_repo, "slims", reload = FALSE)
 
     invisible(list(imports = imports, slims = slims))
-}
-
-
-#' Make HTML for DO User List (DEPRECATED)
-#'
-#' Makes the row and cell html code for the "Users of the Disease Ontology"
-#' section of the collaborators page on disease-ontology.org from the DO team's
-#' "Uses" google sheet. This function explicitly avoids including the html
-#' code for defining the table itself to provide for flexibility.
-#'
-#' @param file The file path where the output should be saved, as a string.
-#'
-#' @section Deprecation Notice:
-#' The information this was formatting for disease-ontology.org was moved from
-#' the "Collaborators" page to the new "Use Cases" page in mid-2022 and was
-#' split from one section into three, making this function obsolete. Use
-#' [make_use_case_html()] instead.
-#'
-#' @export
-make_user_list_html <- function(file) {
-    continue <- NA
-    while (!continue %in% c("y", "n")) {
-        continue <- readline("This function has been deprecated. Would you like to continue anyway? y/n")
-        cotinue <- stringr::str_to_lower(continue)
-    }
-    if (continue == "n") {
-        message("Use make_use_case_html() instead.")
-        return(invisible())
-    }
-
-    # get data
-    user_list <- googlesheets4::read_sheet(
-        ss = .DO_gs$users$ss,
-        sheet = .DO_gs$users$sheet,
-        range = "A:E",
-        col_types = "lcccc"
-    )
-    ws_user_list <- user_list %>%
-        dplyr::filter(!is.na(.data$added)) %>%
-        # ensure list is alphabetical
-        dplyr::arrange(.data$name)
-
-    # build html
-    user_html <- glue::glue_data(
-        .x = ws_user_list,
-        '<a href="{url}" target="_blank">{name}</a>'
-    )
-    html_rows <- html_in_rows(user_html, per_row = 3, indent_n = 2,
-                              cell_attr = c(class="default"))
-
-    readr::write_lines(html_rows, file = file)
 }
 
 
