@@ -3,11 +3,22 @@
 \name{curation_template}
 \alias{curation_template}
 \alias{curation_template.NULL}
+\alias{curation_template.obo_data}
 \title{Create a Curation Template}
 \usage{
 curation_template(.data = NULL, ss = NULL, sheet = NULL, ...)
 
-\method{curation_template}{`NULL`}(ss = NULL, sheet = NULL, ..., nrow = 50)
+\method{curation_template}{`NULL`}(.data = NULL, ss = NULL, sheet = NULL, ..., nrow = 50)
+
+\method{curation_template}{obo_data}(
+  .data,
+  ss = NULL,
+  sheet = NULL,
+  ...,
+  id_max = 20,
+  n_id_sep = 2L,
+  debug = FALSE
+)
 }
 \arguments{
 \item{.data}{Data to add to the curation sheet. If \code{NULL} (default), an empty
@@ -29,8 +40,31 @@ Processed through \code{\link[googlesheets4:as_sheets_id]{as_sheets_id()}}.}
 sheet name will default to "curation-" with today's date appended (formatted
 as "\%Y\%m\%d"; see \code{\link[=format.Date]{format.Date()}}).}
 
+\item{...}{Additional arguments passed to methods.}
+
 \item{nrow}{The number of rows to create in the curation template when
 \code{.data = NULL} (default: \code{50}).}
+
+\item{id_max}{The maximum number of unique classes to include (default: \code{20}).}
+
+\item{n_id_sep}{The number of blank rows to insert between each \code{id} group
+(default: \code{2}).}
+
+\item{debug}{Controls debug output. \code{FALSE} (default) writes to Google Sheets
+normally. One or more of:
+\itemize{
+\item \code{"output"}: returns the final data frame visibly instead of writing to
+Google Sheets.
+\item \code{"types"}: returns a list with \verb{$matched} (named character vector where
+names are the original predicate strings and values are the resolved
+\code{data_type} labels, as mapped by \code{.sparql_dt_motif}) and \verb{$unmatched}
+(character vector of predicates not in \code{.sparql_dt_motif}, used as-is).
+When combined with \code{"steps"}, the list is added as \verb{$types} in that output.
+Combine with \code{"output"} to also return the final data frame.
+\item \code{"steps"}: returns a named list of snapshots at each major pipeline step
+(\code{filtered}, \code{pivoted}, \code{typed}, \code{output}); implies \code{"output"}. If \code{"types"}
+is also requested, includes \verb{$types} in the returned list.
+}}
 }
 \value{
 The Google Sheet info (\code{ss}), as a \link[googlesheets4:sheets_id]{googlesheets4::sheets_id}.
@@ -38,3 +72,19 @@ The Google Sheet info (\code{ss}), as a \link[googlesheets4:sheets_id]{googleshe
 \description{
 Create a curation template in a Google Sheet, optionally including data.
 }
+\section{Formatting Limitations}{
+
+Formatting to make data more visually distinct is not currently supported due
+to limitations of the Google Sheets API and the \code{googlesheets4} package:
+\itemize{
+\item Google Sheets API does not support assigning colors to data validation.
+\item \code{googlesheets4} does not support any formatting.
+}
+
+An alternative approach to support some formatting could be to create a
+functional template with the desired formatting and copy that template with
+\code{\link[googlesheets4:sheet_copy]{googlesheets4::sheet_copy()}}. The \code{data_type} could still be populated by
+this function (only needed to support types not in
+\code{.curation_opts$data_type}).
+}
+

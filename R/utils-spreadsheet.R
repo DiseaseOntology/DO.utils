@@ -21,7 +21,6 @@ colnum_to_ss_letter <- function(x) {
 
   x <- as.integer(x)
   pieces <- character()
-  i <- 1
   while (x > 0L) {
     r <- (x - 1L) %% 26L
     pieces <- c(LETTERS[r + 1L], pieces)
