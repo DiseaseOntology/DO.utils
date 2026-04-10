@@ -26,7 +26,7 @@ Extracts the classes and parents of a DO subtree from a \code{pyDOID.owl.xml}
 object.
 }
 \seealso{
-\link[=extract_subclass]{extract_subclass(method = "descendants")} for the
+\link[=extract_obo_class]{extract_obo_class(method = "descendants")} for the
 same result with a single \code{class}. \code{\link[=format_subtree]{format_subtree()}} to arrange data in a
 tree structure similar to ontology browsers.
 }

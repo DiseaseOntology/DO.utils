@@ -152,7 +152,7 @@ format_doid <- function(x, as = "curie", validate = TRUE,
 #' @export
 format_subtree <- function(subtree_df, top_node) {
     rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")
-    if ("extracted_subclass" %in% class(subtree_df)) {
+    if ("obo_class" %in% class(subtree_df)) {
         id_string <- "iri"
     } else {
         id_string <- "id"

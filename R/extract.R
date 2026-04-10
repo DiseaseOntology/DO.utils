@@ -309,14 +309,14 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' \dontrun{
 #' # Extract all descendants of 'diabetes mellitus'
 #' doid_path <- "<path to doid.owl>"
-#' extract_subclass(doid_path, "DOID:9351")
+#' extract_obo_class(doid_path, "DOID:9351")
 #'
 #' # Extract all ancestors of 'diabetes mellitus'
-#' extract_subclass(doid_path, "DOID:9351", method = "ancestors")
+#' extract_obo_class(doid_path, "DOID:9351", method = "ancestors")
 #'
 #' # Extract all classes of appendicitis (DOID:8337), alcoholic gastritis
 #' (DOID:8680), and viral esophagitis (DOID:6297) up to a common ancestor
-#' extract_subclass(
+#' extract_obo_class(
 #'     doid_path,
 #'     c("DOID:8337", "DOID:8680", "DOID:6297"),
 #'     method = "common_ancestor"
@@ -331,7 +331,7 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' ontology browsers.
 #'
 #' @export
-extract_subclass <- function(input, class, method = "descendants",
+extract_obo_class <- function(input, class, method = "descendants",
                              .robot_path = NULL,
                              tidy_what = c("header", "uri_to_curie"),
                              ...) {
@@ -369,7 +369,7 @@ extract_subclass <- function(input, class, method = "descendants",
         tidy_what = tidy_what
     )
 
-    class(out) <- c("extracted_subclass", class(out))
+    class(out) <- c("obo_class", class(out))
 
     out
 }
@@ -391,14 +391,14 @@ extract_subclass <- function(input, class, method = "descendants",
 #' and `parent_label`, with one row for each unique combination for each
 #' subclass below and including `top_node`.
 #'
-#' @seealso [extract_subclass(method = "descendants")][extract_subclass] for the
+#' @seealso [extract_obo_class(method = "descendants")][extract_obo_class] for the
 #' same result with a single `class`. [format_subtree()] to arrange data in a
 #' tree structure similar to ontology browsers.
 #'
 #' @export
 extract_subtree <- function(x, top_node, reload = FALSE) {
     rlang::warn(
-        "`extract_subtree()` is deprecated. Use `extract_subclass()` instead."
+        "`extract_subtree()` is deprecated. Use `extract_obo_class()` instead."
     )
     owl <- access_owl_xml(x)
     assert_string(top_node)
