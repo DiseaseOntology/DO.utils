@@ -1,0 +1,36 @@
+group	rule_name	text	prior_value
+	multi-rule	"Subject mapped to object based on multiple rules. Each rule should be specified in the 'comment' slot, prefaced by ""Rules:"" and separated by commas, with a period at the end of the whole set. Rule qualifiers, if needed, should appear in parentheses (example: ""Rules: map1 (from NCI:00000), label-label."")."	
+clear-cut, positive/negative	label-label	Subject label (mis)matches object label, may be approximate based on judgment of curator. Label matches alone should generally only be made where other supporting information is not available (as is often the case for ICD9/10).	
+clear-cut, positive/negative	label-synonym	Subject label (mis)matches object synonym, may be approximate based on judgment of curator.	
+clear-cut, positive/negative	synonym-label	Subject synonym (mis)matches object label, may be approximate based on judgment of curator.	
+clear-cut, positive/negative	multi-label-synonym	Multiple (mis)matches between subject label and/or synonyms and object label and/or synonyms, may be approximate based on judgment of curator. Mixed matches/mismatches between label & synonyms can exist but should overwhelmingly support either the positive or negative match (i.e. it should not be ambiguous).	
+clear-cut, positive/negative	definition	Subject mapped to object with (mis)matching definition, as judged by curator.	
+clear-cut, positive/negative	logical-def	Subject mapped to object based on (mis)matching logical axiom-based definition, as judged by a curator.	logical_def
+clear-cut, positive/negative	replaced-term	"Prior subject_id or object_id was replaced by current. Must specify in comment ""subject_id/object_id: <prior_value>""."	replaced_term
+clear-cut, positive	authoritative	Subject mapped to object based on authoritative nature of object.	
+clear-cut, positive	hierarchy-primary	Subject mapped to object based on primary relationship predicate in subject_source & object_source, as judged by a curator.	hierarchy (sc)
+clear-cut, positive	hierarchy-other	Subject mapped to object based on relationship predicates in subject_source & object_source, including one or more non-primary predictates (e.g. part of), as judged by a curator.	
+clear-cut, positive	map1	Subject mapped to object based on one shared mapping.	
+clear-cut, positive	map2plus	Subject mapped to object based on two or more shared mappings.	
+clear-cut, negative	not-disease	Subject mapped to object that is NOT a disease. Any mapping in the subject should have its predicate negated to force exclusion. Evidence should be included in the 'comment' slot. Additionally, a new mapping should be created between the subject_source (e.g. subject_id = obo:doid) and the object_id using the predicate doid:OutOfScope.	not_disease
+clear-cut, negative	phen-diff	Subject should NOT be mapped to object because the phenotype of object is sufficiently distinct, as determined by a curator.	phen_diff
+clear-cut, negative	gen-diff	Subject should NOT be mapped to object because the genetic cause differs.	gen_diff
+clear-cut, negative	other-map	Subject should NOT be mapped to object because a better mapping between a term from the subject source exists with this object. May be used on a correct mapping, possibly in conjunction with rules supporting positive association, but overall result should be exclusion. Use exclude = TRUE for mapping unless mapping is incorrect, then use Not in predicate modifier slot.	other_map
+clear-cut, negative	hierarchy-conflict	Only in very clear & egregious circumstances should this rule be used as evidence of negative mappings--it is common for hierarchy to differ between resources.	
+ambiguous	def-broader	Subject mapped to object where the object definition may imply broader inclusion of a term. This rule does NOT require use of the skos:broadMatch predicate. The predicate should be added based on the curators best judgment.	def_broader
+ambiguous	phen-gen-cross-match	Indicates that one provider defines the disease by phenotype while the other defines the disease by genotype and these diseases cross-match (not clear 1-to-1 relationship)	phen-gen_cross-match
+ambiguous	phen-aggregate	Indicates that subject disease is an aggregate of genotype-defined diseases from the object provider	phen_aggregate
+ambiguous	map-mismatch	Subject and object have one or more mapping(s) to different sources that call into question this mapping.	map_mismatch
+ambiguous	map-def-conflict	Definition on object conflicts with definition on another mapping to this subject, calling into question this mapping. The mapping with the conflict should be specified in the comment field.	map_def_conflict
+ambiguous	no-lit-support	Object should be excluded because it's existence is not currently supported by literature, as determined by a curator.	no_lit_support
+ambiguous	nos	Object should be excluded because it is a Not Otherwise Specified disease category.	
+ambiguous	rare-result	Object can result from subject in rare cases. These should be reciprocal skos:relatedMatch, if they exist, but would be better expressed in logical axioms (how)	rare_result
+ambiguous	nonclinical-group	Disease is a grouping term likely not recognized by a broad community of clinicians; may be ontological in nature	nonclinical_group
+ambiguous	from-skos	"A mapping via SKOS exists to this term, and this is its equivalent oboInOwl:hasDbXref; makes NO statement about type of relationship.
+- [NOTE 2025-10-11]: Lynn's latest comments state that all SKOS mapping should have an xref equivalent... but that's likely too broad a rule to follow and conflicts with prior decisions"	from_skos
+ambiguous	communication	Communication with someone supports the mapping record. Details should be included in a comment.	
+ambiguous	existing-xref	"Indicates that a mapping existed in the ontology before SSSOM record creation; only applies to oboInOwl:hasDbXref mappings; makes no statement about correctness of mapping
+--> may be better to create a column indicating xref in DO (maybe status column indicating active/deprecated with source version???)"	existing_xref
+ambiguous	other-map-except	Same condition as other_map rule (Subject should NOT be mapped to object because a better mapping between a term from the subject source exists with this object) but included anyway. Curator MUST include why exception was made in comment.	other_map_except
+ambiguous	lacks-evidence	Insufficient evidence to conclude this is a real disease	lacks_evidence
+ambiguous	extra-annotation	An additional annotation beyond the label, definition, or mappings supports or refutes this mapping. The specific annotation should be listed in the comment.	extra_annotation

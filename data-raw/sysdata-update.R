@@ -15,10 +15,18 @@ indir <- here::here("data-raw", "internal")
 .curation_opts <- readRDS(file.path(indir, "curation_opts.rds"))
 .sparql_dt_motif <- readRDS(file.path(indir, "sparql_dt_motif.rds"))
 
+
 # SSSOM specification
 .sssom_spec <- readRDS(file.path(indir, "sssom_spec.rds"))
 .sssom_slot_types <- readRDS(file.path(indir, "sssom_slot_types.rds"))
 .sssom_mapping_slots <- readRDS(file.path(indir, "sssom_mapping_slots.rds"))
+
+
+# DO-specific SSSOM curation rules
+.sssom_cur_rules <- readRDS(file.path(indir, "sssom_cur_rules.rds"))
+.sssom_cur_rules_recode <- readRDS(
+  file.path(indir, "sssom_cur_rules_recode.rds")
+)
 
 
 usethis::use_data(
@@ -29,6 +37,8 @@ usethis::use_data(
   .sssom_spec,
   .sssom_slot_types,
   .sssom_mapping_slots,
+  .sssom_cur_rules,
+  .sssom_cur_rules_recode,
   internal = TRUE,
   overwrite = TRUE
 )
