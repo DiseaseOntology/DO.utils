@@ -13,70 +13,67 @@
 #'
 #' @export
 update_website_use_cases <- function(use_cases_path, table_id = "use-cases") {
-    rlang::check_installed("tableHTML")
     stopifnot(file.exists(use_cases_path))
 
     # read current HTML & table
     html <- readr::read_file(use_cases_path)
-    uc_table <- DO.utils:::get_html_table(html, table_id)
-    uc_indent <- DO.utils:::get_html_indent(uc_table)
+    existing_table <- get_html_table(html, table_id)
+    table_indent <- get_html_indent(existing_table)
 
     # get & reformat data
-    use_case_gs <- googlesheets4::read_sheet(
+    uc_gs <- googlesheets4::read_sheet(
         ss = .DO_gs$user$ss,
         sheet = .DO_gs$user$sheet
     )
 
-    use_case_df <- use_case_gs |>
-        # drop rows with missing data or w/o checkbox in 'added'f column
+    uc_df <- uc_gs |>
+        # drop rows with missing data or w/o checkbox in 'added' column
         dplyr::filter(
             !dplyr::if_any(c("added", "name", "url"), is.na)
         ) |>
+        dplyr::select("name", "url", "primary_category") |>
         dplyr::arrange(.data$name) |>
         dplyr::mutate(
-            url = stringr::str_trim(.data$url),
-            Name = DO.utils::format_hyperlink(
+            dplyr::across(dplyr::everything(), stringr::str_trim),
+            url = DO.utils::format_hyperlink(
                 .data$url,
                 as = "html",
                 text = .data$name,
                 target = "_blank"
-            )
-        ) |>
-        dplyr::select("Name", Category = "primary_category")
-
-    use_case_html <- tableHTML::tableHTML(
-        use_case_df,
-        rownames = FALSE,
-        class = '"display"',
-        # wrapping headers for babel translation
-        headers = DO.utils::sandwich_text(
-            names(use_case_df),
-            c("{{ _(\"", "\") }}")
-        ),
-        escape = FALSE,
-        replace_NA = ""
-    ) |>
-        stringr::str_replace_all(
-            c(
-                # strip out undesired attributes & starting \n
-                "(style|id)=\"[^\"]+\"[; ]*|border=[0-9.]+" = "",
-                "< *" = "<",
-                " *>" = ">",
-                "^\n" = "",
-                # add table ID & styling
-                "<table( ?)" = paste0(
-                    '<table id="', table_id, '" style="width:100%;"\\1'
+            ),
+            category_span = stringr::str_split(.data$primary_category, ", *") |>
+                purrr::map_chr(
+                    ~ glue::glue(
+                        '<span class="badge rounded-pill uc-tag" ',
+                        'data-category="{category}">{category}</span>',
+                        category = .x
+                    ) |>
+                        paste0(collapse = ", ")
                 )
+        )
+
+    new_table <- build_datatable_html(
+        uc_df,
+        col_spec = list(
+            "Name" = list(content = "url", search = "name"),
+            "Category" = list(
+                content = "category_span",
+                search = "primary_category"
             )
-        ) |>
-        copy_thead_to_tfoot() |>
-        add_table_indent(uc_indent)
+        ),
+        tbl_id = table_id,
+        tbl_attr = list(style = "width:100%;", class = "display"),
+        header_wrap = c('{{ _("', '") }}'),
+        indent = 0L
+    )
 
     out <- html |>
         stringr::str_replace(
-            stringr::str_escape(uc_table),
-            use_case_html
-        )
+            stringr::str_escape(existing_table),
+            new_table
+        ) |>
+        copy_thead_to_tfoot() |>
+        add_table_indent(table_indent)
 
     res <- readr::write_file(out, use_cases_path)
     invisible(out)
