@@ -8,15 +8,9 @@ add_table_indent <- function(html, indent) {
         "[ \t]*(<[ /]*tr)" = 2,
         "[ \t]*(< *t[hd][^e])" = 3
     )
-    indent_min <- paste0(rep(indent$type, indent$min), collapse = "")
-    indent_increment <- paste0(rep(indent$type, indent$increment), collapse = "")
     indent_key <- purrr::map_chr(
         increment_key,
-        ~ paste0(
-            indent_min,
-            paste0(rep(indent_increment, .x), collapse = ""),
-            "\\1"
-        )
+        ~ paste0(indent$base, strrep(indent$unit, .x), "\\1")
     )
 
     stringr::str_replace_all(html, indent_key)

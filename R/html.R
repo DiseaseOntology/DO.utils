@@ -280,6 +280,11 @@ get_html_table <- function(html, id) {
     html_tbl
 }
 
+#' @returns A list of the form `list(type = " ", base = "  ", unit = "  ")`,
+#' where `type` is the preferred indent type (space or tab), `base` is the
+#' base indent (the minimum indent across all lines), and `unit` is the indent
+#' increment (the minimum increment above the base indent across all lines).
+#' @noRd
 get_html_indent <- function(html) {
     if (length(html) == 1) html <- stringr::str_split(html, "\n")[[1]]
     indents <- stringr::str_extract_all(html, "^\\s+") |>
@@ -298,7 +303,11 @@ get_html_indent <- function(html) {
     increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
         indent_min
     increment <- min(increments, na.rm = TRUE)
-    out <- list(type = indent_type, min = indent_min, increment = increment)
+    out <- list(
+        type = indent_type,
+        base = strrep(indent_type, indent_min),
+        unit = strrep(indent_type, increment)
+    )
     class(out) <- c("html_indent", class(out))
     out
 }
