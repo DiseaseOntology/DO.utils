@@ -276,8 +276,91 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
 
 ############################ INTERNAL UTILITIES ###############################
 
+# simple wrapper for glue::glue() with !<< & >>! delimiters
 glueV <- function(..., .envir = parent.frame()) {
     glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
+}
+
+#' Cumulative String Interpolation
+#'
+#' Cumulative gluing with [glueV()] for rare cases where temporary variables are
+#' found in other temporary variables.
+#'
+#' @param ... Named strings where expression string(s) to format should be
+#' named with the order in which they are to be processed (e.g. `1`, `2`, `3`;
+#' multiple expressions can be processed at the same level) and temporary
+#' variables for substitution should be named to match the `!<< >>!` delimited
+#' variables in the expressions. Order the expressions strings to ensure that
+#' temporary variables stack.
+#' @inheritParams glue::glue
+#' @param max_iter The maximum number of iterations to run before stopping. If
+#' `NULL`, will default to the number of named arguments passed to `...` minus
+#' one. `max_iter` will always be set internally to a minimum of 2 to ensure
+#' the case where temporary variables are found in the specified environment and
+#' not passed as arguments is supported.
+#'
+#' @section Note:
+#' `glueV_cum()` differs from [glue::glue()] in producing an ERROR when no
+#' expression strings are included in `...`, instead of simply returning an
+#' empty `glue` object.
+#'
+#' @examples
+#' glueV_cum(
+#'   # unnamed expression strings
+#'   'FILTER(lang(!<<object>>!) = "!<<lang>>!")',
+#'   '?iri oboInOwl:has!<<syn_scope>>!Synonym ?!<<syn_scope>>!Synonym .',
+#'   # named temporary variables
+#'   object = "?!<<syn_scope>>!Synonym", # includes another temporary variable
+#'   lang = "es",
+#'   syn_scope = "Exact"
+#' )
+#'
+#' @keywords internal
+glueV_cum <- function(..., .sep = "\n", .envir = parent.frame(),
+                      max_iter = NULL) {
+    stopifnot(
+        "`max_iter` must be a positive integer or `NULL`" =
+            (is.integer(max_iter) && max_iter > 0 && length(max_iter) == 1) ||
+             is.null(max_iter)
+    )
+    dots <- list(...)
+
+    named <- has_names(dots)
+    expr_str <- drop_null(dots[!named])
+    expr_len <- vapply(expr_str, length, integer(1L))
+    stopifnot(
+        "`...` must include at least one unnamed expression string" =
+            length(expr_str) > 0,
+        "Unnamed expresssions must be length-1 character vectors" =
+            all(expr_len < 2)
+    )
+
+    out <- paste0(expr_str, collapse = .sep)
+    if (out == "") {
+        return(glue::as_glue(character(0)))
+    }
+
+    temp_vars <- dots[named]
+    if (length(temp_vars) > 0) {
+        glue_env <- rlang::env_clone(.envir, parent.env(.envir))
+        purrr::walk2(
+            names(temp_vars),
+            unname(temp_vars),
+            function(.x, .y) glue_env[[.x]] <- .y
+        )
+    } else {
+        glue_env <- .envir
+    }
+
+    i <- 0
+    if (is.null(max_iter)) max_iter <- length(temp_vars) - 1
+    if (max_iter < 2) max_iter <- 2
+    while (stringr::str_detect(out, "!<<|>>!") || i <= max_iter) {
+        out <- glueV(out, .envir = glue_env)
+        i <- i + 1
+    }
+
+    out
 }
 
 
