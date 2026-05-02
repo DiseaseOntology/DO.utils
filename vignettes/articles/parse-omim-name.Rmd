@@ -55,10 +55,8 @@ parse_omim_name("DEAFNESS, AUTOSOMAL DOMINANT, CONGENITAL; DFNA")
 
 ### Post-qualifiers — attached *after* the primary term
 
-* **Numeric type codes** (`1`, `4`, `23`) are appended with a space.
+* **Numeric & alphanumeric type codes** (`1`, `23`, `7A`) are appended with a space.
 * **`TYPE ...` tokens** are appended with a space.
-* **Alphanumeric subtype codes** (e.g. `7A`) are hyphen-joined to the
-  preceding word (e.g. `SYNDROME, 7A` → `syndrome-7A`).
 
 ```{r}
 parse_omim_name("OSTEOGENESIS IMPERFECTA, TYPE XI; OI11")

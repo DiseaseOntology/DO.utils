@@ -175,7 +175,7 @@ test_that("parse_omim_name() rearranges complex multi-qualifier entries", {
     parse_omim_name(
       "MYASTHENIC SYNDROME, CONGENITAL, 7A, PRESYNAPTIC, AND DISTAL MOTOR NEUROPATHY, AUTOSOMAL DOMINANT; CMS7A" # nolint: line_length_linter.
     ),
-    "autosomal dominant presynaptic congenital myasthenic syndrome-7A and distal motor neuropathy; CMS7A" # nolint: line_length_linter.
+    "autosomal dominant presynaptic congenital myasthenic syndrome 7A and distal motor neuropathy; CMS7A" # nolint: line_length_linter.
   )
   # Feature list (no forcing) → kept in original order
   expect_equal(
@@ -209,7 +209,7 @@ test_that("parse_omim_name() uppercases alphanumeric subtype codes", {
     parse_omim_name(
       "MYASTHENIC SYNDROME, CONGENITAL, 7A, PRESYNAPTIC, AND DISTAL MOTOR NEUROPATHY, AUTOSOMAL DOMINANT; CMS7A" # nolint: line_length_linter.
     ),
-    "syndrome-7A"
+    "syndrome 7A"
   )
 })
 

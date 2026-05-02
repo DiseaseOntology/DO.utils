@@ -336,15 +336,10 @@ omim_rearrange <- function(primary, remaining) {
     # preferred-name convention where the last listed qualifier appears first.
     all_pre <- c(right_pre, rev(left_pre))
 
-    # Attach numbers/type-codes to primary.  Alphanumeric codes (e.g. "7A")
-    # are hyphen-joined; pure numerics (e.g. "14", "23") get a space.
+    # Attach numbers/type-codes to primary, separated by a space.
     primary_part <- primary
     for (n in numbers) {
-        if (grepl("[A-Za-z]", n)) {
-            primary_part <- paste0(primary_part, "-", n)
-        } else {
-            primary_part <- paste(primary_part, n)
-        }
+        primary_part <- paste(primary_part, n)
     }
     if (length(type_quals) > 0L) {
         primary_part <- paste(primary_part, paste(type_quals, collapse = " "))
