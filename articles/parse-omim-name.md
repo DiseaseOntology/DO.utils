@@ -38,6 +38,7 @@ Definitive inheritance terms (`AUTOSOMAL DOMINANT`, `X-LINKED`,
 when listed after other qualifiers.
 
 ``` r
+
 parse_omim_name("SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14")
 #> # A tibble: 1 × 2
 #>   name                                      abbreviation
@@ -58,6 +59,7 @@ parse_omim_name("DEAFNESS, AUTOSOMAL DOMINANT, CONGENITAL; DFNA")
   preceding word (e.g. `SYNDROME, 7A` → `syndrome-7A`).
 
 ``` r
+
 parse_omim_name("OSTEOGENESIS IMPERFECTA, TYPE XI; OI11")
 #> # A tibble: 1 × 2
 #>   name                            abbreviation
@@ -77,6 +79,7 @@ descriptive trailing phrases and appended after the primary term (and
 any post-qualifiers).
 
 ``` r
+
 parse_omim_name("EPILEPSY, PROGRESSIVE MYOCLONIC, 4, WITH OR WITHOUT RENAL FAILURE; EPM4")
 #> # A tibble: 1 × 2
 #>   name                                                           abbreviation
@@ -90,6 +93,7 @@ The token `SUSCEPTIBILITY TO` is always prepended before the entire
 assembled name.
 
 ``` r
+
 parse_omim_name("DIABETES MELLITUS, SUSCEPTIBILITY TO")
 #> # A tibble: 1 × 2
 #>   name                                abbreviation
@@ -117,6 +121,7 @@ When **no** forcing pattern is present (e.g. multi-feature descriptor
 lists), the tokens are kept in original comma order and only lowercased:
 
 ``` r
+
 # No forcing pattern → no rearrangement
 parse_omim_name("SPASTIC TETRAPLEGIA, THIN CORPUS CALLOSUM, AND PROGRESSIVE MICROCEPHALY")
 #> # A tibble: 1 × 2
@@ -160,6 +165,7 @@ rules:
   Use `patterns` with a phrase-level regex:
 
   ``` r
+
   parse_omim_name(
       "SHORT SYNDROME; SHORTSYN",
       patterns = c("short syndrome" = "SHORT syndrome")

@@ -83,6 +83,7 @@ require an API key (at the time of writing).
 ## Tutorial: Obtaining Use Records
 
 ``` r
+
 library(DO.utils)
 suppressPackageStartupMessages(library(dplyr))
 ```
@@ -115,6 +116,7 @@ Obtain “cited by” records from PubMed as follows:
     keys](#api_key) for how to set it).
 
 ``` r
+
 set_entrez_key(keyring::key_get("ENTREZ_KEY"))
 ```
 
@@ -123,6 +125,7 @@ set_entrez_key(keyring::key_get("ENTREZ_KEY"))
     specifying `by_id = TRUE`.
 
 ``` r
+
 cb_pm_res <- citedby_pubmed(id = c("26093607", "29590633"), by_id = TRUE)
 ```
 
@@ -133,6 +136,7 @@ if desired.
 3.  Tidy records into a data.frame (limited information is retained).
 
 ``` r
+
 cb_pm <- tidy_pub_records(cb_pm_res)
 ```
 
@@ -160,6 +164,7 @@ Obtain “cited by” records from PubMed as follows:
 1.  Make your Scopus API key and institutional token available.
 
 ``` r
+
 set_scopus_keys(
     api_key = keyring::key_get("Elsevier_API"),
     insttoken = keyring::key_get("Elsevier_insttoken")
@@ -176,6 +181,7 @@ titles are used to actually obtain “cited by” records from the Scopus
 search API.
 
 ``` r
+
 cb_scopus_res <- citedby_scopus(
   title = c(
     "The Disease Ontology: fostering interoperability between biological and clinical human disease-related data",
@@ -193,6 +199,7 @@ if desired.
 3.  Tidy records into a data.frame (limited information is retained).
 
 ``` r
+
 cb_scopus <- tidy_pub_records(cb_scopus_res)
 ```
 
@@ -242,6 +249,7 @@ with R) or outer single quotes must be used.
   the second primarily to show how quoted terms should be entered.*
 
 ``` r
+
 pm_doid <- search_pubmed("doid")
 pm_full_nm <- search_pubmed("\"human disease ontology\"")
 ```
@@ -264,6 +272,7 @@ If a large number of results are expected, considering creating a
     the searches as input (search results are combined in this example).
 
 ``` r
+
 search_pmids <- unique(c(pm_doid$ids, pm_full_nm$ids))
 pm_doid_res <- pubmed_summary(search_pmids)
 ```
@@ -275,6 +284,7 @@ if desired.
 4.  Tidy records into a data.frame (limited information is retained).
 
 ``` r
+
 search_pm <- tidy_pub_records(pm_doid_res)
 ```
 
@@ -315,6 +325,7 @@ Then load a collection into R with DO.utils as follows:
     of DO.utils to read & parse records.
 
 ``` r
+
 myncbi_col <- read_pubmed_txt("collection.txt")
 ```
 
@@ -339,6 +350,7 @@ search results, it does come with some downsides.
     search.
 
 ``` r
+
 myncbi_res <- pubmed_summary(myncbi_col$pmid)
 ```
 
@@ -349,6 +361,7 @@ if desired.
 4.  Tidy records into a data.frame (limited information is retained).
 
 ``` r
+
 myncbi_pm <- tidy_pub_records(myncbi_res)
 ```
 
@@ -389,6 +402,7 @@ recursively (as shown in step \#4 below).
 1.  Choose a starting record set and number all records.
 
 ``` r
+
 cb_pm <- dplyr::mutate(cb_pm, record_n = dplyr::row_number())
 ```
 
@@ -398,6 +412,7 @@ cb_pm <- dplyr::mutate(cb_pm, record_n = dplyr::row_number())
     The identifiers used for matching are listed in the order used.
 
 ``` r
+
 cb_scopus <- match_citations(cb_scopus, cb_pm, add_col = "record_n")
 #> Matching by types:
 #> * pmid
@@ -407,6 +422,7 @@ cb_scopus <- match_citations(cb_scopus, cb_pm, add_col = "record_n")
 3.  Number the records in the second set *without matches* in the first.
 
 ``` r
+
 cb_scopus <- dplyr::mutate(
     cb_scopus,
     record_n = dplyr::if_else(
@@ -421,6 +437,7 @@ cb_scopus <- dplyr::mutate(
     previously matched set.
 
 ``` r
+
 # matching search
 search_pm <- match_citations(search_pm, cb_scopus, add_col = "record_n") |>
     dplyr::mutate(
@@ -462,6 +479,7 @@ how each record was obtained. This can be done with `mutate` from the
       it.
 
 ``` r
+
 # cited by record sets
 cb_pm <- dplyr::mutate(cb_pm, source = "citedby-pubmed")
 cb_scopus <- dplyr::mutate(cb_scopus, source = "citedby-scopus")
@@ -488,6 +506,7 @@ record sets for later review.*
 > NOTE: Records added earlier are preferentially retained.
 
 ``` r
+
 uniq_records <- dplyr::bind_rows(cb_pm, cb_scopus, search_pm, myncbi_pm) |>
     # concatenate source info
     dplyr::group_by(record_n) |>
@@ -500,6 +519,7 @@ uniq_records <- dplyr::bind_rows(cb_pm, cb_scopus, search_pm, myncbi_pm) |>
 **Result:**
 
 ``` r
+
 uniq_records
 #> # A tibble: 56 × 13
 #>    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type
@@ -540,6 +560,7 @@ record number and record set identifier columns should be collapsed.
 > records.
 
 ``` r
+
 complete_records <- dplyr::bind_rows(cb_pm, cb_scopus) |>
     collapse_col(.cols = c(record_n, source))
 ```
@@ -547,6 +568,7 @@ complete_records <- dplyr::bind_rows(cb_pm, cb_scopus) |>
 **Result:**
 
 ``` r
+
 complete_records
 #> # A tibble: 150 × 13
 #>    first_author  title journal pub_date   doi   pmid  pmcid cites pub_type
@@ -582,6 +604,7 @@ To save data to an existing Google Sheet (the DO team’s preference):
     sheet within the Google Sheet to save data to.
 
 ``` r
+
 library(googlesheets4)
 
 gs_url <-

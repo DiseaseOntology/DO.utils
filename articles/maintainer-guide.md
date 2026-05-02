@@ -16,23 +16,23 @@ their correctly capitalized forms
 
 ### Source files
 
-| File                                   | Purpose                                                                                          |
-|----------------------------------------|--------------------------------------------------------------------------------------------------|
-| `data-raw/omim_eponyms.R`              | Mines OMIM for capitalization candidates; updates `disease_eponyms_curated.tsv`                  |
+| File | Purpose |
+|----|----|
+| `data-raw/omim_eponyms.R` | Mines OMIM for capitalization candidates; updates `disease_eponyms_curated.tsv` |
 | `data-raw/disease_eponyms_curated.tsv` | Shared hand-curated TSV; single authoritative source for all candidates regardless of provenance |
-| `data-raw/build_disease_eponyms.R`     | Reads the curated TSV and saves the `.rda` dataset                                               |
+| `data-raw/build_disease_eponyms.R` | Reads the curated TSV and saves the `.rda` dataset |
 
 ### Curated TSV columns
 
-| Column       | Description                                                                         |
-|--------------|-------------------------------------------------------------------------------------|
-| `word_lower` | Lowercase word (primary key; unique across all sources)                             |
-| `word_cap`   | Correctly capitalized form; `NA` for contested words until manually resolved        |
-| `alt_caps`   | Competing capitalization forms with counts, e.g. `"MacLeod (48); Macleod (2)"`      |
-| `examples`   | Up to 3 source names where the word appeared                                        |
-| `status`     | `"cap"` (capitalize), `"lower"` (leave lowercase), or `"pending"` (awaiting review) |
-| `source`     | Provenance of the candidate (e.g. `"OMIM"`); used to scope refreshes per source     |
-| `notes`      | Free-text annotation (optional)                                                     |
+| Column | Description |
+|----|----|
+| `word_lower` | Lowercase word (primary key; unique across all sources) |
+| `word_cap` | Correctly capitalized form; `NA` for contested words until manually resolved |
+| `alt_caps` | Competing capitalization forms with counts, e.g. `"MacLeod (48); Macleod (2)"` |
+| `examples` | Up to 3 source names where the word appeared |
+| `status` | `"cap"` (capitalize), `"lower"` (leave lowercase), or `"pending"` (awaiting review) |
+| `source` | Provenance of the candidate (e.g. `"OMIM"`); used to scope refreshes per source |
+| `notes` | Free-text annotation (optional) |
 
 ### Workflow
 
@@ -40,6 +40,7 @@ their correctly capitalized forms
     `disease_eponyms_curated.tsv`:
 
     ``` r
+
     source("data-raw/omim_eponyms.R")   # requires OMIM API key; see ?download_omim
     ```
 
@@ -62,6 +63,7 @@ their correctly capitalized forms
 3.  **Rebuild the dataset**:
 
     ``` r
+
     source("data-raw/build_disease_eponyms.R")
     ```
 
@@ -103,6 +105,7 @@ conflicting `disease_eponyms` entries.
     the `disease_cap_patterns` vector, e.g.:
 
     ``` r
+
     disease_cap_patterns <- c(
       disease_cap_patterns,
       "\\bshort syndrome\\b" = "SHORT syndrome"
@@ -112,5 +115,6 @@ conflicting `disease_eponyms` entries.
 2.  Rebuild the dataset:
 
     ``` r
+
     source("data-raw/disease_cap_patterns.R")
     ```

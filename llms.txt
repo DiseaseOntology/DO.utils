@@ -387,6 +387,9 @@ including, for example, those that assist with:
 - [`parse_omim_name()`](https://diseaseontology.github.io/DO.utils/reference/parse_omim_name.md)
   : Parse OMIM Entry Names
 
+- [`paste_na_rm()`](https://diseaseontology.github.io/DO.utils/reference/paste_na_rm.md)
+  : Paste Omitting NA Values
+
 - [`plot_branch_counts()`](https://diseaseontology.github.io/DO.utils/reference/plot_branch_counts.md)
   : Plot Branch Counts
 

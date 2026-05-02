@@ -47,6 +47,7 @@ create a virtual environment before calling
 the first time. The basic procedure would be to execute the following:
 
 ``` r
+
 library(reticulate) # installs with DO.utils
 py_version <- "3.9" # or whatever version you prefer
 venv_name <- "r-reticulate"
