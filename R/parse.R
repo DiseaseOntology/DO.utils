@@ -106,29 +106,19 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 
 #' Parse OMIM Entry Names
 #'
-#' @description
-#' Parses OMIM entry names — often listed in all-uppercase with an "inverted
-#' filing" convention (primary disease term first, then comma-separated
-#' qualifiers) and an optional semicolon-separated abbreviation — into
-#' case- and order-normalized names and separate abbreviations. Mixed-case
-#' input (e.g. from `genemap2.txt`) is also accepted.
+#' Parses OMIM entry names into case- and order-normalized names, preserving
+#' abbreviations, if present.
 #'
-#' @param x A character vector of OMIM entry name strings (e.g.
-#'   `"SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14"`), or a data frame
-#'   with such a column.
-#' @param col \[**data.frame only**\] The name of the column in `x` that
-#'   contains OMIM entry name strings, passed as a string (e.g. `"entry"`).
+#' @param x A character vector of OMIM entry name strings.
 #' @param eponyms A named character vector for proper noun (eponym)
 #'   capitalization, where names are lowercase words and values are their
-#'   capitalized replacements (e.g. `c("waardenburg" = "Waardenburg")`). Applied
-#'   as whole-word, case-insensitive substitutions after lowercasing. Defaults
-#'   to [disease_eponyms]. Pass `NULL` to disable, or supply your own vector to
-#'   override.
+#'   capitalized replacements, e.g. `c("waardenburg" = "Waardenburg")`, or
+#'   `NULL` to disable (default: [disease_eponyms]).
 #' @param patterns A named character vector of phrase-level regex substitutions
 #'   applied to the full lowercased name *after* `eponyms`, longest-first.
-#'   Useful for context-sensitive capitalization (e.g.
-#'   `c("short syndrome" = "SHORT syndrome")`). Defaults to
-#'   [disease_cap_patterns]. Pass `NULL` to disable.
+#'   Useful for context-sensitive capitalization, e.g.
+#'   `c("short syndrome" = "SHORT syndrome")`, or `NULL` to disable (default:
+#'   [disease_cap_patterns]).
 #'
 #' @details
 #' Reverses OMIM\'s inverted filing convention by reclassifying comma-separated
@@ -140,12 +130,8 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #' for full details on qualifier classification, capitalization rules, and
 #' known limitations.
 #'
-#' @returns
-#' * **Character vector input**: a [tibble][tibble::tibble] with columns:
-#'   - `name`: normalized name after rearrangement and capitalization fixes.
-#'   - `abbreviation`: the semicolon-separated abbreviation, or `NA`.
-#' * **Data frame input**: the input data frame with `name` and `abbreviation`
-#'   appended (or replaced if already present).
+#' @returns A character vector of normalized OMIM entry names with
+#' abbreviations preserved.
 #'
 #' @seealso [disease_eponyms] for the curated eponym replacement vector;
 #'   [disease_cap_patterns] for the curated phrase pattern replacement vector;
@@ -153,18 +139,16 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #'   for full details on how parsing and rearrangement work.
 #'
 #' @examples
-#' parse_omim_name(c(
+#' omim_names <- c(
 #'     "SCHIZOPHRENIA 12",
 #'     "DYSTONIA 12; DYT12",
 #'     "SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14",
 #'     "OSTEOGENESIS IMPERFECTA, TYPE XI; OI11",
 #'     "SCOLIOSIS, ISOLATED, SUSCEPTIBILITY TO, 1; IS1",
 #'     "EPILEPSY, PROGRESSIVE MYOCLONIC, 4, WITH OR WITHOUT RENAL FAILURE; EPM4"
-#' ))
+#' )
 #'
-#' # Data frame input
-#' df <- data.frame(entry = c("HURIEZ SYNDROME; HRZ", "SCHWANNOMATOSIS, VESTIBULAR; SWNV"))
-#' parse_omim_name(df, col = "entry")
+#' parse_omim_name(omim_names)
 #'
 #' # Proper noun correction via custom eponyms (overrides disease_eponyms)
 #' parse_omim_name(
@@ -179,7 +163,7 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #' )
 #'
 #' @export
-parse_omim_name <- function(x, col = NULL, eponyms = disease_eponyms,
+parse_omim_name <- function(x, eponyms = disease_eponyms,
                             patterns = disease_cap_patterns) {
     if (!is.null(eponyms) && !is.character(eponyms)) {
         rlang::abort(
@@ -193,31 +177,13 @@ parse_omim_name <- function(x, col = NULL, eponyms = disease_eponyms,
             call = rlang::caller_env()
         )
     }
-    if (is.data.frame(x)) {
-        if (is.null(col)) {
-            rlang::abort(
-                "`col` must be specified when `x` is a data frame.",
-                call = rlang::caller_env()
-            )
-        }
-        if (!col %in% names(x)) {
-            rlang::abort(
-                paste0('Column "', col, '" not found in `x`.'),
-                call = rlang::caller_env()
-            )
-        }
-        parsed <- lapply(x[[col]], omim_parse_one)
-        names_lower <- vapply(parsed, `[[`, character(1), "name")
-        x[["name"]]         <- fix_disease_caps(names_lower, eponyms, patterns)
-        x[["abbreviation"]] <- vapply(parsed, `[[`, character(1), "abbreviation")
-        return(x)
-    }
 
     parsed <- lapply(x, omim_parse_one)
     names_lower <- vapply(parsed, `[[`, character(1), "name")
-    tibble::tibble(
-        name         = fix_disease_caps(names_lower, eponyms, patterns),
-        abbreviation = vapply(parsed, `[[`, character(1), "abbreviation")
+    paste_na_rm(
+        fix_disease_caps(names_lower, eponyms, patterns),
+        vapply(parsed, `[[`, character(1), "abbreviation"),
+        sep = "; "
     )
 }
 
@@ -229,39 +195,32 @@ parse_omim_name <- function(x, col = NULL, eponyms = disease_eponyms,
 omim_parse_one <- function(entry) {
     entry <- trimws(entry)
 
-    # 1. Extract abbreviation (after optional semicolon); uppercase name only
-    #    so that abbreviation case is preserved for non-OMIM input sources.
+    # extract optional abbreviation (after semicolon)
     parts <- strsplit(entry, "\\s*;\\s*")[[1L]]
     name_raw <- toupper(parts[1L])
-    abbreviation <- if (length(parts) < 2L || nchar(parts[2L]) == 0L) NA_character_ else parts[2L]
+    abbreviation <- if (length(parts) < 2L || nchar(parts[2L]) == 0L) {
+        NA_character_
+    } else {
+        parts[2L]
+    }
 
-    # 2. Split name by ", " to get comma-separated tokens
     tokens <- trimws(strsplit(name_raw, ",\\s*")[[1L]])
 
-    # Simple case: no commas → just lowercase
     if (length(tokens) == 1L) {
-        return(list(
-            name = tolower(tokens),
-            abbreviation = abbreviation
-        ))
+        std_nm <- tolower(tokens)
+    } else {
+        primary <- tokens[[1L]]
+        remaining <- tokens[-1L]
+
+        # earrange if at least one qualifier matches a forcing pattern
+        if (omim_has_forcing(remaining)) {
+            std_nm <- omim_rearrange(primary, remaining)
+        } else {
+            std_nm <- paste(tokens, collapse = ", ")
+        }
     }
 
-    primary <- tokens[[1L]]
-    remaining <- tokens[-1L]
-
-    # 3. Only rearrange if at least one qualifier matches a forcing pattern
-    if (!omim_has_forcing(remaining)) {
-        return(list(
-            name = tolower(paste(tokens, collapse = ", ")),
-            abbreviation = abbreviation
-        ))
-    }
-
-    # 4. Apply rearrangement, then lowercase
-    list(
-        name = tolower(omim_rearrange(primary, remaining)),
-        abbreviation = abbreviation
-    )
+    list(name = tolower(std_nm), abbreviation = abbreviation)
 }
 
 
