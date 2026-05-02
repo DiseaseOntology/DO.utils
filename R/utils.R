@@ -274,6 +274,42 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
 }
 
 
+#' Paste Omitting NA Values
+#'
+#' Pastes elements together while omitting `NA` values, returning `NA` only if
+#' all values are `NA`.
+#'
+#' @inheritParams base::paste
+#'
+#' @examples
+#' paste_na_rm(
+#'   c(letters[1:2], NA, NA),
+#'   c(1, NA, NA, 4),
+#'   sep = ", "
+#' )
+#'
+#' paste_na_rm(
+#'   c(letters[1:2], NA, NA),
+#'   c(1, NA, NA, 4),
+#'   sep = ", ",
+#'   collapse = "; "
+#' )
+#'
+#' @export
+paste_na_rm <- function(..., sep = " ", collapse = NULL) {
+  mat <- cbind(...)
+  out <- apply(mat, 1, function(x) { paste(x[!is.na(x)], collapse = sep) })
+  is.na(out) <- out == ""
+
+  if (!is.null(collapse)) {
+    out <- paste(out[!is.na(out)], collapse = collapse)
+    is.na(out) <- out == ""
+  }
+
+  out
+}
+
+
 ############################ INTERNAL UTILITIES ###############################
 
 glueV <- function(..., .envir = parent.frame()) {

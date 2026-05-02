@@ -279,3 +279,18 @@ test_that("roll_middle() works", {
     expect_equal(roll_middle(x, 0, "min"), c(3.5, 10.5, 17.5, 23))
     expect_equal(roll_middle(x, 30, "max"), c(10.5, 17.5, 23, 27.5))
 })
+
+
+# paste_na_rm() tests -------------------------------------------------------
+
+test_that("paste_na_rm() works", {
+  x <- c("a", "b", NA, NA)
+  y <- c(1, NA, NA, 4)
+  expect_equal(paste_na_rm(x, y, sep = "-"), c("a-1", "b", NA, "4"))
+})
+
+test_that("paste_na_rm() collapse arg works", {
+  x <- c("a", "b", NA, NA)
+  y <- c(1, NA, NA, 4)
+  expect_equal(paste_na_rm(x, y, sep = "-", collapse = "|"), "a-1|b|4")
+})
