@@ -208,7 +208,7 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
     omim_type <- class(df)[1]
 
     if (omim_type == "omim_search") {
-        df <- df %>%
+        df <- df |>
             dplyr::mutate(
                 mim_symbol = stringr::str_extract(.data$mim_number, "^[*+#%^]"),
                 mim_symbol = tidyr::replace_na(.data$mim_symbol, "none"),
@@ -222,8 +222,9 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
                     .default = "phenotype, suspected/overlap"
                 ),
                 mim_number = stringr::str_remove(.data$mim_number, "^[*+#%^]"),
-                omim = paste0("MIM:", .data$mim_number)
-            ) %>%
+                omim = paste0("MIM:", .data$mim_number),
+                title_std = parse_omim_name(.data$title)
+            ) |>
             dplyr::relocate("omim", "mim_symbol", "mim_type", .before = 1)
 
         if (!is.null(keep_mim)) {
@@ -246,10 +247,10 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
     }
 
     if (omim_type == "omim_PS_titles") {
-        df <- df %>%
+        df <- df |>
             dplyr::mutate(
                 omim = paste0("MIM:", .data$phenotypic_series_number)
-            ) %>%
+            ) |>
             dplyr::relocate("omim", .before = 1)
     }
 
@@ -261,9 +262,10 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
     )
     omim_phenotype <- all(entry_col_ordered %in% names(df))
     if (omim_type == "omim_PS" || omim_phenotype) {
-        df <- df %>%
+        df <- df |>
             dplyr::mutate(
                 omim = paste0("MIM:", .data$phenotype_mim_number),
+                phenotype_std = parse_omim_name(.data$phenotype),
                 geno_inheritance = dplyr::case_when(
                     .data$inheritance == "AR" ~ "autosomal recessive inheritance",
                     .data$inheritance == "AD" ~ "autosomal dominant inheritance",
@@ -280,10 +282,13 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
 
         df <- append_empty_col(
             df,
-            col = c("omim", entry_col_ordered, "geno_inheritance"),
+            col = c(
+                "omim", entry_col_ordered, "phenotype_std", "geno_inheritance"
+            ),
             order = TRUE
         )
     }
+
     df
 }
 
