@@ -13,26 +13,26 @@ devtools::load_all()
 
 curated_tsv <- here::here("data-raw", "disease_eponyms_curated.tsv")
 if (!file.exists(curated_tsv)) {
-    rlang::abort(c(
-        paste0("Curated TSV not found: ", curated_tsv),
-        i = "Run data-raw/omim_eponyms.R first to generate it."
-    ))
+  rlang::abort(c(
+    paste0("Curated TSV not found: ", curated_tsv),
+    i = "Run data-raw/omim_eponyms.R first to generate it."
+  ))
 }
 
 curated <- readr::read_tsv(
-    curated_tsv,
-    col_types = readr::cols(.default = "c"),
-    na = ""
+  curated_tsv,
+  col_types = readr::cols(.default = "c"),
+  na = ""
 )
 
 # Exclude contested entries (word_cap = NA) even if accidentally marked cap
 accepted <- curated |>
-    dplyr::filter(status == "cap", !is.na(word_cap))
+  dplyr::filter(status == "cap", !is.na(word_cap))
 disease_eponyms <- setNames(accepted$word_cap, accepted$word_lower)
 
 usethis::use_data(disease_eponyms, overwrite = TRUE)
 message(
-    "disease_eponyms dataset saved with ",
-    length(disease_eponyms),
-    " entries."
+  "disease_eponyms dataset saved with ",
+  length(disease_eponyms),
+  " entries."
 )

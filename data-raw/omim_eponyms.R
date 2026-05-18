@@ -410,7 +410,7 @@ out_df <- out_df |>
         .before = 1
     )
 
-readr::write_tsv(out_df, curated_tsv, na = "")
+readr::write_tsv(out_df, curated_tsv, na = "", quote = "needed")
 message(
     "Curated TSV written: ",
     curated_tsv,
