@@ -29,6 +29,8 @@ disease_cap_patterns <- c(
     "^dent disease" = "Dent disease",
     "(disorder.+glycosylation.+)([ivx]+)([a-z]{1,2})$" = "\\1\\U\\2\\L\\3",
     "even-plus" = "EVEN-plus",
+    "gjb2/gjb3" = "GJB2/GJB3",
+    "gpr98/pdzd7" = "GPR98/PDZD7",
     "^glass syndrome$" = "Glass syndrome",
     "^gracile syndrome$" = "GRACILE syndrome",
     "^image(.{0,4})syndrome" = "IMAGE\\1syndrome",
@@ -36,9 +38,11 @@ disease_cap_patterns <- c(
     "lowry-wood" = "Lowry-Wood",
     "melnick-needles" = "Melnick-Needles",
     "northern epilepsy" = "Northern epilepsy",
+    "senior-loken" = "Senior-Loken",
     "short syndrome" = "SHORT syndrome",
     "tan-almurshedi" = "Tan-Almurshedi",
-    "west nile" = "West Nile"
+    "west nile" = "West Nile",
+    "(-w)(hite)|(w)(hite-)|(w)(hite)( syndrome)" = "\\U\\1\\L\\2\\3"
 )
 
 usethis::use_data(disease_cap_patterns, overwrite = TRUE)
