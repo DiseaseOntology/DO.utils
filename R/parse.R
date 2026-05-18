@@ -411,6 +411,10 @@ fix_disease_caps <- function(x, eponyms = NULL, patterns = NULL) {
         ignore.case = TRUE
     )
 
+    # Single isolated letters: type designators, chromosome names, gene
+    # symbols, etc. (e.g. "type a" -> "type A", "y-linked" -> "Y-linked")
+    out <- gsub("\\b([a-z])\\b", "\\U\\1", out, perl = TRUE)
+
     # Word-level eponym replacements: single-pass via alternation + lookup —
     # avoids ~1000 sequential gsub calls on the full vector.
     if (!is.null(eponyms)) {
