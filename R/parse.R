@@ -394,8 +394,8 @@ omim_rearrange <- function(primary, remaining) {
 fix_disease_caps <- function(x, eponyms = NULL, patterns = NULL) {
     # Roman numeral reformatting
     out <- gsub(
-        "(?<=\\btype )([ivxlcdm]+[a-z]?)\\b",
-        "\\U\\1",
+        "\\b(type|syndrome|disease)\\s+([ivxlcdm]+)([a-z]{0,2})\\b",
+        "\\1 \\U\\2\\3",
         x,
         perl = TRUE
     )
