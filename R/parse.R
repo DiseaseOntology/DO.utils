@@ -119,6 +119,10 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #'   Useful for context-sensitive capitalization, e.g.
 #'   `c("short syndrome" = "SHORT syndrome")`, or `NULL` to disable (default:
 #'   [disease_cap_patterns]).
+#' @param qualifiers A character vector of uppercase OMIM qualifier tokens that
+#'   force name rearrangement, in addition to the hardcoded structural patterns
+#'   (numbers, `TYPE`, and definitive inheritance terms). Use `NULL` to disable
+#'   adjective qualifier matching (default: [omim_qualifiers]).
 #'
 #' @details
 #' Reverses OMIM\'s inverted filing convention by reclassifying comma-separated
@@ -135,6 +139,7 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #'
 #' @seealso [disease_eponyms] for the curated eponym replacement vector;
 #'   [disease_cap_patterns] for the curated phrase pattern replacement vector;
+#'   [omim_qualifiers] for the curated adjective qualifier vector;
 #'   the [algorithm article](https://allenbaron.github.io/DO.utils/articles/parse-omim-name.html)
 #'   for full details on how parsing and rearrangement work.
 #'
@@ -164,7 +169,8 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #'
 #' @export
 parse_omim_name <- function(x, eponyms = disease_eponyms,
-                            patterns = disease_cap_patterns) {
+                            patterns = disease_cap_patterns,
+                            qualifiers = omim_qualifiers) {
     if (!is.null(eponyms) && !is.character(eponyms)) {
         rlang::abort(
             "`eponyms` must be a named character vector or NULL.",
@@ -177,8 +183,14 @@ parse_omim_name <- function(x, eponyms = disease_eponyms,
             call = rlang::caller_env()
         )
     }
+    if (!is.null(qualifiers) && !is.character(qualifiers)) {
+        rlang::abort(
+            "`qualifiers` must be a character vector or NULL.",
+            call = rlang::caller_env()
+        )
+    }
 
-    parsed <- lapply(x, omim_parse_one)
+    parsed <- lapply(x, omim_parse_one, qualifiers = qualifiers)
     names_lower <- vapply(parsed, `[[`, character(1), "name")
     paste_na_rm(
         fix_disease_caps(names_lower, eponyms, patterns),
@@ -192,8 +204,10 @@ parse_omim_name <- function(x, eponyms = disease_eponyms,
 
 #' Parse a single OMIM entry name string (INTERNAL)
 #' @noRd
-omim_parse_one <- function(entry) {
+omim_parse_one <- function(entry, qualifiers = omim_qualifiers) {
     entry <- trimws(entry)
+    # Strip OMIM provisional phenotype-gene relationship marker
+    entry <- sub("^\\?", "", entry)
 
     # extract optional abbreviation (after semicolon)
     parts <- strsplit(entry, "\\s*;\\s*")[[1L]]
@@ -213,7 +227,7 @@ omim_parse_one <- function(entry) {
         remaining <- tokens[-1L]
 
         # earrange if at least one qualifier matches a forcing pattern
-        if (omim_has_forcing(remaining)) {
+        if (omim_has_forcing(remaining, qualifiers)) {
             std_nm <- omim_rearrange(primary, remaining)
         } else {
             std_nm <- paste(tokens, collapse = ", ")
@@ -230,8 +244,8 @@ omim_parse_one <- function(entry) {
 #' qualifier matches a number, a TYPE qualifier, a definitive inheritance
 #' pattern, or a core set of strong adjective qualifiers.
 #' @noRd
-omim_has_forcing <- function(tokens) {
-    grepl(
+omim_has_forcing <- function(tokens, qualifiers = omim_qualifiers) {
+    structural <- grepl(
         paste0(
             # Pure number or alphanumeric subtype code, e.g. "1", "4", "7A"
             "^\\d+[A-Za-z]{0,2}$",
@@ -239,15 +253,19 @@ omim_has_forcing <- function(tokens) {
             "|^(TYPE|MULTIPLE TYPES?)\\b",
             # Definitive inheritance qualifier (with optional trailing number)
             "|^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
-            "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$",
-            # Core set of strong adjective/onset qualifiers
-            "|^(BILATERAL|CHILDHOOD-ONSET|CONGENITAL|EARLY-ONSET|FAMILIAL",
-            "|FOCAL|GENERALIZED|HEREDITARY|HYPOMYELINATING|ISOLATED",
-            "|JUVENILE|LATE-ONSET|NEONATAL|POSTSYNAPTIC|PRESYNAPTIC",
-            "|PROGRESSIVE|SUSCEPTIBILITY TO|UNILATERAL|VESTIBULAR)"
+            "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$"
         ),
         tokens
-    ) |> any()
+    )
+    qual_match <- if (!is.null(qualifiers) && length(qualifiers) > 0L) {
+        grepl(
+            paste0("^(", paste(qualifiers, collapse = "|"), ")\\b"),
+            tokens
+        )
+    } else {
+        rep(FALSE, length(tokens))
+    }
+    any(structural | qual_match)
 }
 
 

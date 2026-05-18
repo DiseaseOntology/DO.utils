@@ -2,7 +2,8 @@ utils::globalVariables(
     names = c(
         "DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
         "ns_prefix", "not_obo_prefix", "obo_prefix", "obo_ont_prefix",
-        "obo_prop_prefix", "disease_eponyms", "disease_cap_patterns"
+        "obo_prop_prefix", "disease_eponyms", "disease_cap_patterns",
+        "omim_qualifiers"
     )
 )
 
@@ -208,3 +209,24 @@ ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
 #'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
 #'   for the full dataset-building and curation workflow.
 "disease_cap_patterns"
+
+
+#' OMIM Adjective Qualifier Vector
+#'
+#' A character vector of uppercase OMIM qualifier tokens that trigger name
+#' rearrangement in [parse_omim_name()]. These are adjective/onset qualifiers
+#' that OMIM places as comma-separated tokens after the primary disease term
+#' but that belong before it in natural-language order (e.g. `CONGENITAL`,
+#' `SYNDROMIC`, `PROGRESSIVE`).
+#'
+#' Structural qualifiers — pure numbers, `TYPE`/`MULTIPLE TYPES`, and
+#' definitive inheritance terms such as `AUTOSOMAL RECESSIVE` or `X-LINKED` —
+#' are handled by hardcoded rules in `parse_omim_name()` and are not included
+#' here.
+#'
+#' @format A character vector of uppercase qualifier tokens.
+#'
+#' @seealso [parse_omim_name()] which uses this vector by default;
+#'   [disease_eponyms] and [disease_cap_patterns] for companion capitalization
+#'   datasets.
+"omim_qualifiers"
