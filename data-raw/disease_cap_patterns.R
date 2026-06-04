@@ -20,6 +20,7 @@
 
 disease_cap_patterns <- c(
   "^adult syndrome$" = "ADULT syndrome",
+  "al kaissi" = "Al Kaissi",
   "^arts syndrome$" = "Arts syndrome",
   "-boycott-" = "-Boycott-",
   "baraitser-winter" = "Baraitser-Winter",

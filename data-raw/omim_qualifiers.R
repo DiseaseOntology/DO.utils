@@ -21,6 +21,7 @@ omim_qualifiers <- c(
   "CHILDHOOD-ONSET",
   "CONGENITAL",
   "EARLY-ONSET",
+  "EPISODIC",
   "FAMILIAL",
   "FOCAL",
   "GENERALIZED",
