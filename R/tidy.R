@@ -33,11 +33,19 @@ utils::globalVariables("where")
 tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
     what_opts <- c("header", "unnest", "uri_to_curie", "lgl_NA_FALSE",
                           "as_tibble", "rm_lang_tag")
-    tidy_what <- match.arg(
-        tidy_what,
-        choices = c(what_opts, "everything", "nothing"),
-        several.ok = TRUE
-    )
+    tidy_mismatch <- !tidy_what %in% c(what_opts, "everything", "nothing")
+    if (any(tidy_mismatch)) {
+        rlang::abort(
+            message = c(
+                "Invalid value(s) in tidy_what: ",
+                setNames(
+                    tidy_what[tidy_mismatch],
+                    rep("x", length(tidy_what[tidy_mismatch]))
+                )
+            ),
+            call = rlang::caller_env()
+        )
+    }
     if ("everything" %in% tidy_what) tidy_what <- what_opts
     if ("nothing" %in% tidy_what) return(query_res)
 
