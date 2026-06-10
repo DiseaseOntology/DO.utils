@@ -110,6 +110,159 @@ update_website_count_tables <- function(DO_repo, tag, svn_repo) {
 }
 
 
+#' Update 'Registry of Contributor' Tables on Web Pages
+#'
+#' Updates data in the 'Registry of Contributor' tables of disease-ontology.org
+#' to match the curated contributor data in the
+#' [DO_contributors](https://docs.google.com/spreadsheets/d/1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM/)
+#' google sheet.
+#'
+#' @param contrib_path The file path to the "Contributors" page HTML file, as a
+#' string.
+#' @param table_id The id of the table to update in the HTML file, as a string.
+#'
+#' @returns The page's updated HTML, invisibly.
+#'
+#' @export
+update_website_contributors <- function(contrib_path, table_id) {
+    stopifnot(file.exists(contrib_path))
+    table_id_possible <- names(.DO_gs$contributors)
+    if (!table_id %in% table_id_possible) {
+        stop(
+            "Invalid table_id: ", table_id,
+            ". Must be one of: ",
+            paste(table_id_possible, collapse = ", ")
+        )
+    }
+
+    # read current HTML & table
+    html <- readr::read_file(contrib_path)
+    existing_table <- get_html_table(html, table_id)
+    table_indent <- get_html_indent(existing_table)
+
+    # get & reformat data
+    contrib_gs <- googlesheets4::read_sheet(
+        ss = .DO_gs$contributors[[table_id]]$ss,
+        sheet = .DO_gs$contributors[[table_id]]$sheet,
+        col_types = "c"
+    )
+
+    brand_regex <- unique_to_string(
+        stringr::str_escape(names(brand_fa)),
+        delim = "|"
+    ) |>
+        length_sort(decreasing = TRUE)
+
+    contrib_df <- contrib_gs |>
+        dplyr::mutate(
+            # add id column (to disambuiguate identical names)
+            id = dplyr::row_number(),
+            # use GitHub username as name when name is missing
+            name = dplyr::if_else(
+                !is.na(name),
+                .data$name,
+                stringr::str_match(.data$github, "github.com/([^/]+)")[, 2]
+            )
+        ) |>
+        tidyr::unite(
+            col = "links",
+            "github",
+            "orcid",
+            "other_links",
+            sep = "|",
+            remove = TRUE,
+            na.rm = TRUE
+        ) |>
+        lengthen_col(cols = "links", delim = "|") |>
+        dplyr::mutate(
+            # identify link_type (special handling for URLs)
+            link_type = stringr::str_extract(
+                .data$links,
+                stringr::regex(brand_regex, ignore_case = TRUE)
+            ),
+            link_type = dplyr::if_else(
+                is.na(.data$link_type) &
+                    stringr::str_detect(
+                        .data$links,
+                        stringr::regex("^https?://", ignore_case = TRUE),
+                    ),
+                "url",
+                .data$link_type
+            ),
+            link_type = factor(
+                .data$link_type,
+                levels = c(names(brand_fa), "url")
+            ),
+            # drop private or un-hyperlinkable links (e.g. emails)
+            links = dplyr::if_else(
+                !is.na(.data$link_type),
+                .data$links,
+                NA_character_
+            )
+        ) |>
+        # order links by preference (set by brand_fa order), then alphabetically
+        dplyr::arrange(.data$id, .data$link_type, .data$links)
+
+    contrib_df_html <- contrib_df |>
+        # generate icon links
+        dplyr::mutate(
+            icon = to_fa_icon(.data$link_type, size = "fa-xl"),
+            # include full URLs when no logo is available
+            links = dplyr::case_when(
+                .data$link_type == "url" ~ DO.utils::format_hyperlink(
+                    .data$links,
+                    as = "html",
+                    target = "_blank"
+                ),
+                !is.na(.data$icon) ~ DO.utils::format_hyperlink(
+                    .data$links,
+                    as = "html",
+                    text = .data$icon,
+                    target = "_blank"
+                ),
+                .default = NA_character_
+            )
+        ) |>
+        # drop rows with missing name or noted as "exclude"
+        dplyr::filter(
+            !is.na(.data$name),
+            is.na(.data$status) | !stringr::str_detect(.data$status, "exclude")
+        ) |>
+        dplyr::select("id", "name", "links", "affiliation") |>
+        DO.utils::collapse_col(.cols = -"id", delim = ", ") |>
+        dplyr::select(-"id") |>
+        dplyr::mutate(
+            dplyr::across(
+                dplyr::everything(),
+                ~ stringr::str_replace_all(.x, "\n+", ", ")
+            )
+        )
+
+    new_table <- build_datatable_html(
+        contrib_df_html,
+        col_spec = list(
+            "Name" = list(content = "name"),
+            "Links" = list(content = "links"),
+            "Affiliation" = list(content = "affiliation")
+        ),
+        tbl_id = table_id,
+        tbl_attr = list(style = "width:100%;", class = "display"),
+        header_wrap = c('{{ _("', '") }}'),
+        indent = 0L
+    ) |>
+        copy_thead_to_tfoot() |>
+        add_table_indent(table_indent)
+
+    out <- html |>
+        stringr::str_replace(
+            stringr::str_escape(existing_table),
+            new_table
+        )
+
+    readr::write_file(out, contrib_path)
+}
+
+
 #' Make "Contributors" HTML
 #'
 #' Makes the "Contributor" `<li>` elements for disease-ontology.org. Can be used

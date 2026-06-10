@@ -13,6 +13,24 @@ rlang::check_installed("here")
   citedby = list(
     ss = "https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/",
     sheet = "cited_by"
+  ),
+  contributors = list(
+    individualContributors = list(
+      ss = "https://docs.google.com/spreadsheets/d/1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM/",
+      sheet = "DO-individuals"
+    ),
+    groupContributors = list(
+      ss = "https://docs.google.com/spreadsheets/d/1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM/",
+      sheet = "DO-groups"
+    ),
+    SYMPcontributors = list(
+      ss = "https://docs.google.com/spreadsheets/d/1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM/",
+      sheet = "SYMP"
+    ),
+    TRANScontributors = list(
+      ss = "https://docs.google.com/spreadsheets/d/1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM/",
+      sheet = "TRANS"
+    )
   )
 )
 
