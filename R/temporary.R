@@ -12,5 +12,5 @@
 #'
 #' @export
 restore_names <- function(x, names_from) {
-    purrr::set_names(x, names(names_from))
+  purrr::set_names(x, names(names_from))
 }

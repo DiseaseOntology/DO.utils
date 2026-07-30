@@ -10,19 +10,26 @@ st_sheet <- "ST_pubs"
 
 # custom function
 get_pub_data <- function(gs, sheet) {
-    googlesheets4::read_sheet(
-        gs,
-        sheet,
-        col_types = "c"
+  googlesheets4::read_sheet(
+    gs,
+    sheet,
+    col_types = "c"
+  ) %>%
+    dplyr::mutate(
+      first_author = stringr::str_extract(Authors, "^[^,]+")
     ) %>%
-        dplyr::mutate(
-            first_author = stringr::str_extract(Authors, "^[^,]+")
-        ) %>%
-        dplyr::select(
-            internal_id, pmid = `PubMed ID`, pmcid, doi = DOI, scopus_eid = EID,
-            lens_id, semantic_scholar_id, first_author, title = Title,
-            citation_nlm
-        )
+    dplyr::select(
+      internal_id,
+      pmid = `PubMed ID`,
+      pmcid,
+      doi = DOI,
+      scopus_eid = EID,
+      lens_id,
+      semantic_scholar_id,
+      first_author,
+      title = Title,
+      citation_nlm
+    )
 }
 
 DO_pubs <- get_pub_data(gs_id, do_sheet)

@@ -79,7 +79,8 @@ test_that("parse_omim_name() leaves feature-list entries unchanged", {
   )
 })
 
-test_that("parse_omim_name() rearranges two-qualifier entries with CONGENITAL", { # nolint: line_length_linter.
+test_that("parse_omim_name() rearranges two-qualifier entries with CONGENITAL", {
+  # nolint: line_length_linter.
   expect_equal(
     parse_omim_name(
       "DEAFNESS, CONGENITAL, WITH INNER EAR AGENESIS, MICROTIA, AND MICRODONTIA"
@@ -278,7 +279,8 @@ test_that("parse_omim_name() NULL patterns disables phrase replacement", {
 
 # mixed-case input ------------------------------------------------------
 
-test_that("parse_omim_name() accepts mixed-case input identically to all-caps", { # nolint: line_length_linter.
+test_that("parse_omim_name() accepts mixed-case input identically to all-caps", {
+  # nolint: line_length_linter.
   expect_equal(
     parse_omim_name("Spastic Paraplegia 14, Autosomal Recessive; SPG14"),
     parse_omim_name("SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14")

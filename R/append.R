@@ -16,32 +16,32 @@
 #'
 #' @export
 append_empty_col <- function(df, col, order = FALSE) {
-    stopifnot(is_boolean(order))
-    stopifnot(is.character(col))
+  stopifnot(is_boolean(order))
+  stopifnot(is.character(col))
 
-    new_col <- col[!col %in% names(df)]
-    empty_df <- data.frame(
-        matrix(ncol = length(new_col), nrow = nrow(df)),
-        stringsAsFactors = FALSE
-    )
-    colnames(empty_df) <- new_col
+  new_col <- col[!col %in% names(df)]
+  empty_df <- data.frame(
+    matrix(ncol = length(new_col), nrow = nrow(df)),
+    stringsAsFactors = FALSE
+  )
+  colnames(empty_df) <- new_col
 
-    out_df <- dplyr::bind_cols(df, empty_df)
+  out_df <- dplyr::bind_cols(df, empty_df)
 
-    if (order) {
-        col_nm <- names(out_df)
-        if (!all(col_nm %in% col)) {
-            rlang::abort(
-                message = c(
-                    "All column names in output must be in `col`. Names missing:",
-                    col_nm[!col_nm %in% col]
-                )
-            )
-        }
-
-        out_df <- dplyr::select(out_df, dplyr::one_of(col))
+  if (order) {
+    col_nm <- names(out_df)
+    if (!all(col_nm %in% col)) {
+      rlang::abort(
+        message = c(
+          "All column names in output must be in `col`. Names missing:",
+          col_nm[!col_nm %in% col]
+        )
+      )
     }
-    out_df
+
+    out_df <- dplyr::select(out_df, dplyr::one_of(col))
+  }
+  out_df
 }
 
 
@@ -110,46 +110,46 @@ append_empty_col <- function(df, col, order = FALSE) {
 #'
 #' @export
 append_to_url <- function(x, url, sep = "") {
-    if (length(url) > 1) {
-        if (length(url) != length(x)) {
-            rlang::abort('`url` must be the same length as `x` or length == 1')
+  if (length(url) > 1) {
+    if (length(url) != length(x)) {
+      rlang::abort('`url` must be the same length as `x` or length == 1')
+    }
+    url <- purrr::map_chr(
+      url,
+      ~ tryCatch(get_url(.x), error = function(e) .x)
+    )
+  } else {
+    url <- tryCatch(get_url(url), error = function(e) url)
+  }
+
+  if (length(sep) > 1 && length(sep) != length(x)) {
+    rlang::abort('`sep` must be the same length as `x` or length == 1')
+  }
+
+  ignore_sep <- purrr::map2_lgl(
+    url,
+    sep,
+    ~ stringr::str_detect(.x, paste0(stringr::str_escape(.y), "$"))
+  ) %>%
+    tidyr::replace_na(TRUE)
+
+  if (all(ignore_sep)) {
+    new_url <- paste0(url, x)
+  } else {
+    new_url <- purrr::pmap_chr(
+      list(url, x, sep, ignore_sep),
+      function(.u, .x, .s, .i) {
+        if (.i) {
+          paste0(.u, .x)
+        } else {
+          paste(.u, .x, sep = .s)
         }
-        url <- purrr::map_chr(
-            url,
-            ~ tryCatch(get_url(.x), error = function(e) .x)
-        )
-    } else {
-        url <- tryCatch(get_url(url), error = function(e) url)
-    }
+      }
+    )
+  }
 
-    if (length(sep) > 1 && length(sep) != length(x)) {
-        rlang::abort('`sep` must be the same length as `x` or length == 1')
-    }
-
-    ignore_sep <- purrr::map2_lgl(
-        url,
-        sep,
-        ~ stringr::str_detect(.x, paste0(stringr::str_escape(.y), "$"))
-    ) %>%
-        tidyr::replace_na(TRUE)
-
-    if (all(ignore_sep)) {
-        new_url <- paste0(url, x)
-    } else {
-        new_url <- purrr::pmap_chr(
-            list(url, x, sep, ignore_sep),
-            function(.u, .x, .s, .i) {
-                if (.i) {
-                    paste0(.u, .x)
-                } else {
-                    paste(.u, .x, sep = .s)
-                }
-            }
-        )
-    }
-
-    # ensure output are valid URLs; otherwise return NA
-    not_url <- !is_uri(new_url, empty_ok = FALSE)
-    new_url[is.na(x) | is.na(url) | not_url] <- NA
-    new_url
+  # ensure output are valid URLs; otherwise return NA
+  not_url <- !is_uri(new_url, empty_ok = FALSE)
+  new_url[is.na(x) | is.na(url) | not_url] <- NA
+  new_url
 }

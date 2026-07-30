@@ -42,18 +42,18 @@
 #' @family identifier converters
 #' @export
 to_curie <- function(x, strip_angle_brackets = TRUE) {
-    # to avoid partial namespace-to-prefix conversion *hopefully*
-    prefixes <- length_sort(ns_prefix, decreasing = TRUE)
-    curie <- stringr::str_replace_all(
-        x,
-        stats::setNames(paste0(names(prefixes), ":"), prefixes)
-    )
+  # to avoid partial namespace-to-prefix conversion *hopefully*
+  prefixes <- length_sort(ns_prefix, decreasing = TRUE)
+  curie <- stringr::str_replace_all(
+    x,
+    stats::setNames(paste0(names(prefixes), ":"), prefixes)
+  )
 
-    if (strip_angle_brackets) {
-        curie <- stringr::str_replace_all(curie, "<([^: ]+:[^> ]*)>", "\\1")
-    }
+  if (strip_angle_brackets) {
+    curie <- stringr::str_replace_all(curie, "<([^: ]+:[^> ]*)>", "\\1")
+  }
 
-    curie
+  curie
 }
 
 
@@ -82,12 +82,12 @@ to_curie <- function(x, strip_angle_brackets = TRUE) {
 #' @family identifier converters
 #' @export
 to_uri <- function(x) {
-    # to avoid partial prefix-to-namespace conversion *hopefully*
-    prefixes <- length_sort(ns_prefix, by_name = TRUE, decreasing = TRUE)
-    stringr::str_replace_all(
-        x,
-        stats::setNames(prefixes, paste0(names(prefixes), ":"))
-    )
+  # to avoid partial prefix-to-namespace conversion *hopefully*
+  prefixes <- length_sort(ns_prefix, by_name = TRUE, decreasing = TRUE)
+  stringr::str_replace_all(
+    x,
+    stats::setNames(prefixes, paste0(names(prefixes), ":"))
+  )
 }
 
 #' Convert Vectors to Range String
@@ -154,72 +154,83 @@ to_uri <- function(x) {
 #' to_range(txt, to_int, end_rm = "txt")
 #'
 #' @export
-to_range <- function(x, int_fn = NULL, ..., sep = c(",", "-"),
-                     start_rm = NULL, end_rm = NULL) {
-    if (length(x) == 0) {
-        return(NA)
+to_range <- function(
+  x,
+  int_fn = NULL,
+  ...,
+  sep = c(",", "-"),
+  start_rm = NULL,
+  end_rm = NULL
+) {
+  if (length(x) == 0) {
+    return(NA)
+  }
+
+  uniq <- unique(x)
+  if (!is.numeric(uniq) || any(!is_whole_number(uniq), na.rm = TRUE)) {
+    if (is.null(int_fn)) {
+      rlang::abort(
+        message = "`int_fn` must be specified when `x` is not limited to whole numbers."
+      )
     }
 
-    uniq <- unique(x)
-    if (!is.numeric(uniq) || any(!is_whole_number(uniq), na.rm = TRUE)) {
-        if (is.null(int_fn)) {
-            rlang::abort(
-                message = "`int_fn` must be specified when `x` is not limited to whole numbers.")
-        }
-
-        int_fn <- rlang::as_function(int_fn)
-        int <- int_fn(uniq, ...)
-        if (!is.integer(int)) {
-            rlang::abort(
-                message = paste0(
-                    "`int_fn` should produce an `integer` not `", class(int), "`"
-                )
-            )
-        }
-
-        uniq_order <- uniq[order(int)]
-        int <- sort(int)
-        in_seq <- c(0, diff(int)) == 1
-    } else {
-        uniq_order <- sort(as.integer(uniq))
-        in_seq <- c(0, diff(uniq_order)) == 1
+    int_fn <- rlang::as_function(int_fn)
+    int <- int_fn(uniq, ...)
+    if (!is.integer(int)) {
+      rlang::abort(
+        message = paste0(
+          "`int_fn` should produce an `integer` not `",
+          class(int),
+          "`"
+        )
+      )
     }
 
-    out_vctr <- NULL
-    for (.i in seq_along(in_seq)) {
-        if (is.na(in_seq[.i + 1])) {
-            out_vctr <- c(
-                out_vctr,
-                if (!is.null(end_rm) && utils::tail(out_vctr, 1) == "-") {
-                    stringr::str_remove(uniq_order[.i], end_rm)
-                } else {
-                    uniq_order[.i]
-                }
-            )
-        } else if (!in_seq[.i]) {
-            start_seq <- in_seq[.i + 1] & in_seq[.i + 2]
-            # Fix for error: 2-long range start at end
-            if (is.na(start_seq)) start_seq <- FALSE
+    uniq_order <- uniq[order(int)]
+    int <- sort(int)
+    in_seq <- c(0, diff(int)) == 1
+  } else {
+    uniq_order <- sort(as.integer(uniq))
+    in_seq <- c(0, diff(uniq_order)) == 1
+  }
 
-            sep_ <- if (start_seq) sep[2] else sep[1]
-            uniq_order_ <- if (is.null(start_rm) || !start_seq) {
-                uniq_order[.i]
-            } else {
-                stringr::str_remove(uniq_order[.i], start_rm)
-            }
-            out_vctr <- c(out_vctr, uniq_order_, sep_)
-        } else if (!in_seq[.i + 1]) {
-            out_vctr <- c(
-                out_vctr,
-                if (!is.null(end_rm) && utils::tail(out_vctr, 1) == "-") {
-                    stringr::str_remove(uniq_order[.i], end_rm)
-                } else {
-                    uniq_order[.i]
-                },
-                sep[1]
-            )
+  out_vctr <- NULL
+  for (.i in seq_along(in_seq)) {
+    if (is.na(in_seq[.i + 1])) {
+      out_vctr <- c(
+        out_vctr,
+        if (!is.null(end_rm) && utils::tail(out_vctr, 1) == "-") {
+          stringr::str_remove(uniq_order[.i], end_rm)
+        } else {
+          uniq_order[.i]
         }
-    }
+      )
+    } else if (!in_seq[.i]) {
+      start_seq <- in_seq[.i + 1] & in_seq[.i + 2]
+      # Fix for error: 2-long range start at end
+      if (is.na(start_seq)) {
+        start_seq <- FALSE
+      }
 
-    paste0(out_vctr, collapse = "")
+      sep_ <- if (start_seq) sep[2] else sep[1]
+      uniq_order_ <- if (is.null(start_rm) || !start_seq) {
+        uniq_order[.i]
+      } else {
+        stringr::str_remove(uniq_order[.i], start_rm)
+      }
+      out_vctr <- c(out_vctr, uniq_order_, sep_)
+    } else if (!in_seq[.i + 1]) {
+      out_vctr <- c(
+        out_vctr,
+        if (!is.null(end_rm) && utils::tail(out_vctr, 1) == "-") {
+          stringr::str_remove(uniq_order[.i], end_rm)
+        } else {
+          uniq_order[.i]
+        },
+        sep[1]
+      )
+    }
+  }
+
+  paste0(out_vctr, collapse = "")
 }

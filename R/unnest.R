@@ -38,15 +38,15 @@
 #'
 #' @export
 unnest_cross <- function(data, cols, ...) {
-    .df_out <- data
-    .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
-    purrr::walk(
-        .cols,
-        function(col) {
-            .df_out <<- tidyr::unnest(.df_out, {{ col }}, ...)
-        }
-    )
-    .df_out
+  .df_out <- data
+  .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
+  purrr::walk(
+    .cols,
+    function(col) {
+      .df_out <<- tidyr::unnest(.df_out, {{ col }}, ...)
+    }
+  )
+  .df_out
 }
 
 
@@ -72,21 +72,27 @@ unnest_cross <- function(data, cols, ...) {
 #' for a term.
 #'
 #' @export
-unnest_mapping <- function(df, col, prefix = NULL, prefix_sep = ":",
-                           best_only = TRUE, warn_best_gt1 = FALSE, ...) {
+unnest_mapping <- function(
+  df,
+  col,
+  prefix = NULL,
+  prefix_sep = ":",
+  best_only = TRUE,
+  warn_best_gt1 = FALSE,
+  ...
+) {
+  df_unnested <- df %>%
+    dplyr::mutate(
+      parsed_mapping = parse_mapping(
+        {{ col }},
+        prefix = prefix,
+        prefix_sep = prefix_sep,
+        best_only = best_only,
+        warn_best_gt1 = warn_best_gt1
+      )
+    ) %>%
+    tidyr::unnest(.data$parsed_mapping, ...) %>%
+    dplyr::select(-{{ col }})
 
-    df_unnested <- df %>%
-        dplyr::mutate(
-            parsed_mapping = parse_mapping(
-                {{ col }},
-                prefix = prefix,
-                prefix_sep = prefix_sep,
-                best_only = best_only,
-                warn_best_gt1 = warn_best_gt1
-            )
-        ) %>%
-        tidyr::unnest(.data$parsed_mapping, ...) %>%
-        dplyr::select(- {{ col }} )
-
-    df_unnested
+  df_unnested
 }

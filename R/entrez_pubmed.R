@@ -18,25 +18,26 @@
 #'
 #' @export
 tidy_pubmed_summary <- function(pm_summary, addl_items = NULL) {
-    rlang::inform("tidy_pubmed_summary() has been deprecated. Use tidy_pub_records().")
+  rlang::inform(
+    "tidy_pubmed_summary() has been deprecated. Use tidy_pub_records()."
+  )
 
-    details <- unique(
-        c("uid", "pubdate", "title", "authors", "fulljournalname",
-          addl_items)
-    )
+  details <- unique(
+    c("uid", "pubdate", "title", "authors", "fulljournalname", addl_items)
+  )
 
-    summary_list <- rentrez::extract_from_esummary(pm_summary, details)
+  summary_list <- rentrez::extract_from_esummary(pm_summary, details)
 
-    if (rlang::is_empty(summary_list$authors)) {
-        authors <- NULL
-    } else {
-        authors <- tidy_pubmed_authors(summary_list$authors)
-    }
+  if (rlang::is_empty(summary_list$authors)) {
+    authors <- NULL
+  } else {
+    authors <- tidy_pubmed_authors(summary_list$authors)
+  }
 
-    summary_list$authors <- NULL
-    summary_df <- dplyr::bind_cols(summary_list, authors)
+  summary_list$authors <- NULL
+  summary_df <- dplyr::bind_cols(summary_list, authors)
 
-    summary_df
+  summary_df
 }
 
 # Collapses PubMed author dataframe to a single row
@@ -44,18 +45,18 @@ tidy_pubmed_summary <- function(pm_summary, addl_items = NULL) {
 # Invariant column values are collapsed
 # clusterid is dropped if it contains only blank values
 tidy_pubmed_authors <- function(authors_df) {
-    authors_tidy <- authors_df %>%
-        dplyr::rename(authors = .data$name, auth_clusterid = .data$clusterid) %>%
-        purrr::map_dfc(
-            function(x) {
-                unique_if_invariant(x) %>%
-                    vctr_to_string()
-            }
-        )
+  authors_tidy <- authors_df %>%
+    dplyr::rename(authors = .data$name, auth_clusterid = .data$clusterid) %>%
+    purrr::map_dfc(
+      function(x) {
+        unique_if_invariant(x) %>%
+          vctr_to_string()
+      }
+    )
 
-    if (is_blank(authors_tidy$auth_clusterid)) {
-        authors_tidy <- dplyr::select(.data$authors_tidy, -.data$auth_clusterid)
-    }
+  if (is_blank(authors_tidy$auth_clusterid)) {
+    authors_tidy <- dplyr::select(.data$authors_tidy, -.data$auth_clusterid)
+  }
 
-    authors_tidy
+  authors_tidy
 }

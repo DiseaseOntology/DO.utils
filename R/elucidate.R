@@ -14,7 +14,7 @@
 #'
 #' @export
 elucidate <- function(x, type = "basic", print = TRUE, ...) {
-    UseMethod("elucidate")
+  UseMethod("elucidate")
 }
 
 #' @rdname elucidate
@@ -34,43 +34,42 @@ elucidate <- function(x, type = "basic", print = TRUE, ...) {
 #' OMIM IDs, excluding skos broad/narrow/related matches.
 #'
 #' @export
-elucidate.omim_inventory <- function(x, type = "basic", print = TRUE,
-                                         ...) {
-    dep <- dplyr::filter(x, .data$do_dep)
-    omim_to_many <- dplyr::filter(
-        x,
-        .data$multimaps %in% c("omim_to_doid", "both_ways")
-    )
-    doid_to_many <- dplyr::filter(
-        x,
-        .data$multimaps %in% c("doid_to_omim", "both_ways")
-    )
-    basic <- tibble::tribble(
-        ~ "report", ~ "n",
-        "omim_total", dplyr::n_distinct(x$omim),
-        "omim_absent", dplyr::n_distinct(x$omim[is.na(x$doid)]),
-        "omim_present", dplyr::n_distinct(x$omim[!is.na(x$doid)]),
-        "omim_to_many", dplyr::n_distinct(omim_to_many$omim),
-        "doid_total", dplyr::n_distinct(x$doid, na.rm = TRUE),
-        "doid_deprecated", dplyr::n_distinct(dep$doid),
-        "doid_to_many", dplyr::n_distinct(doid_to_many$doid)
-    )
-    class(basic) <- c("oieb", class(basic)) # omim_inventory_elucidation_basic
+elucidate.omim_inventory <- function(x, type = "basic", print = TRUE, ...) {
+  dep <- dplyr::filter(x, .data$do_dep)
+  omim_to_many <- dplyr::filter(
+    x,
+    .data$multimaps %in% c("omim_to_doid", "both_ways")
+  )
+  doid_to_many <- dplyr::filter(
+    x,
+    .data$multimaps %in% c("doid_to_omim", "both_ways")
+  )
+  basic <- tibble::tribble(
+    ~"report"         , ~"n"                                      ,
+    "omim_total"      , dplyr::n_distinct(x$omim)                 ,
+    "omim_absent"     , dplyr::n_distinct(x$omim[is.na(x$doid)])  ,
+    "omim_present"    , dplyr::n_distinct(x$omim[!is.na(x$doid)]) ,
+    "omim_to_many"    , dplyr::n_distinct(omim_to_many$omim)      ,
+    "doid_total"      , dplyr::n_distinct(x$doid, na.rm = TRUE)   ,
+    "doid_deprecated" , dplyr::n_distinct(dep$doid)               ,
+    "doid_to_many"    , dplyr::n_distinct(doid_to_many$doid)
+  )
+  class(basic) <- c("oieb", class(basic)) # omim_inventory_elucidation_basic
 
-    if (type == "full") {
-        out <- list(
-            stats = basic,
-            dep = dep,
-            omim_to_many = omim_to_many,
-            doid_to_many = doid_to_many
-        )
-    } else {
-        out <- basic
-    }
+  if (type == "full") {
+    out <- list(
+      stats = basic,
+      dep = dep,
+      omim_to_many = omim_to_many,
+      doid_to_many = doid_to_many
+    )
+  } else {
+    out <- basic
+  }
 
-    if (print) {
-        print(basic)
-    }
+  if (print) {
+    print(basic)
+  }
 
-    invisible(out)
+  invisible(out)
 }

@@ -8,15 +8,15 @@
 #'
 #' @keywords internal
 identify_obsolete <- function(x, ...) {
-    UseMethod("identify_obsolete")
+  UseMethod("identify_obsolete")
 }
 
 #' @export
 identify_obsolete.doid_edit <- function(x, ...) {
-    match_res <- stringr::str_match(x, "Class.*DOID_([0-9]+).*obsolete")[, 2]
-    obs_lui <- stats::na.omit(match_res)
-    obs <- paste0("DOID:", obs_lui)
-    obs
+  match_res <- stringr::str_match(x, "Class.*DOID_([0-9]+).*obsolete")[, 2]
+  obs_lui <- stats::na.omit(match_res)
+  obs <- paste0("DOID:", obs_lui)
+  obs
 }
 
 
@@ -48,76 +48,104 @@ identify_obsolete.doid_edit <- function(x, ...) {
 #' }
 #' @aliases identify_missing
 #' @export
-onto_missing <- function(onto_path, input, what = "OMIM",
-                         report_present = TRUE) {
-    rlang::warn(
-        "`onto_missing` is deprecated. Use an inventory_*() function instead."
-    )
-    if (!file.exists(onto_path)) rlang::abort("`onto_path` does not exist.")
-    if (!file.exists(input)) rlang::abort("`input` does not exist.")
-    if (!is_boolean(report_present)) {
-        rlang::abort("`report_present` should be a boolean.")
-    }
+onto_missing <- function(
+  onto_path,
+  input,
+  what = "OMIM",
+  report_present = TRUE
+) {
+  rlang::warn(
+    "`onto_missing` is deprecated. Use an inventory_*() function instead."
+  )
+  if (!file.exists(onto_path)) {
+    rlang::abort("`onto_path` does not exist.")
+  }
+  if (!file.exists(input)) {
+    rlang::abort("`input` does not exist.")
+  }
+  if (!is_boolean(report_present)) {
+    rlang::abort("`report_present` should be a boolean.")
+  }
 
-    xref <- c(
-        "EFO", "GARD", "ICD10CM", "ICD11", "ICD9CM", "ICDO", "KEGG", "MEDDRA",
-        "MESH", "NCI", "OMIM", "ORDO", "SNOMEDCT_US", "UMLS_CUI"
-    )
-    if (!what %in% xref) rlang::abort("Only xrefs currently supported.")
-    if (!rlang::is_string(what)) rlang::abort("`what` must be a string.")
+  xref <- c(
+    "EFO",
+    "GARD",
+    "ICD10CM",
+    "ICD11",
+    "ICD9CM",
+    "ICDO",
+    "KEGG",
+    "MEDDRA",
+    "MESH",
+    "NCI",
+    "OMIM",
+    "ORDO",
+    "SNOMEDCT_US",
+    "UMLS_CUI"
+  )
+  if (!what %in% xref) {
+    rlang::abort("Only xrefs currently supported.")
+  }
+  if (!rlang::is_string(what)) {
+    rlang::abort("`what` must be a string.")
+  }
 
-    if (what == "OMIM") {
-        from_input <- read_omim(input)
-    } else {
-        from_input <- read_delim_auto(input)
-    }
+  if (what == "OMIM") {
+    from_input <- read_omim(input)
+  } else {
+    from_input <- read_delim_auto(input)
+  }
 
-    q_out <- tempfile(fileext = ".tsv")
-    q <- system.file(
-        "sparql", "mapping-all.rq",
-        package = "DO.utils",
-        mustWork = TRUE
+  q_out <- tempfile(fileext = ".tsv")
+  q <- system.file(
+    "sparql",
+    "mapping-all.rq",
+    package = "DO.utils",
+    mustWork = TRUE
+  )
+  res <- robot("query", i = onto_path, query = q, q_out)
+  from_onto <- readr::read_tsv(
+    q_out,
+    name_repair = ~ stringr::str_remove(.x, "^\\?"),
+    show_col_types = FALSE
+  ) %>%
+    tidy_sparql()
+
+  if (what == "OMIM") {
+    compare_by <- c("mapping" = "omim")
+    from_input <- dplyr::select(
+      from_input,
+      "omim",
+      "phenotype",
+      "location",
+      "inheritance",
+      dplyr::everything()
     )
-    res <- robot("query", i = onto_path, query = q, q_out)
-    from_onto <- readr::read_tsv(
-        q_out,
-        name_repair = ~ stringr::str_remove(.x, "^\\?"),
-        show_col_types = FALSE
+  } else {
+    compare_by <- "mapping"
+  }
+
+  in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by) %>%
+    dplyr::arrange(.data$label, .data$id)
+  class(in_onto) <- c("in_onto_df", class(in_onto))
+  missing <- dplyr::anti_join(
+    from_input,
+    from_onto,
+    by = invert_nm(compare_by)
+  ) %>%
+    dplyr::mutate(
+      tidy_label = stringr::str_remove(.data$phenotype, "^\\?")
     ) %>%
-        tidy_sparql()
+    dplyr::arrange(.data$tidy_label, .data$omim) %>%
+    dplyr::select(-.data$tidy_label)
+  class(missing) <- c("onto_missing_df", class(missing))
 
-    if (what == "OMIM") {
-        compare_by <- c("mapping" = "omim")
-        from_input <- dplyr::select(
-            from_input,
-            "omim", "phenotype", "location", "inheritance",
-            dplyr::everything()
-        )
-    } else {
-        compare_by <- "mapping"
-    }
+  if (report_present) {
+    out <- list(in_onto = in_onto, missing = missing)
+    class(out) <- c("onto_missing_list", class(out))
+  } else {
+    out <- missing
+  }
 
-    in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by) %>%
-        dplyr::arrange(.data$label, .data$id)
-    class(in_onto) <- c("in_onto_df", class(in_onto))
-    missing <- dplyr::anti_join(
-        from_input,
-        from_onto,
-        by = invert_nm(compare_by)
-    ) %>%
-        dplyr::mutate(
-            tidy_label = stringr::str_remove(.data$phenotype, "^\\?")
-        ) %>%
-        dplyr::arrange(.data$tidy_label, .data$omim) %>%
-        dplyr::select(-.data$tidy_label)
-    class(missing) <- c("onto_missing_df", class(missing))
-
-    if (report_present) {
-        out <- list(in_onto = in_onto, missing = missing)
-        class(out) <- c("onto_missing_list", class(out))
-    } else {
-        out <- missing
-    }
-
-    out
+  out
 }

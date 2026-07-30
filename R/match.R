@@ -33,109 +33,110 @@
 #'
 #' @export
 match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
-
-    # validate inputs
-    assertthat::assert_that(
-        is_vctr_or_df(x),
-        is_vctr_or_df(ref),
-        is.null(add_col) || rlang::is_string(add_col)
+  # validate inputs
+  assertthat::assert_that(
+    is_vctr_or_df(x),
+    is_vctr_or_df(ref),
+    is.null(add_col) || rlang::is_string(add_col)
+  )
+  if (!is.null(add_col) & !is.data.frame(x)) {
+    rlang::abort(
+      message = "To add results with add_col, x must be a data.frame."
     )
-    if (!is.null(add_col) & !is.data.frame(x)) {
-        rlang::abort(
-            message = "To add results with add_col, x must be a data.frame."
-        )
-    }
+  }
 
-    pub_id_types <- names(pub_id_match)
+  pub_id_types <- names(pub_id_match)
 
-    if (is.vector(x)) {
-        x_type <- type_pub_id(x)
+  if (is.vector(x)) {
+    x_type <- type_pub_id(x)
+  } else {
+    x_type <- find_pub_id_cols(x)
+  }
+
+  if (is.vector(ref)) {
+    ref_type <- type_pub_id(ref)
+  } else {
+    ref_type <- find_pub_id_cols(ref)
+  }
+
+  type_both <- x_type[x_type %in% ref_type]
+
+  # error if no matching columns
+  if (length(type_both) == 0) {
+    msg_header <- if (is.data.frame(x) & is.data.frame(ref)) {
+      "No matching ID columns in x & ref"
     } else {
-        x_type <- find_pub_id_cols(x)
+      "No IDs of same type identified"
     }
-
-    if (is.vector(ref)) {
-        ref_type <- type_pub_id(ref)
-    } else {
-        ref_type <- find_pub_id_cols(ref)
-    }
-
-    type_both <- x_type[x_type %in% ref_type]
-
-    # error if no matching columns
-    if(length(type_both) == 0) {
-        msg_header <- if (is.data.frame(x) & is.data.frame(ref)) {
-            "No matching ID columns in x & ref"
-        } else {
-            "No IDs of same type identified"
-        }
-        rlang::abort(
-            message = c(
-                msg_header,
-                paste0("One of ", vctr_to_string(pub_id_types, delim = ", "),
-                       " must be present in both."
-                )
-            )
+    rlang::abort(
+      message = c(
+        msg_header,
+        paste0(
+          "One of ",
+          vctr_to_string(pub_id_types, delim = ", "),
+          " must be present in both."
         )
+      )
+    )
+  }
+
+  if (length(type_both) == 1) {
+    if (is.data.frame(x) && is.data.frame(ref)) {
+      message("Matching by type: ", type_both)
     }
 
-    if (length(type_both) == 1) {
-        if (is.data.frame(x) && is.data.frame(ref)) {
-            message("Matching by type: ", type_both)
-        }
-
-        if (is.data.frame(x)) {
-            x1 <- x[[type_both]]
-        } else {
-            x1 <- x
-        }
-
-        if (is.data.frame(ref)) {
-            ref1 <- ref[[type_both]]
-        } else {
-            ref1 <- ref
-        }
-
-        # Ensure DOI matches are not affected by case; DOIs are case
-        # insensitive (https://www.doi.org/doi_handbook/2_Numbering.html#2.4)
-        if (type_both == "doi") {
-            x1 <- stringr::str_to_lower(x1)
-            ref1 <- stringr::str_to_lower(ref1)
-        }
-
-        match_vctr <- match_carefully(x1, ref1, nomatch)
+    if (is.data.frame(x)) {
+      x1 <- x[[type_both]]
     } else {
-        # for both data.frame (guaranteed if length(type_both) > 1)
-        types <- priority_sort(type_both, levels = pub_id_types)
-
-        message("Matching by types: ")
-
-        id_matches <- purrr::map(
-            .x = types,
-            function(type) {
-                message("* ", type)
-                x_col <- get_pub_id_col(x, type)
-                ref_col <- get_pub_id_col(ref, type)
-
-                # Ensure DOI matches are not affected by case
-                if (type == "doi") {
-                    x_col <- stringr::str_to_lower(x_col)
-                    ref_col <- stringr::str_to_lower(ref_col)
-                }
-
-                match_res <- match_carefully(x_col, ref_col, nomatch)
-            }
-        )
-
-        match_vctr <- dplyr::coalesce(!!!id_matches)
+      x1 <- x
     }
 
-    if (!is.null(add_col)) {
-        match_df <- dplyr::mutate(x, {{ add_col }} := match_vctr)
-        return(match_df)
+    if (is.data.frame(ref)) {
+      ref1 <- ref[[type_both]]
+    } else {
+      ref1 <- ref
     }
 
-    match_vctr
+    # Ensure DOI matches are not affected by case; DOIs are case
+    # insensitive (https://www.doi.org/doi_handbook/2_Numbering.html#2.4)
+    if (type_both == "doi") {
+      x1 <- stringr::str_to_lower(x1)
+      ref1 <- stringr::str_to_lower(ref1)
+    }
+
+    match_vctr <- match_carefully(x1, ref1, nomatch)
+  } else {
+    # for both data.frame (guaranteed if length(type_both) > 1)
+    types <- priority_sort(type_both, levels = pub_id_types)
+
+    message("Matching by types: ")
+
+    id_matches <- purrr::map(
+      .x = types,
+      function(type) {
+        message("* ", type)
+        x_col <- get_pub_id_col(x, type)
+        ref_col <- get_pub_id_col(ref, type)
+
+        # Ensure DOI matches are not affected by case
+        if (type == "doi") {
+          x_col <- stringr::str_to_lower(x_col)
+          ref_col <- stringr::str_to_lower(ref_col)
+        }
+
+        match_res <- match_carefully(x_col, ref_col, nomatch)
+      }
+    )
+
+    match_vctr <- dplyr::coalesce(!!!id_matches)
+  }
+
+  if (!is.null(add_col)) {
+    match_df <- dplyr::mutate(x, {{ add_col }} := match_vctr)
+    return(match_df)
+  }
+
+  match_vctr
 }
 
 
@@ -149,13 +150,17 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
 #' @export
 #'
 #' @family carefully
-match_carefully <- function(x, table, nomatch = NA_integer_,
-                            incomparables = NULL) {
-    dplyr::if_else(
-        is.na(x),
-        NA_integer_,
-        match(x, table, nomatch, incomparables)
-    )
+match_carefully <- function(
+  x,
+  table,
+  nomatch = NA_integer_,
+  incomparables = NULL
+) {
+  dplyr::if_else(
+    is.na(x),
+    NA_integer_,
+    match(x, table, nomatch, incomparables)
+  )
 }
 
 
@@ -186,32 +191,31 @@ match_carefully <- function(x, table, nomatch = NA_integer_,
 #'
 #' @export
 match_fz <- function(x, table, method = "lcs", maxDist = 115, ...) {
+  table_match_idx <- stringdist::amatch(
+    x,
+    table,
+    method = method,
+    maxDist = maxDist,
+    ...
+  )
 
-    table_match_idx <- stringdist::amatch(
-        x,
-        table,
-        method = method,
-        maxDist = maxDist,
-        ...
+  # create df of set 1 & 2 citations
+  match_df <- tibble::tibble(
+    x = x,
+    table_match = table[table_match_idx]
+  )
+
+  match_df <- dplyr::mutate(
+    match_df,
+    dist = purrr::map2_dbl(
+      # $ syntax to ensure match within df
+      .x = match_df$x,
+      .y = match_df$table_match,
+      ~ stringdist::stringdist(.x, .y, method = method)
     )
+  )
 
-    # create df of set 1 & 2 citations
-    match_df <- tibble::tibble(
-        x = x,
-        table_match = table[table_match_idx]
-    )
-
-    match_df <- dplyr::mutate(
-        match_df,
-        dist = purrr::map2_dbl(
-            # $ syntax to ensure match within df
-            .x = match_df$x,
-            .y = match_df$table_match,
-            ~ stringdist::stringdist(.x, .y, method = method)
-        )
-    )
-
-    match_df
+  match_df
 }
 
 
@@ -224,20 +228,22 @@ match_fz <- function(x, table, method = "lcs", maxDist = 115, ...) {
 #'
 #' @noRd
 get_pub_id_col <- function(df, type) {
+  x <- df[[type]]
 
-    x <- df[[type]]
+  # confirm type
+  computed_type <- type_pub_id(x)
 
-    # confirm type
-    computed_type <- type_pub_id(x)
-
-    assertthat::assert_that(
-        identical(type, computed_type),
-        msg = paste0(
-            "type (", type, ") not identical to computed type: ", computed_type
-        )
+  assertthat::assert_that(
+    identical(type, computed_type),
+    msg = paste0(
+      "type (",
+      type,
+      ") not identical to computed type: ",
+      computed_type
     )
+  )
 
-    x
+  x
 }
 
 
@@ -259,20 +265,19 @@ get_pub_id_col <- function(df, type) {
 #'
 #' @noRd
 find_pub_id_cols <- function(df) {
-    df_lc <- dplyr::rename_with(df, tolower)
-    pub_id_types <- names(pub_id_match)
+  df_lc <- dplyr::rename_with(df, tolower)
+  pub_id_types <- names(pub_id_match)
 
-    id_cols <- pub_id_types[pub_id_types %in% names(df_lc)]
+  id_cols <- pub_id_types[pub_id_types %in% names(df_lc)]
 
-    assertthat::assert_that(
-        length(id_cols) > 0,
-        msg = "No publication ID columns could be identified. At least one
+  assertthat::assert_that(
+    length(id_cols) > 0,
+    msg = "No publication ID columns could be identified. At least one
         column must be named 'pmid', 'pmcid', or 'doi'"
-    )
+  )
 
-    id_cols
+  id_cols
 }
-
 
 
 #' Identify Publication ID Type
@@ -282,47 +287,46 @@ find_pub_id_cols <- function(df) {
 #' @param x A vector of same-type IDs.
 #' @noRd
 type_pub_id <- function(x) {
+  full_match <- sandwich_text(pub_id_match, c("^", "$"))
 
-    full_match <- sandwich_text(pub_id_match, c("^", "$"))
+  id_type <- dplyr::case_when(
+    stringr::str_detect(x, full_match[["doi"]]) ~ "doi",
+    stringr::str_detect(x, full_match[["pmcid"]]) ~ "pmcid",
+    stringr::str_detect(x, full_match[["pmid"]]) ~ "pmid",
+    stringr::str_detect(x, full_match[["scopus_eid"]]) ~ "scopus_eid",
+    !is.na(x) ~ "not identifiable"
+  )
 
-    id_type <- dplyr::case_when(
-        stringr::str_detect(x, full_match[["doi"]]) ~ "doi",
-        stringr::str_detect(x, full_match[["pmcid"]]) ~ "pmcid",
-        stringr::str_detect(x, full_match[["pmid"]]) ~ "pmid",
-        stringr::str_detect(x, full_match[["scopus_eid"]]) ~ "scopus_eid",
-        !is.na(x) ~ "not identifiable"
+  id_no_type <- id_type == "not identifiable"
+
+  assertthat::assert_that(
+    !any(stats::na.omit(id_no_type)),
+    msg = paste0(
+      "Has ID values of unexpected type: ",
+      vctr_to_string(x[id_no_type], delim = ", ")
     )
+  )
 
-    id_no_type <- id_type == "not identifiable"
+  id_type <- unique(stats::na.omit(id_type))
 
-    assertthat::assert_that(
-        !any(stats::na.omit(id_no_type)),
-        msg = paste0(
-            "Has ID values of unexpected type: ",
-            vctr_to_string(x[id_no_type], delim = ", ")
-        )
+  assertthat::assert_that(
+    length(id_type) > 0,
+    msg = "No ID type could be identified"
+  )
+
+  assertthat::assert_that(
+    length(id_type) == 1,
+    msg = paste0(
+      "Mixed ID types in vector. Types identified: ",
+      vctr_to_string(
+        sort(id_type, na.last = TRUE),
+        delim = ", "
+      )
     )
+  )
 
-    id_type <- unique(stats::na.omit(id_type))
+  pub_id_types <- names(pub_id_match)
+  assertthat::assert_that(id_type %in% pub_id_types)
 
-    assertthat::assert_that(
-        length(id_type) > 0,
-        msg = "No ID type could be identified"
-    )
-
-    assertthat::assert_that(
-        length(id_type) == 1,
-        msg = paste0(
-            "Mixed ID types in vector. Types identified: ",
-            vctr_to_string(
-                sort(id_type, na.last = TRUE),
-                delim = ", "
-            )
-        )
-    )
-
-    pub_id_types <- names(pub_id_match)
-    assertthat::assert_that(id_type %in% pub_id_types)
-
-    id_type
+  id_type
 }

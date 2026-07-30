@@ -1,10 +1,18 @@
 utils::globalVariables(
-    names = c(
-        "DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
-        "ns_prefix", "not_obo_prefix", "obo_prefix", "obo_ont_prefix",
-        "obo_prop_prefix", "disease_eponyms", "disease_cap_patterns",
-        "omim_qualifiers"
-    )
+  names = c(
+    "DO_colors",
+    "DO_pubs",
+    "ST_pubs",
+    "obofoundry_metadata",
+    "ns_prefix",
+    "not_obo_prefix",
+    "obo_prefix",
+    "obo_ont_prefix",
+    "obo_prop_prefix",
+    "disease_eponyms",
+    "disease_cap_patterns",
+    "omim_qualifiers"
+  )
 )
 
 #' @keywords internal
@@ -17,10 +25,10 @@ pkg_user_agent <- "DO.utils (github.com/DiseaseOntology/DO.utils)"
 #' prioritized as follows:
 #' \describe{ `r vctr_to_string(names(pub_id_match), delim = " > ")` }
 pub_id_match <- c(
-    pmid = "[0-9]{1,8}",
-    pmcid = "PMC[0-9]+",
-    doi = "10.+/.+",
-    scopus_eid = "2-s2.0-[0-9]{11,}"
+  pmid = "[0-9]{1,8}",
+  pmcid = "PMC[0-9]+",
+  doi = "10.+/.+",
+  scopus_eid = "2-s2.0-[0-9]{11,}"
 )
 
 
@@ -159,11 +167,16 @@ NULL
 "obo_prop_prefix"
 
 
-
 # all possible extensions of OBO Foundry ontologies
-ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
-                  "OWL Functional" = "ofn", "Manchester" = "omn",
-                  "RDF/XML" = "owl", "OWL/XML" = "owx", "Turtle" = "ttl")
+ontology_ext <- c(
+  "OBO Graphs JSON" = "json",
+  "OBO Format" = "obo",
+  "OWL Functional" = "ofn",
+  "Manchester" = "omn",
+  "RDF/XML" = "owl",
+  "OWL/XML" = "owx",
+  "Turtle" = "ttl"
+)
 
 
 #' Disease Name Eponym Replacement Vector

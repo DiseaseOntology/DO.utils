@@ -10,15 +10,14 @@ alliance_class <- c("alliance_tbl", tibble:::tibble_class)
 #'
 #' @noRd
 set_alliance_tbl <- function(df, version_info) {
+  attributes(df) <- c(
+    attributes(df),
+    alliance_version(version_info)
+  )
 
-    attributes(df) <- c(
-        attributes(df),
-        alliance_version(version_info)
-    )
+  class(df) <- alliance_class
 
-    class(df) <- alliance_class
-
-    df
+  df
 }
 
 
@@ -33,67 +32,68 @@ set_alliance_tbl <- function(df, version_info) {
 #'
 #' @noRd
 alliance_version <- function(alliance_obj, as_string = FALSE) {
-    UseMethod("alliance_version")
+  UseMethod("alliance_version")
 }
 
 #' @export
 alliance_version.alliance_tbl <- function(alliance_obj, as_string = FALSE) {
+  # validate
+  assertthat::assert_that(rlang::is_scalar_logical(as_string))
 
-    # validate
-    assertthat::assert_that(rlang::is_scalar_logical(as_string))
+  v <- attributes(alliance_obj)[c(
+    "Alliance_Database_Version",
+    "Date_file_generated_UTC"
+  )]
 
-    v <- attributes(alliance_obj)[c("Alliance_Database_Version", "Date_file_generated_UTC")]
+  if (as_string) {
+    v <- v %>%
+      unlist() %>%
+      vctr_to_string(delim = "_") %>%
+      stringr::str_replace_all(
+        c("[-:]" = "", " " = "_")
+      )
+  }
 
-    if (as_string) {
-        v <- v %>%
-            unlist() %>%
-            vctr_to_string(delim = "_") %>%
-            stringr::str_replace_all(
-                c("[-:]" = "", " " = "_")
-            )
-    }
-
-    v
+  v
 }
 
 #' @export
 alliance_version.default <- function(alliance_obj, as_string = FALSE) {
+  # validate
+  assertthat::assert_that(rlang::is_scalar_logical(as_string))
 
-    # validate
-    assertthat::assert_that(rlang::is_scalar_logical(as_string))
+  header <- readLines(alliance_obj, n = 30)
+  version_date <- grep(
+    "^#.*(version|date).*:",
+    header,
+    ignore.case = TRUE,
+    value = TRUE
+  ) %>%
+    stringr::str_remove("#") %>%
+    stringr::str_squish() %>%
+    stringr::str_split(": ")
 
-    header <- readLines(alliance_obj, n = 30)
-    version_date <- grep(
-        "^#.*(version|date).*:",
-        header,
-        ignore.case = TRUE,
-        value = TRUE
-    ) %>%
-        stringr::str_remove("#") %>%
-        stringr::str_squish() %>%
-        stringr::str_split(": ")
+  if (as_string) {
+    vd_string <- version_date %>%
+      purrr::map(2) %>%
+      unlist() %>%
+      vctr_to_string(delim = "_") %>%
+      stringr::str_replace_all(
+        c("[-:]" = "", " " = "_")
+      )
 
-    if (as_string) {
-        vd_string <- version_date %>%
-            purrr::map(2) %>%
-            unlist() %>%
-            vctr_to_string(delim = "_") %>%
-            stringr::str_replace_all(
-                c("[-:]" = "", " " = "_")
-            )
+    return(vd_string)
+  }
 
-        return(vd_string)
-    }
-
-    vd_list <- purrr::set_names(
-        purrr::map(version_date, 2),
-        nm = stringr::str_replace_all(
-            purrr::map(version_date, 1),
-            c(" " = "_", "[()]" = "")
-        )
+  vd_list <- purrr::set_names(
+    purrr::map(version_date, 2),
+    nm = stringr::str_replace_all(
+      purrr::map(version_date, 1),
+      c(" " = "_", "[()]" = "")
     )
+  )
 
-    vd_list
+  vd_list
 }
 
 
@@ -106,12 +106,17 @@ alliance_version.default <- function(alliance_obj, as_string = FALSE) {
 #'
 #' @noRd
 id_mod <- function(x) {
-    mod_codes <- c(
-        FB = "FlyBase", MGI = "MGD", RGD = "RGD", `OMIM Via RGD` = "RGD",
-        SGD = "SGD", WB = "WormBase", ZFIN = "ZFIN" #, Alliance = "Alliance"
-    )
+  mod_codes <- c(
+    FB = "FlyBase",
+    MGI = "MGD",
+    RGD = "RGD",
+    `OMIM Via RGD` = "RGD",
+    SGD = "SGD",
+    WB = "WormBase",
+    ZFIN = "ZFIN" #, Alliance = "Alliance"
+  )
 
-    dplyr::recode(x, !!!mod_codes)
+  dplyr::recode(x, !!!mod_codes)
 }
 
 
@@ -122,9 +127,9 @@ id_mod <- function(x) {
 #'
 #' @noRd
 rm_dup_curator_alliance <- function(df) {
-    dup <- df %>%
-        dplyr::select(-.data$curator) %>%
-        all_duplicated()
+  dup <- df %>%
+    dplyr::select(-.data$curator) %>%
+    all_duplicated()
 
-    dplyr::filter(df, !(dup & .data$curator == "Alliance"))
+  dplyr::filter(df, !(dup & .data$curator == "Alliance"))
 }

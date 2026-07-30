@@ -60,11 +60,11 @@ NULL
 #' @family pyDOID classes
 #' @export
 DOrepo <- function(path) {
-    if (isFALSE(stringr::str_detect(path, "HumanDiseaseOntology"))) {
-        stop("`path` must be the local path to the HumanDiseaseOntology.")
-    }
+  if (isFALSE(stringr::str_detect(path, "HumanDiseaseOntology"))) {
+    stop("`path` must be the local path to the HumanDiseaseOntology.")
+  }
 
-    pyDOID$DOrepo(path)
+  pyDOID$DOrepo(path)
 }
 
 
@@ -94,7 +94,7 @@ DOrepo <- function(path) {
 #' @family pyDOID classes
 #' @export
 owl_xml <- function(path) {
-    pyDOID$owl$xml(path)$load()
+  pyDOID$owl$xml(path)$load()
 }
 
 #' Access OWL/RDF XML (INTERNAL)
@@ -107,11 +107,11 @@ owl_xml <- function(path) {
 #'
 #' @keywords internal
 access_owl_xml <- function(x) {
-    if (is_owl_xml(x)) {
-        return(x)
-    }
+  if (is_owl_xml(x)) {
+    return(x)
+  }
 
-    owl_xml(x)
+  owl_xml(x)
 }
 
 #' Access DOrepo (INTERNAL)
@@ -125,9 +125,9 @@ access_owl_xml <- function(x) {
 #' @seealso DOrepo
 #' @keywords internal
 access_DOrepo <- function(x) {
-    if (is_DOrepo(x)) {
-        return(x)
-    }
+  if (is_DOrepo(x)) {
+    return(x)
+  }
 
-    DOrepo(x)
+  DOrepo(x)
 }

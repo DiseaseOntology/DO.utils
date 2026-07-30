@@ -21,39 +21,40 @@
 #' @family general utilities
 #' @export
 sandwich_text <- function(x, placeholder, add_dup = TRUE) {
-    if (length(placeholder) < 1 ||
-        length(placeholder) > 2 ||
-        !is.character(placeholder)
-    ) {
-        stop("`placeholder` must be a length-1 or -2 character vector.")
-    }
+  if (
+    length(placeholder) < 1 ||
+      length(placeholder) > 2 ||
+      !is.character(placeholder)
+  ) {
+    stop("`placeholder` must be a length-1 or -2 character vector.")
+  }
 
-    # str_replace_all code from stringr::str_escape() without $, because
-    #   stringr::str_replace() already has special handling to escape $
-    placeholder2 <- stringr::str_replace_all(
-        rep(placeholder, length(placeholder) %% 2 + 1),
-        "([.^\\\\|*+?{}\\[\\]()])",
-        "\\\\\\1"
-    )
-    if (add_dup) {
-        pattern <- c("^", "$")
-    } else {
-        opt_placeholder <- paste0(placeholder2, "?")
-        pattern <- paste0(c("^", opt_placeholder[2]), c(opt_placeholder[1], "$"))
-    }
+  # str_replace_all code from stringr::str_escape() without $, because
+  #   stringr::str_replace() already has special handling to escape $
+  placeholder2 <- stringr::str_replace_all(
+    rep(placeholder, length(placeholder) %% 2 + 1),
+    "([.^\\\\|*+?{}\\[\\]()])",
+    "\\\\\\1"
+  )
+  if (add_dup) {
+    pattern <- c("^", "$")
+  } else {
+    opt_placeholder <- paste0(placeholder2, "?")
+    pattern <- paste0(c("^", opt_placeholder[2]), c(opt_placeholder[1], "$"))
+  }
 
-    out <- x
-    purrr::map2(
-        pattern,
-        placeholder2,
-        function(.p, .r) out <<- stringr::str_replace(out, .p, .r)
-    )
+  out <- x
+  purrr::map2(
+    pattern,
+    placeholder2,
+    function(.p, .r) out <<- stringr::str_replace(out, .p, .r)
+  )
 
-    if (!is.null(names(x))) {
-        names(out) <- names(x)
-    }
+  if (!is.null(names(x))) {
+    names(out) <- names(x)
+  }
 
-    out
+  out
 }
 
 
@@ -99,34 +100,34 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
 #' @family general utilities
 #' @export
 length_sort <- function(x, by_name = FALSE, ...) {
-    if (by_name) {
-        len <- stringr::str_length(names(x))
-    } else {
-        len <- stringr::str_length(x)
-    }
+  if (by_name) {
+    len <- stringr::str_length(names(x))
+  } else {
+    len <- stringr::str_length(x)
+  }
 
-    x[order(len, ...)]
+  x[order(len, ...)]
 }
 
 #' @rdname length_sort
 #' @export
 length_order <- function(data, cols, ...) {
-    .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
-    if (length(.cols) > 1) {
-        index <- do.call(
-            "order",
-            c(
-                purrr::map(
-                    dplyr::select(data, dplyr::all_of(.cols)),
-                    stringr::str_length
-                ),
-                ...
-            )
-        )
-    } else {
-        index <- order(stringr::str_length(dplyr::pull(data, .cols)), ...)
-    }
-    data[index, ]
+  .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
+  if (length(.cols) > 1) {
+    index <- do.call(
+      "order",
+      c(
+        purrr::map(
+          dplyr::select(data, dplyr::all_of(.cols)),
+          stringr::str_length
+        ),
+        ...
+      )
+    )
+  } else {
+    index <- order(stringr::str_length(dplyr::pull(data, .cols)), ...)
+  }
+  data[index, ]
 }
 
 
@@ -165,60 +166,62 @@ length_order <- function(data, cols, ...) {
 #' @seealso [print.suggested_regex()] for the print method.
 #' @export
 suggest_regex <- function(x, pivot = "wide") {
-    pivot <- match.arg(pivot, choices = c("wide", "long"))
-    details <- tibble::tibble(position = stringr::str_length(x)) |>
-        dplyr::count(.data$position)
-    max_len <- max(details$position)
-    missing_pos <- (1:max_len)[!1:max_len %in% details$position]
-    details <- details |>
-        tibble::add_row(position = missing_pos, n = max(details$n)) |>
-        dplyr::arrange(.data$position)
+  pivot <- match.arg(pivot, choices = c("wide", "long"))
+  details <- tibble::tibble(position = stringr::str_length(x)) |>
+    dplyr::count(.data$position)
+  max_len <- max(details$position)
+  missing_pos <- (1:max_len)[!1:max_len %in% details$position]
+  details <- details |>
+    tibble::add_row(position = missing_pos, n = max(details$n)) |>
+    dplyr::arrange(.data$position)
 
-    xsplit <- stringr::str_split(x, "")
+  xsplit <- stringr::str_split(x, "")
 
-    chr_at_pos <- purrr::map(
-        xsplit,
-        ~ append(.x, rep(NA, max_len - length(.x)))
-    ) |>
-        invert_sublists() |>
-        purrr::map_chr(
-            function(.x) {
-                candidates <- sort(unique(unlist(.x)))
-                if (length(candidates) == 1) return(candidates)
-                sandwich_text(
-                    collapse_to_string(
-                        candidates,
-                        delim = "",
-                        na.rm = TRUE,
-                        unique = TRUE
-                    ),
-                    c("[", "]")
-                )
-            }
+  chr_at_pos <- purrr::map(
+    xsplit,
+    ~ append(.x, rep(NA, max_len - length(.x)))
+  ) |>
+    invert_sublists() |>
+    purrr::map_chr(
+      function(.x) {
+        candidates <- sort(unique(unlist(.x)))
+        if (length(candidates) == 1) {
+          return(candidates)
+        }
+        sandwich_text(
+          collapse_to_string(
+            candidates,
+            delim = "",
+            na.rm = TRUE,
+            unique = TRUE
+          ),
+          c("[", "]")
         )
+      }
+    )
 
+  details <- details |>
+    dplyr::mutate(regex = chr_at_pos, .after = "position")
+
+  out <- paste0(details$regex, collapse = "")
+
+  if (pivot == "wide") {
     details <- details |>
-        dplyr::mutate(regex = chr_at_pos, .after = "position")
-
-    out <- paste0(details$regex, collapse = "")
-
-    if (pivot == "wide") {
-        details <- details |>
-            dplyr::mutate(n = as.character(.data$n)) |>
-            dplyr::rename(pos = "position") |>
-            tidyr::pivot_longer(
-                cols = c("regex", "n"),
-                names_to = "position",
-                values_to = "value"
-            ) |>
-            tidyr::pivot_wider(
-                names_from = "pos",
-                values_from = "value"
-            )
-    }
-    class(out) <- c("suggested_regex", class(out))
-    attr(out, "details") <- details
-    out
+      dplyr::mutate(n = as.character(.data$n)) |>
+      dplyr::rename(pos = "position") |>
+      tidyr::pivot_longer(
+        cols = c("regex", "n"),
+        names_to = "position",
+        values_to = "value"
+      ) |>
+      tidyr::pivot_wider(
+        names_from = "pos",
+        values_from = "value"
+      )
+  }
+  class(out) <- c("suggested_regex", class(out))
+  attr(out, "details") <- details
+  out
 }
 
 
@@ -254,23 +257,25 @@ suggest_regex <- function(x, pivot = "wide") {
 #' @family general utilities
 #' @export
 max_paren_depth <- function(x, unmatched_err = TRUE) {
-    str_paren_depth <- function(s, unmatched_err = TRUE) {
-        stopifnot(
-            "`unmatched_err` must be a boolean" = rlang::is_bool(unmatched_err)
-        )
-        chars <- strsplit(s, "")[[1]]
-        paren <- ifelse(chars == "(", 1L, ifelse(chars == ")", -1L, 0L))
-        if (length(paren) == 0) return(0L)
-        cum <- cumsum(paren)
-        if (any(cum < 0) || utils::tail(cum, 1) != 0) {
-            if (unmatched_err) {
-                stop("Unmatched parentheses detected in string: '", s, "'")
-            }
-            return(NA_integer_)
-        }
-        max(c(0L, cum))
+  str_paren_depth <- function(s, unmatched_err = TRUE) {
+    stopifnot(
+      "`unmatched_err` must be a boolean" = rlang::is_bool(unmatched_err)
+    )
+    chars <- strsplit(s, "")[[1]]
+    paren <- ifelse(chars == "(", 1L, ifelse(chars == ")", -1L, 0L))
+    if (length(paren) == 0) {
+      return(0L)
     }
-    vapply(x, str_paren_depth, integer(1), unmatched_err = unmatched_err)
+    cum <- cumsum(paren)
+    if (any(cum < 0) || utils::tail(cum, 1) != 0) {
+      if (unmatched_err) {
+        stop("Unmatched parentheses detected in string: '", s, "'")
+      }
+      return(NA_integer_)
+    }
+    max(c(0L, cum))
+  }
+  vapply(x, str_paren_depth, integer(1), unmatched_err = unmatched_err)
 }
 
 
@@ -298,7 +303,9 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
 #' @export
 paste_na_rm <- function(..., sep = " ", collapse = NULL) {
   mat <- cbind(...)
-  out <- apply(mat, 1, function(x) { paste(x[!is.na(x)], collapse = sep) })
+  out <- apply(mat, 1, function(x) {
+    paste(x[!is.na(x)], collapse = sep)
+  })
   is.na(out) <- out == ""
 
   if (!is.null(collapse)) {
@@ -313,7 +320,7 @@ paste_na_rm <- function(..., sep = " ", collapse = NULL) {
 ############################ INTERNAL UTILITIES ###############################
 
 glueV <- function(..., .envir = parent.frame()) {
-    glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
+  glue::glue(..., .envir = .envir, .open = "!<<", .close = ">>!")
 }
 
 
@@ -344,28 +351,27 @@ glueV <- function(..., .envir = parent.frame()) {
 #'
 #' @keywords internal
 roll_middle <- function(x, limit, limit_type = "min") {
-    limit_type <- match.arg(limit_type, choices = c("min", "max"))
+  limit_type <- match.arg(limit_type, choices = c("min", "max"))
+  stopifnot(
+    "`x` must be a numeric vector sorted in ascending order" = x == sort(x),
+    "`limit` must be a numeric scalar" = length(limit) == 1 && is.numeric(limit)
+  )
+
+  if (limit_type == "min") {
     stopifnot(
-        "`x` must be a numeric vector sorted in ascending order" = x == sort(x),
-        "`limit` must be a numeric scalar" =
-            length(limit) == 1 && is.numeric(limit)
+      "`limit` must be <= min(x) when `limit_type = 'start'`" = limit <= min(x)
     )
+    x_rng <- c(limit, x[-length(x)])
+    out <- (x - x_rng) / 2 + x_rng
+  } else {
+    stopifnot(
+      "`limit` must be >= max(x) when `limit_type = 'end'`" = limit >= max(x)
+    )
+    x_rng <- c(x[-1], limit)
+    out <- (x_rng - x) / 2 + x
+  }
 
-    if (limit_type == "min") {
-        stopifnot(
-            "`limit` must be <= min(x) when `limit_type = 'start'`" = limit <= min(x)
-        )
-        x_rng <- c(limit, x[-length(x)])
-        out <- (x - x_rng) / 2 + x_rng
-    } else {
-        stopifnot(
-            "`limit` must be >= max(x) when `limit_type = 'end'`" = limit >= max(x)
-        )
-        x_rng <- c(x[-1], limit)
-        out <- (x_rng - x) / 2 + x
-    }
-
-    out
+  out
 }
 
 
@@ -381,16 +387,18 @@ roll_middle <- function(x, limit, limit_type = "min") {
 #'
 #' @noRd
 arabic_to_roman <- function(x) {
-    numbers <- stringr::str_extract_all(x, "[0-9]+") |>
-        unlist() |>
-        unique() |>
-        length_sort(decreasing = TRUE)
+  numbers <- stringr::str_extract_all(x, "[0-9]+") |>
+    unlist() |>
+    unique() |>
+    length_sort(decreasing = TRUE)
 
-    if (length(numbers) == 0) return(x)
+  if (length(numbers) == 0) {
+    return(x)
+  }
 
-    replace_vctr <- as.character(utils::as.roman(numbers))
-    names(replace_vctr) <- numbers
-    stringr::str_replace_all(x, replace_vctr)
+  replace_vctr <- as.character(utils::as.roman(numbers))
+  names(replace_vctr) <- numbers
+  stringr::str_replace_all(x, replace_vctr)
 }
 
 
@@ -406,39 +414,44 @@ arabic_to_roman <- function(x) {
 #'
 #' @keywords internal
 match_arg_several <- function(arg, choices) {
-    arg_nm <- rlang::as_string(rlang::enexpr(arg))
-    arg_missing <- !arg %in% choices
+  arg_nm <- rlang::as_string(rlang::enexpr(arg))
+  arg_missing <- !arg %in% choices
 
-    if (any(arg_missing)) {
-        if (is.character(choices)) {
-            choices <- sandwich_text(choices, '"')
-        }
-
-        msg <- paste0(
-            "`", arg_nm, "` must be one of: ",
-            vctr_to_string(choices, ", ")
-        )
-        arg_err <- arg[arg_missing]
-        if (is.character(arg)) {
-            arg_err <- sandwich_text(arg[arg_missing], '"')
-        }
-        x_err <- wrap_onscreen(
-            paste0(
-                "Not ",
-                paste0(
-                    arg_err, " (pos: ", which(arg_missing), ")",
-                    collapse = ", "
-                )
-            ),
-            exdent = 0
-        )
-        rlang::abort(
-            c(msg, x = x_err),
-            call = parent.frame()
-        )
+  if (any(arg_missing)) {
+    if (is.character(choices)) {
+      choices <- sandwich_text(choices, '"')
     }
 
-    arg
+    msg <- paste0(
+      "`",
+      arg_nm,
+      "` must be one of: ",
+      vctr_to_string(choices, ", ")
+    )
+    arg_err <- arg[arg_missing]
+    if (is.character(arg)) {
+      arg_err <- sandwich_text(arg[arg_missing], '"')
+    }
+    x_err <- wrap_onscreen(
+      paste0(
+        "Not ",
+        paste0(
+          arg_err,
+          " (pos: ",
+          which(arg_missing),
+          ")",
+          collapse = ", "
+        )
+      ),
+      exdent = 0
+    )
+    rlang::abort(
+      c(msg, x = x_err),
+      call = parent.frame()
+    )
+  }
+
+  arg
 }
 
 
@@ -446,31 +459,41 @@ match_arg_several <- function(arg, choices) {
 
 # concatenates vector input `x` replacing values with the quantity dropped
 # when `x` is longer than `n` (optionally dropping duplicates)
-trunc_cat_n <- function(x, n, delim = ", ", unique = TRUE, na.rm = FALSE,
-                        sort = FALSE, decreasing = FALSE, ...) {
-    if (unique) x <- unique(x)
-    if (length(x) > n) {
-        x_cat <- vctr_to_string(
-            x[1:n],
-            delim = delim,
-            na.rm = na.rm,
-            sort = sort,
-            decreasing = decreasing,
-            ...
-        )
-        msg <- paste0(x_cat, " [+", length(x) - n, " more]")
-    } else {
-        msg <- vctr_to_string(
-            x,
-            delim = delim,
-            na.rm = na.rm,
-            sort = sort,
-            decreasing = decreasing,
-            ...
-        )
-    }
+trunc_cat_n <- function(
+  x,
+  n,
+  delim = ", ",
+  unique = TRUE,
+  na.rm = FALSE,
+  sort = FALSE,
+  decreasing = FALSE,
+  ...
+) {
+  if (unique) {
+    x <- unique(x)
+  }
+  if (length(x) > n) {
+    x_cat <- vctr_to_string(
+      x[1:n],
+      delim = delim,
+      na.rm = na.rm,
+      sort = sort,
+      decreasing = decreasing,
+      ...
+    )
+    msg <- paste0(x_cat, " [+", length(x) - n, " more]")
+  } else {
+    msg <- vctr_to_string(
+      x,
+      delim = delim,
+      na.rm = na.rm,
+      sort = sort,
+      decreasing = decreasing,
+      ...
+    )
+  }
 
-    msg
+  msg
 }
 
 
@@ -480,44 +503,44 @@ trunc_cat_n <- function(x, n, delim = ", ", unique = TRUE, na.rm = FALSE,
 # .which = logical/numeric vector indicating positions in `...` to include
 #   in message
 msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {
-    dots <- rlang::exprs(...)
-    arg <- msg_dots_(dots)
-    if (!is.null(.bullet)) {
-        arg <- purrr::set_names(arg, nm = rep(.bullet, length(arg)))
+  dots <- rlang::exprs(...)
+  arg <- msg_dots_(dots)
+  if (!is.null(.bullet)) {
+    arg <- purrr::set_names(arg, nm = rep(.bullet, length(arg)))
+  }
+  if (!is.null(.which)) {
+    if (is.logical(.which) && length(.which) != length(dots)) {
+      rlang::abort("Logical .which must be same length as `...`")
     }
-    if (!is.null(.which)) {
-        if (is.logical(.which) && length(.which) != length(dots)) {
-            rlang::abort("Logical .which must be same length as `...`")
-        }
-        if (is.numeric(.which)) {
-            in_rng <- dplyr::between(.which, 1, length(dots))
-            if (!all(in_rng)) {
-                rlang::abort(
-                    c(
-                        "Numeric .which must all be <= length of `...`",
-                        i = paste0("Not: ", to_range(.which[!in_rng]))
-                    )
-                )
-            }
-        }
-        arg <- arg[.which]
+    if (is.numeric(.which)) {
+      in_rng <- dplyr::between(.which, 1, length(dots))
+      if (!all(in_rng)) {
+        rlang::abort(
+          c(
+            "Numeric .which must all be <= length of `...`",
+            i = paste0("Not: ", to_range(.which[!in_rng]))
+          )
+        )
+      }
     }
+    arg <- arg[.which]
+  }
 
-    c(.msg, arg)
+  c(.msg, arg)
 }
 
 
 msg_dots_ <- function(x) {
-    x_val <- dplyr::if_else(
-        purrr::map_lgl(x, rlang::is_string),
-        paste0('"', x, '"'),
-        as.character(x)
-    )
-    dplyr::if_else(
-        names(x) == "",
-        x_val,
-        paste(names(x), x_val, sep = " = ")
-    )
+  x_val <- dplyr::if_else(
+    purrr::map_lgl(x, rlang::is_string),
+    paste0('"', x, '"'),
+    as.character(x)
+  )
+  dplyr::if_else(
+    names(x) == "",
+    x_val,
+    paste(names(x), x_val, sep = " = ")
+  )
 }
 
 
@@ -526,10 +549,14 @@ msg_dots_ <- function(x) {
 # makes elements in `x` appear as code in documentation
 #   see R/data.R DO_colors for examples on how this works
 vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
-    if (use_names) x <- names(x)
-    if (!is.null(regex)) x <- x[stringr::str_detect(x, regex)]
-    # vctr_to_string(
-        sandwich_text(x, c('\\code{', '}'))#, ", ")
+  if (use_names) {
+    x <- names(x)
+  }
+  if (!is.null(regex)) {
+    x <- x[stringr::str_detect(x, regex)]
+  }
+  # vctr_to_string(
+  sandwich_text(x, c('\\code{', '}')) #, ", ")
 }
 
 
@@ -540,22 +567,23 @@ vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
 # * b: "a", "b"
 # See get_url() for example
 list_to_man <- function(x, ordered = FALSE) {
-    if (any(!rlang::have_name(x))) {
-        rlang::abort("All elements in `x` must be named.")
-    }
-    list_item <- if (ordered) {
-        paste0(seq_along(names(x)), ". ")
-    } else {
-        "* "
-    }
+  if (any(!rlang::have_name(x))) {
+    rlang::abort("All elements in `x` must be named.")
+  }
+  list_item <- if (ordered) {
+    paste0(seq_along(names(x)), ". ")
+  } else {
+    "* "
+  }
 
-    man_list <- paste0(
-        list_item,
-        names(x), ": ",
-        purrr::map_chr(x, ~ vctr_to_string(.x, delim = ", "))
-    )
+  man_list <- paste0(
+    list_item,
+    names(x),
+    ": ",
+    purrr::map_chr(x, ~ vctr_to_string(.x, delim = ", "))
+  )
 
-    vctr_to_string(man_list, delim = "\n")
+  vctr_to_string(man_list, delim = "\n")
 }
 
 
@@ -573,45 +601,50 @@ list_to_man <- function(x, ordered = FALSE) {
 #' @inheritParams save
 #'
 #' @noRd
-use_data_internal <- function(..., overwrite = FALSE, compress = "bzip2",
-                              version = 2, ascii = FALSE) {
-    dots_as_strings <- rlang::enexprs(...) %>%
-        purrr::map_chr(rlang::as_string)
+use_data_internal <- function(
+  ...,
+  overwrite = FALSE,
+  compress = "bzip2",
+  version = 2,
+  ascii = FALSE
+) {
+  dots_as_strings <- rlang::enexprs(...) %>%
+    purrr::map_chr(rlang::as_string)
 
-    dots_not_exist <- purrr::map_lgl(dots_as_strings, ~ !exists(.x))
-    if (any(dots_not_exist)) {
-        rlang::abort(
-            c(
-                "Specified data could not be found:",
-                purrr::set_names(
-                    dots_as_strings[dots_not_exist],
-                    rep("x", sum(dots_not_exist))
-                )
-            )
+  dots_not_exist <- purrr::map_lgl(dots_as_strings, ~ !exists(.x))
+  if (any(dots_not_exist)) {
+    rlang::abort(
+      c(
+        "Specified data could not be found:",
+        purrr::set_names(
+          dots_as_strings[dots_not_exist],
+          rep("x", sum(dots_not_exist))
         )
-    }
-    if (file.exists("R/sysdata.rda")) {
-        sysdata <- load("R/sysdata.rda")
-
-        obj_exist <- intersect(dots_as_strings, sysdata)
-        if (length(obj_exist) > 0 && !overwrite) {
-            rlang::abort(
-                c(
-                    "Internal data already exists. Use `overwrite = TRUE` to overwrite.",
-                    purrr::set_names(obj_exist, rep("x", length(obj_exist)))
-                )
-            )
-        }
-    } else {
-        sysdata <- character(0)
-    }
-
-    save(
-        list = union(sysdata, dots_as_strings),
-        file = "R/sysdata.rda",
-        compress = compress,
-        version = version,
-        ascii = ascii,
-        envir = parent.frame()
+      )
     )
+  }
+  if (file.exists("R/sysdata.rda")) {
+    sysdata <- load("R/sysdata.rda")
+
+    obj_exist <- intersect(dots_as_strings, sysdata)
+    if (length(obj_exist) > 0 && !overwrite) {
+      rlang::abort(
+        c(
+          "Internal data already exists. Use `overwrite = TRUE` to overwrite.",
+          purrr::set_names(obj_exist, rep("x", length(obj_exist)))
+        )
+      )
+    }
+  } else {
+    sysdata <- character(0)
+  }
+
+  save(
+    list = union(sysdata, dots_as_strings),
+    file = "R/sysdata.rda",
+    compress = compress,
+    version = version,
+    ascii = ascii,
+    envir = parent.frame()
+  )
 }

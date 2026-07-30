@@ -25,50 +25,60 @@
 #'
 #' @export
 lexiclean <- function(x, mod = "all") {
-    mods <- c("lc", "roman", "rm_space", "rm_punct")
-    mod <- match.arg(mod, choices = c("all", mods), several.ok = TRUE)
-    if ("all" %in% mod) mod <- mods
+  mods <- c("lc", "roman", "rm_space", "rm_punct")
+  mod <- match.arg(mod, choices = c("all", mods), several.ok = TRUE)
+  if ("all" %in% mod) {
+    mod <- mods
+  }
 
-    out <- x
-    if ("roman" %in% mod) out <- chr_num_to_roman(out)
-    if ("rm_space" %in% mod) out <- stringr::str_remove_all(out, "[[:space:]]")
-    if ("rm_punct" %in% mod) out <- stringr::str_remove_all(out, "[[:punct:]]")
-    if ("lc" %in% mod) out <- stringr::str_to_lower(out)
-    out
+  out <- x
+  if ("roman" %in% mod) {
+    out <- chr_num_to_roman(out)
+  }
+  if ("rm_space" %in% mod) {
+    out <- stringr::str_remove_all(out, "[[:space:]]")
+  }
+  if ("rm_punct" %in% mod) {
+    out <- stringr::str_remove_all(out, "[[:punct:]]")
+  }
+  if ("lc" %in% mod) {
+    out <- stringr::str_to_lower(out)
+  }
+  out
 }
 
 
 # lexiclean() helpers -----------------------------------------------------
 
 chr_num_to_roman <- function(x) {
-    has_number <- stringr::str_detect(x, "[0-9]+")
-    numbers <- stringr::str_extract_all(x, "[0-9]+")
-    rn <- purrr::map(
-        numbers,
-        ~ as.character(utils::as.roman(.x))
-    )
-    replace_list <- purrr::map2(
-        numbers,
-        rn,
-        function(num, rn) {
-            if (length(num) == 0) {
-                NA
-            } else {
-                pattern <- paste0("(^|[^0-9])", num, "([^0-9]|$)")
-                purrr::set_names(rn, num)
-            }
-        }
-    )
+  has_number <- stringr::str_detect(x, "[0-9]+")
+  numbers <- stringr::str_extract_all(x, "[0-9]+")
+  rn <- purrr::map(
+    numbers,
+    ~ as.character(utils::as.roman(.x))
+  )
+  replace_list <- purrr::map2(
+    numbers,
+    rn,
+    function(num, rn) {
+      if (length(num) == 0) {
+        NA
+      } else {
+        pattern <- paste0("(^|[^0-9])", num, "([^0-9]|$)")
+        purrr::set_names(rn, num)
+      }
+    }
+  )
 
-    purrr::map2_chr(
-        x,
-        replace_list,
-        function(input, patt_repl) {
-            if (all(is.na(patt_repl))) {
-                input
-            } else {
-                stringr::str_replace_all(input, patt_repl)
-            }
-        }
-    )
+  purrr::map2_chr(
+    x,
+    replace_list,
+    function(input, patt_repl) {
+      if (all(is.na(patt_repl))) {
+        input
+      } else {
+        stringr::str_replace_all(input, patt_repl)
+      }
+    }
+  )
 }

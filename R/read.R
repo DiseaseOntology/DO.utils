@@ -11,40 +11,42 @@
 #'
 #' @export
 read_pubmed_txt <- function(file) {
-    txt_citations <- readLines(file) %>%
-        stringr::str_trim()
+  txt_citations <- readLines(file) %>%
+    stringr::str_trim()
 
-    # identify spacer after each citation & citation start/end locations
-    spacer_loc <- c(
-        stringr::str_which(txt_citations, "^$"),
-        length(txt_citations)
-    )
-    start_loc <- c(1, stats::na.omit(dplyr::lag(spacer_loc)) + 1)
-    end_loc <- spacer_loc - 1
+  # identify spacer after each citation & citation start/end locations
+  spacer_loc <- c(
+    stringr::str_which(txt_citations, "^$"),
+    length(txt_citations)
+  )
+  start_loc <- c(1, stats::na.omit(dplyr::lag(spacer_loc)) + 1)
+  end_loc <- spacer_loc - 1
 
-    # collapse citations
-    citations <- purrr::map2_chr(
-        .x = start_loc,
-        .y = end_loc,
-        ~ paste0(txt_citations[.x:.y], collapse = " ")
-    )
+  # collapse citations
+  citations <- purrr::map2_chr(
+    .x = start_loc,
+    .y = end_loc,
+    ~ paste0(txt_citations[.x:.y], collapse = " ")
+  )
 
-    # remove empty citations
-    citations <- citations[!stringr::str_detect(citations, "^[NA ]+$")] %>%
-        # remove extra whitespace
-        stringr::str_squish()
+  # remove empty citations
+  citations <- citations[!stringr::str_detect(citations, "^[NA ]+$")] %>%
+    # remove extra whitespace
+    stringr::str_squish()
 
-    # extract identifiers and format as tibble
-    citation_df <- tibble::tibble(
-        n = 1:length(citations),
-        pmid = stringr::str_match(citations, "PMID: ([0-9]+)")[, 2] %>%
-            dplyr::na_if("0"),
-        pmcid = stringr::str_match(citations, "PMCID: (PMC[0-9]+)")[, 2],
-        doi = stringr::str_match(citations, "(doi|DOI): (10[^[:space:]]+)\\.?")[, 3],
-        citation = citations
-    )
+  # extract identifiers and format as tibble
+  citation_df <- tibble::tibble(
+    n = 1:length(citations),
+    pmid = stringr::str_match(citations, "PMID: ([0-9]+)")[, 2] %>%
+      dplyr::na_if("0"),
+    pmcid = stringr::str_match(citations, "PMCID: (PMC[0-9]+)")[, 2],
+    doi = stringr::str_match(citations, "(doi|DOI): (10[^[:space:]]+)\\.?")[,
+      3
+    ],
+    citation = citations
+  )
 
-    citation_df
+  citation_df
 }
 
 
@@ -63,56 +65,61 @@ read_pubmed_txt <- function(file) {
 #' @inheritDotParams readr::read_csv -show_col_types
 #'
 #' @export
-read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
-                    ...) {
-    stopifnot(
-        rlang::is_bool(read_all),
-        rlang::is_bool(tidy)
-    )
-    rlang::check_installed(
-        pkg = c("readr", "stringr", "purrr", "utils"),
-        reason = "to use read_ga()"
-    )
+read_ga <- function(
+  ga_file,
+  read_all = FALSE,
+  tidy = TRUE,
+  keep_total = FALSE,
+  ...
+) {
+  stopifnot(
+    rlang::is_bool(read_all),
+    rlang::is_bool(tidy)
+  )
+  rlang::check_installed(
+    pkg = c("readr", "stringr", "purrr", "utils"),
+    reason = "to use read_ga()"
+  )
 
-    .data <- readr::read_lines(ga_file)
-    tbl_delim <- c(
-        which(stringr::str_detect(.data, "^$")), # empty lines delimit tbls
-        length(.data) + 1 # ensure last table has endpoint
-    )
-    if (read_all & length(tbl_delim) > 2) {
-        dot_args <- list(...)
-        tbl <- purrr::map2(
-            utils::head(tbl_delim + 1, -1),
-            utils::tail(tbl_delim - 1, -1),
-            function(.x, .y) {
-                out <- rlang::exec(
-                    readr::read_csv,
-                    file = paste(.data[.x:.y], "\n"),
-                    show_col_types = FALSE,
-                    !!!dot_args
-                )
-            }
+  .data <- readr::read_lines(ga_file)
+  tbl_delim <- c(
+    which(stringr::str_detect(.data, "^$")), # empty lines delimit tbls
+    length(.data) + 1 # ensure last table has endpoint
+  )
+  if (read_all & length(tbl_delim) > 2) {
+    dot_args <- list(...)
+    tbl <- purrr::map2(
+      utils::head(tbl_delim + 1, -1),
+      utils::tail(tbl_delim - 1, -1),
+      function(.x, .y) {
+        out <- rlang::exec(
+          readr::read_csv,
+          file = paste(.data[.x:.y], "\n"),
+          show_col_types = FALSE,
+          !!!dot_args
         )
+      }
+    )
 
-        if (tidy) {
-            tbl <- purrr::map(tbl, ~ tidy_ga_tbl(.x, keep_total = keep_total))
-        }
-    } else {
-        tbl <- readr::read_csv(
-            file = paste(
-                .data[(tbl_delim[1] + 1):(tbl_delim[2] - 1)],
-                "\n"
-            ),
-            show_col_types = FALSE,
-            ...
-        )
-
-        if (tidy) {
-            tbl <- tidy_ga_tbl(tbl, keep_total = keep_total)
-        }
+    if (tidy) {
+      tbl <- purrr::map(tbl, ~ tidy_ga_tbl(.x, keep_total = keep_total))
     }
+  } else {
+    tbl <- readr::read_csv(
+      file = paste(
+        .data[(tbl_delim[1] + 1):(tbl_delim[2] - 1)],
+        "\n"
+      ),
+      show_col_types = FALSE,
+      ...
+    )
 
-    tbl
+    if (tidy) {
+      tbl <- tidy_ga_tbl(tbl, keep_total = keep_total)
+    }
+  }
+
+  tbl
 }
 
 
@@ -207,92 +214,106 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #'
 #' @export
 read_omim <- function(file, keep_mim = c("#", "%"), ...) {
-    df <- preprocess_omim_dl(file, ...)
-    omim_type <- class(df)[1]
+  df <- preprocess_omim_dl(file, ...)
+  omim_type <- class(df)[1]
 
-    if (omim_type == "omim_search") {
-        df <- df |>
-            dplyr::mutate(
-                mim_symbol = stringr::str_extract(.data$mim_number, "^[*+#%^]"),
-                mim_symbol = tidyr::replace_na(.data$mim_symbol, "none"),
-                mim_type = dplyr::case_match(
-                    .data$mim_symbol,
-                    "*" ~ "gene",
-                    "+" ~ "gene, includes phenotype",
-                    "#" ~ "phenotype",
-                    "%" ~ "phenotype, unknown molecular basis",
-                    "^" ~ "deprecated",
-                    .default = "phenotype, suspected/overlap"
-                ),
-                mim_number = stringr::str_remove(.data$mim_number, "^[*+#%^]"),
-                omim = paste0("MIM:", .data$mim_number),
-                title_std = parse_omim_name(.data$title)
-            ) |>
-            dplyr::relocate("omim", "mim_symbol", "mim_type", .before = 1)
+  if (omim_type == "omim_search") {
+    df <- df |>
+      dplyr::mutate(
+        mim_symbol = stringr::str_extract(.data$mim_number, "^[*+#%^]"),
+        mim_symbol = tidyr::replace_na(.data$mim_symbol, "none"),
+        mim_type = dplyr::case_match(
+          .data$mim_symbol,
+          "*" ~ "gene",
+          "+" ~ "gene, includes phenotype",
+          "#" ~ "phenotype",
+          "%" ~ "phenotype, unknown molecular basis",
+          "^" ~ "deprecated",
+          .default = "phenotype, suspected/overlap"
+        ),
+        mim_number = stringr::str_remove(.data$mim_number, "^[*+#%^]"),
+        omim = paste0("MIM:", .data$mim_number),
+        title_std = parse_omim_name(.data$title)
+      ) |>
+      dplyr::relocate("omim", "mim_symbol", "mim_type", .before = 1)
 
-        if (!is.null(keep_mim)) {
-            mim_sym <- c("*", "+", "#", "%", "^", "none")
-            mim_mismatch <- keep_mim[!keep_mim %in% mim_sym]
-            if (length(mim_mismatch) > 0) {
-                rlang::abort(
-                    c(
-                        '`keep_mim` must be one or more of "*", "+", "#", "%", "^", or "none"',
-                        stats::setNames(
-                            sandwich_text(mim_mismatch, '"'),
-                            rep("x", length(mim_mismatch))
-                        )
-                    )
-                )
-            }
-
-            df <- dplyr::filter(df, .data$mim_symbol %in% keep_mim)
-        }
-    }
-
-    if (omim_type == "omim_PS_titles") {
-        df <- df |>
-            dplyr::mutate(
-                omim = paste0("MIM:", .data$phenotypic_series_number)
-            ) |>
-            dplyr::relocate("omim", .before = 1)
-    }
-
-    # ensure output matches ordering of data columns at omim.org for entries
-    # (empty cols will be added if missing)
-    entry_col_ordered <- c(
-        "location", "phenotype", "phenotype_mim_number", "inheritance",
-        "phenotype_mapping_key", "gene_locus", "gene_locus_mim_number"
-    )
-    omim_phenotype <- all(entry_col_ordered %in% names(df))
-    if (omim_type == "omim_PS" || omim_phenotype) {
-        df <- df |>
-            dplyr::mutate(
-                omim = paste0("MIM:", .data$phenotype_mim_number),
-                phenotype_std = parse_omim_name(.data$phenotype),
-                geno_inheritance = dplyr::case_when(
-                    .data$inheritance == "AR" ~ "autosomal recessive inheritance",
-                    .data$inheritance == "AD" ~ "autosomal dominant inheritance",
-                    .data$inheritance == "XLR" ~ "X-linked recessive inheritance",
-                    .data$inheritance == "XLD" ~ "X-linked recessive inheritance",
-                    .data$inheritance == "XL" ~ "X-linked inheritance",
-                    stringr::str_detect(.data$inheritance, stringr::coll("AR")) &
-                        stringr::str_detect(.data$inheritance, stringr::coll("AD")) ~ "autosomal inheritance",
-                    stringr::str_detect(.data$inheritance, stringr::coll("XLR")) &
-                        stringr::str_detect(.data$inheritance, stringr::coll("XLD")) ~ "X-linked inheritance",
-                    .default = NA_character_
-                )
+    if (!is.null(keep_mim)) {
+      mim_sym <- c("*", "+", "#", "%", "^", "none")
+      mim_mismatch <- keep_mim[!keep_mim %in% mim_sym]
+      if (length(mim_mismatch) > 0) {
+        rlang::abort(
+          c(
+            '`keep_mim` must be one or more of "*", "+", "#", "%", "^", or "none"',
+            stats::setNames(
+              sandwich_text(mim_mismatch, '"'),
+              rep("x", length(mim_mismatch))
             )
-
-        df <- append_empty_col(
-            df,
-            col = c(
-                "omim", entry_col_ordered, "phenotype_std", "geno_inheritance"
-            ),
-            order = TRUE
+          )
         )
-    }
+      }
 
-    df
+      df <- dplyr::filter(df, .data$mim_symbol %in% keep_mim)
+    }
+  }
+
+  if (omim_type == "omim_PS_titles") {
+    df <- df |>
+      dplyr::mutate(
+        omim = paste0("MIM:", .data$phenotypic_series_number)
+      ) |>
+      dplyr::relocate("omim", .before = 1)
+  }
+
+  # ensure output matches ordering of data columns at omim.org for entries
+  # (empty cols will be added if missing)
+  entry_col_ordered <- c(
+    "location",
+    "phenotype",
+    "phenotype_mim_number",
+    "inheritance",
+    "phenotype_mapping_key",
+    "gene_locus",
+    "gene_locus_mim_number"
+  )
+  omim_phenotype <- all(entry_col_ordered %in% names(df))
+  if (omim_type == "omim_PS" || omim_phenotype) {
+    df <- df |>
+      dplyr::mutate(
+        omim = paste0("MIM:", .data$phenotype_mim_number),
+        phenotype_std = parse_omim_name(.data$phenotype),
+        geno_inheritance = dplyr::case_when(
+          .data$inheritance == "AR" ~ "autosomal recessive inheritance",
+          .data$inheritance == "AD" ~ "autosomal dominant inheritance",
+          .data$inheritance == "XLR" ~ "X-linked recessive inheritance",
+          .data$inheritance == "XLD" ~ "X-linked recessive inheritance",
+          .data$inheritance == "XL" ~ "X-linked inheritance",
+          stringr::str_detect(.data$inheritance, stringr::coll("AR")) &
+            stringr::str_detect(
+              .data$inheritance,
+              stringr::coll("AD")
+            ) ~ "autosomal inheritance",
+          stringr::str_detect(.data$inheritance, stringr::coll("XLR")) &
+            stringr::str_detect(
+              .data$inheritance,
+              stringr::coll("XLD")
+            ) ~ "X-linked inheritance",
+          .default = NA_character_
+        )
+      )
+
+    df <- append_empty_col(
+      df,
+      col = c(
+        "omim",
+        entry_col_ordered,
+        "phenotype_std",
+        "geno_inheritance"
+      ),
+      order = TRUE
+    )
+  }
+
+  df
 }
 
 
@@ -321,23 +342,25 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
 #'
 #' @keywords internal
 read_delim_auto <- function(file, ..., strict = TRUE, show_col_types = FALSE) {
-    if (length(file) != 1) file <- paste0(file, collapse = "\n")
-    if (file.exists(file)) {
-        ext <- stringr::str_extract(file, "\\.[tc]sv")
-        delim <- switch(ext, .tsv = "\t", .csv = ",")
-        if (is.null(delim)) {
-            rlang::abort("`file` must have .tsv or .csv extension.")
-        }
-    } else {
-        delim <- guess_delim(file, strict = strict)
+  if (length(file) != 1) {
+    file <- paste0(file, collapse = "\n")
+  }
+  if (file.exists(file)) {
+    ext <- stringr::str_extract(file, "\\.[tc]sv")
+    delim <- switch(ext, .tsv = "\t", .csv = ",")
+    if (is.null(delim)) {
+      rlang::abort("`file` must have .tsv or .csv extension.")
     }
+  } else {
+    delim <- guess_delim(file, strict = strict)
+  }
 
-    readr::read_delim(
-        file = file,
-        delim = delim,
-        show_col_types = show_col_types,
-        ...
-    )
+  readr::read_delim(
+    file = file,
+    delim = delim,
+    show_col_types = show_col_types,
+    ...
+  )
 }
 
 
@@ -351,9 +374,9 @@ read_delim_auto <- function(file, ..., strict = TRUE, show_col_types = FALSE) {
 #'
 #' @keywords internal
 read_doid_edit <- function(DO_repo) {
-    doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
-    doid_edit <- readr::read_lines(doid_edit_path)
+  doid_edit_path <- file.path(DO_repo, "src", "ontology", "doid-edit.owl")
+  doid_edit <- readr::read_lines(doid_edit_path)
 
-    class(doid_edit) <- c("doid_edit", class(doid_edit))
-    doid_edit
+  class(doid_edit) <- c("doid_edit", class(doid_edit))
+  doid_edit
 }

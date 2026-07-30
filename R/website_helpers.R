@@ -9,29 +9,29 @@
 #' @family make_use_case_html() helpers
 #' @noRd
 html_col_sort <- function(x, cols) {
-    UseMethod("html_col_sort")
+  UseMethod("html_col_sort")
 }
 
 #' @export
 html_col_sort.data.frame <- function(x, cols) {
-    len <- nrow(x)
-    idx <- create_row_index(len, cols)
-    x %>%
-        dplyr::mutate(.row_id = idx) %>%
-        dplyr::arrange(.data$.row_id) %>%
-        dplyr::select(-.data$.row_id)
+  len <- nrow(x)
+  idx <- create_row_index(len, cols)
+  x %>%
+    dplyr::mutate(.row_id = idx) %>%
+    dplyr::arrange(.data$.row_id) %>%
+    dplyr::select(-.data$.row_id)
 }
 
 #' @export
 html_col_sort.default <- function(x, cols) {
-    idx <- create_row_index(length(x), cols)
-    purrr::map(
-        1:max(idx),
-        function(i) {
-            x[idx == i]
-        }
-    ) %>%
-        unlist(recursive = FALSE)
+  idx <- create_row_index(length(x), cols)
+  purrr::map(
+    1:max(idx),
+    function(i) {
+      x[idx == i]
+    }
+  ) %>%
+    unlist(recursive = FALSE)
 }
 
 #' Ensures correct ordering; needed because repeating 1:rows when there
@@ -43,16 +43,20 @@ html_col_sort.default <- function(x, cols) {
 #' @family make_use_case_html() > html_col_sort() helpers
 #' @noRd
 create_row_index <- function(len, cols) {
-    if (len < cols) return(rep(1, len))
+  if (len < cols) {
+    return(rep(1, len))
+  }
 
-    in_last_row <- len %% cols
-    if (in_last_row == 0) in_last_row <- cols
-    rows <- round_up(len / cols, 0)
-    row_idx <- c(
-        rep(1:rows, times = in_last_row),
-        rep(1:(rows - 1), times = cols - in_last_row)
-    )
-    row_idx
+  in_last_row <- len %% cols
+  if (in_last_row == 0) {
+    in_last_row <- cols
+  }
+  rows <- round_up(len / cols, 0)
+  row_idx <- c(
+    rep(1:rows, times = in_last_row),
+    rep(1:(rows - 1), times = cols - in_last_row)
+  )
+  row_idx
 }
 
 
@@ -78,68 +82,68 @@ create_row_index <- function(len, cols) {
 #' @family update_website_count_tables() helpers
 #' @keywords internal
 replace_html_counts <- function(DO_repo, svn_repo, page, reload = NULL) {
-    page <- match.arg(page, choices = c("imports", "slims"))
-    page_path <- switch(
-        page,
-        imports = file.path(
-            svn_repo,
-            "templates/disease_ontology/resources/DO_Imports.html"
-        ),
-        slims = file.path(
-            svn_repo,
-            "templates/disease_ontology/resources/DO_Slims.html"
-        )
+  page <- match.arg(page, choices = c("imports", "slims"))
+  page_path <- switch(
+    page,
+    imports = file.path(
+      svn_repo,
+      "templates/disease_ontology/resources/DO_Imports.html"
+    ),
+    slims = file.path(
+      svn_repo,
+      "templates/disease_ontology/resources/DO_Slims.html"
     )
-    page_html <- readr::read_lines(page_path)
+  )
+  page_html <- readr::read_lines(page_path)
 
-    sparql_dir <- system.file("sparql", package = "DO.utils", mustWork = TRUE)
-    query <- switch(
-        page,
-        imports = file.path(sparql_dir, "website-imports.rq"),
-        slims = file.path(sparql_dir, "website-slims.rq")
+  sparql_dir <- system.file("sparql", package = "DO.utils", mustWork = TRUE)
+  query <- switch(
+    page,
+    imports = file.path(sparql_dir, "website-imports.rq"),
+    slims = file.path(sparql_dir, "website-slims.rq")
+  )
+  data_df <- DO.utils::robot_query(
+    input = file.path(DO_repo, "src/ontology/doid-merged.owl"),
+    query = query,
+    tidy_what = "header"
+  )
+  txt_count <- format(data_df$count, big.mark = ",", trim = TRUE)
+
+  # identify replacement positions in html
+  pos <- find_count_pos(page_html, data_df, page)
+  warn_missing_pos(pos, data_df, page)
+
+  # capture old count & calculate diff for comparison & validation
+  all_html_numbers <- stringr::str_extract(page_html, "[0-9,]+") %>%
+    stringr::str_remove_all(",") %>%
+    as.integer()
+  data_df <- dplyr::mutate(
+    data_df,
+    old = purrr::map_int(
+      pos,
+      ~ ifelse(
+        .x == 0,
+        NA_integer_,
+        as.integer(all_html_numbers[.x])
+      )
+    ),
+    new = .data$count,
+    count = NULL,
+    diff = .data$new - .data$old
+  )
+
+  html_out <- page_html
+  for (i in seq_along(pos)) {
+    html_out[pos[i]] <- stringr::str_replace(
+      html_out[pos[i]],
+      "[0-9,]+",
+      txt_count[i]
     )
-    data_df <- DO.utils::robot_query(
-        input = file.path(DO_repo, "src/ontology/doid-merged.owl"),
-        query = query,
-        tidy_what = "header"
-    )
-    txt_count <- format(data_df$count, big.mark = ",", trim = TRUE)
+  }
 
-    # identify replacement positions in html
-    pos <- find_count_pos(page_html, data_df, page)
-    warn_missing_pos(pos, data_df, page)
+  readr::write_lines(html_out, page_path)
 
-    # capture old count & calculate diff for comparison & validation
-    all_html_numbers <- stringr::str_extract(page_html, "[0-9,]+") %>%
-        stringr::str_remove_all(",") %>%
-        as.integer()
-    data_df <- dplyr::mutate(
-        data_df,
-        old = purrr::map_int(
-            pos,
-            ~ ifelse(
-                .x == 0,
-                NA_integer_,
-                as.integer(all_html_numbers[.x])
-            )
-        ),
-        new = .data$count,
-        count = NULL,
-        diff = .data$new - .data$old
-    )
-
-    html_out <- page_html
-    for (i in seq_along(pos)) {
-        html_out[pos[i]] <- stringr::str_replace(
-            html_out[pos[i]],
-            "[0-9,]+",
-            txt_count[i]
-        )
-    }
-
-    readr::write_lines(html_out, page_path)
-
-    invisible(tibble::as_tibble(data_df))
+  invisible(tibble::as_tibble(data_df))
 }
 
 #' Find Positions of Counts in HTML Vector
@@ -160,36 +164,39 @@ replace_html_counts <- function(DO_repo, svn_repo, page, reload = NULL) {
 #' @family update_website_count_tables() > replace_html_counts() helpers
 #' @noRd
 find_count_pos <- function(page_html, data_df, page) {
-    page <- match.arg(page, choices = c("imports", "slims"))
+  page <- match.arg(page, choices = c("imports", "slims"))
 
-    if (page == "imports") {
-        import_root_recode <- c(
-            chebi = "chemicals", omim_susceptibility = "omim", onset = "onset",
-            `ontology relations` = "relation", ncbitaxon = "taxon",
-            `transmission process` = "transmission"
-        )
-        id <- dplyr::recode(data_df$import_root, !!!import_root_recode)
-    }
-
-    if (page == "slims") {
-        id <- data_df$slim
-    }
-
-    data_pattern <- paste0("<td>[^/]*", id)
-    tdnum_pos <- which(stringr::str_detect(page_html, "<td> *[0-9,.]+ *</td>"))
-    pos <- purrr::map_dbl(
-        data_pattern,
-        function(.p) {
-            match_pos <- which(stringr::str_detect(page_html, .p))
-            if (length(match_pos) == 0) {
-                0
-            } else {
-                tdnum_pos[tdnum_pos > match_pos][1]
-            }
-        }
+  if (page == "imports") {
+    import_root_recode <- c(
+      chebi = "chemicals",
+      omim_susceptibility = "omim",
+      onset = "onset",
+      `ontology relations` = "relation",
+      ncbitaxon = "taxon",
+      `transmission process` = "transmission"
     )
+    id <- dplyr::recode(data_df$import_root, !!!import_root_recode)
+  }
 
-    pos
+  if (page == "slims") {
+    id <- data_df$slim
+  }
+
+  data_pattern <- paste0("<td>[^/]*", id)
+  tdnum_pos <- which(stringr::str_detect(page_html, "<td> *[0-9,.]+ *</td>"))
+  pos <- purrr::map_dbl(
+    data_pattern,
+    function(.p) {
+      match_pos <- which(stringr::str_detect(page_html, .p))
+      if (length(match_pos) == 0) {
+        0
+      } else {
+        tdnum_pos[tdnum_pos > match_pos][1]
+      }
+    }
+  )
+
+  pos
 }
 
 #' Warning for Missing Count Positions
@@ -210,25 +217,27 @@ find_count_pos <- function(page_html, data_df, page) {
 #' @family update_website_count_tables() > replace_html_counts() helpers
 #' @noRd
 warn_missing_pos <- function(pos, data_df, page) {
-    page <- match.arg(page, choices = c("imports", "slims"))
+  page <- match.arg(page, choices = c("imports", "slims"))
 
-    if (any(pos == 0) && page == "imports") {
-        root_missing <- data_df$import_root[pos == 0]
-        names(root_missing) <- rep("i", length(root_missing))
-        rlang::warn(
-            c("Import(s) exist that are not included in the Imports page count table:",
-              root_missing
-            )
-        )
-    }
+  if (any(pos == 0) && page == "imports") {
+    root_missing <- data_df$import_root[pos == 0]
+    names(root_missing) <- rep("i", length(root_missing))
+    rlang::warn(
+      c(
+        "Import(s) exist that are not included in the Imports page count table:",
+        root_missing
+      )
+    )
+  }
 
-    if (any(pos == 0) && page == "slims") {
-        slim_missing <- data_df$slim[pos == 0]
-        names(slim_missing) <- rep("i", length(slim_missing))
-        rlang::warn(
-            c("Slims(s) exist that are not included in the Slims page count table:",
-              slim_missing
-            )
-        )
-    }
+  if (any(pos == 0) && page == "slims") {
+    slim_missing <- data_df$slim[pos == 0]
+    names(slim_missing) <- rep("i", length(slim_missing))
+    rlang::warn(
+      c(
+        "Slims(s) exist that are not included in the Slims page count table:",
+        slim_missing
+      )
+    )
+  }
 }

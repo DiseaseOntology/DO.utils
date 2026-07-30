@@ -21,7 +21,7 @@ NULL
 #' @name chunk
 #' @export
 partition <- function(x, n) {
-    pos <- seq_along(x)
-    groups <- (pos - 1) %/% n
-    split(x, groups)
+  pos <- seq_along(x)
+  groups <- (pos - 1) %/% n
+  split(x, groups)
 }

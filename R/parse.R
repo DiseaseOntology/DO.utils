@@ -13,13 +13,13 @@
 #'
 #' @export
 parse_mapping <- function(py_gilda_res_list, ...) {
-    parsed_list <- purrr::map(
-        py_gilda_res_list,
-        parse_term_mapping,
-        ...
-    )
+  parsed_list <- purrr::map(
+    py_gilda_res_list,
+    parse_term_mapping,
+    ...
+  )
 
-    parsed_list
+  parsed_list
 }
 
 
@@ -45,32 +45,35 @@ parse_mapping <- function(py_gilda_res_list, ...) {
 #' List of data frames with the mapping result(s) for each term.
 #'
 #' @keywords internal
-parse_term_mapping <- function(py_gilda_term_mappings, best_only = TRUE,
-                               warn_best_gt1 = FALSE, ...) {
+parse_term_mapping <- function(
+  py_gilda_term_mappings,
+  best_only = TRUE,
+  warn_best_gt1 = FALSE,
+  ...
+) {
+  # produce empty tibble when no matches to term exist
+  if (length(py_gilda_term_mappings) == 0) {
+    return(
+      tibble::tribble(
+        ~id , ~term , ~score ,
+        NA  , NA    , NA
+      )
+    )
+  }
 
-    # produce empty tibble when no matches to term exist
-    if (length(py_gilda_term_mappings) == 0) {
-        return(
-            tibble::tribble(
-                ~id, ~term, ~score,
-                NA, NA, NA
-            )
-        )
+  mapping <- purrr::map_dfr(py_gilda_term_mappings, extract_ScoredMatch, ...)
+
+  if (best_only) {
+    best_mapping <- mapping %>%
+      dplyr::filter(.data$score == max(.data$score, na.rm = TRUE))
+    if (warn_best_gt1) {
+      warning(names(py_gilda_term_mappings), " has >1 best mapping.")
     }
 
-    mapping <- purrr::map_dfr(py_gilda_term_mappings, extract_ScoredMatch, ...)
+    return(best_mapping)
+  }
 
-    if (best_only) {
-        best_mapping <- mapping %>%
-            dplyr::filter(.data$score == max(.data$score, na.rm = TRUE))
-        if (warn_best_gt1) {
-            warning(names(py_gilda_term_mappings), " has >1 best mapping.")
-        }
-
-        return(best_mapping)
-    }
-
-    mapping
+  mapping
 }
 
 #' Extract ScoredMatch Objects (INTERNAL)
@@ -86,19 +89,22 @@ parse_term_mapping <- function(py_gilda_term_mappings, best_only = TRUE,
 #'     namespace LUIs, as a string. Ignored if `prefix = NULL`.
 #'
 #' @keywords internal
-extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
-                                prefix_sep = ":") {
-    if (is.null(prefix)) {
-        prefix_sep <- NULL
-    }
+extract_ScoredMatch <- function(
+  py_ScoredMatch,
+  prefix = NULL,
+  prefix_sep = ":"
+) {
+  if (is.null(prefix)) {
+    prefix_sep <- NULL
+  }
 
-    df <- tibble::tibble(
-        id = paste0(prefix, prefix_sep, py_ScoredMatch$term$id),
-        term = py_ScoredMatch$term$entry_name,
-        score = round(py_ScoredMatch$score, 2)
-    )
+  df <- tibble::tibble(
+    id = paste0(prefix, prefix_sep, py_ScoredMatch$term$id),
+    term = py_ScoredMatch$term$entry_name,
+    score = round(py_ScoredMatch$score, 2)
+  )
 
-    df
+  df
 }
 
 
@@ -168,35 +174,38 @@ extract_ScoredMatch <- function(py_ScoredMatch, prefix = NULL,
 #' )
 #'
 #' @export
-parse_omim_name <- function(x, eponyms = disease_eponyms,
-                            patterns = disease_cap_patterns,
-                            qualifiers = omim_qualifiers) {
-    if (!is.null(eponyms) && !is.character(eponyms)) {
-        rlang::abort(
-            "`eponyms` must be a named character vector or NULL.",
-            call = rlang::caller_env()
-        )
-    }
-    if (!is.null(patterns) && !is.character(patterns)) {
-        rlang::abort(
-            "`patterns` must be a named character vector or NULL.",
-            call = rlang::caller_env()
-        )
-    }
-    if (!is.null(qualifiers) && !is.character(qualifiers)) {
-        rlang::abort(
-            "`qualifiers` must be a character vector or NULL.",
-            call = rlang::caller_env()
-        )
-    }
-
-    parsed <- lapply(x, omim_parse_one, qualifiers = qualifiers)
-    names_lower <- vapply(parsed, `[[`, character(1), "name")
-    paste_na_rm(
-        fix_disease_caps(names_lower, eponyms, patterns),
-        vapply(parsed, `[[`, character(1), "abbreviation"),
-        sep = "; "
+parse_omim_name <- function(
+  x,
+  eponyms = disease_eponyms,
+  patterns = disease_cap_patterns,
+  qualifiers = omim_qualifiers
+) {
+  if (!is.null(eponyms) && !is.character(eponyms)) {
+    rlang::abort(
+      "`eponyms` must be a named character vector or NULL.",
+      call = rlang::caller_env()
     )
+  }
+  if (!is.null(patterns) && !is.character(patterns)) {
+    rlang::abort(
+      "`patterns` must be a named character vector or NULL.",
+      call = rlang::caller_env()
+    )
+  }
+  if (!is.null(qualifiers) && !is.character(qualifiers)) {
+    rlang::abort(
+      "`qualifiers` must be a character vector or NULL.",
+      call = rlang::caller_env()
+    )
+  }
+
+  parsed <- lapply(x, omim_parse_one, qualifiers = qualifiers)
+  names_lower <- vapply(parsed, `[[`, character(1), "name")
+  paste_na_rm(
+    fix_disease_caps(names_lower, eponyms, patterns),
+    vapply(parsed, `[[`, character(1), "abbreviation"),
+    sep = "; "
+  )
 }
 
 
@@ -205,36 +214,36 @@ parse_omim_name <- function(x, eponyms = disease_eponyms,
 #' Parse a single OMIM entry name string (INTERNAL)
 #' @noRd
 omim_parse_one <- function(entry, qualifiers = omim_qualifiers) {
-    entry <- trimws(entry)
-    # Strip OMIM provisional phenotype-gene relationship marker
-    entry <- sub("^\\?", "", entry)
+  entry <- trimws(entry)
+  # Strip OMIM provisional phenotype-gene relationship marker
+  entry <- sub("^\\?", "", entry)
 
-    # extract optional abbreviation (after semicolon)
-    parts <- strsplit(entry, "\\s*;\\s*")[[1L]]
-    name_raw <- toupper(parts[1L])
-    abbreviation <- if (length(parts) < 2L || nchar(parts[2L]) == 0L) {
-        NA_character_
+  # extract optional abbreviation (after semicolon)
+  parts <- strsplit(entry, "\\s*;\\s*")[[1L]]
+  name_raw <- toupper(parts[1L])
+  abbreviation <- if (length(parts) < 2L || nchar(parts[2L]) == 0L) {
+    NA_character_
+  } else {
+    parts[2L]
+  }
+
+  tokens <- trimws(strsplit(name_raw, ",\\s*")[[1L]])
+
+  if (length(tokens) == 1L) {
+    std_nm <- tolower(tokens)
+  } else {
+    primary <- tokens[[1L]]
+    remaining <- tokens[-1L]
+
+    # rearrange if at least one qualifier matches a forcing pattern
+    if (omim_has_forcing(remaining, qualifiers)) {
+      std_nm <- omim_rearrange(primary, remaining)
     } else {
-        parts[2L]
+      std_nm <- paste(tokens, collapse = ", ")
     }
+  }
 
-    tokens <- trimws(strsplit(name_raw, ",\\s*")[[1L]])
-
-    if (length(tokens) == 1L) {
-        std_nm <- tolower(tokens)
-    } else {
-        primary <- tokens[[1L]]
-        remaining <- tokens[-1L]
-
-        # rearrange if at least one qualifier matches a forcing pattern
-        if (omim_has_forcing(remaining, qualifiers)) {
-            std_nm <- omim_rearrange(primary, remaining)
-        } else {
-            std_nm <- paste(tokens, collapse = ", ")
-        }
-    }
-
-    list(name = tolower(std_nm), abbreviation = abbreviation)
+  list(name = tolower(std_nm), abbreviation = abbreviation)
 }
 
 
@@ -245,27 +254,27 @@ omim_parse_one <- function(entry, qualifiers = omim_qualifiers) {
 #' pattern, or a core set of strong adjective qualifiers.
 #' @noRd
 omim_has_forcing <- function(tokens, qualifiers = omim_qualifiers) {
-    structural <- grepl(
-        paste0(
-            # Pure number or alphanumeric subtype code, e.g. "1", "4", "7A"
-            "^\\d+[A-Za-z]{0,2}$",
-            # TYPE / MULTIPLE TYPES qualifier
-            "|^(TYPE|MULTIPLE TYPES?)\\b",
-            # Definitive inheritance qualifier (with optional trailing number)
-            "|^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
-            "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$"
-        ),
-        tokens
+  structural <- grepl(
+    paste0(
+      # Pure number or alphanumeric subtype code, e.g. "1", "4", "7A"
+      "^\\d+[A-Za-z]{0,2}$",
+      # TYPE / MULTIPLE TYPES qualifier
+      "|^(TYPE|MULTIPLE TYPES?)\\b",
+      # Definitive inheritance qualifier (with optional trailing number)
+      "|^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
+      "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$"
+    ),
+    tokens
+  )
+  qual_match <- if (!is.null(qualifiers) && length(qualifiers) > 0L) {
+    grepl(
+      paste0("^(", paste(qualifiers, collapse = "|"), ")\\b"),
+      tokens
     )
-    qual_match <- if (!is.null(qualifiers) && length(qualifiers) > 0L) {
-        grepl(
-            paste0("^(", paste(qualifiers, collapse = "|"), ")\\b"),
-            tokens
-        )
-    } else {
-        rep(FALSE, length(tokens))
-    }
-    any(structural | qual_match)
+  } else {
+    rep(FALSE, length(tokens))
+  }
+  any(structural | qual_match)
 }
 
 
@@ -276,105 +285,105 @@ omim_has_forcing <- function(tokens, qualifiers = omim_qualifiers) {
 #'
 #' @noRd
 omim_rearrange <- function(primary, remaining) {
-    # Token-type predicates (each operates on a single uppercase string)
-    is_num <- function(x) grepl("^\\d+[A-Za-z]{0,2}$", x)
-    is_type <- function(x) grepl("^(TYPE|MULTIPLE TYPES?)\\b", x)
-    is_susc <- function(x) identical(x, "SUSCEPTIBILITY TO")
-    is_trail <- function(x) grepl("^(WITH|WITHOUT|DUE TO|AND|OR)\\b", x)
-    is_def <- function(x) {
-        grepl(
-            paste0(
-                "^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
-                "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$"
-            ),
-            x
-        )
+  # Token-type predicates (each operates on a single uppercase string)
+  is_num <- function(x) grepl("^\\d+[A-Za-z]{0,2}$", x)
+  is_type <- function(x) grepl("^(TYPE|MULTIPLE TYPES?)\\b", x)
+  is_susc <- function(x) identical(x, "SUSCEPTIBILITY TO")
+  is_trail <- function(x) grepl("^(WITH|WITHOUT|DUE TO|AND|OR)\\b", x)
+  is_def <- function(x) {
+    grepl(
+      paste0(
+        "^(AUTOSOMAL (DOMINANT|RECESSIVE)|X-LINKED( (DOMINANT|RECESSIVE))?",
+        "|Y-LINKED|MITOCHONDRIAL)( \\d+[A-Za-z]{0,2})?$"
+      ),
+      x
+    )
+  }
+
+  numbers <- character(0)
+  type_quals <- character(0)
+  left_pre <- character(0) # non-definitive pre-qualifiers (in order)
+  right_pre <- character(0) # definitive pre-qualifiers (in order)
+  trailing <- character(0)
+  susceptibility <- FALSE
+  in_trailing <- FALSE
+
+  for (tok in remaining) {
+    # Inside trailing phrase: collect tokens, pulling out any definitive
+    # pre-qualifiers that OMIM lists *after* the trailing phrase
+    # (e.g. "... AND DISTAL MOTOR NEUROPATHY, AUTOSOMAL DOMINANT").
+    if (in_trailing) {
+      if (is_def(tok)) {
+        right_pre <- c(right_pre, tok)
+      } else {
+        trailing <- c(trailing, tok)
+      }
+      next
     }
 
-    numbers <- character(0)
-    type_quals <- character(0)
-    left_pre <- character(0) # non-definitive pre-qualifiers (in order)
-    right_pre <- character(0) # definitive pre-qualifiers (in order)
-    trailing <- character(0)
-    susceptibility <- FALSE
-    in_trailing <- FALSE
-
-    for (tok in remaining) {
-        # Inside trailing phrase: collect tokens, pulling out any definitive
-        # pre-qualifiers that OMIM lists *after* the trailing phrase
-        # (e.g. "... AND DISTAL MOTOR NEUROPATHY, AUTOSOMAL DOMINANT").
-        if (in_trailing) {
-            if (is_def(tok)) {
-                right_pre <- c(right_pre, tok)
-            } else {
-                trailing <- c(trailing, tok)
-            }
-            next
-        }
-
-        # Trailing phrase start
-        if (is_trail(tok)) {
-            in_trailing <- TRUE
-            trailing <- c(trailing, tok)
-            next
-        }
-
-        # SUSCEPTIBILITY TO
-        if (is_susc(tok)) {
-            susceptibility <- TRUE
-            next
-        }
-
-        # Extract a number embedded at the end of a qualifier token,
-        # e.g. "AUTOSOMAL RECESSIVE 117" → qualifier "AUTOSOMAL RECESSIVE"
-        # + number "117".
-        embedded <- regmatches(tok, regexpr("\\d+[A-Za-z]{0,2}$", tok))
-        if (length(embedded) > 0L && !is_num(tok)) {
-            tok_base <- trimws(sub("\\s*\\d+[A-Za-z]{0,2}$", "", tok))
-            if (nchar(tok_base) > 0L) {
-                numbers <- c(numbers, embedded)
-                tok <- tok_base
-            }
-        }
-
-        # Classify the (possibly stripped) token
-        if (is_num(tok)) {
-            numbers <- c(numbers, tok)
-        } else if (is_type(tok)) {
-            type_quals <- c(type_quals, tok)
-        } else if (is_def(tok)) {
-            right_pre <- c(right_pre, tok)
-        } else {
-            left_pre <- c(left_pre, tok)
-        }
+    # Trailing phrase start
+    if (is_trail(tok)) {
+      in_trailing <- TRUE
+      trailing <- c(trailing, tok)
+      next
     }
 
-    # Pre-qualifier order: definitive qualifiers (right_pre) first, then
-    # non-definitive in REVERSE listing order — this matches the OMIM
-    # preferred-name convention where the last listed qualifier appears first.
-    all_pre <- c(right_pre, rev(left_pre))
-
-    # Attach numbers/type-codes to primary, separated by a space.
-    primary_part <- primary
-    for (n in numbers) {
-        primary_part <- paste(primary_part, n)
-    }
-    if (length(type_quals) > 0L) {
-        primary_part <- paste(primary_part, paste(type_quals, collapse = " "))
+    # SUSCEPTIBILITY TO
+    if (is_susc(tok)) {
+      susceptibility <- TRUE
+      next
     }
 
-    # Assemble
-    parts <- c(all_pre, primary_part)
-    if (length(trailing) > 0L) {
-        parts <- c(parts, paste(trailing, collapse = ", "))
+    # Extract a number embedded at the end of a qualifier token,
+    # e.g. "AUTOSOMAL RECESSIVE 117" → qualifier "AUTOSOMAL RECESSIVE"
+    # + number "117".
+    embedded <- regmatches(tok, regexpr("\\d+[A-Za-z]{0,2}$", tok))
+    if (length(embedded) > 0L && !is_num(tok)) {
+      tok_base <- trimws(sub("\\s*\\d+[A-Za-z]{0,2}$", "", tok))
+      if (nchar(tok_base) > 0L) {
+        numbers <- c(numbers, embedded)
+        tok <- tok_base
+      }
     }
-    result <- paste(parts, collapse = " ")
 
-    if (susceptibility) {
-        result <- paste("SUSCEPTIBILITY TO", result)
+    # Classify the (possibly stripped) token
+    if (is_num(tok)) {
+      numbers <- c(numbers, tok)
+    } else if (is_type(tok)) {
+      type_quals <- c(type_quals, tok)
+    } else if (is_def(tok)) {
+      right_pre <- c(right_pre, tok)
+    } else {
+      left_pre <- c(left_pre, tok)
     }
+  }
 
-    result
+  # Pre-qualifier order: definitive qualifiers (right_pre) first, then
+  # non-definitive in REVERSE listing order — this matches the OMIM
+  # preferred-name convention where the last listed qualifier appears first.
+  all_pre <- c(right_pre, rev(left_pre))
+
+  # Attach numbers/type-codes to primary, separated by a space.
+  primary_part <- primary
+  for (n in numbers) {
+    primary_part <- paste(primary_part, n)
+  }
+  if (length(type_quals) > 0L) {
+    primary_part <- paste(primary_part, paste(type_quals, collapse = " "))
+  }
+
+  # Assemble
+  parts <- c(all_pre, primary_part)
+  if (length(trailing) > 0L) {
+    parts <- c(parts, paste(trailing, collapse = ", "))
+  }
+  result <- paste(parts, collapse = " ")
+
+  if (susceptibility) {
+    result <- paste("SUSCEPTIBILITY TO", result)
+  }
+
+  result
 }
 
 
@@ -410,57 +419,61 @@ omim_rearrange <- function(primary, remaining) {
 #'
 #' @noRd
 fix_disease_caps <- function(x, eponyms = NULL, patterns = NULL) {
-    # Roman numeral reformatting
-    out <- gsub(
-        "\\b(type|syndrome|disease)\\s+([ivxlcdm]+)([a-z]{0,2})\\b",
-        "\\1 \\U\\2\\3",
-        x,
-        perl = TRUE
-    )
+  # Roman numeral reformatting
+  out <- gsub(
+    "\\b(type|syndrome|disease)\\s+([ivxlcdm]+)([a-z]{0,2})\\b",
+    "\\1 \\U\\2\\3",
+    x,
+    perl = TRUE
+  )
 
-    # Alphanumeric subtype reformatting
-    out <- gsub("\\b(\\d+)([a-z]{1,2})\\b", "\\1\\U\\2", out, perl = TRUE)
-    # Immunoglobulin abbreviations: IgA, IgD, IgE, IgG, IgM, IgY
-    out <- gsub(
-        "\\big([aegmdy])\\b",
-        "Ig\\U\\1",
+  # Alphanumeric subtype reformatting
+  out <- gsub("\\b(\\d+)([a-z]{1,2})\\b", "\\1\\U\\2", out, perl = TRUE)
+  # Immunoglobulin abbreviations: IgA, IgD, IgE, IgG, IgM, IgY
+  out <- gsub(
+    "\\big([aegmdy])\\b",
+    "Ig\\U\\1",
+    out,
+    perl = TRUE,
+    ignore.case = TRUE
+  )
+
+  # Single isolated letters: type designators, chromosome names, gene
+  # symbols, etc. (e.g. "type a" -> "type A", "y-linked" -> "Y-linked")
+  out <- gsub("\\b([a-z])\\b", "\\U\\1", out, perl = TRUE)
+
+  # Word-level eponym replacements: single-pass via alternation + lookup —
+  # avoids ~1000 sequential gsub calls on the full vector.
+  if (!is.null(eponyms)) {
+    ep_names_esc <- gsub(
+      "([.+*?^${}()|\\[\\]\\\\])",
+      "\\\\\\1",
+      names(eponyms),
+      perl = TRUE
+    )
+    alt_pat <- paste0("(?i)\\b(", paste(ep_names_esc, collapse = "|"), ")\\b")
+    lookup <- purrr::set_names(unname(eponyms), tolower(names(eponyms)))
+    out <- stringr::str_replace_all(out, alt_pat, function(m) {
+      unname(lookup[tolower(m)])
+    })
+  }
+
+  # Phrase-level pattern replacements, longest-first.
+  # Replacements using PCRE case modifiers (\U, \L, \E) must use
+  # gsub(perl=TRUE) without ignore.case; all others run case-insensitively.
+  if (!is.null(patterns) && length(patterns) > 0L) {
+    is_perl_case <- grepl("\\\\[ULE]", patterns)
+    ord <- order(nchar(names(patterns)), decreasing = TRUE)
+    for (i in ord) {
+      out <- gsub(
+        names(patterns)[[i]],
+        patterns[[i]],
         out,
-        perl = TRUE,
-        ignore.case = TRUE
-    )
-
-    # Single isolated letters: type designators, chromosome names, gene
-    # symbols, etc. (e.g. "type a" -> "type A", "y-linked" -> "Y-linked")
-    out <- gsub("\\b([a-z])\\b", "\\U\\1", out, perl = TRUE)
-
-    # Word-level eponym replacements: single-pass via alternation + lookup —
-    # avoids ~1000 sequential gsub calls on the full vector.
-    if (!is.null(eponyms)) {
-        ep_names_esc <- gsub(
-            "([.+*?^${}()|\\[\\]\\\\])", "\\\\\\1",
-            names(eponyms), perl = TRUE
-        )
-        alt_pat <- paste0("(?i)\\b(", paste(ep_names_esc, collapse = "|"), ")\\b")
-        lookup  <- purrr::set_names(unname(eponyms), tolower(names(eponyms)))
-        out <- stringr::str_replace_all(out, alt_pat, function(m) unname(lookup[tolower(m)]))
+        ignore.case = !is_perl_case[[i]],
+        perl = TRUE
+      )
     }
+  }
 
-    # Phrase-level pattern replacements, longest-first.
-    # Replacements using PCRE case modifiers (\U, \L, \E) must use
-    # gsub(perl=TRUE) without ignore.case; all others run case-insensitively.
-    if (!is.null(patterns) && length(patterns) > 0L) {
-        is_perl_case <- grepl("\\\\[ULE]", patterns)
-        ord <- order(nchar(names(patterns)), decreasing = TRUE)
-        for (i in ord) {
-            out <- gsub(
-                names(patterns)[[i]],
-                patterns[[i]],
-                out,
-                ignore.case = !is_perl_case[[i]],
-                perl = TRUE
-            )
-        }
-    }
-
-    out
+  out
 }

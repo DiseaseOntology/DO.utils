@@ -17,15 +17,14 @@ ss_list_class <- c("scopus_search_list", "list")
 #'
 #' @noRd
 scopus_title_query <- function(title) {
+  if (length(title) == 1) {
+    q <- paste0("REFTITLE(\"", title, "\")")
+  } else {
+    q <- vctr_to_string(
+      paste0("REFTITLE(\"", title, "\")"),
+      delim = " OR "
+    )
+  }
 
-    if (length(title) == 1) {
-        q <- paste0("REFTITLE(\"", title, "\")")
-    } else {
-        q <- vctr_to_string(
-            paste0("REFTITLE(\"", title, "\")"),
-            delim = " OR "
-        )
-    }
-
-    q
+  q
 }

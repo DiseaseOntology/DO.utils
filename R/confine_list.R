@@ -11,17 +11,17 @@
 #'
 #' @export
 confine_list <- function(.list) {
-    purrr::map_chr(
-        .list,
-        jsonlite::serializeJSON
-    )
+  purrr::map_chr(
+    .list,
+    jsonlite::serializeJSON
+  )
 }
 
 #' @rdname confine_list
 #' @export
 release_list <- function(.json_chr) {
-    purrr::map(
-        .json_chr,
-        jsonlite::unserializeJSON
-    )
+  purrr::map(
+    .json_chr,
+    jsonlite::unserializeJSON
+  )
 }

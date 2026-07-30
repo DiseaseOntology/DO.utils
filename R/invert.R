@@ -56,60 +56,63 @@
 #'
 #' @export
 invert_sublists <- function(x, use_sublist_names = FALSE) {
-    stopifnot(is_boolean(use_sublist_names))
-    stopifnot(is.list(x))
-    if (length(x) <= 1) {
-        stop("Cannot invert single sublist.")
+  stopifnot(is_boolean(use_sublist_names))
+  stopifnot(is.list(x))
+  if (length(x) <= 1) {
+    stop("Cannot invert single sublist.")
+  }
+
+  sublist_len <- unique(purrr::map_int(x, length))
+  if (length(sublist_len) != 1) {
+    stop("Sublists do not have the same number of elements.")
+  }
+  if (sublist_len == 0) {
+    stop("Cannot invert empty sublists.")
+  }
+
+  if (use_sublist_names) {
+    all_sublist_nm <- purrr::map(x, names)
+    if (any(c("", NA) %in% unlist(all_sublist_nm))) {
+      stop("All sublist elements must be named when use_sublist_names = TRUE")
     }
 
-    sublist_len <- unique(purrr::map_int(x, length))
-    if (length(sublist_len) != 1) {
-        stop("Sublists do not have the same number of elements.")
-    }
-    if (sublist_len == 0) {
-        stop("Cannot invert empty sublists.")
-    }
-
-    if (use_sublist_names) {
-
-        all_sublist_nm <- purrr::map(x, names)
-        if (any(c("", NA) %in% unlist(all_sublist_nm))) {
-            stop("All sublist elements must be named when use_sublist_names = TRUE")
-        }
-
-        dup_nm <- purrr::map_lgl(all_sublist_nm, ~ any(duplicated(.x)))
-        if (any(unlist(dup_nm))) {
-            stop("All elements within a sublist must have unique names when use_sublist_names = TRUE")
-        }
-
-        nm_same <- purrr::map(
-            all_sublist_nm,
-            ~ all_sublist_nm[[1]] %in% .x
-        ) %>%
-            unlist() %>%
-            matrix(nrow = sublist_len) %>%
-            apply(1, function(row) dplyr::n_distinct(row) == 1)
-        if (any(!nm_same)) {
-            stop("Matching names must exist across all sublists when use_sublist_names = TRUE)")
-        }
-
-        out <- purrr::map(
-            all_sublist_nm[[1]],
-            function(nm) {
-                purrr::map(x, purrr::chuck, nm)
-            }
-        )
-        names(out) <- all_sublist_nm[[1]]
-    } else {
-        out <- purrr::map(
-            1:sublist_len,
-            function(i) {
-                purrr::map(x, purrr::chuck, i)
-            }
-        )
+    dup_nm <- purrr::map_lgl(all_sublist_nm, ~ any(duplicated(.x)))
+    if (any(unlist(dup_nm))) {
+      stop(
+        "All elements within a sublist must have unique names when use_sublist_names = TRUE"
+      )
     }
 
-    out
+    nm_same <- purrr::map(
+      all_sublist_nm,
+      ~ all_sublist_nm[[1]] %in% .x
+    ) %>%
+      unlist() %>%
+      matrix(nrow = sublist_len) %>%
+      apply(1, function(row) dplyr::n_distinct(row) == 1)
+    if (any(!nm_same)) {
+      stop(
+        "Matching names must exist across all sublists when use_sublist_names = TRUE)"
+      )
+    }
+
+    out <- purrr::map(
+      all_sublist_nm[[1]],
+      function(nm) {
+        purrr::map(x, purrr::chuck, nm)
+      }
+    )
+    names(out) <- all_sublist_nm[[1]]
+  } else {
+    out <- purrr::map(
+      1:sublist_len,
+      function(i) {
+        purrr::map(x, purrr::chuck, i)
+      }
+    )
+  }
+
+  out
 }
 
 
@@ -121,5 +124,5 @@ invert_sublists <- function(x, use_sublist_names = FALSE) {
 #'
 #' @keywords internal
 invert_nm <- function(x) {
-    stats::setNames(names(x), x)
+  stats::setNames(names(x), x)
 }

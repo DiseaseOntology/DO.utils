@@ -4,19 +4,19 @@
 # Capture official SSSOM specification and parse for use by DO.utils
 
 rlang::check_installed(
-    c("glue", "here", "purrr", "stringr", "yaml")
+  c("glue", "here", "purrr", "stringr", "yaml")
 )
 
 
 # identify latest SSSOM version and construct URL for raw YAML
 sssom_version <- stringr::str_remove(
-    httr::HEAD("https://github.com/mapping-commons/sssom/releases/latest/")$url,
-    ".*/"
+  httr::HEAD("https://github.com/mapping-commons/sssom/releases/latest/")$url,
+  ".*/"
 )
 sssom_yaml_path <- glue::glue(
-    "https://raw.githubusercontent.com/mapping-commons/sssom/@sssom_version@/src/sssom_schema/schema/sssom_schema.yaml",
-    .open = "@",
-    .close = "@"
+  "https://raw.githubusercontent.com/mapping-commons/sssom/@sssom_version@/src/sssom_schema/schema/sssom_schema.yaml",
+  .open = "@",
+  .close = "@"
 )
 
 
@@ -27,11 +27,11 @@ yaml_file <- file.path(outdir, paste0("sssom_schema-", sssom_version, ".yaml"))
 dl_status <- download.file(sssom_yaml_path, yaml_file)
 
 if (dl_status != 0) {
-    rlang::abort(
-        glue::glue(
-            "Failed to download SSSOM specification from {sssom_yaml_path}"
-        )
+  rlang::abort(
+    glue::glue(
+      "Failed to download SSSOM specification from {sssom_yaml_path}"
     )
+  )
 }
 
 .sssom_spec <- yaml::read_yaml(yaml_file)
@@ -42,17 +42,17 @@ if (dl_status != 0) {
 .sssom_mapping_slots <- .sssom_spec$classes$mapping$slots
 
 saveRDS(
-    .sssom_spec,
-    file = file.path(outdir, "sssom_spec.rds"),
-    compress = "bzip2"
+  .sssom_spec,
+  file = file.path(outdir, "sssom_spec.rds"),
+  compress = "bzip2"
 )
 saveRDS(
-    .sssom_slot_types,
-    file = file.path(outdir, "sssom_slot_types.rds"),
-    compress = "bzip2"
+  .sssom_slot_types,
+  file = file.path(outdir, "sssom_slot_types.rds"),
+  compress = "bzip2"
 )
 saveRDS(
-    .sssom_mapping_slots,
-    file = file.path(outdir, "sssom_mapping_slots.rds"),
-    compress = "bzip2"
+  .sssom_mapping_slots,
+  file = file.path(outdir, "sssom_mapping_slots.rds"),
+  compress = "bzip2"
 )

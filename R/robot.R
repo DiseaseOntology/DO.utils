@@ -45,28 +45,28 @@
 #'
 #' @export
 robot <- function(..., .robot_path = NULL) {
-    check_robot(.robot_path)
-    dots <- convert_robot_tf(...)
-    args <- stringr::str_trim(names(dots))
+  check_robot(.robot_path)
+  dots <- convert_robot_tf(...)
+  args <- stringr::str_trim(names(dots))
 
-    if (length(args) == 0) {
-        robot_args <- unlist(dots)
-    } else {
-        args <- dplyr::case_when(
-            stringr::str_length(args) < 1 ~ args,
-            stringr::str_length(args) == 1 ~ paste0("-", args),
-            stringr::str_length(args) > 1 ~ paste0("--", args)
-        )
-        robot_args <- purrr::map2_chr(
-            args,
-            unlist(dots, use.names = FALSE),
-            ~ paste(.x, .y)
-        )
-    }
+  if (length(args) == 0) {
+    robot_args <- unlist(dots)
+  } else {
+    args <- dplyr::case_when(
+      stringr::str_length(args) < 1 ~ args,
+      stringr::str_length(args) == 1 ~ paste0("-", args),
+      stringr::str_length(args) > 1 ~ paste0("--", args)
+    )
+    robot_args <- purrr::map2_chr(
+      args,
+      unlist(dots, use.names = FALSE),
+      ~ paste(.x, .y)
+    )
+  }
 
-    status <- suppressWarnings(DO_env$robot(args = robot_args))
-    status <- check_robot_error(status)
-    if (length(status) > 0) rlang::inform(status)
+  status <- suppressWarnings(DO_env$robot(args = robot_args))
+  status <- check_robot_error(status)
+  if (length(status) > 0) rlang::inform(status)
 }
 
 
@@ -87,51 +87,52 @@ robot <- function(..., .robot_path = NULL) {
 #'
 #' @export
 install_robot <- function(...) {
-    robot_file <- "/usr/local/bin/robot"
-    jar_file <- "/usr/local/bin/robot.jar"
+  robot_file <- "/usr/local/bin/robot"
+  jar_file <- "/usr/local/bin/robot.jar"
 
-    exit <- integer()
+  exit <- integer()
 
-    # get robot batch file
-    exit[1] <- utils::download.file(
-        url = "https://raw.githubusercontent.com/ontodev/robot/master/bin/robot",
-        destfile = robot_file,
-        ...
+  # get robot batch file
+  exit[1] <- utils::download.file(
+    url = "https://raw.githubusercontent.com/ontodev/robot/master/bin/robot",
+    destfile = robot_file,
+    ...
+  )
+
+  # make robot batch file executable by USER only
+  exit[2] <- as.integer(
+    system2(
+      "chmod",
+      args = c("u+x", robot_file, "; echo $?"),
+      stdout = TRUE
+    )
+  )
+
+  # get latest robot.jar file
+  exit[3] <- utils::download.file(
+    url = "https://github.com/ontodev/robot/releases/latest/download/robot.jar",
+    destfile = jar_file,
+    ...
+  )
+
+  if (all(exit == 0)) {
+    invisible(check_robot())
+  } else {
+    non_zero_codes <- exit != 0
+    non_zero_fxn <- dplyr::recode(
+      which(exit != 0),
+      c(
+        `1` = "download robot",
+        `2` = "chmod robot",
+        `3` = "download robot.jar"
+      )
     )
 
-    # make robot batch file executable by USER only
-    exit[2] <- as.integer(
-        system2(
-            "chmod",
-            args = c("u+x", robot_file, "; echo $?"),
-            stdout = TRUE
-        )
+    warning(
+      "Non-zero exit code(s):\n",
+      paste0(non_zero_fxn, ": ", exit[non_zero_codes], "\n")
     )
-
-    # get latest robot.jar file
-    exit[3] <- utils::download.file(
-        url = "https://github.com/ontodev/robot/releases/latest/download/robot.jar",
-        destfile = jar_file,
-        ...
-    )
-
-    if (all(exit == 0)) {
-        invisible(check_robot())
-    } else {
-        non_zero_codes <- exit != 0
-        non_zero_fxn <- dplyr::recode(
-            which(exit != 0),
-            c(
-                `1` = "download robot", `2` = "chmod robot",
-                `3` = "download robot.jar"
-            )
-        )
-
-        warning(
-            "Non-zero exit code(s):\n",
-            paste0(non_zero_fxn, ": ", exit[non_zero_codes], "\n")
-        )
-    }
+  }
 }
 
 
@@ -149,110 +150,118 @@ install_robot <- function(...) {
 #'
 #' @noRd
 check_robot <- function(.robot_path = NULL, on_fail = "error") {
-    if (is.null(.robot_path) && !is.null(DO_env$robot)) {
-        return(DO_env$robot_path)
+  if (is.null(.robot_path) && !is.null(DO_env$robot)) {
+    return(DO_env$robot_path)
+  }
+  if (is.null(.robot_path)) {
+    DO_env$robot_path <- Sys.which("robot")
+  } else {
+    .robot_path <- suppressWarnings(normalizePath(.robot_path))
+    if (!is.null(DO_env$robot_path) && .robot_path == DO_env$robot_path) {
+      rlang::inform("ROBOT path unchanged.")
+      return(DO_env$robot_path)
+    } else {
+      DO_env$robot_path <- .robot_path
     }
+  }
+
+  if (tools::file_ext(DO_env$robot_path) == "jar") {
+    DO_env$robot <- function(args, ...) {
+      system2(
+        "java",
+        c("-jar", DO_env$robot_path, args),
+        stdout = TRUE,
+        stderr = TRUE,
+        ...
+      )
+    }
+  } else {
+    DO_env$robot <- function(args, ...) {
+      system2(
+        DO_env$robot_path,
+        args,
+        stdout = TRUE,
+        stderr = TRUE,
+        ...
+      )
+    }
+  }
+
+  version <- try(DO_env$robot("--version"), silent = TRUE)
+
+  if (stringr::str_detect(version, "ROBOT version ")) {
+    names(DO_env$robot_path) <- version
+    rlang::inform(
+      paste0(version, " at ", DO_env$robot_path, " activated for session.")
+    )
+  } else {
+    DO_env$robot <- NULL
+    DO_env$robot_path <- NULL
+  }
+
+  if (is.null(DO_env$robot) && !is.null(on_fail)) {
     if (is.null(.robot_path)) {
-        DO_env$robot_path <- Sys.which("robot")
+      msg <- "ROBOT cannot be found. Please specify a path to robot.jar, or install and add it to the system path (see https://robot.obolibrary.org)"
     } else {
-        .robot_path <- suppressWarnings(normalizePath(.robot_path))
-        if (!is.null(DO_env$robot_path) && .robot_path == DO_env$robot_path) {
-            rlang::inform("ROBOT path unchanged.")
-            return(DO_env$robot_path)
-        } else {
-            DO_env$robot_path <- .robot_path
-        }
+      msg <- paste0("ROBOT at ", .robot_path, " is not available or working.")
     }
 
-    if (tools::file_ext(DO_env$robot_path) == "jar") {
-        DO_env$robot <- function(args, ...) {
-            system2(
-                "java", c("-jar", DO_env$robot_path, args),
-                stdout = TRUE, stderr = TRUE, ...
-            )
-        }
-    } else {
-        DO_env$robot <- function(args, ...) {
-            system2(
-                DO_env$robot_path, args,
-                stdout = TRUE, stderr = TRUE, ...
-            )
-        }
-    }
+    msg_fxn <- switch(
+      on_fail,
+      error = rlang::abort,
+      warn = rlang::warn,
+      inform = rlang::inform
+    )
+    msg_fxn(msg, class = "robot_fail")
+  }
 
-    version <- try(DO_env$robot("--version"), silent = TRUE)
-
-    if (stringr::str_detect(version, "ROBOT version ")) {
-        names(DO_env$robot_path) <- version
-        rlang::inform(
-            paste0(version, " at ", DO_env$robot_path, " activated for session.")
-        )
-    } else {
-        DO_env$robot <- NULL
-        DO_env$robot_path <- NULL
-    }
-
-    if (is.null(DO_env$robot) && !is.null(on_fail)) {
-        if (is.null(.robot_path)) {
-            msg <- "ROBOT cannot be found. Please specify a path to robot.jar, or install and add it to the system path (see https://robot.obolibrary.org)"
-        } else {
-            msg <- paste0("ROBOT at ", .robot_path, " is not available or working.")
-        }
-
-        msg_fxn <- switch(
-            on_fail,
-            error = rlang::abort,
-            warn = rlang::warn,
-            inform = rlang::inform
-        )
-        msg_fxn(msg, class = "robot_fail")
-    }
-
-    invisible(DO_env$robot_path)
+  invisible(DO_env$robot_path)
 }
 
 # check if status is indicative of error
 check_robot_error <- function(status) {
-    if (length(status) == 1 && is.numeric(status)) {
-        if (status == 0) {
-            return()
-        }
-    } else {
-        exit_status <- attr(status, "status")
-        if (is.null(exit_status) || exit_status == 0) {
-            return(status)
-        }
+  if (length(status) == 1 && is.numeric(status)) {
+    if (status == 0) {
+      return()
     }
+  } else {
+    exit_status <- attr(status, "status")
+    if (is.null(exit_status) || exit_status == 0) {
+      return(status)
+    }
+  }
 
-    java_error <- any(
-        stringr::str_detect(status, stringr::coll("java", ignore_case = TRUE))
-    )
-    if (java_error) robot_error(status, "java_error")
-    robot_error(status)
+  java_error <- any(
+    stringr::str_detect(status, stringr::coll("java", ignore_case = TRUE))
+  )
+  if (java_error) {
+    robot_error(status, "java_error")
+  }
+  robot_error(status)
 }
 
 # signal errors during execution of ROBOT program
 robot_error <- function(msg = NULL, class = NULL) {
-    if (is.null(msg)) {
-        msg <- paste0("Requested ROBOT program is not available or working.")
-    } else {
-        msg <- c(msg[1], vctr_to_string(msg[-1], delim = "\n  "))
-    }
+  if (is.null(msg)) {
+    msg <- paste0("Requested ROBOT program is not available or working.")
+  } else {
+    msg <- c(msg[1], vctr_to_string(msg[-1], delim = "\n  "))
+  }
 
-    class <- append(class, values = "robot_error")
-    rlang::abort(msg, class, .frame = parent.frame())
+  class <- append(class, values = "robot_error")
+  rlang::abort(msg, class, .frame = parent.frame())
 }
 
 # convert TRUE/FALSE to robot-compatible "true"/"false"
 convert_robot_tf <- function(...) {
-    x <- list(...)
-    purrr::map(
-        x,
-        function(.x) {
-            if (!.x %in% c(TRUE, FALSE) & !.x %in% c("TRUE", "FALSE")) {
-                return(.x)
-            }
-            tolower(.x)
-        }
-    )
+  x <- list(...)
+  purrr::map(
+    x,
+    function(.x) {
+      if (!.x %in% c(TRUE, FALSE) & !.x %in% c("TRUE", "FALSE")) {
+        return(.x)
+      }
+      tolower(.x)
+    }
+  )
 }

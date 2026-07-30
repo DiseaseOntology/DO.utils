@@ -8,42 +8,42 @@
 #'
 #' @export
 batch_id_converter <- function(x, type = NULL, ...) {
-    n <- length(x)
+  n <- length(x)
 
-    if (n <= 200) {
-        res <- rcrossref::id_converter(x)
-        check_id_conv_status(res)
-        out <- res$records
-    } else {
-        pages <- seq(round_up(n / 200))
-        s <- 200 * (pages - 1) + 1
-        e <- 200 * pages
-        e[length(e)] <- n
+  if (n <= 200) {
+    res <- rcrossref::id_converter(x)
+    check_id_conv_status(res)
+    out <- res$records
+  } else {
+    pages <- seq(round_up(n / 200))
+    s <- 200 * (pages - 1) + 1
+    e <- 200 * pages
+    e[length(e)] <- n
 
-        res_list <- purrr::map2(
-            .x = s,
-            .y = e,
-            function(.s, .e) {
-                ids <- x[.s:.e]
-                rcrossref::id_converter(ids, type = type, ...)
-            }
-        ) %>%
-            purrr::transpose()
+    res_list <- purrr::map2(
+      .x = s,
+      .y = e,
+      function(.s, .e) {
+        ids <- x[.s:.e]
+        rcrossref::id_converter(ids, type = type, ...)
+      }
+    ) %>%
+      purrr::transpose()
 
-        check_id_conv_status(res_list)
-        out <- dplyr::bind_rows(res_list$records)
-    }
+    check_id_conv_status(res_list)
+    out <- dplyr::bind_rows(res_list$records)
+  }
 
-    out
+  out
 }
 
 
 check_id_conv_status <- function(res) {
-    if (any(res$status != "ok")) {
-        warning(
-            "ID converter API request returned an error, full responses returned for debugging",
-            call. = FALSE
-        )
-        return(res)
-    }
+  if (any(res$status != "ok")) {
+    warning(
+      "ID converter API request returned an error, full responses returned for debugging",
+      call. = FALSE
+    )
+    return(res)
+  }
 }

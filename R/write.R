@@ -10,11 +10,11 @@
 #'
 #' @keywords internal
 write_access <- function(names) {
-    x <- file.access(names, mode = 2)
-    dplyr::case_when(
-        x == 0 ~ TRUE,
-        TRUE ~ FALSE
-    )
+  x <- file.access(names, mode = 2)
+  dplyr::case_when(
+    x == 0 ~ TRUE,
+    TRUE ~ FALSE
+  )
 }
 
 #' Write a Graph to .graphml File
@@ -31,11 +31,11 @@ write_access <- function(names) {
 #'
 #' @export
 write_graphml <- function(graph, file) {
-    if (tools::file_ext(file) != "graphml") {
-        file <- paste0(file, ".graphml")
-    }
-    igraph::write_graph(graph, file, format = "graphml")
-    normalizePath(file)
+  if (tools::file_ext(file) != "graphml") {
+    file <- paste0(file, ".graphml")
+  }
+  igraph::write_graph(graph, file, format = "graphml")
+  normalizePath(file)
 }
 
 
@@ -69,55 +69,67 @@ write_graphml <- function(graph, file) {
 #'
 #' @export
 write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
-    stopifnot(
-        "`sheet` must be a character string or `NULL`" =
-            is.null(sheet) || rlang::is_string(sheet)
+  stopifnot(
+    "`sheet` must be a character string or `NULL`" = is.null(sheet) ||
+      rlang::is_string(sheet)
+  )
+  dot_nm <- names(list(...))
+  if (any(dot_nm %in% c("sheet_nm", "datestamp"))) {
+    rlang::abort(
+      "`sheet_nm` and `datestamp` are deprecated; use `sheet` instead.",
+      class = "deprecated"
     )
-    dot_nm <- names(list(...))
-    if (any(dot_nm %in% c("sheet_nm", "datestamp"))) {
-        rlang::abort(
-            "`sheet_nm` and `datestamp` are deprecated; use `sheet` instead.",
-            class = "deprecated"
-        )
-    }
-    UseMethod("write_gs")
+  }
+  UseMethod("write_gs")
 }
 
 #' @rdname write_gs
 #' @export
-write_gs.omim_inventory <- function(data, ss, sheet = "omim_inventory-%Y%m%d",
-                                    hyperlink_curie = c("omim", "doid"), ...) {
-    gs_info <- write_gs.data.frame(
-        data = data,
-        ss = ss,
-        sheet = sheet,
-        hyperlink_curie = hyperlink_curie,
-        ...
-    )
-    invisible(gs_info)
+write_gs.omim_inventory <- function(
+  data,
+  ss,
+  sheet = "omim_inventory-%Y%m%d",
+  hyperlink_curie = c("omim", "doid"),
+  ...
+) {
+  gs_info <- write_gs.data.frame(
+    data = data,
+    ss = ss,
+    sheet = sheet,
+    hyperlink_curie = hyperlink_curie,
+    ...
+  )
+  invisible(gs_info)
 }
 
 #' @rdname write_gs
 #' @export
-write_gs.data.frame <- function(data, ss, sheet = "data-%Y%m%d",
-                                hyperlink_curie = NULL, ...) {
-    if (!is.null(sheet)) sheet <- format(Sys.Date(), sheet)
+write_gs.data.frame <- function(
+  data,
+  ss,
+  sheet = "data-%Y%m%d",
+  hyperlink_curie = NULL,
+  ...
+) {
+  if (!is.null(sheet)) {
+    sheet <- format(Sys.Date(), sheet)
+  }
 
-    hyperlink_col <- tidyselect::eval_select(
-        tidyselect::enquo(hyperlink_curie),
-        data
+  hyperlink_col <- tidyselect::eval_select(
+    tidyselect::enquo(hyperlink_curie),
+    data
+  )
+  if (length(hyperlink_col) > 0) {
+    data <- dplyr::mutate(
+      data,
+      dplyr::across(
+        .cols = dplyr::all_of(hyperlink_col),
+        .fns = ~ hyperlink_curie(.x, as = "gs")
+      )
     )
-    if (length(hyperlink_col) > 0) {
-        data <- dplyr::mutate(
-            data,
-            dplyr::across(
-                .cols = dplyr::all_of(hyperlink_col),
-                .fns = ~ hyperlink_curie(.x, as = "gs")
-            )
-        )
-    }
+  }
 
-    gs_info <- googlesheets4::write_sheet(data, ss, sheet)
+  gs_info <- googlesheets4::write_sheet(data, ss, sheet)
 
-    invisible(gs_info)
+  invisible(gs_info)
 }

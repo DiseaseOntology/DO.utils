@@ -47,18 +47,25 @@
 #'
 #' @family Hyperlink functions
 #' @export
-build_hyperlink <- function(x, url, as, ..., sep = "", text = x,
-                            preserve = "text") {
-    full_url <- append_to_url(x, url, sep)
-    hyperlink <- format_hyperlink(
-        full_url,
-        as = as,
-        ...,
-        text = text,
-        preserve = preserve
-    )
+build_hyperlink <- function(
+  x,
+  url,
+  as,
+  ...,
+  sep = "",
+  text = x,
+  preserve = "text"
+) {
+  full_url <- append_to_url(x, url, sep)
+  hyperlink <- format_hyperlink(
+    full_url,
+    as = as,
+    ...,
+    text = text,
+    preserve = preserve
+  )
 
-    hyperlink
+  hyperlink
 }
 
 #' @param curie A character vector of CURIEs to convert to hyperlinks.
@@ -67,8 +74,8 @@ build_hyperlink <- function(x, url, as, ..., sep = "", text = x,
 #' @rdname build_hyperlink
 #' @export
 hyperlink_curie <- function(curie, as, ..., def = "obo_generic") {
-    stopifnot(any(is_curie(curie, def = def) | is.na(curie)))
-    lui <- stringr::str_remove(curie, ".*:")
-    prefix <- stringr::str_remove(curie, ":.*")
-    build_hyperlink(x = lui, url = prefix, text = curie, as = as, ...)
+  stopifnot(any(is_curie(curie, def = def) | is.na(curie)))
+  lui <- stringr::str_remove(curie, ".*:")
+  prefix <- stringr::str_remove(curie, ":.*")
+  build_hyperlink(x = lui, url = prefix, text = curie, as = as, ...)
 }

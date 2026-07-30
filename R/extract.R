@@ -12,65 +12,75 @@
 #' @family extract_pmid documentation
 #' @export
 extract_pmid <- function(x, ...) {
-    UseMethod("extract_pmid")
+  UseMethod("extract_pmid")
 }
 
 #' @rdname extract_pmid
 #' @export
 extract_pmid.pm_search <- function(x, ...) {
-    x$ids
+  x$ids
 }
 
 #' @rdname extract_pmid
 #' @export
 extract_pmid.pmc_search <- function(x, ...) {
-    pmids <- x$pmids
+  pmids <- x$pmids
 
-    if (length(pmids) == 0) {
-        stop("No PMIDs available. Was 'pmid' set to TRUE in search_pmc()?")
-    }
+  if (length(pmids) == 0) {
+    stop("No PMIDs available. Was 'pmid' set to TRUE in search_pmc()?")
+  }
 
-    pmid_missing <- is.na(pmids)
-    if (any(pmid_missing)) {
-        n_missing <- sum(pmid_missing)
-        n_id <- length(pmids)
-        pct_missing <- round(n_missing / n_id, 2)
+  pmid_missing <- is.na(pmids)
+  if (any(pmid_missing)) {
+    n_missing <- sum(pmid_missing)
+    n_id <- length(pmids)
+    pct_missing <- round(n_missing / n_id, 2)
 
-        warning(
-            n_missing, " of ", n_id, " (", pct_missing, "%)",
-            " PMIDs are missing. Consider extracting PMCIDs.",
-            call. = FALSE
-        )
-    }
+    warning(
+      n_missing,
+      " of ",
+      n_id,
+      " (",
+      pct_missing,
+      "%)",
+      " PMIDs are missing. Consider extracting PMCIDs.",
+      call. = FALSE
+    )
+  }
 
-    pmids
+  pmids
 }
 
 #' @rdname extract_pmid
 #' @export
 extract_pmid.data.frame <- function(x, ...) {
-    df <- dplyr::rename_with(x, .fn = tolower)
+  df <- dplyr::rename_with(x, .fn = tolower)
 
-    if (!"pmid" %in% names(df)) {
-        stop("PMID column could not be identified. Name must be 'pmid' or 'PMID').")
-    }
+  if (!"pmid" %in% names(df)) {
+    stop("PMID column could not be identified. Name must be 'pmid' or 'PMID').")
+  }
 
-    pmids <- df$pmid
+  pmids <- df$pmid
 
-    pmid_missing <- is.na(pmids)
-    if (any(pmid_missing)) {
-        n_missing <- sum(pmid_missing)
-        n_id <- length(pmids)
-        pct_missing <- round(n_missing / n_id, 2)
+  pmid_missing <- is.na(pmids)
+  if (any(pmid_missing)) {
+    n_missing <- sum(pmid_missing)
+    n_id <- length(pmids)
+    pct_missing <- round(n_missing / n_id, 2)
 
-        warning(
-            n_missing, " of ", n_id, " (", pct_missing, "%)",
-            " PMIDs are missing. Consider extracting alternate IDs, if available.",
-            call. = FALSE
-        )
-    }
+    warning(
+      n_missing,
+      " of ",
+      n_id,
+      " (",
+      pct_missing,
+      "%)",
+      " PMIDs are missing. Consider extracting alternate IDs, if available.",
+      call. = FALSE
+    )
+  }
 
-    pmids
+  pmids
 }
 
 
@@ -91,47 +101,52 @@ extract_pmid.data.frame <- function(x, ...) {
 #'
 #' @family extract_pmid documentation
 #' @export
-extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
-                               no_result = "error", ...) {
-    no_result <- match.arg(
-        no_result,
-        c("error", "warning", "message", "none")
+extract_pmid.elink <- function(
+  x,
+  linkname = NULL,
+  quietly = FALSE,
+  no_result = "error",
+  ...
+) {
+  no_result <- match.arg(
+    no_result,
+    c("error", "warning", "message", "none")
+  )
+
+  nm <- names(x$links)
+  pm_res <- stringr::str_detect(nm, "_pubmed")
+  pm_n <- sum(pm_res)
+
+  if (pm_n == 0) {
+    msg <- "No PubMed 'cited by' results"
+    switch(
+      no_result,
+      error = rlang::abort(msg, class = "no_result"),
+      warning = rlang::warn(msg, class = "no_result"),
+      message = rlang::inform(msg, class = "no_result"),
+      NULL
     )
+    return(invisible(NULL))
+  }
 
-    nm <- names(x$links)
-    pm_res <- stringr::str_detect(nm, "_pubmed")
-    pm_n <- sum(pm_res)
-
-    if (pm_n == 0) {
-        msg <- "No PubMed 'cited by' results"
-        switch(
-            no_result,
-            error = rlang::abort(msg, class = "no_result"),
-            warning = rlang::warn(msg, class = "no_result"),
-            message = rlang::inform(msg, class = "no_result"),
-            NULL
-        )
-        return(invisible(NULL))
-    }
-
-    if (pm_n > 1 && is.null(linkname)) {
-        stop(
-            "linkname must be specified when elink object contains more than
+  if (pm_n > 1 && is.null(linkname)) {
+    stop(
+      "linkname must be specified when elink object contains more than
                 one pubmed result. Identified linknames: ",
-            vctr_to_string(nm[pm_res], delim = ", ")
-        )
-    }
+      vctr_to_string(nm[pm_res], delim = ", ")
+    )
+  }
 
-    pmid <- if (!is.null(linkname)) {
-        x$links[[linkname]]
-    } else {
-        if (!quietly && length(nm) > 1) {
-            message("PubMed linkname identified: ", nm[pm_res])
-        }
-        x$links[[pm_res]]
+  pmid <- if (!is.null(linkname)) {
+    x$links[[linkname]]
+  } else {
+    if (!quietly && length(nm) > 1) {
+      message("PubMed linkname identified: ", nm[pm_res])
     }
+    x$links[[pm_res]]
+  }
 
-    pmid
+  pmid
 }
 
 
@@ -147,46 +162,46 @@ extract_pmid.elink <- function(x, linkname = NULL, quietly = FALSE,
 #' @family extract_pmid documentation
 #' @export
 extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
-    cond_msg <- NULL
-    res <- purrr::map2(
-        x,
-        names(x),
-        function(vals, nm) {
-            tryCatch(
-                extract_pmid(vals, no_result = no_result, ...),
-                # make no_result message more informative & discard when signaled
-                no_result = function(cond) {
-                    cond_type <- dplyr::nth(class(cond), -2)
-                    if (cond_type == "error") {
-                        rlang::abort(
-                            class = class(cond)[1],
-                            parent = cond
-                        )
-                    } else {
-                        cond_msg <<- cond$message
-                        return(NULL)
-                    }
-                }
+  cond_msg <- NULL
+  res <- purrr::map2(
+    x,
+    names(x),
+    function(vals, nm) {
+      tryCatch(
+        extract_pmid(vals, no_result = no_result, ...),
+        # make no_result message more informative & discard when signaled
+        no_result = function(cond) {
+          cond_type <- dplyr::nth(class(cond), -2)
+          if (cond_type == "error") {
+            rlang::abort(
+              class = class(cond)[1],
+              parent = cond
             )
+          } else {
+            cond_msg <<- cond$message
+            return(NULL)
+          }
         }
-    )
-    names(res) <- names(x)
-
-    # keep only those with results
-    out <- purrr::compact(res)
-    discard <- names(res)[!names(res) %in% names(out)]
-    if (no_result != "none" & length(discard) > 0) {
-        rlang::signal(
-            message = c(
-                paste0(cond_msg, ", discarded:"),
-                purrr::set_names(discard, rep("i", length(discard)))
-            ),
-            class = c("no_result", no_result),
-            use_cli_format = TRUE
-        )
+      )
     }
+  )
+  names(res) <- names(x)
 
-    out
+  # keep only those with results
+  out <- purrr::compact(res)
+  discard <- names(res)[!names(res) %in% names(out)]
+  if (no_result != "none" & length(discard) > 0) {
+    rlang::signal(
+      message = c(
+        paste0(cond_msg, ", discarded:"),
+        purrr::set_names(discard, rep("i", length(discard)))
+      ),
+      class = c("no_result", no_result),
+      use_cli_format = TRUE
+    )
+  }
+
+  out
 }
 
 
@@ -208,31 +223,30 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
 #' @md
 #' @export
 extract_pm_date <- function(citation) {
+  # define regex patterns
+  ymd_regex <- "[12][0-9]{3} (Jan|Feb|Ma[ry]|Apr|Ju[nl]|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2}"
+  ym_regex <- "[12][0-9]{3} (Jan|Feb|Ma[ry]|Apr|Ju[nl]|Aug|Sep|Oct|Nov|Dec)"
+  y_regex <- "[12][0-9]{3}"
 
-    # define regex patterns
-    ymd_regex <- "[12][0-9]{3} (Jan|Feb|Ma[ry]|Apr|Ju[nl]|Aug|Sep|Oct|Nov|Dec) [0-9]{1,2}"
-    ym_regex <- "[12][0-9]{3} (Jan|Feb|Ma[ry]|Apr|Ju[nl]|Aug|Sep|Oct|Nov|Dec)"
-    y_regex <- "[12][0-9]{3}"
+  # stepwise identification to avoid picking up dates from titles, as much
+  #   as possible
+  pub_date <- dplyr::case_when(
+    stringr::str_detect(citation, ymd_regex) ~
+      lubridate::ymd(stringr::str_extract(citation, ymd_regex)),
+    # if lacking day, will use first day of month
+    stringr::str_detect(citation, ym_regex) ~
+      lubridate::ym(stringr::str_extract(citation, ym_regex)),
+    stringr::str_detect(citation, y_regex) ~
+      # if year only, not ideal (use first day of year)
+      lubridate::ymd(
+        paste0(
+          stringr::str_extract(citation, y_regex),
+          "-01-01"
+        )
+      )
+  )
 
-    # stepwise identification to avoid picking up dates from titles, as much
-    #   as possible
-    pub_date <- dplyr::case_when(
-        stringr::str_detect(citation, ymd_regex) ~
-            lubridate::ymd(stringr::str_extract(citation, ymd_regex)),
-        # if lacking day, will use first day of month
-        stringr::str_detect(citation, ym_regex) ~
-            lubridate::ym(stringr::str_extract(citation, ym_regex)),
-        stringr::str_detect(citation, y_regex) ~
-            # if year only, not ideal (use first day of year)
-            lubridate::ymd(
-                paste0(
-                    stringr::str_extract(citation, y_regex),
-                    "-01-01"
-                )
-            )
-    )
-
-    pub_date
+  pub_date
 }
 
 
@@ -251,35 +265,38 @@ extract_pm_date <- function(citation) {
 #' A tibble of DOIDs and their associated URLs.
 #'
 #' @noRd
-extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
-                             w_raw_match = FALSE) {
-    doid_w_url <- doid_edit[has_doid_url(doid_edit)]
+extract_doid_url <- function(
+  doid_edit,
+  include_obsolete = FALSE,
+  w_raw_match = FALSE
+) {
+  doid_w_url <- doid_edit[has_doid_url(doid_edit)]
 
-    df <- tibble::tibble(
-        raw_match = doid_w_url,
-        doid = stringr::str_extract(doid_w_url, "DOID[:_][0-9]+"),
-        url_str = stringr::str_extract_all(doid_w_url, 'url:[^"]+"')
+  df <- tibble::tibble(
+    raw_match = doid_w_url,
+    doid = stringr::str_extract(doid_w_url, "DOID[:_][0-9]+"),
+    url_str = stringr::str_extract_all(doid_w_url, 'url:[^"]+"')
+  )
+
+  # tidy
+  df <- df %>%
+    tidyr::unnest_longer(.data$url_str) %>%
+    dplyr::mutate(
+      doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
+      url = stringr::str_remove_all(.data$url_str, '^url:|"'),
+      url_str = NULL
     )
 
-    # tidy
-    df <- df %>%
-        tidyr::unnest_longer(.data$url_str) %>%
-        dplyr::mutate(
-            doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
-            url = stringr::str_remove_all(.data$url_str, '^url:|"'),
-            url_str = NULL
-        )
+  if (!isTRUE(include_obsolete)) {
+    obs <- identify_obsolete(doid_edit)
+    df <- dplyr::filter(df, !.data$doid %in% obs)
+  }
 
-    if (!isTRUE(include_obsolete)) {
-        obs <- identify_obsolete(doid_edit)
-        df <- dplyr::filter(df, !.data$doid %in% obs)
-    }
+  if (!isTRUE(w_raw_match)) {
+    df <- dplyr::select(df, -.data$raw_match)
+  }
 
-    if (!isTRUE(w_raw_match)) {
-        df <- dplyr::select(df, -.data$raw_match)
-    }
-
-    df
+  df
 }
 
 
@@ -303,15 +320,15 @@ extract_doid_url <- function(doid_edit, include_obsolete = FALSE,
 #' ontology browsers.
 #' @export
 extract_subtree <- function(x, top_node, reload = FALSE) {
-    owl <- access_owl_xml(x)
-    assert_string(top_node)
+  owl <- access_owl_xml(x)
+  assert_string(top_node)
 
-    top_class <- format_doid(top_node, as = "obo_curie")
-    q <- glue::glue(subtree_query_glue)
-    subtree <- owl$query(q, reload = reload) %>%
-        tibble::as_tibble()
+  top_class <- format_doid(top_node, as = "obo_curie")
+  q <- glue::glue(subtree_query_glue)
+  subtree <- owl$query(q, reload = reload) %>%
+    tibble::as_tibble()
 
-    subtree
+  subtree
 }
 
 
@@ -329,10 +346,10 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 #' @family `extract_*_axiom` functions
 #' @export
 extract_class_axiom <- function(DO_repo) {
-    doid_edit <- read_doid_edit(DO_repo)
-    eq_raw <- grep("EquivalentClasses", doid_edit, value = TRUE)
-    subclass_raw <- grep("SubClassOf.*Object", doid_edit, value = TRUE)
-    list(eq = eq_raw, subclass = subclass_raw)
+  doid_edit <- read_doid_edit(DO_repo)
+  eq_raw <- grep("EquivalentClasses", doid_edit, value = TRUE)
+  subclass_raw <- grep("SubClassOf.*Object", doid_edit, value = TRUE)
+  list(eq = eq_raw, subclass = subclass_raw)
 }
 
 
@@ -348,8 +365,8 @@ extract_class_axiom <- function(DO_repo) {
 #' @family `extract_*_axiom` functions
 #' @export
 extract_eq_axiom <- function(DO_repo) {
-    doid_edit <- read_doid_edit(DO_repo)
-    grep("EquivalentClasses", doid_edit, value = TRUE)
+  doid_edit <- read_doid_edit(DO_repo)
+  grep("EquivalentClasses", doid_edit, value = TRUE)
 }
 
 
@@ -365,8 +382,8 @@ extract_eq_axiom <- function(DO_repo) {
 #' @family `extract_*_axiom` functions
 #' @export
 extract_subclass_axiom <- function(DO_repo) {
-    doid_edit <- read_doid_edit(DO_repo)
-    grep("SubClassOf.*Object", doid_edit, value = TRUE)
+  doid_edit <- read_doid_edit(DO_repo)
+  grep("SubClassOf.*Object", doid_edit, value = TRUE)
 }
 
 
@@ -394,16 +411,20 @@ extract_subclass_axiom <- function(DO_repo) {
 #' [collapse_col_flex()] to prevent duplication of records.
 #'
 #' @export
-extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
-                                 debug = FALSE) {
-    x <- access_owl_xml(x)
-    if (debug) {
-        info <- list(x = x)
-        on.exit(return(x))
-    }
+extract_as_tidygraph <- function(
+  x,
+  query = NULL,
+  collapse_method = "first",
+  debug = FALSE
+) {
+  x <- access_owl_xml(x)
+  if (debug) {
+    info <- list(x = x)
+    on.exit(return(x))
+  }
 
-    if (is.null(query)) {
-        query <- "
+  if (is.null(query)) {
+    query <- "
             SELECT ?id ?label ?parent ?plabel
             WHERE {
                 ?class a owl:Class ;
@@ -414,34 +435,42 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
                 ?p_iri oboInOwl:id ?parent ;
                     rdfs:label ?plabel .
             }"
-    }
-    if (debug) info["query"] <- query
+  }
+  if (debug) {
+    info["query"] <- query
+  }
 
-    qres <- x$query(query) %>%
-        tidy_sparql()
-    qres <- collapse_col(
-        qres,
-        names(qres)[!names(qres) %in% c("id", "parent")],
-        method = collapse_method
-    )
-    if (debug) info["query_res"] <- qres
+  qres <- x$query(query) %>%
+    tidy_sparql()
+  qres <- collapse_col(
+    qres,
+    names(qres)[!names(qres) %in% c("id", "parent")],
+    method = collapse_method
+  )
+  if (debug) {
+    info["query_res"] <- qres
+  }
 
-    annotate <- dplyr::bind_rows(
-        dplyr::select(qres, -dplyr::one_of("parent", "plabel")),
-        dplyr::select(qres, "id" = "parent", "label" = "plabel")
-    ) %>%
-        dplyr::rename("name" = "id") %>%
-        unique()
-    if (debug) info["annotation_df"] <- annotate
+  annotate <- dplyr::bind_rows(
+    dplyr::select(qres, -dplyr::one_of("parent", "plabel")),
+    dplyr::select(qres, "id" = "parent", "label" = "plabel")
+  ) %>%
+    dplyr::rename("name" = "id") %>%
+    unique()
+  if (debug) {
+    info["annotation_df"] <- annotate
+  }
 
-    tg <- tidygraph::as_tbl_graph(
-        dplyr::select(qres, "id", "parent")
-    ) %>%
-        tidygraph::activate("nodes") %>%
-        dplyr::left_join(annotate, by = "name")
-    if (debug) info["tidygraph"] <- tg
+  tg <- tidygraph::as_tbl_graph(
+    dplyr::select(qres, "id", "parent")
+  ) %>%
+    tidygraph::activate("nodes") %>%
+    dplyr::left_join(annotate, by = "name")
+  if (debug) {
+    info["tidygraph"] <- tg
+  }
 
-    tg
+  tg
 }
 
 
@@ -483,24 +512,28 @@ extract_as_tidygraph <- function(x, query = NULL, collapse_method = "first",
 #' will be included in the `predicate_modifier` column.
 #'
 #' @export
-extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
-                                  tidy_what = "everything") {
-    if (isTRUE(as_skos)) {
-        q_nm <- "mapping-ordo-skos.rq"
-    } else {
-        q_nm <- "mapping-ordo.rq"
-    }
+extract_ordo_mappings <- function(
+  ordo_path,
+  as_skos = TRUE,
+  output = NULL,
+  tidy_what = "everything"
+) {
+  if (isTRUE(as_skos)) {
+    q_nm <- "mapping-ordo-skos.rq"
+  } else {
+    q_nm <- "mapping-ordo.rq"
+  }
 
-    q_file <- system.file("sparql", q_nm, package = "DO.utils", mustWork = TRUE)
-    out <- robot_query(
-        input = ordo_path,
-        query = q_file,
-        output = output,
-        tidy_what = tidy_what,
-        col_types = readr::cols(.default = readr::col_character())
-    )
+  q_file <- system.file("sparql", q_nm, package = "DO.utils", mustWork = TRUE)
+  out <- robot_query(
+    input = ordo_path,
+    query = q_file,
+    output = output,
+    tidy_what = tidy_what,
+    col_types = readr::cols(.default = readr::col_character())
+  )
 
-    out
+  out
 }
 
 
@@ -540,74 +573,79 @@ extract_ordo_mappings <- function(ordo_path, as_skos = TRUE, output = NULL,
 #' according to `version_as` or today's date if `versionIRI` is not defined.
 #'
 #' @export
-extract_obo_mappings <- function(onto_path, id = NULL, version_as = "release",
-                                 output = NULL,
-                                 tidy_what = c("header", "unnest"),
-                                 split_prefix_date = TRUE) {
-    version_as <- match.arg(version_as, c("release", "iri"))
-    q_file <- system.file(
-        "sparql", "mapping-all-sssom.rq",
-        package = "DO.utils",
-        mustWork = TRUE
+extract_obo_mappings <- function(
+  onto_path,
+  id = NULL,
+  version_as = "release",
+  output = NULL,
+  tidy_what = c("header", "unnest"),
+  split_prefix_date = TRUE
+) {
+  version_as <- match.arg(version_as, c("release", "iri"))
+  q_file <- system.file(
+    "sparql",
+    "mapping-all-sssom.rq",
+    package = "DO.utils",
+    mustWork = TRUE
+  )
+  out <- robot_query(
+    input = onto_path,
+    query = q_file,
+    output = output,
+    tidy_what = tidy_what,
+    col_types = readr::cols(.default = readr::col_character())
+  )
+  out <- dplyr::mutate(
+    out,
+    dplyr::across(
+      c("subject_id", "predicate_id", "object_id"),
+      to_curie
+    ),
+    subject_source_version = stringr::str_remove_all(
+      .data$subject_source_version,
+      "^<|>$"
     )
-    out <- robot_query(
-        input = onto_path,
-        query = q_file,
-        output = output,
-        tidy_what = tidy_what,
-        col_types = readr::cols(.default = readr::col_character())
-    )
+  )
+
+  if (split_prefix_date) {
     out <- dplyr::mutate(
-        out,
-        dplyr::across(
-            c("subject_id", "predicate_id", "object_id"),
-            to_curie
+      out,
+      object_source_version = stringr::str_replace_all(
+        stringr::str_extract(
+          .data$object_id,
+          "\\d{4}[_-]\\d{2}[_-]\\d{2}"
         ),
-        subject_source_version = stringr::str_remove_all(
-            .data$subject_source_version,
-            "^<|>$"
-        )
+        "_",
+        "-"
+      ),
+      object_id = stringr::str_remove(
+        .data$object_id,
+        "[_-]\\d{4}[_-]\\d{2}[_-]\\d{2}"
+      )
     )
+  }
 
-    if (split_prefix_date) {
-        out <- dplyr::mutate(
-            out,
-            object_source_version = stringr::str_replace_all(
-                stringr::str_extract(
-                    .data$object_id,
-                    "\\d{4}[_-]\\d{2}[_-]\\d{2}"
-                ),
-                "_",
-                "-"
-            ),
-            object_id = stringr::str_remove(
-                .data$object_id,
-                "[_-]\\d{4}[_-]\\d{2}[_-]\\d{2}"
-            )
-        )
+  if (version_as == "release") {
+    out <- dplyr::mutate(
+      out,
+      subject_source_version = stringr::str_replace(
+        .data$subject_source_version,
+        ".*releases?/([^/]+)/.*",
+        "\\1"
+      )
+    )
+  }
+
+  if (!is.null(id)) {
+    curie <- to_curie(id)
+    # fallback to IRI match if not all can be converted to CURIEs
+    if (any(!is_curie(curie))) {
+      uri <- to_uri(curie)
+      out <- dplyr::filter(out, to_uri(.data$subject_id) %in% uri)
+    } else {
+      out <- dplyr::filter(out, .data$subject_id %in% curie)
     }
+  }
 
-    if (version_as == "release") {
-        out <- dplyr::mutate(
-            out,
-            subject_source_version = stringr::str_replace(
-                .data$subject_source_version,
-                ".*releases?/([^/]+)/.*",
-                "\\1"
-            )
-        )
-    }
-
-    if (!is.null(id)) {
-        curie <- to_curie(id)
-        # fallback to IRI match if not all can be converted to CURIEs
-        if (any(!is_curie(curie))) {
-            uri <- to_uri(curie)
-            out <- dplyr::filter(out, to_uri(.data$subject_id) %in% uri)
-        } else {
-            out <- dplyr::filter(out, .data$subject_id %in% curie)
-        }
-    }
-
-    out
+  out
 }

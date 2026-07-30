@@ -40,49 +40,50 @@
 #'
 #' @export
 unique_if_invariant <- function(x, na.rm = FALSE, incl_nm = FALSE, ...) {
-    assert_scalar_logical(na.rm)
-    assert_scalar_logical(incl_nm)
+  assert_scalar_logical(na.rm)
+  assert_scalar_logical(incl_nm)
 
-    ndim <- length(dim(x))
-    if (ndim > 2) {
-        rlang::abort(
-            c(
-                "unique_if_invariant() does not support objects with >2 dimensions.",
-                x = paste0("`dim(x)` = ", ndim)
-            )
-        )
-    }
+  ndim <- length(dim(x))
+  if (ndim > 2) {
+    rlang::abort(
+      c(
+        "unique_if_invariant() does not support objects with >2 dimensions.",
+        x = paste0("`dim(x)` = ", ndim)
+      )
+    )
+  }
 
-    uniq <- x
-    if (na.rm & !all(is.na(x))) {
-        if (ndim == 0) {
-            uniq <- stats::na.omit(uniq)
-        } else {
-            rlang::warn("`na.rm` is ignored when `x` has 2 dimensions.")
-        }
-    }
-    uniq <- unique(uniq, ...)
-
-
-    if (ndim == 2) {
-        if (incl_nm) {
-            rlang::warn("`incl_nm` is ignored when `x` has 2 dimensions.")
-        }
-        n_out <- nrow(uniq)
+  uniq <- x
+  if (na.rm & !all(is.na(x))) {
+    if (ndim == 0) {
+      uniq <- stats::na.omit(uniq)
     } else {
-        n_out <- length(uniq)
-        if (incl_nm) {
-            uniq_nm <- unique(names(x), ...)
-            n_out <- max(n_out, length(uniq_nm))
-        }
+      rlang::warn("`na.rm` is ignored when `x` has 2 dimensions.")
     }
+  }
+  uniq <- unique(uniq, ...)
 
-    if (n_out == 1) {
-        if (incl_nm && ndim == 0) names(uniq) <- uniq_nm
-        uniq
-    } else {
-        x
+  if (ndim == 2) {
+    if (incl_nm) {
+      rlang::warn("`incl_nm` is ignored when `x` has 2 dimensions.")
     }
+    n_out <- nrow(uniq)
+  } else {
+    n_out <- length(uniq)
+    if (incl_nm) {
+      uniq_nm <- unique(names(x), ...)
+      n_out <- max(n_out, length(uniq_nm))
+    }
+  }
+
+  if (n_out == 1) {
+    if (incl_nm && ndim == 0) {
+      names(uniq) <- uniq_nm
+    }
+    uniq
+  } else {
+    x
+  }
 }
 
 
@@ -105,31 +106,45 @@ unique_if_invariant <- function(x, na.rm = FALSE, incl_nm = FALSE, ...) {
 #'     vector-to-string conversion method
 #'
 #' @export
-vctr_to_string <- function(x, delim = "|", na.rm = FALSE, sort = FALSE,
-                           decreasing = FALSE, ...) {
-    assert_scalar_logical(na.rm)
+vctr_to_string <- function(
+  x,
+  delim = "|",
+  na.rm = FALSE,
+  sort = FALSE,
+  decreasing = FALSE,
+  ...
+) {
+  assert_scalar_logical(na.rm)
 
-    if (all(is.na(x))) return(NA_character_)
-    if (na.rm) {
-        x <- stats::na.omit(x)
-    }
+  if (all(is.na(x))) {
+    return(NA_character_)
+  }
+  if (na.rm) {
+    x <- stats::na.omit(x)
+  }
 
-    if (isTRUE(sort)) {
-        x <- sort(x, decreasing = decreasing, ...)
-    }
-    paste0(x, collapse = delim)
+  if (isTRUE(sort)) {
+    x <- sort(x, decreasing = decreasing, ...)
+  }
+  paste0(x, collapse = delim)
 }
 
 #' @rdname vctr_to_string
 #' @export
-unique_to_string <- function(x, delim = "|", na.rm = FALSE, sort = FALSE,
-                             decreasing = FALSE, ...) {
-    vctr_to_string(
-        unique(x),
-        delim = delim,
-        na.rm = na.rm,
-        sort = sort,
-        decreasing = decreasing,
-        ...
-    )
+unique_to_string <- function(
+  x,
+  delim = "|",
+  na.rm = FALSE,
+  sort = FALSE,
+  decreasing = FALSE,
+  ...
+) {
+  vctr_to_string(
+    unique(x),
+    delim = delim,
+    na.rm = na.rm,
+    sort = sort,
+    decreasing = decreasing,
+    ...
+  )
 }

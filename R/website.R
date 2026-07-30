@@ -21,67 +21,66 @@
 #'
 #' @export
 make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
-    # validate arguments
-    if (!rlang::is_string(out_dir) || !dir.exists(out_dir)) {
-        rlang::abort(
-            message = "`out_dir` is not a single directory or does not exist."
+  # validate arguments
+  if (!rlang::is_string(out_dir) || !dir.exists(out_dir)) {
+    rlang::abort(
+      message = "`out_dir` is not a single directory or does not exist."
+    )
+  }
+
+  # prep data
+  use_case_gs <- googlesheets4::read_sheet(
+    ss = .DO_gs$users$ss,
+    sheet = .DO_gs$users$sheet,
+    range = "A:E",
+    col_types = "lcccc"
+  )
+  use_case_df <- use_case_gs %>%
+    dplyr::filter(!is.na(.data$added)) %>%
+    dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
+
+  possible_use_cases <- unique(use_case_df$type) |>
+    stats::na.omit()
+  group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
+  if ("all" %in% group) {
+    group <- possible_use_cases
+  }
+
+  out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
+
+  use_case_list <- purrr::map(
+    group,
+    ~ dplyr::filter(use_case_df, .data$type == .x) %>%
+      # ensure use cases are alphabetical by column
+      dplyr::arrange(.data$sort_col) %>%
+      html_col_sort(3)
+  ) %>%
+    purrr::set_names(nm = group)
+
+  # build html
+  use_case_html_list <- purrr::map(
+    use_case_list,
+    function(.df) {
+      glue::glue_data(
+        .x = .df,
+        '<a href="{url}" target="_blank">{name}</a>'
+      ) %>%
+        html_in_rows(
+          per_row = 3,
+          indent_n = 2,
+          cell_attr = c(class = "default")
         )
     }
+  )
 
-    # prep data
-    use_case_gs <- googlesheets4::read_sheet(
-        ss = .DO_gs$users$ss,
-        sheet = .DO_gs$users$sheet,
-        range = "A:E",
-        col_types = "lcccc"
-    )
-    use_case_df <- use_case_gs %>%
-        dplyr::filter(!is.na(.data$added)) %>%
-        dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
+  # save files
+  purrr::walk2(
+    .x = use_case_html_list,
+    .y = out_file,
+    ~ readr::write_lines(x = .x, file = .y)
+  )
 
-
-    possible_use_cases <- unique(use_case_df$type) |>
-        stats::na.omit()
-    group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
-    if ("all" %in% group) {
-        group <- possible_use_cases
-    }
-
-    out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
-
-    use_case_list <- purrr::map(
-        group,
-        ~ dplyr::filter(use_case_df, .data$type == .x) %>%
-            # ensure use cases are alphabetical by column
-            dplyr::arrange(.data$sort_col) %>%
-            html_col_sort(3)
-    ) %>%
-        purrr::set_names(nm = group)
-
-    # build html
-    use_case_html_list <- purrr::map(
-        use_case_list,
-        function(.df) {
-            glue::glue_data(
-                .x = .df,
-                '<a href="{url}" target="_blank">{name}</a>'
-            ) %>%
-                html_in_rows(
-                    per_row = 3,
-                    indent_n = 2,
-                    cell_attr = c(class="default")
-                )
-        }
-    )
-
-    # save files
-    purrr::walk2(
-        .x = use_case_html_list,
-        .y = out_file,
-        ~ readr::write_lines(x = .x, file = .y)
-    )
-
-    invisible(use_case_gs)
+  invisible(use_case_gs)
 }
 
 
@@ -102,16 +101,16 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
 #'
 #' @export
 update_website_count_tables <- function(DO_repo, tag, svn_repo) {
-    # reversibly checkout tag
-    repo <- git2r::repository(DO_repo)
-    repo_head <- git2r::repository_head(repo)
-    on.exit(git2r::checkout(repo_head))
-    git2r::checkout(repo, tag)
+  # reversibly checkout tag
+  repo <- git2r::repository(DO_repo)
+  repo_head <- git2r::repository_head(repo)
+  on.exit(git2r::checkout(repo_head))
+  git2r::checkout(repo, tag)
 
-    imports <- replace_html_counts(DO_repo, svn_repo, "imports", reload = TRUE)
-    slims <- replace_html_counts(DO_repo, svn_repo, "slims", reload = FALSE)
+  imports <- replace_html_counts(DO_repo, svn_repo, "imports", reload = TRUE)
+  slims <- replace_html_counts(DO_repo, svn_repo, "slims", reload = FALSE)
 
-    invisible(list(imports = imports, slims = slims))
+  invisible(list(imports = imports, slims = slims))
 }
 
 
@@ -132,37 +131,43 @@ update_website_count_tables <- function(DO_repo, tag, svn_repo) {
 #'
 #' @export
 make_user_list_html <- function(file) {
-    continue <- NA
-    while (!continue %in% c("y", "n")) {
-        continue <- readline("This function has been deprecated. Would you like to continue anyway? y/n")
-        cotinue <- stringr::str_to_lower(continue)
-    }
-    if (continue == "n") {
-        message("Use make_use_case_html() instead.")
-        return(invisible())
-    }
-
-    # get data
-    user_list <- googlesheets4::read_sheet(
-        ss = .DO_gs$users$ss,
-        sheet = .DO_gs$users$sheet,
-        range = "A:E",
-        col_types = "lcccc"
+  continue <- NA
+  while (!continue %in% c("y", "n")) {
+    continue <- readline(
+      "This function has been deprecated. Would you like to continue anyway? y/n"
     )
-    ws_user_list <- user_list %>%
-        dplyr::filter(!is.na(.data$added)) %>%
-        # ensure list is alphabetical
-        dplyr::arrange(.data$name)
+    cotinue <- stringr::str_to_lower(continue)
+  }
+  if (continue == "n") {
+    message("Use make_use_case_html() instead.")
+    return(invisible())
+  }
 
-    # build html
-    user_html <- glue::glue_data(
-        .x = ws_user_list,
-        '<a href="{url}" target="_blank">{name}</a>'
-    )
-    html_rows <- html_in_rows(user_html, per_row = 3, indent_n = 2,
-                              cell_attr = c(class="default"))
+  # get data
+  user_list <- googlesheets4::read_sheet(
+    ss = .DO_gs$users$ss,
+    sheet = .DO_gs$users$sheet,
+    range = "A:E",
+    col_types = "lcccc"
+  )
+  ws_user_list <- user_list %>%
+    dplyr::filter(!is.na(.data$added)) %>%
+    # ensure list is alphabetical
+    dplyr::arrange(.data$name)
 
-    readr::write_lines(html_rows, file = file)
+  # build html
+  user_html <- glue::glue_data(
+    .x = ws_user_list,
+    '<a href="{url}" target="_blank">{name}</a>'
+  )
+  html_rows <- html_in_rows(
+    user_html,
+    per_row = 3,
+    indent_n = 2,
+    cell_attr = c(class = "default")
+  )
+
+  readr::write_lines(html_rows, file = file)
 }
 
 
@@ -189,34 +194,34 @@ make_user_list_html <- function(file) {
 #'
 #' @export
 make_contributor_html <- function(contrib_df) {
-    .data <- contrib_df %>%
-        dplyr::mutate(
-            github = build_hyperlink(
-                x = .data$github,
-                url = "github",
-                as = "html",
-                text = "Github"
-            ),
-            orcid = build_hyperlink(
-                x = .data$orcid,
-                url = "orcid",
-                as = "html",
-                text = "ORCID"
-            ),
-            links = purrr::map2_chr(
-                .data$github,
-                .data$orcid,
-                ~ vctr_to_string(c(.x, .y), delim = ", ", na.rm = TRUE)
-            )
-        )
+  .data <- contrib_df %>%
+    dplyr::mutate(
+      github = build_hyperlink(
+        x = .data$github,
+        url = "github",
+        as = "html",
+        text = "Github"
+      ),
+      orcid = build_hyperlink(
+        x = .data$orcid,
+        url = "orcid",
+        as = "html",
+        text = "ORCID"
+      ),
+      links = purrr::map2_chr(
+        .data$github,
+        .data$orcid,
+        ~ vctr_to_string(c(.x, .y), delim = ", ", na.rm = TRUE)
+      )
+    )
 
-    member <- dplyr::filter(.data, .data$team_member) %>%
-        dplyr::arrange(.data$name)
-    member_html <- glue::glue_data(.x = member, "<li>{name} ({links})</li>")
+  member <- dplyr::filter(.data, .data$team_member) %>%
+    dplyr::arrange(.data$name)
+  member_html <- glue::glue_data(.x = member, "<li>{name} ({links})</li>")
 
-    nonmember <- dplyr::filter(.data, !.data$team_member) %>%
-        dplyr::arrange(.data$name)
-    nonmember_html <- glue::glue_data(.x = nonmember, "<li>{name} ({links})</li>")
+  nonmember <- dplyr::filter(.data, !.data$team_member) %>%
+    dplyr::arrange(.data$name)
+  nonmember_html <- glue::glue_data(.x = nonmember, "<li>{name} ({links})</li>")
 
-    list(member = member_html, nonmember = nonmember_html)
+  list(member = member_html, nonmember = nonmember_html)
 }

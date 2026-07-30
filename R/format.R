@@ -57,31 +57,36 @@
 #' format_obo(x, as = "curie", validate = FALSE, ns_type = "prop")
 #'
 #' @export
-format_obo <- function(x, as = "curie", validate = TRUE,
-                       allow = "standard", ns_type = "obo") {
-    as <- match.arg(
-        as,
-        choices = c("curie", "obo_curie", "uri", "<uri>", "ns.lui")
-    )
+format_obo <- function(
+  x,
+  as = "curie",
+  validate = TRUE,
+  allow = "standard",
+  ns_type = "obo"
+) {
+  as <- match.arg(
+    as,
+    choices = c("curie", "obo_curie", "uri", "<uri>", "ns.lui")
+  )
 
-    if (validate) {
-        valid_obo <- is_valid_obo(x, allow, ns_type)
-        assertthat::assert_that(all(valid_obo))
-    } else {
-        # to reliably identify non-OBO IDs
-        valid_obo <- is_valid_obo(x, allow = c("standard", "ns.lui"), ns_type)
-    }
+  if (validate) {
+    valid_obo <- is_valid_obo(x, allow, ns_type)
+    assertthat::assert_that(all(valid_obo))
+  } else {
+    # to reliably identify non-OBO IDs
+    valid_obo <- is_valid_obo(x, allow = c("standard", "ns.lui"), ns_type)
+  }
 
-    if (ns_type == "ont") {
-        prefixes <- obo_ont_prefix
-    } else if (ns_type == "prop") {
-        prefixes <- obo_prop_prefix
-    } else {
-        prefixes <- obo_prefix[names(obo_prefix) != "obo"]
-    }
+  if (ns_type == "ont") {
+    prefixes <- obo_ont_prefix
+  } else if (ns_type == "prop") {
+    prefixes <- obo_prop_prefix
+  } else {
+    prefixes <- obo_prefix[names(obo_prefix) != "obo"]
+  }
 
-    out <- reformat_obo_id(x, valid_obo, as, prefixes)
-    out
+  out <- reformat_obo_id(x, valid_obo, as, prefixes)
+  out
 }
 
 #' @examples
@@ -104,31 +109,36 @@ format_obo <- function(x, as = "curie", validate = TRUE,
 #'
 #' @rdname format_obo
 #' @export
-format_doid <- function(x, as = "curie", validate = TRUE,
-                       allow = "standard", ns_type = "obo") {
-    as <- match.arg(
-        as,
-        choices = c("curie", "obo_curie", "uri", "<uri>", "ns.lui")
-    )
+format_doid <- function(
+  x,
+  as = "curie",
+  validate = TRUE,
+  allow = "standard",
+  ns_type = "obo"
+) {
+  as <- match.arg(
+    as,
+    choices = c("curie", "obo_curie", "uri", "<uri>", "ns.lui")
+  )
 
-    if (validate) {
-        valid_doid <- is_valid_doid(x, allow, ns_type)
-        assertthat::assert_that(all(valid_doid))
-    } else {
-        # to reliably identify non-OBO IDs
-        valid_doid <- is_valid_doid(x, allow = c("standard", "ns.lui"), ns_type)
-    }
+  if (validate) {
+    valid_doid <- is_valid_doid(x, allow, ns_type)
+    assertthat::assert_that(all(valid_doid))
+  } else {
+    # to reliably identify non-OBO IDs
+    valid_doid <- is_valid_doid(x, allow = c("standard", "ns.lui"), ns_type)
+  }
 
-    if (ns_type == "ont") {
-        prefixes <- obo_ont_prefix["DOID"]
-    } else if (ns_type == "prop") {
-        prefixes <- obo_prop_prefix["doid"]
-    } else {
-        prefixes <- obo_prefix[c("DOID", "doid")]
-    }
+  if (ns_type == "ont") {
+    prefixes <- obo_ont_prefix["DOID"]
+  } else if (ns_type == "prop") {
+    prefixes <- obo_prop_prefix["doid"]
+  } else {
+    prefixes <- obo_prefix[c("DOID", "doid")]
+  }
 
-    out <- reformat_obo_id(x, valid_doid, as, prefixes)
-    out
+  out <- reformat_obo_id(x, valid_doid, as, prefixes)
+  out
 }
 
 
@@ -151,12 +161,12 @@ format_doid <- function(x, as = "curie", validate = TRUE,
 #' @seealso [extract_subtree()]
 #' @export
 format_subtree <- function(subtree_df, top_node) {
-    rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")
-    top_class <- format_doid(top_node, as = "curie")
-    tg <- as_subtree_tidygraph(subtree_df, top_class)
-    formatted <- pivot_subtree(tg, top_class)
+  rlang::check_installed("tidygraph", reason = "to use `format_subtree()`")
+  top_class <- format_doid(top_node, as = "curie")
+  tg <- as_subtree_tidygraph(subtree_df, top_class)
+  formatted <- pivot_subtree(tg, top_class)
 
-    formatted
+  formatted
 }
 
 
@@ -209,36 +219,39 @@ format_subtree <- function(subtree_df, top_node) {
 #' _[generify_obo()] for details._
 #'
 #' @export
-format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
-                         placeholders = c("<<<", ">>>", "%%%", "@@@"),
-                         max_phrases = 15L) {
+format_axiom <- function(
+  x,
+  property_df = NULL,
+  generify_obo = FALSE,
+  placeholders = c("<<<", ">>>", "%%%", "@@@"),
+  max_phrases = 15L
+) {
+  out <- format_axiom_type(x)
 
-    out <- format_axiom_type(x)
-
-    i <- 0
-    while (any(has_object_stmt(out)) && i < max_phrases) {
-        out <- format_inmost_object_phrase(
-            out,
-            placeholders = placeholders
-        )
-        i <- i + 1
-    }
-
-    if (!is.null(property_df)) {
-        out <- label_properties(out, property_df)
-    }
-    if (isTRUE(generify_obo)) {
-        out <- generify_obo(out)
-    }
-
-    # Replace placeholders used to protect phrases, parentheses and spaces.
-    replacement <- purrr::set_names(
-        c("\\(", "\\)", " "),
-        nm = placeholders[1:3]
+  i <- 0
+  while (any(has_object_stmt(out)) && i < max_phrases) {
+    out <- format_inmost_object_phrase(
+      out,
+      placeholders = placeholders
     )
-    out <- stringr::str_replace_all(out, replacement)
+    i <- i + 1
+  }
 
-    out
+  if (!is.null(property_df)) {
+    out <- label_properties(out, property_df)
+  }
+  if (isTRUE(generify_obo)) {
+    out <- generify_obo(out)
+  }
+
+  # Replace placeholders used to protect phrases, parentheses and spaces.
+  replacement <- purrr::set_names(
+    c("\\(", "\\)", " "),
+    nm = placeholders[1:3]
+  )
+  out <- stringr::str_replace_all(out, replacement)
+
+  out
 }
 
 
@@ -298,137 +311,140 @@ format_axiom <- function(x, property_df = NULL, generify_obo = FALSE,
 #'
 #' @export
 format_hyperlink <- function(url, as, ..., text = NULL, preserve = "url") {
-    as <- match.arg(as, c("gs", "xlsx", "html"))
-    preserve <- match.arg(preserve, c("url", "text"))
-    if (is.null(text) && preserve == "text") {
-        rlang::abort('`preserve` can not be set to "text" when `text` is NULL.')
-    }
-    if (!is.null(text) && length(text) != 1 && length(text) != length(url)) {
-        rlang::abort(
-            "`text` must be a string or character vector of the same length as `url`"
-        )
-    }
+  as <- match.arg(as, c("gs", "xlsx", "html"))
+  preserve <- match.arg(preserve, c("url", "text"))
+  if (is.null(text) && preserve == "text") {
+    rlang::abort('`preserve` can not be set to "text" when `text` is NULL.')
+  }
+  if (!is.null(text) && length(text) != 1 && length(text) != length(url)) {
+    rlang::abort(
+      "`text` must be a string or character vector of the same length as `url`"
+    )
+  }
 
-    if (as == "gs") {
-        warn_attr(...)
-        if (is.null(text)) {
-            formula <- as.character(glue::glue('=HYPERLINK("{url}")'))
-        } else {
-            formula <- dplyr::if_else(
-                !is.na(text),
-                as.character(glue::glue('=HYPERLINK("{url}", "{text}")')),
-                as.character(glue::glue('=HYPERLINK("{url}")'))
-            )
-        }
-        formatted <- googlesheets4::gs4_formula(formula)
-    }
-
-    if (as == "xlsx") {
-        warn_attr(...)
-        if (is.null(text)) {
-            formatted <- url
-            class(formatted) <- "hyperlink"
-        } else {
-            formatted <- dplyr::if_else(
-                !is.na(text),
-                as.character(glue::glue('=HYPERLINK("{url}", "{text}")')),
-                as.character(glue::glue('=HYPERLINK("{url}")'))
-            )
-            class(formatted) <- "formula"
-        }
-    }
-
-    if (as == "html") {
-        attr <- list(...)
-        if (length(attr) > 0) {
-            unnamed <- names(attr) == ""
-            if (any(unnamed)) {
-                rlang::abort(
-                    msg_dots(
-                        "All hyperlink attributes in `...` must be named.",
-                        ...,
-                        .which = unnamed
-                    )
-                )
-            }
-
-            attr <- list(...)
-            html_attr <- paste0(
-                " ", names(attr), "=", sandwich_text(attr, '"'),
-                collapse = ""
-            )
-        } else {
-            html_attr <- NULL
-        }
-
-        if (is.null(text)) {
-            text <- url
-        } else {
-            text <- dplyr::if_else(!is.na(text), text, url)
-        }
-
-        formatted <- glue::glue(
-            '<a href="{url}"{html_attr}>{text}</a>',
-            .null = ""
-        )
-        formatted <- as.character(formatted)
-    }
-
-    if (preserve == "url") {
-        formatted[is.na(url)] <- NA
+  if (as == "gs") {
+    warn_attr(...)
+    if (is.null(text)) {
+      formula <- as.character(glue::glue('=HYPERLINK("{url}")'))
     } else {
-        if (length(text) == 1) {
-            formatted[is.na(url)] <- text
-        } else {
-            formatted[is.na(url)] <- text[is.na(url)]
-        }
+      formula <- dplyr::if_else(
+        !is.na(text),
+        as.character(glue::glue('=HYPERLINK("{url}", "{text}")')),
+        as.character(glue::glue('=HYPERLINK("{url}")'))
+      )
+    }
+    formatted <- googlesheets4::gs4_formula(formula)
+  }
+
+  if (as == "xlsx") {
+    warn_attr(...)
+    if (is.null(text)) {
+      formatted <- url
+      class(formatted) <- "hyperlink"
+    } else {
+      formatted <- dplyr::if_else(
+        !is.na(text),
+        as.character(glue::glue('=HYPERLINK("{url}", "{text}")')),
+        as.character(glue::glue('=HYPERLINK("{url}")'))
+      )
+      class(formatted) <- "formula"
+    }
+  }
+
+  if (as == "html") {
+    attr <- list(...)
+    if (length(attr) > 0) {
+      unnamed <- names(attr) == ""
+      if (any(unnamed)) {
+        rlang::abort(
+          msg_dots(
+            "All hyperlink attributes in `...` must be named.",
+            ...,
+            .which = unnamed
+          )
+        )
+      }
+
+      attr <- list(...)
+      html_attr <- paste0(
+        " ",
+        names(attr),
+        "=",
+        sandwich_text(attr, '"'),
+        collapse = ""
+      )
+    } else {
+      html_attr <- NULL
     }
 
-    formatted
+    if (is.null(text)) {
+      text <- url
+    } else {
+      text <- dplyr::if_else(!is.na(text), text, url)
+    }
+
+    formatted <- glue::glue(
+      '<a href="{url}"{html_attr}>{text}</a>',
+      .null = ""
+    )
+    formatted <- as.character(formatted)
+  }
+
+  if (preserve == "url") {
+    formatted[is.na(url)] <- NA
+  } else {
+    if (length(text) == 1) {
+      formatted[is.na(url)] <- text
+    } else {
+      formatted[is.na(url)] <- text[is.na(url)]
+    }
+  }
+
+  formatted
 }
 
 
 # format_obo()/format_doid() helpers --------------------------------------
 
 reformat_obo_id <- function(x, valid, as, prefixes) {
-    prefixes <- length_sort(prefixes, by_name = TRUE, decreasing = TRUE)
-    prefix_regex <- paste0(names(prefixes), collapse = "|")
-    ns <- stringr::str_match(x, paste0("(?:^|.*[/:])(", prefix_regex, ")"))[, 2]
-    lui <- purrr::map2_chr(
-        x,
-        ns,
-        ~ stringr::str_remove_all(.x, paste0(".*", .y, "[:_#]|>?$"))
+  prefixes <- length_sort(prefixes, by_name = TRUE, decreasing = TRUE)
+  prefix_regex <- paste0(names(prefixes), collapse = "|")
+  ns <- stringr::str_match(x, paste0("(?:^|.*[/:])(", prefix_regex, ")"))[, 2]
+  lui <- purrr::map2_chr(
+    x,
+    ns,
+    ~ stringr::str_remove_all(.x, paste0(".*", .y, "[:_#]|>?$"))
+  )
+  # set up namespace & separator
+  if (as == "curie") {
+    first <- paste0(ns, ":")
+  } else {
+    # all other formats are modified URIs
+    first <- prefixes[ns]
+  }
+
+  if (as %in% c("obo_curie", "ns.lui")) {
+    first <- stringr::str_remove(first, ".*/")
+  }
+  if (as == "obo_curie") {
+    # with special handling for oboInOwl IDs (do NOT have standard OBO PURLs)
+    first <- dplyr::if_else(
+      ns == "oboInOwl",
+      "oboInOwl:",
+      paste0("obo:", first)
     )
-    # set up namespace & separator
-    if (as == "curie") {
-        first <- paste0(ns, ":")
-    } else {
-        # all other formats are modified URIs
-        first <- prefixes[ns]
-    }
+  }
 
-    if (as %in% c("obo_curie", "ns.lui")) {
-        first <- stringr::str_remove(first, ".*/")
-    }
-    if (as == "obo_curie") {
-        # with special handling for oboInOwl IDs (do NOT have standard OBO PURLs)
-        first <- dplyr::if_else(
-            ns == "oboInOwl",
-            "oboInOwl:",
-            paste0("obo:", first)
-        )
-    }
+  # create full output
+  out <- paste0(first, lui)
 
-    # create full output
-    out <- paste0(first, lui)
+  # restore non-OBO IDs and add/remove angle brackets
+  out[!valid] <- x[!valid]
+  if (as == "uri") {
+    out <- stringr::str_remove_all(out, "^<|>$")
+  } else if (as == "<uri>") {
+    out <- stringr::str_replace_all(out, c("^<?" = "<", ">?$" = ">"))
+  }
 
-    # restore non-OBO IDs and add/remove angle brackets
-    out[!valid] <- x[!valid]
-    if (as == "uri") {
-        out <- stringr::str_remove_all(out, "^<|>$")
-    } else if (as == "<uri>") {
-        out <- stringr::str_replace_all(out, c("^<?" = "<", ">?$" = ">"))
-    }
-
-    out
+  out
 }

@@ -40,83 +40,92 @@
 #' }
 #'
 #' @export
-inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
-                           include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-                           when_pred_NA = "error") {
-    stopifnot("`onto_path` does not exist." = file.exists(onto_path))
+inventory_omim <- function(
+  onto_path,
+  omim_input,
+  keep_mim = c("#", "%"),
+  include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+  when_pred_NA = "error"
+) {
+  stopifnot("`onto_path` does not exist." = file.exists(onto_path))
 
-    if ("omim_tbl" %in% class(omim_input)) {
-        out <- omim_input
-    } else if (file.exists(omim_input)) {
-        out <- read_omim(omim_input, keep_mim = keep_mim)
-    } else {
-        rlang::abort(
-            "`omim_input` must be an `omim_tbl` or the path to an existing file."
-        )
-    }
-
-    # get DO-OMIM mappings
-    q <- system.file(
-        "sparql", "mapping-all.rq",
-        package = "DO.utils",
-        mustWork = TRUE
+  if ("omim_tbl" %in% class(omim_input)) {
+    out <- omim_input
+  } else if (file.exists(omim_input)) {
+    out <- read_omim(omim_input, keep_mim = keep_mim)
+  } else {
+    rlang::abort(
+      "`omim_input` must be an `omim_tbl` or the path to an existing file."
     )
-    do_mappings <- robot_query(onto_path, q, tidy_what = "everything")
+  }
 
-    do_omim <- do_mappings %>%
-        dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) %>%
-        dplyr::rename(
-            doid = .data$id, do_label = .data$label, do_dep = .data$dep,
-            omim = .data$mapping
-        ) %>%
-        collapse_col(.data$mapping_type, na.rm = TRUE)
+  # get DO-OMIM mappings
+  q <- system.file(
+    "sparql",
+    "mapping-all.rq",
+    package = "DO.utils",
+    mustWork = TRUE
+  )
+  do_mappings <- robot_query(onto_path, q, tidy_what = "everything")
 
-    # convert OMIM: prefix to MIM: (preferred) with warning, if needed
-    if (any(stringr::str_detect(do_omim$omim, "OMIM"))) {
-        rlang::warn("`onto_path` file uses an unpreferred OMIM prefix. Converting to 'MIM'...")
-        do_omim <- do_omim %>%
-            dplyr::mutate(
-                omim = stringr::str_replace(.data$omim, "OMIM:", "MIM:")
-            )
-    }
+  do_omim <- do_mappings %>%
+    dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) %>%
+    dplyr::rename(
+      doid = .data$id,
+      do_label = .data$label,
+      do_dep = .data$dep,
+      omim = .data$mapping
+    ) %>%
+    collapse_col(.data$mapping_type, na.rm = TRUE)
 
-    out <- out %>%
-        dplyr::left_join(do_omim, by = "omim") %>%
-        append_empty_col(
-            col = c("exists", "mapping_type", "doid", "do_label", "do_dep")
-        ) %>%
-        dplyr::mutate(exists = !is.na(.data$doid)) %>%
-        dplyr::relocate(
-            c(.data$mapping_type, .data$exists),
-            .before = .data$doid
-        )
-
-    # identify terms that multimap
-    omim_mm <- multimaps(
-        out$omim,
-        out$mapping_type,
-        out$doid,
-        when_pred_NA = when_pred_NA
+  # convert OMIM: prefix to MIM: (preferred) with warning, if needed
+  if (any(stringr::str_detect(do_omim$omim, "OMIM"))) {
+    rlang::warn(
+      "`onto_path` file uses an unpreferred OMIM prefix. Converting to 'MIM'..."
     )
-    doid_mm <- multimaps(
-        out$doid,
-        out$mapping_type,
-        out$omim,
-        when_pred_NA = when_pred_NA
-    )
-    out <- dplyr::mutate(
-        out,
-        multimaps = dplyr::case_when(
-            omim_mm & doid_mm ~ "both_ways",
-            omim_mm ~ "omim_to_doid",
-            doid_mm ~ "doid_to_omim",
-            TRUE ~ NA_character_
-        )
+    do_omim <- do_omim %>%
+      dplyr::mutate(
+        omim = stringr::str_replace(.data$omim, "OMIM:", "MIM:")
+      )
+  }
+
+  out <- out %>%
+    dplyr::left_join(do_omim, by = "omim") %>%
+    append_empty_col(
+      col = c("exists", "mapping_type", "doid", "do_label", "do_dep")
+    ) %>%
+    dplyr::mutate(exists = !is.na(.data$doid)) %>%
+    dplyr::relocate(
+      c(.data$mapping_type, .data$exists),
+      .before = .data$doid
     )
 
-    class(out) <- c("omim_inventory", "mapping_inventory", class(out))
+  # identify terms that multimap
+  omim_mm <- multimaps(
+    out$omim,
+    out$mapping_type,
+    out$doid,
+    when_pred_NA = when_pred_NA
+  )
+  doid_mm <- multimaps(
+    out$doid,
+    out$mapping_type,
+    out$omim,
+    when_pred_NA = when_pred_NA
+  )
+  out <- dplyr::mutate(
+    out,
+    multimaps = dplyr::case_when(
+      omim_mm & doid_mm ~ "both_ways",
+      omim_mm ~ "omim_to_doid",
+      doid_mm ~ "doid_to_omim",
+      TRUE ~ NA_character_
+    )
+  )
 
-    out
+  class(out) <- c("omim_inventory", "mapping_inventory", class(out))
+
+  out
 }
 
 
@@ -147,41 +156,49 @@ inventory_omim <- function(onto_path, omim_input, keep_mim = c("#", "%"),
 #' both are `NA`, are ignored and return `FALSE`.
 #'
 #' @keywords internal
-multimaps <- function(x, pred, y,
-                      include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-                      when_pred_NA = "error") {
-    stopifnot(
-        "`x`, `pred`, & `y` must be the same length" =
-            dplyr::n_distinct(c(length(x), length(pred), length(y))) == 1
+multimaps <- function(
+  x,
+  pred,
+  y,
+  include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
+  when_pred_NA = "error"
+) {
+  stopifnot(
+    "`x`, `pred`, & `y` must be the same length" = dplyr::n_distinct(c(
+      length(x),
+      length(pred),
+      length(y)
+    )) ==
+      1
+  )
+
+  if (all(is.na(x)) || all(is.na(y))) {
+    out <- rep(FALSE, length(x))
+    return(out)
+  }
+
+  p_missing <- is.na(pred) & !is.na(x) & !is.na(y)
+  if (any(p_missing)) {
+    rlang::abort(
+      c(
+        "Predicates must not be missing from mappings",
+        x = paste0("`pred` = `NA` [", to_range(which(p_missing)), "]")
+      )
     )
+  }
 
-    if (all(is.na(x)) || all(is.na(y))) {
-        out <- rep(FALSE, length(x))
-        return(out)
-    }
-
-    p_missing <- is.na(pred) & !is.na(x) & !is.na(y)
-    if (any(p_missing)) {
-        rlang::abort(
-            c(
-                "Predicates must not be missing from mappings",
-                x = paste0("`pred` = `NA` [", to_range(which(p_missing)), "]")
-            )
-        )
-    }
-
-    include_pattern <- unique_to_string(include_pred, delim = "|")
-    p_incl <- stringr::str_detect(pred, include_pattern)
-    pi_split <- split(p_incl, x)
-    y_split <- split(y, x)
-    multimaps <- vapply(
-        seq_along(y_split),
-        function(i) {
-            y_in <- y_split[[i]][pi_split[[i]]]
-            dplyr::n_distinct(y_in, na.rm = TRUE) > 1
-        },
-        FUN.VALUE = FALSE
-    )
-    out <- x %in% names(y_split)[multimaps]
-    out
+  include_pattern <- unique_to_string(include_pred, delim = "|")
+  p_incl <- stringr::str_detect(pred, include_pattern)
+  pi_split <- split(p_incl, x)
+  y_split <- split(y, x)
+  multimaps <- vapply(
+    seq_along(y_split),
+    function(i) {
+      y_in <- y_split[[i]][pi_split[[i]]]
+      dplyr::n_distinct(y_in, na.rm = TRUE) > 1
+    },
+    FUN.VALUE = FALSE
+  )
+  out <- x %in% names(y_split)[multimaps]
+  out
 }

@@ -12,49 +12,53 @@
 #' @inheritParams pubmed_summary
 #'
 #' @export
-pmc_summary <- function(input, config = NULL, version = "2.0",
-                           retmode = "xml", ...) {
+pmc_summary <- function(
+  input,
+  config = NULL,
+  version = "2.0",
+  retmode = "xml",
+  ...
+) {
+  if ("web_history" %in% class(input)) {
+    web_history <- input
+    id <- NULL
+  } else if (purrr::is_list(input)) {
+    # minimize summary request (limit to unique PMIDs)
+    web_history <- NULL
+    id <- unique(unlist(input))
+  } else {
+    web_history <- NULL
+    id <- input
+  }
 
-    if ("web_history" %in% class(input)) {
-        web_history <- input
-        id <- NULL
-    } else if (purrr::is_list(input)) {
-        # minimize summary request (limit to unique PMIDs)
-        web_history <- NULL
-        id <- unique(unlist(input))
-    } else {
-        web_history <- NULL
-        id <- input
-    }
+  # strip PMC from identifier, if present (API uses bare number)
+  id <- stringr::str_remove(id, "^PMC")
 
-    # strip PMC from identifier, if present (API uses bare number)
-    id <- stringr::str_remove(id, "^PMC")
+  if (is.null(web_history) & length(id) > 200) {
+    web_history <- rentrez::entrez_post("pmc", id = id)
+    id <- NULL
+  }
 
-    if (is.null(web_history) & length(id) > 200) {
-        web_history <- rentrez::entrez_post("pmc", id = id)
-        id <- NULL
-    }
+  summary_res <- rentrez::entrez_summary(
+    db = "pmc",
+    id = id,
+    web_history = web_history,
+    version = version,
+    always_return_list = TRUE,
+    retmode = retmode,
+    config = config,
+    ...
+  )
 
-    summary_res <- rentrez::entrez_summary(
-        db = "pmc",
-        id = id,
-        web_history = web_history,
-        version = version,
-        always_return_list = TRUE,
-        retmode = retmode,
-        config = config,
-        ...
+  if (purrr::is_list(input)) {
+    summary_list <- purrr::map(
+      input,
+      ~ summary_res[.x]
     )
+    class(summary_list) <- "esummary_list_nested"
+  } else {
+    summary_list <- summary_res
+  }
 
-    if (purrr::is_list(input)) {
-        summary_list <- purrr::map(
-            input,
-            ~ summary_res[.x]
-        )
-        class(summary_list) <- "esummary_list_nested"
-    } else {
-        summary_list <- summary_res
-    }
-
-    summary_list
+  summary_list
 }
