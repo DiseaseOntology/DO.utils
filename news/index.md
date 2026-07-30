@@ -1,5 +1,48 @@
 # Changelog
 
+## DO.utils 0.3.5
+
+### General
+
+#### BREAKING CHANGES
+
+- [`parse_omim_name()`](https://diseaseontology.github.io/DO.utils/reference/parse_omim_name.md)
+  no longer accepts data frame input; the `col` argument has been
+  dropped. Output is now a character vector of normalized names with
+  abbreviations preserved (previously a tibble with `name` and
+  `abbreviation` columns).
+
+#### New
+
+- [`paste_na_rm()`](https://diseaseontology.github.io/DO.utils/reference/paste_na_rm.md)
+  pastes elements together while omitting `NA` values, returning `NA`
+  only if all values are `NA`.
+- `omim_qualifiers` dataset: a character vector of OMIM adjective
+  qualifier tokens (e.g. `CONGENITAL`, `SYNDROMIC`) used by
+  [`parse_omim_name()`](https://diseaseontology.github.io/DO.utils/reference/parse_omim_name.md)
+  to control name rearrangement.
+
+#### Updates
+
+- [`parse_omim_name()`](https://diseaseontology.github.io/DO.utils/reference/parse_omim_name.md)
+  gains a `qualifiers` argument (defaulting to `omim_qualifiers`) for
+  finer control over name rearrangement; formatting improvements include
+  appending alphanumeric suffixes with a space instead of a hyphen, and
+  improved roman numeral and single-letter capitalization.
+- [`read_omim()`](https://diseaseontology.github.io/DO.utils/reference/read_omim.md)
+  now adds a standardized name column — `title_std` for search results
+  and `phenotype_std` for entries/phenotypic series — using
+  [`parse_omim_name()`](https://diseaseontology.github.io/DO.utils/reference/parse_omim_name.md).
+- `disease_cap_patterns` and `disease_eponyms` datasets updated.
+
+### DO Management & Analysis
+
+#### Updates
+
+- [`tidy_sparql()`](https://diseaseontology.github.io/DO.utils/reference/tidy_sparql.md)
+  now signals an error for unrecognized `tidy_what` values instead of
+  silently dropping them.
+
 ## DO.utils 0.3.4
 
 ### General

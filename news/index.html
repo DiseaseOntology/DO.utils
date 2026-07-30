@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,41 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.5" id="doutils-035">DO.utils 0.3.5<a class="anchor" aria-label="anchor" href="#doutils-035"></a></h2>
+<div class="section level3">
+<h3 id="general-0-3-5">General<a class="anchor" aria-label="anchor" href="#general-0-3-5"></a></h3>
+<div class="section level4">
+<h4 id="breaking-changes-0-3-5">BREAKING CHANGES<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-5"></a></h4>
+<ul><li>
+<code><a href="../reference/parse_omim_name.html">parse_omim_name()</a></code> no longer accepts data frame input; the <code>col</code> argument has been dropped. Output is now a character vector of normalized names with abbreviations preserved (previously a tibble with <code>name</code> and <code>abbreviation</code> columns).</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-0-3-5">New<a class="anchor" aria-label="anchor" href="#new-0-3-5"></a></h4>
+<ul><li>
+<code><a href="../reference/paste_na_rm.html">paste_na_rm()</a></code> pastes elements together while omitting <code>NA</code> values, returning <code>NA</code> only if all values are <code>NA</code>.</li>
+<li>
+<code>omim_qualifiers</code> dataset: a character vector of OMIM adjective qualifier tokens (e.g. <code>CONGENITAL</code>, <code>SYNDROMIC</code>) used by <code><a href="../reference/parse_omim_name.html">parse_omim_name()</a></code> to control name rearrangement.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="updates-0-3-5">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-5"></a></h4>
+<ul><li>
+<code><a href="../reference/parse_omim_name.html">parse_omim_name()</a></code> gains a <code>qualifiers</code> argument (defaulting to <code>omim_qualifiers</code>) for finer control over name rearrangement; formatting improvements include appending alphanumeric suffixes with a space instead of a hyphen, and improved roman numeral and single-letter capitalization.</li>
+<li>
+<code><a href="../reference/read_omim.html">read_omim()</a></code> now adds a standardized name column — <code>title_std</code> for search results and <code>phenotype_std</code> for entries/phenotypic series — using <code><a href="../reference/parse_omim_name.html">parse_omim_name()</a></code>.</li>
+<li>
+<code>disease_cap_patterns</code> and <code>disease_eponyms</code> datasets updated.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="do-management--analysis-0-3-5">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-5"></a></h3>
+<div class="section level4">
+<h4 id="updates-0-3-5-1">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-5-1"></a></h4>
+<ul><li>
+<code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code> now signals an error for unrecognized <code>tidy_what</code> values instead of silently dropping them.</li>
+</ul></div>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.4" id="doutils-034">DO.utils 0.3.4<a class="anchor" aria-label="anchor" href="#doutils-034"></a></h2>
 <div class="section level3">
