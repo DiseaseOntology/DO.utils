@@ -217,7 +217,7 @@ citedby_pmid <- function(
   config = NULL,
   ...
 ) {
-  if (is.null(web_history) & length(id) > 200) {
+  if (is.null(web_history) && length(id) > 200) {
     web_history <- rentrez::entrez_post("pubmed", id = id)
     id <- NULL
   }

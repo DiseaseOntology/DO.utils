@@ -36,7 +36,7 @@ read_pubmed_txt <- function(file) {
 
   # extract identifiers and format as tibble
   citation_df <- tibble::tibble(
-    n = 1:length(citations),
+    n = seq_along(citations),
     pmid = stringr::str_match(citations, "PMID: ([0-9]+)")[, 2] %>%
       dplyr::na_if("0"),
     pmcid = stringr::str_match(citations, "PMCID: (PMC[0-9]+)")[, 2],
@@ -86,7 +86,7 @@ read_ga <- function(
     which(stringr::str_detect(.data, "^$")), # empty lines delimit tbls
     length(.data) + 1 # ensure last table has endpoint
   )
-  if (read_all & length(tbl_delim) > 2) {
+  if (read_all && length(tbl_delim) > 2) {
     dot_args <- list(...)
     tbl <- purrr::map2(
       utils::head(tbl_delim + 1, -1),
