@@ -72,7 +72,7 @@ test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES TITLES",
     expect_equal(read_omim("data/omim/omim-dl-ps_titles.tsv"), expected)
 })
 
-# search downloads
+# Search downloads --------------------------------------------------------
 search_expected <- structure(
     list(
         omim = c(
@@ -226,26 +226,45 @@ search_expected <- structure(
     omim_official = TRUE
 )
 
+# test excludes `title_std` --> avoid testing parse_omim_name() output here
+res_search <- read_omim("data/omim/omim-dl-search.tsv")
 test_that("read_omim() works for OFFICIAL download of SEARCH results", {
+    res <- res_search |>
+        dplyr::select(dplyr::all_of(names(search_expected)))
     expect_equal(
-        read_omim("data/omim/omim-dl-search.tsv"),
+        res,
         dplyr::filter(search_expected, mim_symbol %in% c("#", "%"))
     )
 })
 
 test_that("read_omim() keep_mim arg works", {
+    res1 <- read_omim("data/omim/omim-dl-search.tsv", keep_mim = "none") |>
+        dplyr::select(dplyr::all_of(names(search_expected)))
     expect_equal(
-        read_omim("data/omim/omim-dl-search.tsv", keep_mim = "none"),
+        res1,
         dplyr::filter(search_expected, mim_symbol == "none")
     )
+
+    res_all <- read_omim("data/omim/omim-dl-search.tsv", keep_mim = NULL) |>
+        dplyr::select(dplyr::all_of(names(search_expected)))
     expect_equal(
-        read_omim("data/omim/omim-dl-search.tsv", keep_mim = NULL),
+        res_all,
         search_expected
     )
+
+    # non-exsistent value for keep_mim
     expect_error(read_omim("data/omim/omim-dl-search.tsv", keep_mim = "@"))
 })
 
-# phenotypic series downloads
+# confirm presence & type of `title_std` column
+test_that("read_omim() adds title_std column for search downloads", {
+    expect_true("title_std" %in% names(res_search))
+    expect_true(is.character(res_search$title_std))
+    expect_true(all(!is.na(res_search$title_std)))
+})
+
+
+# Phenotypic series downloads ---------------------------------------------
 ps_df <- structure(
     list(
         omim = c("MIM:PS613135", "MIM:619738", "MIM:613135", "MIM:618049"),
@@ -273,8 +292,19 @@ ps_df <- structure(
     omim_official = TRUE
 )
 
+# test excludes `phenotype_std` --> avoid testing parse_omim_name() output here
+res_ps <- read_omim("data/omim/omim-dl-ps.tsv")
 test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES", {
-    expect_equal(read_omim("data/omim/omim-dl-ps.tsv"), ps_df)
+    res <- res_ps |>
+        dplyr::select(dplyr::all_of(names(ps_df)))
+    expect_equal(res, ps_df)
+})
+
+# confirm presence & type of `phenotype_std` column
+test_that("read_omim() adds phenotype_std column for OFFICIAL download of PHENOTYPIC SERIES", {
+    expect_true("phenotype_std" %in% names(res_ps))
+    expect_true(is.character(res_ps$phenotype_std))
+    expect_true(all(!is.na(res_ps$phenotype_std)))
 })
 
 
@@ -282,6 +312,8 @@ test_that("read_omim() works for OFFICIAL download of PHENOTYPIC SERIES", {
 # For copy-pasted data
 ##################################################
 
+# tests exclude `phenotype_std` --> avoid testing parse_omim_name() output here
+res_ps_cp <- read_omim("data/omim/omim-cp-ps.csv")
 test_that("read_omim() works for COPIED data (PS or with entry info)", {
     ps_df_cp <- ps_df %>%
         dplyr::filter(!stringr::str_detect(.data$omim, "PS")) %>%
@@ -289,6 +321,18 @@ test_that("read_omim() works for COPIED data (PS or with entry info)", {
     attr(ps_df_cp, "omim_official") <- FALSE
     class(ps_df_cp) <- class(ps_df)[-1]
 
-    expect_equal(read_omim("data/omim/omim-cp-ps.csv"), ps_df_cp)
-    expect_equal(read_omim("data/omim/omim-cp-entry-p-ps.csv"), ps_df_cp)
+    res <- res_ps_cp |>
+        dplyr::select(dplyr::all_of(names(ps_df_cp)))
+    expect_equal(res, ps_df_cp)
+
+    res_entry <- read_omim("data/omim/omim-cp-entry-p-ps.csv") |>
+        dplyr::select(dplyr::all_of(names(ps_df_cp)))
+    expect_equal(res_entry, ps_df_cp)
+})
+
+# confirm presence & type of `phenotype_std` column
+test_that("read_omim() adds phenotype_std column for OFFICIAL download of PHENOTYPIC SERIES", {
+    expect_true("phenotype_std" %in% names(res_ps_cp))
+    expect_true(is.character(res_ps_cp$phenotype_std))
+    expect_true(all(!is.na(res_ps_cp$phenotype_std)))
 })
