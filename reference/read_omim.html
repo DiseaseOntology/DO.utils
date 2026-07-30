@@ -98,12 +98,13 @@ containing the search used.</p></li>
 <li><p>OMIM phenotypic series titles download: Additional <code>omim_PS_titles</code> class.</p></li>
 <li><p>OMIM phenotypic series download: Additional <code>omim_PS</code> class and a row
 representing the OMIM phenotypic series itself.</p></li>
-</ul><p>Output with columns typical OMIM phenotype entries, including <code>omim_PS</code>, will
-have an additional <code>geno_inheritance</code> column containing a best guess at
-inheritance from the GENO ontology. This simplifies adding inheritance as
-logical subClassOf axioms supporting curation.</p>
-<p>NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
-entries but column are ordered differently.</p>
+</ul><p>Output with typical OMIM phenotype entries, including <code>omim_PS</code>, will have 2
+additional columns to simplify and support curation:</p><ol><li><p><strong><code>title_std</code> (search) or <code>phenotype_std</code> (entries/phenotypic series):</strong>
+the standardized phenotype name, as produced by <code><a href="parse_omim_name.html">parse_omim_name()</a></code></p></li>
+<li><p><strong><code>geno_inheritance</code></strong>: containing a best guess at inheritance from the
+GENO ontology</p></li>
+</ol><p>NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
+entries but columns are ordered differently.</p>
     </div>
     <div class="section level2">
     <h2 id="manual-input-requirements">Manual Input Requirements<a class="anchor" aria-label="anchor" href="#manual-input-requirements"></a></h2>
@@ -167,7 +168,7 @@ shorthand, as follows (from <a href="https://www.omim.org/help/faq" class="exter
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

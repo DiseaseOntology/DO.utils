@@ -104,42 +104,27 @@ preferred-name conventions. Definitive inheritance terms
 and appear first, even when listed after other qualifiers.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                                      abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> autosomal recessive spastic paraplegia 14 SPG14</span></span>
+<span><span class="co">#&gt; [1] "autosomal recessive spastic paraplegia 14; SPG14"</span></span>
 <span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"DEAFNESS, AUTOSOMAL DOMINANT, CONGENITAL; DFNA"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                                   abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> autosomal dominant congenital deafness DFNA</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "autosomal dominant congenital deafness; DFNA"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="post-qualifiers-attached-after-the-primary-term">Post-qualifiers — attached <em>after</em> the primary term<a class="anchor" aria-label="anchor" href="#post-qualifiers-attached-after-the-primary-term"></a>
 </h3>
 <ul>
 <li>
-<strong>Numeric type codes</strong> (<code>1</code>, <code>4</code>,
-<code>23</code>) are appended with a space.</li>
+<strong>Numeric &amp; alphanumeric type codes</strong>
+(<code>1</code>, <code>23</code>, <code>7A</code>) are appended with a
+space.</li>
 <li>
 <strong><code>TYPE ...</code> tokens</strong> are appended with a
 space.</li>
-<li>
-<strong>Alphanumeric subtype codes</strong> (e.g. <code>7A</code>)
-are hyphen-joined to the preceding word (e.g. <code>SYNDROME, 7A</code>
-→ <code>syndrome-7A</code>).</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"OSTEOGENESIS IMPERFECTA, TYPE XI; OI11"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                            abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> osteogenesis imperfecta type XI OI11</span></span>
+<span><span class="co">#&gt; [1] "osteogenesis imperfecta type XI; OI11"</span></span>
 <span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"SCOLIOSIS, ISOLATED, SUSCEPTIBILITY TO, 1; IS1"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                                   abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> susceptibility to isolated scoliosis 1 IS1</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "susceptibility to isolated scoliosis 1; IS1"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="trailing-phrases-appended-last">Trailing phrases — appended <em>last</em><a class="anchor" aria-label="anchor" href="#trailing-phrases-appended-last"></a>
@@ -150,10 +135,7 @@ phrases and appended after the primary term (and any
 post-qualifiers).</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"EPILEPSY, PROGRESSIVE MYOCLONIC, 4, WITH OR WITHOUT RENAL FAILURE; EPM4"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                                                           abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> progressive myoclonic epilepsy 4 with or without renal failure EPM4</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "progressive myoclonic epilepsy 4 with or without renal failure; EPM4"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="susceptibility-to">
@@ -163,10 +145,7 @@ post-qualifiers).</p>
 the entire assembled name.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"DIABETES MELLITUS, SUSCEPTIBILITY TO"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                                abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> susceptibility to diabetes mellitus <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "susceptibility to diabetes mellitus"</span></span></code></pre></div>
 <hr>
 </div>
 </div>
@@ -199,10 +178,7 @@ comma order and only lowercased:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># No forcing pattern → no rearrangement</span></span>
 <span><span class="fu"><a href="../reference/parse_omim_name.html">parse_omim_name</a></span><span class="op">(</span><span class="st">"SPASTIC TETRAPLEGIA, THIN CORPUS CALLOSUM, AND PROGRESSIVE MICROCEPHALY"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name                                                              abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                                             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> spastic tetraplegia, thin corpus callosum, and progressive micro… <span style="color: #BB0000;">NA</span></span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "spastic tetraplegia, thin corpus callosum, and progressive microcephaly"</span></span></code></pre></div>
 <p>To extend the forcing list for edge cases, open an issue or submit a
 PR editing <code>omim_has_forcing()</code> in
 <code>R/parse.R</code>.</p>
@@ -253,10 +229,7 @@ adjective) cannot be resolved by word-level <code>eponyms</code>. Use
 <span>    <span class="st">"SHORT SYNDROME; SHORTSYN"</span>,</span>
 <span>    patterns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"short syndrome"</span> <span class="op">=</span> <span class="st">"SHORT syndrome"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
-<span><span class="co">#&gt;   name           abbreviation</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> SHORT syndrome SHORTSYN</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "SHORT syndrome; SHORTSYN"</span></span></code></pre></div>
 </li>
 <li><p><strong>Context-specific word substitutions</strong>
 (e.g. <code>WITH</code> → <code>associated with</code>) cannot be
@@ -277,7 +250,7 @@ types; edge cases exist (submit an issue to extend it).</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

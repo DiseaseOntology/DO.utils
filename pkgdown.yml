@@ -1,12 +1,12 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/maintainer-guide: maintainer-guide.html
   obtain_use_records: obtain_use_records.html
   articles/parse-omim-name: parse-omim-name.html
   use-reticulate-python: use-reticulate-python.html
-last_built: 2026-07-01T17:34Z
+last_built: 2026-07-30T20:19Z
 urls:
   reference: https://diseaseontology.github.io/DO.utils/reference
   article: https://diseaseontology.github.io/DO.utils/articles

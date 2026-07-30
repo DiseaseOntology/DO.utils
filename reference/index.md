@@ -230,6 +230,9 @@
 - [`obofoundry_metadata`](https://diseaseontology.github.io/DO.utils/reference/obofoundry_metadata.md)
   : OBO Foundry Metadata
 
+- [`omim_qualifiers`](https://diseaseontology.github.io/DO.utils/reference/omim_qualifiers.md)
+  : OMIM Adjective Qualifier Vector
+
 - [`onto_missing()`](https://diseaseontology.github.io/DO.utils/reference/onto_missing.md)
   : Identify Data Missing from an Ontology (DEPRECATED)
 

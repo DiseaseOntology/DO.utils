@@ -40,36 +40,23 @@ when listed after other qualifiers.
 ``` r
 
 parse_omim_name("SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14")
-#> # A tibble: 1 × 2
-#>   name                                      abbreviation
-#>   <chr>                                     <chr>       
-#> 1 autosomal recessive spastic paraplegia 14 SPG14
+#> [1] "autosomal recessive spastic paraplegia 14; SPG14"
 parse_omim_name("DEAFNESS, AUTOSOMAL DOMINANT, CONGENITAL; DFNA")
-#> # A tibble: 1 × 2
-#>   name                                   abbreviation
-#>   <chr>                                  <chr>       
-#> 1 autosomal dominant congenital deafness DFNA
+#> [1] "autosomal dominant congenital deafness; DFNA"
 ```
 
 ### Post-qualifiers — attached *after* the primary term
 
-- **Numeric type codes** (`1`, `4`, `23`) are appended with a space.
+- **Numeric & alphanumeric type codes** (`1`, `23`, `7A`) are appended
+  with a space.
 - **`TYPE ...` tokens** are appended with a space.
-- **Alphanumeric subtype codes** (e.g. `7A`) are hyphen-joined to the
-  preceding word (e.g. `SYNDROME, 7A` → `syndrome-7A`).
 
 ``` r
 
 parse_omim_name("OSTEOGENESIS IMPERFECTA, TYPE XI; OI11")
-#> # A tibble: 1 × 2
-#>   name                            abbreviation
-#>   <chr>                           <chr>       
-#> 1 osteogenesis imperfecta type XI OI11
+#> [1] "osteogenesis imperfecta type XI; OI11"
 parse_omim_name("SCOLIOSIS, ISOLATED, SUSCEPTIBILITY TO, 1; IS1")
-#> # A tibble: 1 × 2
-#>   name                                   abbreviation
-#>   <chr>                                  <chr>       
-#> 1 susceptibility to isolated scoliosis 1 IS1
+#> [1] "susceptibility to isolated scoliosis 1; IS1"
 ```
 
 ### Trailing phrases — appended *last*
@@ -81,10 +68,7 @@ any post-qualifiers).
 ``` r
 
 parse_omim_name("EPILEPSY, PROGRESSIVE MYOCLONIC, 4, WITH OR WITHOUT RENAL FAILURE; EPM4")
-#> # A tibble: 1 × 2
-#>   name                                                           abbreviation
-#>   <chr>                                                          <chr>       
-#> 1 progressive myoclonic epilepsy 4 with or without renal failure EPM4
+#> [1] "progressive myoclonic epilepsy 4 with or without renal failure; EPM4"
 ```
 
 ### `SUSCEPTIBILITY TO`
@@ -95,10 +79,7 @@ assembled name.
 ``` r
 
 parse_omim_name("DIABETES MELLITUS, SUSCEPTIBILITY TO")
-#> # A tibble: 1 × 2
-#>   name                                abbreviation
-#>   <chr>                               <chr>       
-#> 1 susceptibility to diabetes mellitus NA
+#> [1] "susceptibility to diabetes mellitus"
 ```
 
 ------------------------------------------------------------------------
@@ -124,10 +105,7 @@ lists), the tokens are kept in original comma order and only lowercased:
 
 # No forcing pattern → no rearrangement
 parse_omim_name("SPASTIC TETRAPLEGIA, THIN CORPUS CALLOSUM, AND PROGRESSIVE MICROCEPHALY")
-#> # A tibble: 1 × 2
-#>   name                                                              abbreviation
-#>   <chr>                                                             <chr>       
-#> 1 spastic tetraplegia, thin corpus callosum, and progressive micro… NA
+#> [1] "spastic tetraplegia, thin corpus callosum, and progressive microcephaly"
 ```
 
 To extend the forcing list for edge cases, open an issue or submit a PR
@@ -170,10 +148,7 @@ rules:
       "SHORT SYNDROME; SHORTSYN",
       patterns = c("short syndrome" = "SHORT syndrome")
   )
-  #> # A tibble: 1 × 2
-  #>   name           abbreviation
-  #>   <chr>          <chr>       
-  #> 1 SHORT syndrome SHORTSYN
+  #> [1] "SHORT syndrome; SHORTSYN"
   ```
 
 - **Context-specific word substitutions** (e.g. `WITH` →
