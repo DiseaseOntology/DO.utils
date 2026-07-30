@@ -17,7 +17,7 @@ to_character <- function(x, ...) {
 
 #' @export
 to_character.list <- function(x, ...) {
-  purrr::map(x, to_character) %>%
+  purrr::map(x, to_character) |>
     unlist()
 }
 

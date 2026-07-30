@@ -14,10 +14,10 @@ get_pub_data <- function(gs, sheet) {
     gs,
     sheet,
     col_types = "c"
-  ) %>%
+  ) |>
     dplyr::mutate(
       first_author = stringr::str_extract(Authors, "^[^,]+")
-    ) %>%
+    ) |>
     dplyr::select(
       internal_id,
       pmid = `PubMed ID`,

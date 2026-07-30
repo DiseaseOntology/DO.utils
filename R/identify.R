@@ -108,7 +108,7 @@ onto_missing <- function(
     q_out,
     name_repair = ~ stringr::str_remove(.x, "^\\?"),
     show_col_types = FALSE
-  ) %>%
+  ) |>
     tidy_sparql()
 
   if (what == "OMIM") {
@@ -125,18 +125,18 @@ onto_missing <- function(
     compare_by <- "mapping"
   }
 
-  in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by) %>%
+  in_onto <- dplyr::inner_join(from_onto, from_input, by = compare_by) |>
     dplyr::arrange(.data$label, .data$id)
   class(in_onto) <- c("in_onto_df", class(in_onto))
   missing <- dplyr::anti_join(
     from_input,
     from_onto,
     by = invert_nm(compare_by)
-  ) %>%
+  ) |>
     dplyr::mutate(
       tidy_label = stringr::str_remove(.data$phenotype, "^\\?")
-    ) %>%
-    dplyr::arrange(.data$tidy_label, .data$omim) %>%
+    ) |>
+    dplyr::arrange(.data$tidy_label, .data$omim) |>
     dplyr::select(-.data$tidy_label)
   class(missing) <- c("onto_missing_df", class(missing))
 

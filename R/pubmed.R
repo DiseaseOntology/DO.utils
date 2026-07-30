@@ -130,12 +130,12 @@ truncate_authors <- function(pubmed_df) {
 #'
 #' @noRd
 hoist_ArticleIds <- function(pubmed_df, id = NULL) {
-  id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) %>%
+  id_df <- purrr::map(pubmed_df$ArticleIds, tidy_ArticleId_set) |>
     dplyr::bind_rows()
 
   # rename to match pkg internal representation; only needed for PubMed
   if (all(c("pmcid", "pmc") %in% names(id_df))) {
-    id_df <- id_df %>%
+    id_df <- id_df |>
       dplyr::rename(
         pmcid_long = .data$pmcid,
         pmcid = .data$pmc,
@@ -173,6 +173,6 @@ tidy_ArticleId_set <- function(x) {
       #type_N = .x$IdTypeN, # not needed
       value = .x$Value
     )
-  ) %>%
+  ) |>
     tidyr::pivot_wider(names_from = .data$type, values_from = .data$value)
 }

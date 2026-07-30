@@ -19,7 +19,7 @@
 #' @export
 pyobo_map <- function(terms, namespace) {
   grounder <- pyobo_gutils$get_grounder(namespace)
-  res <- purrr::map(terms, grounder$ground) %>%
+  res <- purrr::map(terms, grounder$ground) |>
     purrr::set_names(terms)
 
   res

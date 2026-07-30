@@ -7,7 +7,7 @@
 #'
 #' @export
 print.oieb <- function(x, ...) {
-  oie_new <- x %>%
+  oie_new <- x |>
     dplyr::mutate(
       id_type = stringr::str_remove(.data$report, "_.+"),
       stat = stringr::str_remove(.data$report, "[^_]+_"),

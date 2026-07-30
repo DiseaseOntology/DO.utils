@@ -22,7 +22,7 @@ trans_contributors <- googlesheets4::read_sheet(
     ss = "1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM",
     sheet = "TRANS",
     col_types = "c"
-) \%>\%
+) |>
     dplyr::mutate(dplyr::across(dplyr::everything(), readr::parse_guess))
 trans_contributors
 

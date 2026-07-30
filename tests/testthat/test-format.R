@@ -266,7 +266,7 @@ test_that("format_subtree() works when no fill is needed", {
     res,
     dplyr::row_number() < hge_pos |
       dplyr::row_number() > hge_pos + 2
-  ) %>%
+  ) |>
     dplyr::mutate(
       duplicated = FALSE,
       parent_id = stringr::str_remove(parent_id, "\\|?DOID:5074\\|?"),

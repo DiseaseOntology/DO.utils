@@ -81,7 +81,7 @@ unnest_mapping <- function(
   warn_best_gt1 = FALSE,
   ...
 ) {
-  df_unnested <- df %>%
+  df_unnested <- df |>
     dplyr::mutate(
       parsed_mapping = parse_mapping(
         {{ col }},
@@ -90,8 +90,8 @@ unnest_mapping <- function(
         best_only = best_only,
         warn_best_gt1 = warn_best_gt1
       )
-    ) %>%
-    tidyr::unnest(.data$parsed_mapping, ...) %>%
+    ) |>
+    tidyr::unnest(.data$parsed_mapping, ...) |>
     dplyr::select(-{{ col }})
 
   df_unnested

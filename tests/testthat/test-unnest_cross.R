@@ -64,7 +64,7 @@ test_that("unnest_cross() can use tidyselect semantics", {
 test_that("unnest_cross() works like sequential unnest calls", {
   expect_identical(
     unnest_cross(df, cols = c(interjection, letter)),
-    tidyr::unnest(df, interjection) %>%
+    tidyr::unnest(df, interjection) |>
       tidyr::unnest(letter)
   )
 })
@@ -104,6 +104,6 @@ test_that("unnest_cross() works like unnest() with a single nested tibble", {
 test_that("unnest_cross() works like sequential unnest calls for list col of dfs", {
   expect_equal(
     unnest_cross(df_list_df, cols = c(bool, tbl)),
-    tidyr::unnest(df_list_df, bool) %>% tidyr::unnest(tbl)
+    tidyr::unnest(df_list_df, bool) |> tidyr::unnest(tbl)
   )
 })

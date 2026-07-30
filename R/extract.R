@@ -279,8 +279,8 @@ extract_doid_url <- function(
   )
 
   # tidy
-  df <- df %>%
-    tidyr::unnest_longer(.data$url_str) %>%
+  df <- df |>
+    tidyr::unnest_longer(.data$url_str) |>
     dplyr::mutate(
       doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
       url = stringr::str_remove_all(.data$url_str, '^url:|"'),
@@ -325,7 +325,7 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
 
   top_class <- format_doid(top_node, as = "obo_curie")
   q <- glue::glue(subtree_query_glue)
-  subtree <- owl$query(q, reload = reload) %>%
+  subtree <- owl$query(q, reload = reload) |>
     tibble::as_tibble()
 
   subtree
@@ -440,7 +440,7 @@ extract_as_tidygraph <- function(
     info["query"] <- query
   }
 
-  qres <- x$query(query) %>%
+  qres <- x$query(query) |>
     tidy_sparql()
   qres <- collapse_col(
     qres,
@@ -454,8 +454,8 @@ extract_as_tidygraph <- function(
   annotate <- dplyr::bind_rows(
     dplyr::select(qres, -dplyr::one_of("parent", "plabel")),
     dplyr::select(qres, "id" = "parent", "label" = "plabel")
-  ) %>%
-    dplyr::rename("name" = "id") %>%
+  ) |>
+    dplyr::rename("name" = "id") |>
     unique()
   if (debug) {
     info["annotation_df"] <- annotate
@@ -463,8 +463,8 @@ extract_as_tidygraph <- function(
 
   tg <- tidygraph::as_tbl_graph(
     dplyr::select(qres, "id", "parent")
-  ) %>%
-    tidygraph::activate("nodes") %>%
+  ) |>
+    tidygraph::activate("nodes") |>
     dplyr::left_join(annotate, by = "name")
   if (debug) {
     info["tidygraph"] <- tg

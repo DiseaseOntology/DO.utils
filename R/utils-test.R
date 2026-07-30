@@ -43,16 +43,16 @@ examine_format_axiom_snapshots <- function(test_dir = "tests/testthat/") {
     paren = stringr::str_count(.data$res, "\\(")
   )
 
-  compare_df <- dplyr::bind_rows(ax_df, ss_df) %>%
-    dplyr::arrange(.data$id, dplyr::desc(.data$cmd)) %>%
-    dplyr::group_by(.data$id) %>%
+  compare_df <- dplyr::bind_rows(ax_df, ss_df) |>
+    dplyr::arrange(.data$id, dplyr::desc(.data$cmd)) |>
+    dplyr::group_by(.data$id) |>
     dplyr::mutate(
       paren_correct = dplyr::if_else(
         .data$cmd == "original axiom",
         NA,
         .data$paren[.data$cmd == "original axiom"] - .data$paren == 1
       )
-    ) %>%
+    ) |>
     dplyr::ungroup()
 
   compare_df

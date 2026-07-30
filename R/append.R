@@ -130,7 +130,7 @@ append_to_url <- function(x, url, sep = "") {
     url,
     sep,
     ~ stringr::str_detect(.x, paste0(stringr::str_escape(.y), "$"))
-  ) %>%
+  ) |>
     tidyr::replace_na(TRUE)
 
   if (all(ignore_sep)) {

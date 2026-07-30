@@ -46,9 +46,9 @@ alliance_version.alliance_tbl <- function(alliance_obj, as_string = FALSE) {
   )]
 
   if (as_string) {
-    v <- v %>%
-      unlist() %>%
-      vctr_to_string(delim = "_") %>%
+    v <- v |>
+      unlist() |>
+      vctr_to_string(delim = "_") |>
       stringr::str_replace_all(
         c("[-:]" = "", " " = "_")
       )
@@ -68,16 +68,16 @@ alliance_version.default <- function(alliance_obj, as_string = FALSE) {
     header,
     ignore.case = TRUE,
     value = TRUE
-  ) %>%
-    stringr::str_remove("#") %>%
-    stringr::str_squish() %>%
+  ) |>
+    stringr::str_remove("#") |>
+    stringr::str_squish() |>
     stringr::str_split(": ")
 
   if (as_string) {
-    vd_string <- version_date %>%
-      purrr::map(2) %>%
-      unlist() %>%
-      vctr_to_string(delim = "_") %>%
+    vd_string <- version_date |>
+      purrr::map(2) |>
+      unlist() |>
+      vctr_to_string(delim = "_") |>
       stringr::str_replace_all(
         c("[-:]" = "", " " = "_")
       )
@@ -127,8 +127,8 @@ id_mod <- function(x) {
 #'
 #' @noRd
 rm_dup_curator_alliance <- function(df) {
-  dup <- df %>%
-    dplyr::select(-.data$curator) %>%
+  dup <- df |>
+    dplyr::select(-.data$curator) |>
     all_duplicated()
 
   dplyr::filter(df, !(dup & .data$curator == "Alliance"))

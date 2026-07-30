@@ -315,8 +315,8 @@ test_that("read_omim() adds phenotype_std column for OFFICIAL download of PHENOT
 # tests exclude `phenotype_std` --> avoid testing parse_omim_name() output here
 res_ps_cp <- read_omim("data/omim/omim-cp-ps.csv")
 test_that("read_omim() works for COPIED data (PS or with entry info)", {
-  ps_df_cp <- ps_df %>%
-    dplyr::filter(!stringr::str_detect(.data$omim, "PS")) %>%
+  ps_df_cp <- ps_df |>
+    dplyr::filter(!stringr::str_detect(.data$omim, "PS")) |>
     dplyr::mutate(gene_locus = stringr::str_remove(.data$gene_locus, ",.*"))
   attr(ps_df_cp, "omim_official") <- FALSE
   class(ps_df_cp) <- class(ps_df)[-1]

@@ -44,19 +44,19 @@ plot_branch_counts <- function(
   total <- robot_query(doid_path, branch_query, tidy_what = tidy_what) |>
     dplyr::rename("Total" = "count")
 
-  df <- dplyr::left_join(asserted, total, by = "branch") %>%
+  df <- dplyr::left_join(asserted, total, by = "branch") |>
     dplyr::mutate(
       dplyr::across(.cols = c("Asserted", "Total"), .fns = as.integer),
       Inferred = .data$Total - .data$Asserted,
       branch = stringr::str_to_title(
         stringr::str_remove(.data$branch, "disease (of|by) ")
       )
-    ) %>%
+    ) |>
     tidyr::pivot_longer(
       cols = c("Asserted", "Inferred"),
       names_to = "class_type",
       values_to = "Count"
-    ) %>%
+    ) |>
     dplyr::mutate(
       branch = factor(
         .data$branch,
@@ -184,7 +184,7 @@ plot_citedby <- function(
     "Article"
   )
 
-  df <- readr::read_csv(data_file) %>%
+  df <- readr::read_csv(data_file) |>
     dplyr::mutate(
       Year = lubridate::year(.data$pub_date),
       pub_type = clean_pub_type(.data$pub_type)
@@ -278,9 +278,9 @@ plot_def_src <- function(
   w = 8,
   h = 5.6
 ) {
-  df <- read_doid_edit(DO_repo) %>%
-    extract_doid_url() %>%
-    dplyr::mutate(domain = extract_url_domain(.data$url, drop_www = TRUE)) %>%
+  df <- read_doid_edit(DO_repo) |>
+    extract_doid_url() |>
+    dplyr::mutate(domain = extract_url_domain(.data$url, drop_www = TRUE)) |>
     # tidy source names
     dplyr::mutate(
       Source = stringr::str_to_lower(.data$domain),
@@ -314,7 +314,7 @@ plot_def_src <- function(
         "rarediseases.info.nih.gov" = "GARD",
         "cancer.gov" = "NCI"
       )
-    ) %>%
+    ) |>
     # separate mutate needed for is_nlm_subdomain() to get improved df data
     dplyr::mutate(
       Source = dplyr::case_when(
@@ -329,14 +329,14 @@ plot_def_src <- function(
       )
     )
 
-  count_df <- dplyr::count(df, .data$Source, name = "Count", sort = TRUE) %>%
+  count_df <- dplyr::count(df, .data$Source, name = "Count", sort = TRUE) |>
     dplyr::mutate(rank = dplyr::row_number(dplyr::desc(.data$Count)))
 
   total_url <- sum(count_df$Count)
-  top_10 <- count_df %>%
+  top_10 <- count_df |>
     dplyr::filter(rank <= 10)
-  other <- count_df %>%
-    dplyr::filter(rank > 10) %>%
+  other <- count_df |>
+    dplyr::filter(rank > 10) |>
     dplyr::summarize(
       Source = paste0(
         "Other Sources (",
@@ -413,32 +413,32 @@ plot_term_def_counts <- function(
   h = 5.6
 ) {
   release_df <- readr::read_csv(release_file)
-  counts_df <- readr::read_csv(counts_file) %>%
+  counts_df <- readr::read_csv(counts_file) |>
     dplyr::rename(release = .data$tag_name)
   df <- dplyr::left_join(
     release_df,
     counts_df,
     by = c("tag_name" = "release")
-  ) %>%
+  ) |>
     # add year
-    dplyr::mutate(date = lubridate::date(.data$created_at)) %>%
+    dplyr::mutate(date = lubridate::date(.data$created_at)) |>
     # drop bug fix releases that happen on same day (for plotting by date)
-    dplyr::group_by(.data$date) %>%
-    dplyr::arrange(dplyr::desc(.data$created_at)) %>%
-    dplyr::filter(!duplicated(.data$date)) %>%
-    dplyr::ungroup() %>%
+    dplyr::group_by(.data$date) |>
+    dplyr::arrange(dplyr::desc(.data$created_at)) |>
+    dplyr::filter(!duplicated(.data$date)) |>
+    dplyr::ungroup() |>
     # drop extra columns
-    dplyr::select(.data$date, .data$terms, .data$defs) %>%
+    dplyr::select(.data$date, .data$terms, .data$defs) |>
     dplyr::mutate(
       n_terms = .data$terms - .data$defs,
       n_defs = .data$defs
-    ) %>%
-    dplyr::select(-.data$defs) %>%
+    ) |>
+    dplyr::select(-.data$defs) |>
     tidyr::pivot_longer(
       cols = c(.data$n_terms, .data$n_defs),
       names_to = "variable",
       values_to = "value"
-    ) %>%
+    ) |>
     dplyr::mutate(
       variable = factor(
         .data$variable,
@@ -447,8 +447,8 @@ plot_term_def_counts <- function(
     )
 
   ## Create Area Plot - NEW version, 2021-08-11
-  g <- df %>%
-    dplyr::select(-"terms") %>%
+  g <- df |>
+    dplyr::select(-"terms") |>
     ggplot2::ggplot() +
     ggplot2::geom_area(
       ggplot2::aes(x = .data$date, y = .data$value, fill = .data$variable),
@@ -547,7 +547,7 @@ plot_xref_counts <- function(
     ICD10CM = "Automated"
   )
 
-  df <- df %>%
+  df <- df |>
     dplyr::mutate(
       Curation = factor(
         dplyr::recode(.data$prefix, !!!curation_type),

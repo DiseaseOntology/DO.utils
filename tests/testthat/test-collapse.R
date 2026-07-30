@@ -94,8 +94,8 @@ expect_unique_rows <- function(object, n) {
   act <- quasi_label(rlang::enquo(object), arg = "object")
 
   # 2. Call expect()
-  act$n <- act$val %>%
-    unique() %>%
+  act$n <- act$val |>
+    unique() |>
     nrow()
 
   expect(

@@ -110,8 +110,8 @@ download_obo_ontology <- function(
   )
 
   # subset to non-obsolete ontologies and set dest_file
-  obofoundry_records <- obofoundry_metadata %>%
-    dplyr::filter(.data$id %in% oid & !.data$is_obsolete) %>%
+  obofoundry_records <- obofoundry_metadata |>
+    dplyr::filter(.data$id %in% oid & !.data$is_obsolete) |>
     dplyr::mutate(
       dest_file = file.path(dest_dir, basename(.data$ontology_purl))
     )
@@ -237,7 +237,7 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
     .x = url,
     .y = dest_file,
     .f = function(.url, .file) {
-      utils::download.file(url = .url, destfile = .file, ...) %>%
+      utils::download.file(url = .url, destfile = .file, ...) |>
         dl_status$check(.url, .file, abort = on_failure == "abort")
     }
   )

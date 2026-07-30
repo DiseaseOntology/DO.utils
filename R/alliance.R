@@ -15,10 +15,10 @@ read_alliance <- function(alliance_tsv) {
   ## identify header (to skip), if any
   ##  Skipping instead of using comment = "#" because data gets truncated
   ##  where values contain "#" (e.g. 'Tg(Alb-Mut)#Cpv')
-  data_start <- readr::read_lines(alliance_tsv, n_max = 100) %>%
-    stringr::str_trim() %>%
-    stringr::str_detect("^#|^$", negate = TRUE) %>%
-    which() %>%
+  data_start <- readr::read_lines(alliance_tsv, n_max = 100) |>
+    stringr::str_trim() |>
+    stringr::str_detect("^#|^$", negate = TRUE) |>
+    which() |>
     min()
 
   if (length(data_start) == 0) {
@@ -105,7 +105,7 @@ count_alliance_records <- function(
     alliance_tbl,
     # remove exact & date duplicates
     !duplicated(dplyr::select(alliance_tbl, -.data$Date))
-  ) %>%
+  ) |>
     # simplify object type and set desired print order
     dplyr::mutate(
       obj_type = dplyr::recode(
@@ -117,7 +117,7 @@ count_alliance_records <- function(
         levels = c("gene", "allele", "model")
       ),
       DBObjectType = NULL
-    ) %>%
+    ) |>
     dplyr::rename(species = .data$SpeciesName)
 
   if (!is.null(term_subset)) {
@@ -128,7 +128,7 @@ count_alliance_records <- function(
   }
 
   if (assign_to == "curator") {
-    record_df <- alliance_dedup %>%
+    record_df <- alliance_dedup |>
       dplyr::mutate(
         curator = id_mod(.data$Source),
         Source = NULL
@@ -155,26 +155,26 @@ count_alliance_records <- function(
     count_by <- assign_to
   }
 
-  record_count <- record_df %>%
-    dplyr::select(c(count_by, cols_include)) %>%
+  record_count <- record_df |>
+    dplyr::select(c(count_by, cols_include)) |>
     unique()
 
   if (assign_to == "curator") {
     record_count <- rm_dup_curator_alliance(record_count)
   }
 
-  record_count <- record_count %>%
+  record_count <- record_count |>
     dplyr::count(
       dplyr::across(count_by),
       name = count_col_nm
     )
 
   if (isTRUE(by_type) && isTRUE(pivot)) {
-    record_count <- record_count %>%
+    record_count <- record_count |>
       tidyr::pivot_wider(
         names_from = .data$obj_type,
         values_from = count_col_nm
-      ) %>%
+      ) |>
       dplyr::rename_with(
         .fn = ~ paste0(.x, ".", record_lvl, "_n"),
         .cols = -assign_to
@@ -204,28 +204,28 @@ save_alliance_counts <- function(counts_tbl, file, ...) {
   # prepare empty row as spacer between data and version info
   col_n <- ncol(counts_tbl)
   tmp_col_names <- paste0("c", 1:col_n)
-  spacer <- matrix("", nrow = 1, ncol = col_n) %>%
+  spacer <- matrix("", nrow = 1, ncol = col_n) |>
     tibble::as_tibble(.name_repair = ~tmp_col_names)
 
   # create version info footer (with spacer)
   v <- alliance_version(counts_tbl)
-  v_footer <- matrix("", nrow = 2, ncol = col_n) %>%
-    tibble::as_tibble(.name_repair = ~tmp_col_names) %>%
+  v_footer <- matrix("", nrow = 2, ncol = col_n) |>
+    tibble::as_tibble(.name_repair = ~tmp_col_names) |>
     dplyr::mutate(
       c1 = names(v),
       c2 = unlist(v)
-    ) %>%
-    dplyr::add_row(!!!spacer, .before = 1) %>%
+    ) |>
+    dplyr::add_row(!!!spacer, .before = 1) |>
     purrr::set_names(names(counts_tbl))
 
-  tbl_out <- counts_tbl %>%
+  tbl_out <- counts_tbl |>
     # convert all to character to avoid type mismatch errors
     dplyr::mutate(
       dplyr::across(
         dplyr::everything(),
         as.character
       )
-    ) %>%
+    ) |>
     # add version info footer
     dplyr::bind_rows(v_footer)
 

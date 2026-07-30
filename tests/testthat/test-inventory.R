@@ -41,7 +41,7 @@ test_that("multimap() works including only skos:(exact|close)Match, excludes obo
 })
 
 test_that("multimaps() returns all `FALSE` when either input has only `NA`", {
-  .tbl <- dplyr::filter(.tbl, dplyr::row_number() < 4) %>%
+  .tbl <- dplyr::filter(.tbl, dplyr::row_number() < 4) |>
     dplyr::mutate(y = NA)
 
   expect_equal(multimaps(.tbl$x, .tbl$p, .tbl$y), rep(FALSE, 3))

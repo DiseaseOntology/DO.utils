@@ -27,7 +27,7 @@ batch_id_converter <- function(x, type = NULL, ...) {
         ids <- x[.s:.e]
         rcrossref::id_converter(ids, type = type, ...)
       }
-    ) %>%
+    ) |>
       purrr::transpose()
 
     check_id_conv_status(res_list)

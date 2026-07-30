@@ -68,14 +68,14 @@ inventory_omim <- function(
   )
   do_mappings <- robot_query(onto_path, q, tidy_what = "everything")
 
-  do_omim <- do_mappings %>%
-    dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) %>%
+  do_omim <- do_mappings |>
+    dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) |>
     dplyr::rename(
       doid = .data$id,
       do_label = .data$label,
       do_dep = .data$dep,
       omim = .data$mapping
-    ) %>%
+    ) |>
     collapse_col(.data$mapping_type, na.rm = TRUE)
 
   # convert OMIM: prefix to MIM: (preferred) with warning, if needed
@@ -83,18 +83,18 @@ inventory_omim <- function(
     rlang::warn(
       "`onto_path` file uses an unpreferred OMIM prefix. Converting to 'MIM'..."
     )
-    do_omim <- do_omim %>%
+    do_omim <- do_omim |>
       dplyr::mutate(
         omim = stringr::str_replace(.data$omim, "OMIM:", "MIM:")
       )
   }
 
-  out <- out %>%
-    dplyr::left_join(do_omim, by = "omim") %>%
+  out <- out |>
+    dplyr::left_join(do_omim, by = "omim") |>
     append_empty_col(
       col = c("exists", "mapping_type", "doid", "do_label", "do_dep")
-    ) %>%
-    dplyr::mutate(exists = !is.na(.data$doid)) %>%
+    ) |>
+    dplyr::mutate(exists = !is.na(.data$doid)) |>
     dplyr::relocate(
       c(.data$mapping_type, .data$exists),
       .before = .data$doid

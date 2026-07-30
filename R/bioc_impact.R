@@ -59,11 +59,11 @@ get_bioc_pkg_stats_ <- function(pkg, pkg_type, url) {
     pkg_type %in% bioc_pkg_types
   )
 
-  df <- readr::read_tsv(url) %>%
+  df <- readr::read_tsv(url) |>
     dplyr::mutate(
       pkg = pkg,
       pkg_type = pkg_type
-    ) %>%
+    ) |>
     dplyr::select(pkg, pkg_type, dplyr::everything())
 
   df

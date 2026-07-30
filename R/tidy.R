@@ -93,9 +93,9 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
         if (!is.character(.x)) {
           return(character(0))
         }
-        stringr::str_extract_all(.x, "@[a-z]{2}") %>%
-          unlist() %>%
-          stats::na.omit() %>%
+        stringr::str_extract_all(.x, "@[a-z]{2}") |>
+          unlist() |>
+          stats::na.omit() |>
           unique()
       }
     )
@@ -178,7 +178,7 @@ tidy_pub_records.scopus_search <- function(x, ...) {
     col_collapse <- append(col_collapse, c(cites = "unique"))
   }
 
-  pub_tidy <- pub_tbl %>%
+  pub_tidy <- pub_tbl |>
     dplyr::mutate(
       first_author = stringr::str_remove_all(.data$`dc:creator`, "\\."),
       pub_type = paste(
@@ -187,8 +187,8 @@ tidy_pub_records.scopus_search <- function(x, ...) {
         sep = "|"
       ),
       pub_date = lubridate::date(.data$`prism:coverDate`)
-    ) %>%
-    dplyr::select(!!!col_select) %>%
+    ) |>
+    dplyr::select(!!!col_select) |>
     collapse_col_flex(!!!col_collapse)
 
   pub_tidy
@@ -224,8 +224,8 @@ tidy_pub_records.esummary_list <- function(x, ...) {
     col_collapse <- append(col_collapse, c(cites = "unique"))
   }
 
-  pub_tidy <- pub_tbl %>%
-    hoist_ArticleIds() %>%
+  pub_tidy <- pub_tbl |>
+    hoist_ArticleIds() |>
     dplyr::mutate(
       pub_type = purrr::map_chr(
         .data$PubType,
@@ -233,8 +233,8 @@ tidy_pub_records.esummary_list <- function(x, ...) {
         delim = "|"
       ),
       pub_date = lubridate::date(.data$SortPubDate)
-    ) %>%
-    dplyr::select(!!!col_select) %>%
+    ) |>
+    dplyr::select(!!!col_select) |>
     collapse_col_flex(!!!col_collapse)
 
   pub_tidy
@@ -258,16 +258,16 @@ tidy_ga_tbl <- function(ga_tbl, keep_total = FALSE) {
     reason = "to use tidy_ga_tbl()"
   )
 
-  out <- ga_tbl %>%
+  out <- ga_tbl |>
     dplyr::rename_with(
-      .fn = ~ stringr::str_to_lower(.x) %>%
+      .fn = ~ stringr::str_to_lower(.x) |>
         stringr::str_replace_all(
           c("/" = "per", "[. ]+" = "_")
         )
     )
 
   if ("date_range" %in% names(out)) {
-    out <- out %>%
+    out <- out |>
       tidyr::separate_wider_delim(
         cols = .data$date_range,
         delim = stringr::regex(" *- *"),
@@ -276,13 +276,13 @@ tidy_ga_tbl <- function(ga_tbl, keep_total = FALSE) {
       )
   }
 
-  out <- out %>%
+  out <- out |>
     dplyr::rename_with(
       .cols = dplyr::where(
         ~ is.character(.x) && any(stringr::str_detect(.x, "%$"), na.rm = TRUE)
       ),
       .fn = ~ paste0(.x, "_pct", recycle0 = TRUE)
-    ) %>%
+    ) |>
     dplyr::mutate(
       dplyr::across(
         .cols = dplyr::matches("^(day|date)_"),
@@ -299,10 +299,10 @@ tidy_ga_tbl <- function(ga_tbl, keep_total = FALSE) {
     )
 
   if (!keep_total) {
-    out <- out %>%
+    out <- out |>
       dplyr::filter(dplyr::if_all(.cols = 1, .fns = ~ !is.na(.x)))
   } else {
-    out <- out %>%
+    out <- out |>
       dplyr::mutate(
         dplyr::across(.cols = 1, ~ dplyr::if_else(is.na(.x), "TOTAL", .x))
       )

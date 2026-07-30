@@ -97,8 +97,8 @@ collapse_col <- function(
 ) {
   valid_methods <- c("unique", "first", "last")
   method <- match.arg(method, choices = valid_methods)
-  df %>%
-    dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
+  df |>
+    dplyr::group_by(dplyr::across(-{{ .cols }})) |>
     dplyr::summarize(
       dplyr::across(
         .cols = dplyr::everything(),
@@ -109,8 +109,8 @@ collapse_col <- function(
           na.rm = na.rm
         )
       )
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::select(dplyr::all_of(names(df)))
 }
 
@@ -173,7 +173,7 @@ collapse_col_flex <- function(df, ..., method = "unique", delim = "|") {
   valid_methods <- c("unique", "first", "last")
   method <- match.arg(method, choices = valid_methods)
 
-  dots_as_strings <- rlang::enexprs(...) %>%
+  dots_as_strings <- rlang::enexprs(...) |>
     purrr::map(rlang::as_string)
 
   if (any(names(dots_as_strings) != "")) {
@@ -194,8 +194,8 @@ collapse_col_flex <- function(df, ..., method = "unique", delim = "|") {
     )
   }
 
-  df %>%
-    dplyr::group_by(dplyr::across(-{{ collapse_vars }})) %>%
+  df |>
+    dplyr::group_by(dplyr::across(-{{ collapse_vars }})) |>
     dplyr::summarize(
       dplyr::across(
         .cols = dplyr::everything(),
@@ -205,7 +205,7 @@ collapse_col_flex <- function(df, ..., method = "unique", delim = "|") {
           delim = delim
         )
       )
-    ) %>%
-    dplyr::ungroup() %>%
+    ) |>
+    dplyr::ungroup() |>
     dplyr::select(dplyr::all_of(names(df)))
 }

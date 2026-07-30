@@ -45,11 +45,11 @@ tidy_pubmed_summary <- function(pm_summary, addl_items = NULL) {
 # Invariant column values are collapsed
 # clusterid is dropped if it contains only blank values
 tidy_pubmed_authors <- function(authors_df) {
-  authors_tidy <- authors_df %>%
-    dplyr::rename(authors = .data$name, auth_clusterid = .data$clusterid) %>%
+  authors_tidy <- authors_df |>
+    dplyr::rename(authors = .data$name, auth_clusterid = .data$clusterid) |>
     purrr::map_dfc(
       function(x) {
-        unique_if_invariant(x) %>%
+        unique_if_invariant(x) |>
           vctr_to_string()
       }
     )

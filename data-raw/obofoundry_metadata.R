@@ -18,9 +18,9 @@ unnest_wider_df <- function(.df, .col, names_sep = "_") {
     }
   )
 
-  .df[[col_name]] %>%
-    dplyr::bind_rows() %>%
-    tibble::as_tibble() %>%
+  .df[[col_name]] |>
+    dplyr::bind_rows() |>
+    tibble::as_tibble() |>
     dplyr::rename_with(~ paste(col_name, .x, sep = names_sep))
 }
 
@@ -45,14 +45,14 @@ obofoundry_data <- jsonlite::read_json(
 
 
 # tidy somewhat & save complete data set as csv (list columns as json)
-obofoundry_df <- obofoundry_data$ontologies %>%
-  tibble::as_tibble() %>%
+obofoundry_df <- obofoundry_data$ontologies |>
+  tibble::as_tibble() |>
   janitor::clean_names()
 
 obofoundry_df <- purrr::map_dfc(
   names(obofoundry_df)[purrr::map_lgl(obofoundry_df, is.data.frame)],
   ~ unnest_wider_df(obofoundry_df, .x)
-) %>%
+) |>
   dplyr::bind_cols(
     dplyr::select(obofoundry_df, !tidyselect:::where(is.data.frame))
   )
@@ -60,7 +60,7 @@ obofoundry_df <- purrr::map_dfc(
 obofoundry_df <- dplyr::bind_cols(
   dplyr::select(obofoundry_df, -review_document),
   unnest_wider_df(obofoundry_df, review_document)
-) %>%
+) |>
   dplyr::mutate(
     dplyr::across(where(purrr::is_list), confine_list),
     dplyr::across(
@@ -73,9 +73,9 @@ readr::write_csv(obofoundry_df, "data-raw/obofoundry_metadata.csv")
 
 
 # export meaningful data
-obofoundry_metadata <- obofoundry_df %>%
+obofoundry_metadata <- obofoundry_df |>
   # making rename explicit here
-  dplyr::rename(contact_name = contact_label) %>%
+  dplyr::rename(contact_name = contact_label) |>
   dplyr::select(
     id,
     title,
@@ -99,7 +99,7 @@ obofoundry_metadata <- obofoundry_df %>%
     in_foundry_order,
     in_foundry,
     build_infallible
-  ) %>%
+  ) |>
   dplyr::mutate(
     publications = purrr::map(release_list(publications), tibble::as_tibble)
   )

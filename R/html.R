@@ -61,7 +61,7 @@ html_in_rows <- function(
   row_cell_html <- purrr::map(
     cell_grouped,
     ~ c(r_start, .x, r_end)
-  ) %>%
+  ) |>
     unlist(use.names = FALSE)
 
   row_cell_html

@@ -86,9 +86,9 @@ invert_sublists <- function(x, use_sublist_names = FALSE) {
     nm_same <- purrr::map(
       all_sublist_nm,
       ~ all_sublist_nm[[1]] %in% .x
-    ) %>%
-      unlist() %>%
-      matrix(nrow = sublist_len) %>%
+    ) |>
+      unlist() |>
+      matrix(nrow = sublist_len) |>
       apply(1, function(row) dplyr::n_distinct(row) == 1)
     if (any(!nm_same)) {
       stop(

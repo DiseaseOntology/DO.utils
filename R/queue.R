@@ -28,13 +28,13 @@ queue_xref_split <- function(.DOrepo, src = "all") {
 
   xref <- repo$doid$query(
     system.file("sparql", "DO_xref.rq", package = "DO.utils")
-  ) %>%
+  ) |>
     tidy_sparql()
 
-  to_split <- xref %>%
-    dplyr::group_by(.data$ns) %>%
-    dplyr::filter(all_duplicated(.data$id)) %>%
-    dplyr::ungroup() %>%
+  to_split <- xref |>
+    dplyr::group_by(.data$ns) |>
+    dplyr::filter(all_duplicated(.data$id)) |>
+    dplyr::ungroup() |>
     dplyr::arrange(.data$id, .data$ns, .data$xref)
 
   if (!"all" %in% src_lc) {

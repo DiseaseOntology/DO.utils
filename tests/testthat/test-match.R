@@ -3,10 +3,10 @@
 ##### DATA #####
 pub_id_types <- names(pub_id_match)
 
-df_all <- DO_pubs %>%
+df_all <- DO_pubs |>
   # ensure priority order here matches that set by pub_id_types & all present
-  dplyr::select(dplyr::one_of(pub_id_types)) %>%
-  .[1:length(pub_id_types), ]
+  dplyr::select(dplyr::one_of(pub_id_types)) |>
+  (\(x) x[1:length(pub_id_types), ])()
 
 df_NA <- purrr::map2(
   .x = df_all,
@@ -15,7 +15,7 @@ df_NA <- purrr::map2(
     col[-pos] <- NA
     col
   }
-) %>%
+) |>
   dplyr::bind_cols()
 
 

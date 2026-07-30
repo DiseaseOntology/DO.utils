@@ -44,7 +44,7 @@ results exist in a response; one of "error", "warning" (default),
 "message" or "none".}
 
 \item{view}{type of view to give, see
-\url{https://api.elsevier.com/documentation/ScopusSearchAPI.wadl}}
+\url{https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl}}
 
 \item{start}{where should the records start gathering}
 

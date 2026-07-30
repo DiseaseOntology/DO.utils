@@ -64,7 +64,7 @@ parse_term_mapping <- function(
   mapping <- purrr::map_dfr(py_gilda_term_mappings, extract_ScoredMatch, ...)
 
   if (best_only) {
-    best_mapping <- mapping %>%
+    best_mapping <- mapping |>
       dplyr::filter(.data$score == max(.data$score, na.rm = TRUE))
     if (warn_best_gt1) {
       warning(names(py_gilda_term_mappings), " has >1 best mapping.")

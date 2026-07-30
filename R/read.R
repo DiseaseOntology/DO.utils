@@ -11,7 +11,7 @@
 #'
 #' @export
 read_pubmed_txt <- function(file) {
-  txt_citations <- readLines(file) %>%
+  txt_citations <- readLines(file) |>
     stringr::str_trim()
 
   # identify spacer after each citation & citation start/end locations
@@ -30,14 +30,14 @@ read_pubmed_txt <- function(file) {
   )
 
   # remove empty citations
-  citations <- citations[!stringr::str_detect(citations, "^[NA ]+$")] %>%
+  citations <- citations[!stringr::str_detect(citations, "^[NA ]+$")] |>
     # remove extra whitespace
     stringr::str_squish()
 
   # extract identifiers and format as tibble
   citation_df <- tibble::tibble(
     n = seq_along(citations),
-    pmid = stringr::str_match(citations, "PMID: ([0-9]+)")[, 2] %>%
+    pmid = stringr::str_match(citations, "PMID: ([0-9]+)")[, 2] |>
       dplyr::na_if("0"),
     pmcid = stringr::str_match(citations, "PMCID: (PMC[0-9]+)")[, 2],
     doi = stringr::str_match(citations, "(doi|DOI): (10[^[:space:]]+)\\.?")[,

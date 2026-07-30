@@ -16,9 +16,9 @@ html_col_sort <- function(x, cols) {
 html_col_sort.data.frame <- function(x, cols) {
   len <- nrow(x)
   idx <- create_row_index(len, cols)
-  x %>%
-    dplyr::mutate(.row_id = idx) %>%
-    dplyr::arrange(.data$.row_id) %>%
+  x |>
+    dplyr::mutate(.row_id = idx) |>
+    dplyr::arrange(.data$.row_id) |>
     dplyr::select(-.data$.row_id)
 }
 
@@ -30,7 +30,7 @@ html_col_sort.default <- function(x, cols) {
     function(i) {
       x[idx == i]
     }
-  ) %>%
+  ) |>
     unlist(recursive = FALSE)
 }
 
@@ -114,8 +114,8 @@ replace_html_counts <- function(DO_repo, svn_repo, page, reload = NULL) {
   warn_missing_pos(pos, data_df, page)
 
   # capture old count & calculate diff for comparison & validation
-  all_html_numbers <- stringr::str_extract(page_html, "[0-9,]+") %>%
-    stringr::str_remove_all(",") %>%
+  all_html_numbers <- stringr::str_extract(page_html, "[0-9,]+") |>
+    stringr::str_remove_all(",") |>
     as.integer()
   data_df <- dplyr::mutate(
     data_df,

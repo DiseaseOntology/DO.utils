@@ -608,7 +608,7 @@ use_data_internal <- function(
   version = 2,
   ascii = FALSE
 ) {
-  dots_as_strings <- rlang::enexprs(...) %>%
+  dots_as_strings <- rlang::enexprs(...) |>
     purrr::map_chr(rlang::as_string)
 
   dots_not_exist <- purrr::map_lgl(dots_as_strings, ~ !exists(.x))

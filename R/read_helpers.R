@@ -26,8 +26,8 @@ preprocess_omim_dl <- function(file, ...) {
     if (was_generated) {
       # get header
       header_n <- identify_omim_header_row(.lines)
-      header <- .lines[header_n] %>%
-        stringr::str_remove("^# *") %>%
+      header <- .lines[header_n] |>
+        stringr::str_remove("^# *") |>
         stringr::str_split_1("\t")
 
       # determine official download type: PS_complete, etc.
@@ -69,8 +69,8 @@ preprocess_omim_dl <- function(file, ...) {
           "search|phenotypic series( titles)?",
           ignore_case = TRUE
         )
-      ) %>%
-        stringr::str_to_lower() %>%
+      ) |>
+        stringr::str_to_lower() |>
         stringr::str_replace_all(
           c("phenotypic series" = "PS", " " = "_")
         )
@@ -153,9 +153,9 @@ preprocess_omim_dl <- function(file, ...) {
     }
   }
 
-  names(df) <- names(df) %>%
-    make.names(unique = TRUE) %>%
-    stringr::str_replace_all(c("[._]+" = "_", "_$" = "")) %>%
+  names(df) <- names(df) |>
+    make.names(unique = TRUE) |>
+    stringr::str_replace_all(c("[._]+" = "_", "_$" = "")) |>
     stringr::str_to_lower()
 
   if (!is.na(dl_type)) {

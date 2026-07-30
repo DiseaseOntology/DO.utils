@@ -35,8 +35,8 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
     range = "A:E",
     col_types = "lcccc"
   )
-  use_case_df <- use_case_gs %>%
-    dplyr::filter(!is.na(.data$added)) %>%
+  use_case_df <- use_case_gs |>
+    dplyr::filter(!is.na(.data$added)) |>
     dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
 
   possible_use_cases <- unique(use_case_df$type) |>
@@ -50,11 +50,11 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
 
   use_case_list <- purrr::map(
     group,
-    ~ dplyr::filter(use_case_df, .data$type == .x) %>%
+    ~ dplyr::filter(use_case_df, .data$type == .x) |>
       # ensure use cases are alphabetical by column
-      dplyr::arrange(.data$sort_col) %>%
+      dplyr::arrange(.data$sort_col) |>
       html_col_sort(3)
-  ) %>%
+  ) |>
     purrr::set_names(nm = group)
 
   # build html
@@ -64,7 +64,7 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
       glue::glue_data(
         .x = .df,
         '<a href="{url}" target="_blank">{name}</a>'
-      ) %>%
+      ) |>
         html_in_rows(
           per_row = 3,
           indent_n = 2,
@@ -150,8 +150,8 @@ make_user_list_html <- function(file) {
     range = "A:E",
     col_types = "lcccc"
   )
-  ws_user_list <- user_list %>%
-    dplyr::filter(!is.na(.data$added)) %>%
+  ws_user_list <- user_list |>
+    dplyr::filter(!is.na(.data$added)) |>
     # ensure list is alphabetical
     dplyr::arrange(.data$name)
 
@@ -186,7 +186,7 @@ make_user_list_html <- function(file) {
 #'     ss = "1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM",
 #'     sheet = "TRANS",
 #'     col_types = "c"
-#' ) %>%
+#' ) |>
 #'     dplyr::mutate(dplyr::across(dplyr::everything(), readr::parse_guess))
 #' trans_contributors
 #'
@@ -194,7 +194,7 @@ make_user_list_html <- function(file) {
 #'
 #' @export
 make_contributor_html <- function(contrib_df) {
-  .data <- contrib_df %>%
+  .data <- contrib_df |>
     dplyr::mutate(
       github = build_hyperlink(
         x = .data$github,
@@ -215,11 +215,11 @@ make_contributor_html <- function(contrib_df) {
       )
     )
 
-  member <- dplyr::filter(.data, .data$team_member) %>%
+  member <- dplyr::filter(.data, .data$team_member) |>
     dplyr::arrange(.data$name)
   member_html <- glue::glue_data(.x = member, "<li>{name} ({links})</li>")
 
-  nonmember <- dplyr::filter(.data, !.data$team_member) %>%
+  nonmember <- dplyr::filter(.data, !.data$team_member) |>
     dplyr::arrange(.data$name)
   nonmember_html <- glue::glue_data(.x = nonmember, "<li>{name} ({links})</li>")
 
