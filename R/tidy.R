@@ -38,7 +38,7 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
         rlang::abort(
             message = c(
                 "Invalid value(s) in tidy_what: ",
-                setNames(
+                stats::setNames(
                     tidy_what[tidy_mismatch],
                     rep("x", length(tidy_what[tidy_mismatch]))
                 )
