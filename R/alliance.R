@@ -65,14 +65,16 @@ read_alliance <- function(alliance_tsv) {
 #'
 #' @param alliance_tbl a dataframe derived from Alliance data (usually a
 #'     [downloaded .tsv file](https://www.alliancegenome.org/downloads))
-#' @param term_subset character vector of DOIDs to limit counts to
+#' @param term_subset character vector of DOIDs to limit counts to (default: NULL)
 #' @param by_type logical indicating whether to count by Alliance object type
-#'     (i.e. gene, allele, model)
+#'     (i.e. gene, allele, model) (default: TRUE)
 #' @param pivot logical indicating whether to pivot values to type columns;
-#'     ignored if by_type = FALSE.
-#' @param record_lvl a string indicating the desired specificity of records.
+#'     ignored if by_type = FALSE (default: TRUE)
+#' @param record_lvl a string indicating the desired specificity of records;
+#'     see details for options (default: "disease-object")
 #' @param assign_to how to assign records when counting; one of "species" or
 #'     "curator" (i.e. the organization responsible for curating the record)
+#'     (default: "species")
 #'
 #' @return
 #' A summary tibble with the count of unique object annotations defined by

@@ -17,18 +17,20 @@ count_alliance_records(
 \item{alliance_tbl}{a dataframe derived from Alliance data (usually a
 \href{https://www.alliancegenome.org/downloads}{downloaded .tsv file})}
 
-\item{term_subset}{character vector of DOIDs to limit counts to}
+\item{term_subset}{character vector of DOIDs to limit counts to (default: NULL)}
 
 \item{by_type}{logical indicating whether to count by Alliance object type
-(i.e. gene, allele, model)}
+(i.e. gene, allele, model) (default: TRUE)}
 
 \item{pivot}{logical indicating whether to pivot values to type columns;
-ignored if by_type = FALSE.}
+ignored if by_type = FALSE (default: TRUE)}
 
-\item{record_lvl}{a string indicating the desired specificity of records.}
+\item{record_lvl}{a string indicating the desired specificity of records;
+see details for options (default: "disease-object")}
 
 \item{assign_to}{how to assign records when counting; one of "species" or
-"curator" (i.e. the organization responsible for curating the record)}
+"curator" (i.e. the organization responsible for curating the record)
+(default: "species")}
 }
 \value{
 A summary tibble with the count of unique object annotations defined by
