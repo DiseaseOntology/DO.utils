@@ -6,49 +6,37 @@
 \usage{
 parse_omim_name(
   x,
-  col = NULL,
   eponyms = disease_eponyms,
-  patterns = disease_cap_patterns
+  patterns = disease_cap_patterns,
+  qualifiers = omim_qualifiers
 )
 }
 \arguments{
-\item{x}{A character vector of OMIM entry name strings (e.g.
-\code{"SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14"}), or a data frame
-with such a column.}
-
-\item{col}{[\strong{data.frame only}] The name of the column in \code{x} that
-contains OMIM entry name strings, passed as a string (e.g. \code{"entry"}).}
+\item{x}{A character vector of OMIM entry name strings.}
 
 \item{eponyms}{A named character vector for proper noun (eponym)
 capitalization, where names are lowercase words and values are their
-capitalized replacements (e.g. \code{c("waardenburg" = "Waardenburg")}). Applied
-as whole-word, case-insensitive substitutions after lowercasing. Defaults
-to \link{disease_eponyms}. Pass \code{NULL} to disable, or supply your own vector to
-override.}
+capitalized replacements, e.g. \code{c("waardenburg" = "Waardenburg")}, or
+\code{NULL} to disable (default: \link{disease_eponyms}).}
 
 \item{patterns}{A named character vector of phrase-level regex substitutions
 applied to the full lowercased name \emph{after} \code{eponyms}, longest-first.
-Useful for context-sensitive capitalization (e.g.
-\code{c("short syndrome" = "SHORT syndrome")}). Defaults to
-\link{disease_cap_patterns}. Pass \code{NULL} to disable.}
+Useful for context-sensitive capitalization, e.g.
+\code{c("short syndrome" = "SHORT syndrome")}, or \code{NULL} to disable (default:
+\link{disease_cap_patterns}).}
+
+\item{qualifiers}{A character vector of uppercase OMIM qualifier tokens that
+force name rearrangement, in addition to the hardcoded structural patterns
+(numbers, \code{TYPE}, and definitive inheritance terms). Use \code{NULL} to disable
+adjective qualifier matching (default: \link{omim_qualifiers}).}
 }
 \value{
-\itemize{
-\item \strong{Character vector input}: a \link[tibble:tibble]{tibble} with columns:
-\itemize{
-\item \code{name}: normalized name after rearrangement and capitalization fixes.
-\item \code{abbreviation}: the semicolon-separated abbreviation, or \code{NA}.
-}
-\item \strong{Data frame input}: the input data frame with \code{name} and \code{abbreviation}
-appended (or replaced if already present).
-}
+A character vector of normalized OMIM entry names with
+abbreviations preserved.
 }
 \description{
-Parses OMIM entry names — often listed in all-uppercase with an "inverted
-filing" convention (primary disease term first, then comma-separated
-qualifiers) and an optional semicolon-separated abbreviation — into
-case- and order-normalized names and separate abbreviations. Mixed-case
-input (e.g. from \code{genemap2.txt}) is also accepted.
+Parses OMIM entry names into case- and order-normalized names, preserving
+abbreviations, if present.
 }
 \details{
 Reverses OMIM\'s inverted filing convention by reclassifying comma-separated
@@ -61,18 +49,16 @@ for full details on qualifier classification, capitalization rules, and
 known limitations.
 }
 \examples{
-parse_omim_name(c(
+omim_names <- c(
     "SCHIZOPHRENIA 12",
     "DYSTONIA 12; DYT12",
     "SPASTIC PARAPLEGIA 14, AUTOSOMAL RECESSIVE; SPG14",
     "OSTEOGENESIS IMPERFECTA, TYPE XI; OI11",
     "SCOLIOSIS, ISOLATED, SUSCEPTIBILITY TO, 1; IS1",
     "EPILEPSY, PROGRESSIVE MYOCLONIC, 4, WITH OR WITHOUT RENAL FAILURE; EPM4"
-))
+)
 
-# Data frame input
-df <- data.frame(entry = c("HURIEZ SYNDROME; HRZ", "SCHWANNOMATOSIS, VESTIBULAR; SWNV"))
-parse_omim_name(df, col = "entry")
+parse_omim_name(omim_names)
 
 # Proper noun correction via custom eponyms (overrides disease_eponyms)
 parse_omim_name(
@@ -90,6 +76,7 @@ parse_omim_name(
 \seealso{
 \link{disease_eponyms} for the curated eponym replacement vector;
 \link{disease_cap_patterns} for the curated phrase pattern replacement vector;
+\link{omim_qualifiers} for the curated adjective qualifier vector;
 the \href{https://allenbaron.github.io/DO.utils/articles/parse-omim-name.html}{algorithm article}
 for full details on how parsing and rearrangement work.
 }
