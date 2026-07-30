@@ -4,7 +4,12 @@
 \alias{parse_omim_name}
 \title{Parse OMIM Entry Names}
 \usage{
-parse_omim_name(x, eponyms = disease_eponyms, patterns = disease_cap_patterns)
+parse_omim_name(
+  x,
+  eponyms = disease_eponyms,
+  patterns = disease_cap_patterns,
+  qualifiers = omim_qualifiers
+)
 }
 \arguments{
 \item{x}{A character vector of OMIM entry name strings.}
@@ -19,6 +24,11 @@ applied to the full lowercased name \emph{after} \code{eponyms}, longest-first.
 Useful for context-sensitive capitalization, e.g.
 \code{c("short syndrome" = "SHORT syndrome")}, or \code{NULL} to disable (default:
 \link{disease_cap_patterns}).}
+
+\item{qualifiers}{A character vector of uppercase OMIM qualifier tokens that
+force name rearrangement, in addition to the hardcoded structural patterns
+(numbers, \code{TYPE}, and definitive inheritance terms). Use \code{NULL} to disable
+adjective qualifier matching (default: \link{omim_qualifiers}).}
 }
 \value{
 A character vector of normalized OMIM entry names with
@@ -66,6 +76,7 @@ parse_omim_name(
 \seealso{
 \link{disease_eponyms} for the curated eponym replacement vector;
 \link{disease_cap_patterns} for the curated phrase pattern replacement vector;
+\link{omim_qualifiers} for the curated adjective qualifier vector;
 the \href{https://allenbaron.github.io/DO.utils/articles/parse-omim-name.html}{algorithm article}
 for full details on how parsing and rearrangement work.
 }

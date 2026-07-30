@@ -194,13 +194,16 @@ read_ga <- function(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE,
 #' * OMIM phenotypic series download: Additional `omim_PS` class and a row
 #' representing the OMIM phenotypic series itself.
 #'
-#' Output with columns typical OMIM phenotype entries, including `omim_PS`, will
-#' have an additional `geno_inheritance` column containing a best guess at
-#' inheritance from the GENO ontology. This simplifies adding inheritance as
-#' logical subClassOf axioms supporting curation.
+#' Output with typical OMIM phenotype entries, including `omim_PS`, will have 2
+#' additional columns to simplify and support curation:
+#'
+#' 1. **`title_std` (search) or `phenotype_std` (entries/phenotypic series):**
+#' the standardized phenotype name, as produced by [parse_omim_name()]
+#' 2. **`geno_inheritance`**: containing a best guess at inheritance from the
+#' GENO ontology
 #'
 #' NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
-#' entries but column are ordered differently.
+#' entries but columns are ordered differently.
 #'
 #' @export
 read_omim <- function(file, keep_mim = c("#", "%"), ...) {
