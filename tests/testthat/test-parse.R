@@ -301,3 +301,17 @@ test_that("parse_omim_name() preserves abbreviation case from input", {
     "SHORTSYN"
   )
 })
+
+
+# specific examples for which adjusment has been made --------------------
+
+test_that("parse_omim_name() places qualifiers AFTER numbers", {
+  expect_equal(
+    parse_omim_name("CILIARY DYSKINESIA, PRIMARY, 47, AND LISSENCEPHALY"),
+    "primary ciliary dyskinesia 47 and lissencephaly"
+  )
+  expect_equal(
+    parse_omim_name("Ciliary dyskinesia, primary, 48, without situs inversus"),
+    "primary ciliary dyskinesia 48 without situs inversus"
+  )
+})

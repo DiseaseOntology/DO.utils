@@ -226,7 +226,7 @@ omim_parse_one <- function(entry, qualifiers = omim_qualifiers) {
         primary <- tokens[[1L]]
         remaining <- tokens[-1L]
 
-        # earrange if at least one qualifier matches a forcing pattern
+        # rearrange if at least one qualifier matches a forcing pattern
         if (omim_has_forcing(remaining, qualifiers)) {
             std_nm <- omim_rearrange(primary, remaining)
         } else {
@@ -280,7 +280,7 @@ omim_rearrange <- function(primary, remaining) {
     is_num <- function(x) grepl("^\\d+[A-Za-z]{0,2}$", x)
     is_type <- function(x) grepl("^(TYPE|MULTIPLE TYPES?)\\b", x)
     is_susc <- function(x) identical(x, "SUSCEPTIBILITY TO")
-    is_trail <- function(x) grepl("^(WITH|DUE TO|AND|OR)\\b", x)
+    is_trail <- function(x) grepl("^(WITH|WITHOUT|DUE TO|AND|OR)\\b", x)
     is_def <- function(x) {
         grepl(
             paste0(
