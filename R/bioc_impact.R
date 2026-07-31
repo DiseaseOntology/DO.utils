@@ -67,7 +67,7 @@ get_bioc_pkg_stats_ <- function(pkg, pkg_type, url) {
       pkg = pkg,
       pkg_type = pkg_type
     ) |>
-    dplyr::select(pkg, pkg_type, dplyr::everything())
+    dplyr::select("pkg", "pkg_type", dplyr::everything())
 
   df
 }

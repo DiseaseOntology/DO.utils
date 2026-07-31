@@ -338,9 +338,9 @@ plot_def_src <- function(
 
   total_url <- sum(count_df$Count)
   top_10 <- count_df |>
-    dplyr::filter(rank <= 10)
+    dplyr::filter(.data$rank <= 10)
   other <- count_df |>
-    dplyr::filter(rank > 10) |>
+    dplyr::filter(.data$rank > 10) |>
     dplyr::summarize(
       Source = paste0(
         "Other Sources (",
@@ -432,14 +432,14 @@ plot_term_def_counts <- function(
     dplyr::filter(!duplicated(.data$date)) |>
     dplyr::ungroup() |>
     # drop extra columns
-    dplyr::select(.data$date, .data$terms, .data$defs) |>
+    dplyr::select("date", "terms", "defs") |>
     dplyr::mutate(
       n_terms = .data$terms - .data$defs,
       n_defs = .data$defs
     ) |>
-    dplyr::select(-.data$defs) |>
+    dplyr::select(-"defs") |>
     tidyr::pivot_longer(
-      cols = c(.data$n_terms, .data$n_defs),
+      cols = c("n_terms", "n_defs"),
       names_to = "variable",
       values_to = "value"
     ) |>
