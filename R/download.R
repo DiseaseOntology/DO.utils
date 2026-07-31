@@ -12,7 +12,8 @@
 #' promotes reproducibility and ensures future access if needed.
 #'
 #' @param dest_dir path to directory where file will be saved
-#' @param url URL to Alliance file; if not provided, will be requested at console
+#' @param url URL to Alliance file; the default is the Alliance's complete
+#'  disease-linked data file
 #' @inheritParams download_file
 #'
 #' @returns
@@ -20,10 +21,16 @@
 #'
 #' @family Alliance functions
 #' @export
-download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
-  # Use default URL, if missing
-  if (missing(url)) {
-    url <- "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz"
+download_alliance_tsv <- function(
+  dest_dir,
+  url = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz",
+  ...
+) {
+  if (
+    !rlang::is_string(url) ||
+      !stringr::str_detect(url, "https?://.*alliancegenome.org")
+  ) {
+    rlang::abort("Invalid URL provided.")
   }
 
   dest_file <- file.path(dest_dir, basename(url))

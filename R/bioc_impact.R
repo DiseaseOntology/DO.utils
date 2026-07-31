@@ -6,14 +6,15 @@
 #' @param pkg_type character vector of same length as `pkg` identifying the type
 #'  of Bioconductor package; one of "software", "annotation", "experiment", or
 #'  "workflow"
-#' @param yr character scalar; 4-digit year of stats desired,
-#'  default = current year (currently implemented only for single yr)
+#' @param yr character scalar; 4-digit year of stats desired; if `NULL`
+#'  (default), will use the current year (currently implemented only for single
+#'  yr)
 #' @param delay_rng `c(min, max)` number of seconds to wait between requests;
 #' default = `c(1, 10)`
 #'
 #' @export
-get_bioc_pkg_stats <- function(pkg, pkg_type, yr, delay_rng) {
-  if (missing(yr)) {
+get_bioc_pkg_stats <- function(pkg, pkg_type, yr = NULL, delay_rng = c(1, 10)) {
+  if (is.null(yr)) {
     yr <- cur_yr()
   }
 
@@ -24,9 +25,6 @@ get_bioc_pkg_stats <- function(pkg, pkg_type, yr, delay_rng) {
   )
 
   if (length(pkg) > 1) {
-    if (missing(delay_rng)) {
-      delay_rng <- c(1, 10)
-    }
     if (length(delay_rng) != 2 || !is.numeric(delay_rng)) {
       rlang::abort("`delay_rng` must be a length-2 numeric vector.")
     }

@@ -316,7 +316,9 @@ get_html_indent <- function(html) {
   indent_n <- stringr::str_count(indents, indent_type)
   indent_min <- min(indent_n)
   min_pos <- which(indent_n == indent_min)[1]
-  increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
+  increments <- indent_n[
+    indent_n > indent_min & seq_along(indent_n) > min_pos
+  ] -
     indent_min
   increment <- min(increments, na.rm = TRUE)
   list(type = indent_type, min = indent_min, increment = increment)

@@ -17,19 +17,19 @@ rentrez::set_entrez_key
 #' @seealso citedby_scopus
 #'
 #' @export
-set_scopus_keys <- function(api_key, insttoken) {
-  if (missing(api_key) && missing(insttoken)) {
+set_scopus_keys <- function(api_key = NULL, insttoken = NULL) {
+  if (is.null(api_key) && is.null(insttoken)) {
     rlang::abort("At least one key must be provided")
   }
 
   out <- NULL
-  if (!missing(api_key)) {
+  if (!is.null(api_key)) {
     out <- rlang::set_names(
       Sys.setenv(Elsevier_API = api_key),
       "api_key"
     )
   }
-  if (!missing(insttoken)) {
+  if (!is.null(insttoken)) {
     out <- c(
       out,
       rlang::set_names(
