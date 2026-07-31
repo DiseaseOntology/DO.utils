@@ -130,5 +130,5 @@ invert_sublists <- function(x, use_sublist_names = FALSE) {
 #'
 #' @keywords internal
 invert_nm <- function(x) {
-  stats::setNames(names(x), x)
+  rlang::set_names(names(x), x)
 }

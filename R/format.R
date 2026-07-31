@@ -245,7 +245,7 @@ format_axiom <- function(
   }
 
   # Replace placeholders used to protect phrases, parentheses and spaces.
-  replacement <- purrr::set_names(
+  replacement <- rlang::set_names(
     c("\\(", "\\)", " "),
     nm = placeholders[1:3]
   )

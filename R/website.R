@@ -55,7 +55,7 @@ make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
       dplyr::arrange(.data$sort_col) |>
       html_col_sort(3)
   ) |>
-    purrr::set_names(nm = group)
+    rlang::set_names(nm = group)
 
   # build html
   use_case_html_list <- purrr::map(

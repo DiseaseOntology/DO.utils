@@ -11,7 +11,7 @@ nm_increment <- purrr::map2(
   nm,
   1:length(nm),
   function(.x, .y) {
-    purrr::set_names(.x, c(paste0(names(.x)[1], .y), names(.x)[2]))
+    rlang::set_names(.x, c(paste0(names(.x)[1], .y), names(.x)[2]))
   }
 )
 nm_reordered <- list(

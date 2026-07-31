@@ -91,7 +91,7 @@ preprocess_omim_dl <- function(file, ...) {
       )
 
       if (dl_type == "PS") {
-        ps <- purrr::set_names(
+        ps <- rlang::set_names(
           stringr::str_split(.lines[header_n - 1], " +- +")[[1]][1:2],
           c("Phenotype", "Phenotype MIM number")
         )

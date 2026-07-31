@@ -220,7 +220,7 @@ save_alliance_counts <- function(counts_tbl, file, ...) {
       c2 = unlist(v)
     ) |>
     dplyr::add_row(!!!spacer, .before = 1) |>
-    purrr::set_names(names(counts_tbl))
+    rlang::set_names(names(counts_tbl))
 
   tbl_out <- counts_tbl |>
     # convert all to character to avoid type mismatch errors

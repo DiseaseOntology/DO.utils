@@ -89,7 +89,7 @@ alliance_version.default <- function(alliance_obj, as_string = FALSE) {
     return(vd_string)
   }
 
-  vd_list <- purrr::set_names(
+  vd_list <- rlang::set_names(
     purrr::map(version_date, 2),
     nm = stringr::str_replace_all(
       purrr::map(version_date, 1),

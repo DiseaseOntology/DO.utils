@@ -246,7 +246,7 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
         rlang::abort(
           c(
             '`keep_mim` must be one or more of "*", "+", "#", "%", "^", or "none"',
-            stats::setNames(
+            rlang::set_names(
               sandwich_text(mim_mismatch, '"'),
               rep("x", length(mim_mismatch))
             )

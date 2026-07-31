@@ -193,7 +193,7 @@ label_properties <- function(x, property_df) {
     property_df$label,
     "'"
   )
-  prop_replacement <- purrr::set_names(
+  prop_replacement <- rlang::set_names(
     ns_label,
     nm = stringr::str_replace(
       property_df$property,

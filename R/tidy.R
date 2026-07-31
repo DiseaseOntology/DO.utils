@@ -44,7 +44,7 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
     rlang::abort(
       message = c(
         "Invalid value(s) in tidy_what: ",
-        stats::setNames(
+        rlang::set_names(
           tidy_what[tidy_mismatch],
           rep("x", length(tidy_what[tidy_mismatch]))
         )
@@ -115,7 +115,7 @@ tidy_sparql <- function(query_res, tidy_what = "everything", ...) {
       rlang::inform(
         c(
           "Multiple language tags were found and retained in the following columns:",
-          purrr::set_names(col_msg, rep("i", length(col_msg)))
+          rlang::set_names(col_msg, rep("i", length(col_msg)))
         )
       )
     }

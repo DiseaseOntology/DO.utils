@@ -24,7 +24,7 @@ set_scopus_keys <- function(api_key, insttoken) {
 
   out <- NULL
   if (!missing(api_key)) {
-    out <- stats::setNames(
+    out <- rlang::set_names(
       Sys.setenv(Elsevier_API = api_key),
       "api_key"
     )
@@ -32,7 +32,7 @@ set_scopus_keys <- function(api_key, insttoken) {
   if (!missing(insttoken)) {
     out <- c(
       out,
-      stats::setNames(
+      rlang::set_names(
         Sys.setenv(Elsevier_insttoken = insttoken),
         "insttoken"
       )

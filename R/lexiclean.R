@@ -65,7 +65,7 @@ chr_num_to_roman <- function(x) {
         NA
       } else {
         pattern <- paste0("(^|[^0-9])", num, "([^0-9]|$)")
-        purrr::set_names(rn, num)
+        rlang::set_names(rn, num)
       }
     }
   )

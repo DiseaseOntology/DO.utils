@@ -512,7 +512,7 @@ msg_dots <- function(.msg, ..., .which = NULL, .bullet = NULL) {
   dots <- rlang::exprs(...)
   arg <- msg_dots_(dots)
   if (!is.null(.bullet)) {
-    arg <- purrr::set_names(arg, nm = rep(.bullet, length(arg)))
+    arg <- rlang::set_names(arg, nm = rep(.bullet, length(arg)))
   }
   if (!is.null(.which)) {
     if (is.logical(.which) && length(.which) != length(dots)) {
@@ -622,7 +622,7 @@ use_data_internal <- function(
     rlang::abort(
       c(
         "Specified data could not be found:",
-        purrr::set_names(
+        rlang::set_names(
           dots_as_strings[dots_not_exist],
           rep("x", sum(dots_not_exist))
         )
@@ -637,7 +637,7 @@ use_data_internal <- function(
       rlang::abort(
         c(
           "Internal data already exists. Use `overwrite = TRUE` to overwrite.",
-          purrr::set_names(obj_exist, rep("x", length(obj_exist)))
+          rlang::set_names(obj_exist, rep("x", length(obj_exist)))
         )
       )
     }

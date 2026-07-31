@@ -92,6 +92,6 @@ as_tibble.scopus_search <- function(x, ...) {
 #' @export
 as_tibble.scopus_search_list <- function(x, ...) {
   purrr::map(x, as_tibble) |>
-    purrr::set_names(nm = names(x)) |>
+    rlang::set_names(nm = names(x)) |>
     dplyr::bind_rows(.id = "cites")
 }

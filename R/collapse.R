@@ -199,7 +199,7 @@ collapse_col_flex <- function(df, ..., method = "unique", delim = "|") {
       rlang::abort("Arguments in `...` must be column names in `df`.")
     }
     collapse_vars <- unlist(dots_as_strings)
-    c_method <- purrr::set_names(
+    c_method <- rlang::set_names(
       rep(method, length(collapse_vars)),
       nm = collapse_vars
     )

@@ -46,7 +46,7 @@ to_curie <- function(x, strip_angle_brackets = TRUE) {
   prefixes <- length_sort(ns_prefix, decreasing = TRUE)
   curie <- stringr::str_replace_all(
     x,
-    stats::setNames(paste0(names(prefixes), ":"), prefixes)
+    rlang::set_names(paste0(names(prefixes), ":"), prefixes)
   )
 
   if (strip_angle_brackets) {
@@ -86,7 +86,7 @@ to_uri <- function(x) {
   prefixes <- length_sort(ns_prefix, by_name = TRUE, decreasing = TRUE)
   stringr::str_replace_all(
     x,
-    stats::setNames(prefixes, paste0(names(prefixes), ":"))
+    rlang::set_names(prefixes, paste0(names(prefixes), ":"))
   )
 }
 

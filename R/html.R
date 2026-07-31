@@ -371,9 +371,9 @@ set_html_attr <- function(..., max_length = NULL, quote = "\"") {
     attr_list,
     names(attr_list),
     ~ if (length(.x) == 1) {
-      purrr::set_names(rep(.x, max_length), rep(.y, max_length))
+      rlang::set_names(rep(.x, max_length), rep(.y, max_length))
     } else {
-      purrr::set_names(.x, rep(.y, length(.x)))
+      rlang::set_names(.x, rep(.y, length(.x)))
     }
   )
 

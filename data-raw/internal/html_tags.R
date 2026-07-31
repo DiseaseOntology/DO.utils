@@ -33,7 +33,7 @@ index_legend <- raw_element_index |>
   stringr::str_remove(" DTD") |>
   stringr::str_squish() |>
   stringr::str_to_lower() |>
-  (\(x) purrr::set_names(x, nm = stringr::str_sub(x, end = 1L)))()
+  (\(x) rlang::set_names(x, nm = stringr::str_sub(x, end = 1L)))()
 
 .html_tags <- raw_element_index |>
   rvest::html_table() |>

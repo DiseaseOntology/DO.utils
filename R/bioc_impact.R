@@ -105,7 +105,7 @@ bioc_pkg_types <- c("software", "annotation", "experiment", "workflow")
 #   statistics dump file, download score dump file
 #
 #   * download score = average downloads over 12 month period
-bioc_stat_sites <- purrr::set_names(
+bioc_stat_sites <- rlang::set_names(
   c(
     "https://bioconductor.org/packages/stats/",
     "https://bioconductor.org/packages/stats/data-annotation.html",
@@ -115,7 +115,7 @@ bioc_stat_sites <- purrr::set_names(
   bioc_pkg_types
 )
 
-bioc_stat_baseurl <- purrr::set_names(
+bioc_stat_baseurl <- rlang::set_names(
   c(
     "https://bioconductor.org/packages/stats/bioc/",
     "https://bioconductor.org/packages/stats/data-annotation/",
@@ -125,7 +125,7 @@ bioc_stat_baseurl <- purrr::set_names(
   bioc_pkg_types
 )
 
-bioc_stat_dumps <- purrr::set_names(
+bioc_stat_dumps <- rlang::set_names(
   stringr::str_replace(
     bioc_stat_baseurl,
     "([a-z]+)/$",
@@ -134,7 +134,7 @@ bioc_stat_dumps <- purrr::set_names(
   bioc_pkg_types
 )
 
-bioc_score_dumps <- purrr::set_names(
+bioc_score_dumps <- rlang::set_names(
   stringr::str_replace(
     bioc_stat_dumps,
     "stats\\.",

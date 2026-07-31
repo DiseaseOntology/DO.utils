@@ -107,7 +107,7 @@ citedby_scopus <- function(
         rlang::signal(
           message = c(
             paste0("Discarded (", no_res_msg, ")"),
-            purrr::set_names(discard, rep("i", length(discard)))
+            rlang::set_names(discard, rep("i", length(discard)))
           ),
           class = c("no_result", no_result),
           use_cli_format = TRUE

@@ -100,7 +100,7 @@ test_that("match_citations(): errors when df column name != computed type", {
     match_citations(
       df_all[[1]],
       # wrong name
-      purrr::set_names(df_all[[2]], names(df_all)[1])
+      rlang::set_names(df_all[[2]], names(df_all)[1])
     )
   )
 })
