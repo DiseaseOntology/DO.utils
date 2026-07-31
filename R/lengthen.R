@@ -15,7 +15,7 @@
 #' new columns. This is useful if the de-concatenated columns are integer,
 #' numeric or logical. NOTE: "NA" strings will _always_ be converted to `NA`s.
 #'
-#' @return
+#' @returns
 #' A data.frame with the specified columns lengthened.
 #'
 #' @examples

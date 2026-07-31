@@ -261,7 +261,7 @@ extract_pm_date <- function(citation) {
 #' @param w_raw_match Whether to include the full line of doid-edit.owl where
 #'     each URL was extracted from, as a boolean (default: `FALSE`).
 #'
-#' @return
+#' @returns
 #' A tibble of DOIDs and their associated URLs.
 #'
 #' @noRd

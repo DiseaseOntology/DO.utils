@@ -15,7 +15,7 @@
 #' @param url URL to Alliance file; if not provided, will be requested at console
 #' @inheritParams download_file
 #'
-#' @return
+#' @returns
 #' Path to saved file.
 #'
 #' @family Alliance functions
@@ -215,7 +215,7 @@ download_omim <- function(
 #' - "skip" - do nothing
 #' @param ... Additional arguments passed on to [utils::download.file()].
 #'
-#' @return
+#' @returns
 #' Unless `on_failure` includes "list_failed", the successfully downloaded
 #' `dest_file`(s); otherwise, a 2-vector list where `successful` =
 #' `dest_file`(s) and `failed` = `url`(s).

@@ -78,7 +78,7 @@ robot <- function(..., .robot_path = NULL) {
 #' @param ... arguments passed on to [utils::download.file()]; should not be
 #' needed
 #'
-#' @return
+#' @returns
 #' The version of robot.jar, if successful, otherwise a warning indicating where
 #' failures occurred along with their non-zero integer codes. See documentation
 #' of [utils::download.file()] (for download of robot/robot.jar) and [system2()]

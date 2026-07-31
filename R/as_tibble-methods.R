@@ -9,7 +9,7 @@
 #' @param x An `esummary` object (`esummary_list` or `esummary_list_nested`)
 #' @param ... Ignored; included for extensibility.
 #'
-#' @return
+#' @returns
 #' An untidy, where `esummary_id` is the input identifier. `esummary_list_nested`
 #' objects will have an additional `cites` column.
 #'
@@ -66,7 +66,7 @@ as_tibble.esummary_list_nested <- function(x, ...) {
 #' @param x A `scopus_search` or `scopus_search_list` object.
 #' @param ... Ignored; included for extensibility.
 #'
-#' @return
+#' @returns
 #' An untidy tibble. `scopus_search_list` objects will have an additional
 #' `cites` column.
 #'

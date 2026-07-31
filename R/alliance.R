@@ -6,7 +6,7 @@
 #'
 #' @param alliance_tsv path to Alliance .tsv or .tsv.gz file
 #'
-#' @return
+#' @returns
 #' A dataframe.
 #'
 #' @family Alliance functions
@@ -73,7 +73,7 @@ read_alliance <- function(alliance_tsv) {
 #' @param assign_to how to assign records when counting; one of "species" or
 #'     "curator" (i.e. the organization responsible for curating the record)
 #'
-#' @return
+#' @returns
 #' A summary tibble with the count of unique object annotations defined by
 #' `record_lvl`, aggregated according to species/curator (`assign_to`) and,
 #' optionally, object type (`by_type`).

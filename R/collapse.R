@@ -57,7 +57,7 @@ collapse_to_string <- function(
 #'     "first", or "last".
 #' @inheritParams vctr_to_string
 #'
-#' @return
+#' @returns
 #' A data.frame with the specified columns collapsed. Also **NOTE** the
 #' following:
 #'
@@ -131,7 +131,7 @@ collapse_col <- function(
 #'     "first", or "last"
 #' @inheritParams vctr_to_string
 #'
-#' @return
+#' @returns
 #' A data.frame with the specified columns collapsed. Also **NOTE** the
 #' following:
 #'

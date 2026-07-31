@@ -25,7 +25,7 @@
 #'     vector.
 #' @inheritParams base::match
 #'
-#' @return
+#' @returns
 #' If `x` is a vector or `add_col` is FALSE (default), an integer vector of the
 #' same length as `x` (if a data.frame, of length equal to the number of rows).
 #' If `x` is a data.frame and `add_col` is TRUE, a mutated data.frame with a
@@ -186,7 +186,7 @@ match_carefully <- function(
 #' @inheritParams stringdist::amatch
 #' @param ... arguments passed on to [stringdist::amatch()]
 #'
-#' @return
+#' @returns
 #' A tibble with 3 columns:
 #' * `x`
 #' * `table_match`: the closest match of `x`
@@ -263,7 +263,7 @@ get_pub_id_col <- function(df, type) {
 #'
 #' @param df a data.frame
 #'
-#' @return
+#' @returns
 #' A character vector of publication ID column names.
 #'
 #' @noRd

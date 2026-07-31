@@ -21,7 +21,7 @@
 #'     [Scopus Search Documentation: API Specification](https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl).
 #' @param headers Additional headers to be added by [httr::add_headers()].
 #'
-#' @return If `by_id = FALSE`, the list result from the Scopus Search API (as
+#' @returns If `by_id = FALSE`, the list result from the Scopus Search API (as
 #'     produced by [rscopus::scopus_search]). If `by_id = TRUE`, an `id` named
 #'     list of `scopus_search` result lists.
 #'
