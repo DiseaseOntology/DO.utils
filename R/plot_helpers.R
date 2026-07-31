@@ -19,11 +19,10 @@ extract_url_domain <- function(url, drop_www = FALSE) {
 #'
 #' @family plot_def_src() helpers
 #' @noRd
-is_nlm_subdomain <- function(subdomain) {
-  df <- get(".", envir = parent.frame())
-  df$Source %in%
+is_nlm_subdomain <- function(subdomain, url, source) {
+  source %in%
     c("ncbi.nlm.nih.gov", "nlm.nih.gov") &
-    stringr::str_detect(df$url, subdomain)
+    stringr::str_detect(url, subdomain)
 }
 
 

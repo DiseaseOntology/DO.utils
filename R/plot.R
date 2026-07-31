@@ -319,13 +319,17 @@ plot_def_src <- function(
     dplyr::mutate(
       Source = dplyr::case_when(
         stringr::str_detect(.data$url, "mesh") ~ "MeSH",
-        is_nlm_subdomain("medlineplus") ~ "MedlinePlus",
-        is_nlm_subdomain("pmc") ~ "PubMed Central",
-        is_nlm_subdomain("pubmed") ~ "PubMed",
-        is_nlm_subdomain("entrez") ~ "PubMed",
-        is_nlm_subdomain("omim") ~ "OMIM",
-        is_nlm_subdomain("book") ~ "NCBI Bookshelf",
-        TRUE ~ Source
+        is_nlm_subdomain(
+          "medlineplus",
+          .data$url,
+          .data$Source
+        ) ~ "MedlinePlus",
+        is_nlm_subdomain("pmc", .data$url, .data$Source) ~ "PubMed Central",
+        is_nlm_subdomain("pubmed", .data$url, .data$Source) ~ "PubMed",
+        is_nlm_subdomain("entrez", .data$url, .data$Source) ~ "PubMed",
+        is_nlm_subdomain("omim", .data$url, .data$Source) ~ "OMIM",
+        is_nlm_subdomain("book", .data$url, .data$Source) ~ "NCBI Bookshelf",
+        TRUE ~ .data$Source
       )
     )
 
