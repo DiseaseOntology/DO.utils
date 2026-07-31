@@ -43,8 +43,12 @@ citedby_scopus <- function(
   verbose = FALSE,
   ...
 ) {
-  assert_character(title)
-  assert_scalar_logical(by_id)
+  if (!is.character(title)) {
+    rlang::abort("`title` must be a character vector.")
+  }
+  if (!rlang::is_scalar_logical(by_id)) {
+    rlang::abort("`by_id` must be TRUE or FALSE.")
+  }
   no_result <- match.arg(
     no_result,
     c("error", "warning", "message", "none")
@@ -59,8 +63,12 @@ citedby_scopus <- function(
   headers <- use_scopus_insttoken(insttoken, headers)
 
   if (by_id && length(title) > 1) {
-    assert_character(id)
-    assertthat::assert_that(length(title) == length(id))
+    if (!is.character(id)) {
+      rlang::abort("`id` must be a character vector.")
+    }
+    if (length(title) != length(id)) {
+      rlang::abort("`title` and `id` must be the same length.")
+    }
 
     cited_by <- purrr::map(
       title,

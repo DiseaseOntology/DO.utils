@@ -72,10 +72,12 @@ read_ga <- function(
   keep_total = FALSE,
   ...
 ) {
-  stopifnot(
-    rlang::is_bool(read_all),
-    rlang::is_bool(tidy)
-  )
+  if (!rlang::is_bool(read_all)) {
+    rlang::abort("`read_all` must be TRUE or FALSE.")
+  }
+  if (!rlang::is_bool(tidy)) {
+    rlang::abort("`tidy` must be TRUE or FALSE.")
+  }
   rlang::check_installed(
     pkg = c("readr", "stringr", "purrr", "utils"),
     reason = "to use read_ga()"

@@ -67,7 +67,10 @@ parse_term_mapping <- function(
     best_mapping <- mapping |>
       dplyr::filter(.data$score == max(.data$score, na.rm = TRUE))
     if (warn_best_gt1) {
-      warning(names(py_gilda_term_mappings), " has >1 best mapping.")
+      rlang::warn(paste0(
+        names(py_gilda_term_mappings),
+        " has >1 best mapping."
+      ))
     }
 
     return(best_mapping)

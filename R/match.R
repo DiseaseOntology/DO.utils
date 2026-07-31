@@ -34,11 +34,15 @@
 #' @export
 match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
   # validate inputs
-  assertthat::assert_that(
-    is_vctr_or_df(x),
-    is_vctr_or_df(ref),
-    is.null(add_col) || rlang::is_string(add_col)
-  )
+  if (!is_vctr_or_df(x)) {
+    rlang::abort("`x` must be a vector or data frame.")
+  }
+  if (!is_vctr_or_df(ref)) {
+    rlang::abort("`ref` must be a vector or data frame.")
+  }
+  if (!is.null(add_col) && !rlang::is_string(add_col)) {
+    rlang::abort("`add_col` must be a string or NULL.")
+  }
   if (!is.null(add_col) & !is.data.frame(x)) {
     rlang::abort(
       message = "To add results with add_col, x must be a data.frame."
@@ -82,7 +86,7 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
 
   if (length(type_both) == 1) {
     if (is.data.frame(x) && is.data.frame(ref)) {
-      message("Matching by type: ", type_both)
+      rlang::inform(paste0("Matching by type: ", type_both))
     }
 
     if (is.data.frame(x)) {
@@ -109,12 +113,12 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
     # for both data.frame (guaranteed if length(type_both) > 1)
     types <- priority_sort(type_both, levels = pub_id_types)
 
-    message("Matching by types: ")
+    rlang::inform("Matching by types: ")
 
     id_matches <- purrr::map(
       .x = types,
       function(type) {
-        message("* ", type)
+        rlang::inform(paste0("* ", type))
         x_col <- get_pub_id_col(x, type)
         ref_col <- get_pub_id_col(ref, type)
 
@@ -233,15 +237,14 @@ get_pub_id_col <- function(df, type) {
   # confirm type
   computed_type <- type_pub_id(x)
 
-  assertthat::assert_that(
-    identical(type, computed_type),
-    msg = paste0(
+  if (!identical(type, computed_type)) {
+    rlang::abort(paste0(
       "type (",
       type,
       ") not identical to computed type: ",
       computed_type
-    )
-  )
+    ))
+  }
 
   x
 }
@@ -270,11 +273,11 @@ find_pub_id_cols <- function(df) {
 
   id_cols <- pub_id_types[pub_id_types %in% names(df_lc)]
 
-  assertthat::assert_that(
-    length(id_cols) > 0,
-    msg = "No publication ID columns could be identified. At least one
-        column must be named 'pmid', 'pmcid', or 'doi'"
-  )
+  if (length(id_cols) == 0) {
+    rlang::abort(
+      "No publication ID columns could be identified. At least one column must be named 'pmid', 'pmcid', or 'doi'."
+    )
+  }
 
   id_cols
 }
@@ -299,34 +302,30 @@ type_pub_id <- function(x) {
 
   id_no_type <- id_type == "not identifiable"
 
-  assertthat::assert_that(
-    !any(stats::na.omit(id_no_type)),
-    msg = paste0(
+  if (any(stats::na.omit(id_no_type))) {
+    rlang::abort(paste0(
       "Has ID values of unexpected type: ",
       vctr_to_string(x[id_no_type], delim = ", ")
-    )
-  )
+    ))
+  }
 
   id_type <- unique(stats::na.omit(id_type))
 
-  assertthat::assert_that(
-    length(id_type) > 0,
-    msg = "No ID type could be identified"
-  )
+  if (length(id_type) == 0) {
+    rlang::abort("No ID type could be identified.")
+  }
 
-  assertthat::assert_that(
-    length(id_type) == 1,
-    msg = paste0(
+  if (length(id_type) != 1) {
+    rlang::abort(paste0(
       "Mixed ID types in vector. Types identified: ",
-      vctr_to_string(
-        sort(id_type, na.last = TRUE),
-        delim = ", "
-      )
-    )
-  )
+      vctr_to_string(sort(id_type, na.last = TRUE), delim = ", ")
+    ))
+  }
 
   pub_id_types <- names(pub_id_match)
-  assertthat::assert_that(id_type %in% pub_id_types)
+  if (!id_type %in% pub_id_types) {
+    rlang::abort(paste0("Unrecognized ID type: ", id_type))
+  }
 
   id_type
 }

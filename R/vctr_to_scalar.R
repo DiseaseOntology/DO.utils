@@ -40,8 +40,12 @@
 #'
 #' @export
 unique_if_invariant <- function(x, na.rm = FALSE, incl_nm = FALSE, ...) {
-  assert_scalar_logical(na.rm)
-  assert_scalar_logical(incl_nm)
+  if (!rlang::is_scalar_logical(na.rm)) {
+    rlang::abort("`na.rm` must be TRUE or FALSE.")
+  }
+  if (!rlang::is_scalar_logical(incl_nm)) {
+    rlang::abort("`incl_nm` must be TRUE or FALSE.")
+  }
 
   ndim <- length(dim(x))
   if (ndim > 2) {
@@ -114,7 +118,9 @@ vctr_to_string <- function(
   decreasing = FALSE,
   ...
 ) {
-  assert_scalar_logical(na.rm)
+  if (!rlang::is_scalar_logical(na.rm)) {
+    rlang::abort("`na.rm` must be TRUE or FALSE.")
+  }
 
   if (all(is.na(x))) {
     return(NA_character_)

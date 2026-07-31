@@ -96,7 +96,9 @@ NULL
 #' @export
 #' @rdname char_val_predicates
 is_blank <- function(x) {
-  assert_character(x)
+  if (!is.character(x)) {
+    rlang::abort("`x` must be a character vector.")
+  }
   stringr::str_trim(x) == ""
 }
 
@@ -128,21 +130,27 @@ NULL
 #' @export
 #' @rdname num_val_predicates
 is_positive <- function(x) {
-  assert_numeric(x)
+  if (!is.numeric(x)) {
+    rlang::abort("`x` must be a numeric vector.")
+  }
   x > 0 & is.finite(x)
 }
 
 #' @export
 #' @rdname num_val_predicates
 is_negative <- function(x) {
-  assert_numeric(x)
+  if (!is.numeric(x)) {
+    rlang::abort("`x` must be a numeric vector.")
+  }
   x < 0 & is.finite(x)
 }
 
 #' @export
 #' @rdname num_val_predicates
 is_whole_number <- function(x, tol = .Machine$double.eps) {
-  assert_numeric(x)
+  if (!is.numeric(x)) {
+    rlang::abort("`x` must be a numeric vector.")
+  }
   abs(x - round(x)) < tol
 }
 
@@ -254,7 +262,9 @@ NULL
 #' @rdname obo_ID_predicates
 #' @export
 is_valid_obo <- function(x, allow = "standard", ns_type = "obo") {
-  assert_character(x)
+  if (!is.character(x)) {
+    rlang::abort("`x` must be a character vector.")
+  }
   ns_type <- match.arg(ns_type, c("obo", "ont", "prop"))
   prefixes <- switch(
     ns_type,
@@ -308,7 +318,9 @@ is_valid_obo <- function(x, allow = "standard", ns_type = "obo") {
 #' @rdname obo_ID_predicates
 #' @export
 is_valid_doid <- function(x, allow = "standard", ns_type = "obo") {
-  assert_character(x)
+  if (!is.character(x)) {
+    rlang::abort("`x` must be a character vector.")
+  }
   ns_type <- match.arg(ns_type, c("obo", "ont", "prop"))
 
   ns_sep <- switch(
@@ -438,7 +450,9 @@ is_curie <- function(x, def = "obo_generic") {
 #' @family predicates
 #' @export
 is_uri <- function(x, empty_ok = TRUE) {
-  assert_character(x)
+  if (!is.character(x)) {
+    rlang::abort("`x` must be a character vector.")
+  }
   purrr::map_lgl(x, ~ has_uri_reqs(.x, empty_ok))
 }
 

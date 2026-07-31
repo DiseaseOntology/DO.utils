@@ -14,7 +14,6 @@ LazyData: true
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Imports:
-    assertthat,
     dplyr (>= 1.1.0),
     ggplot2 (>= 3.4.0),
     git2r,

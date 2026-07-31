@@ -202,12 +202,12 @@ guess_delim <- function(x, strict = TRUE) {
   row_delim_prop <- max(sum(comma_n > 0), sum(tab_n > 0)) / length(.x)
   if (strict) {
     if (row_delim_prop != 1) {
-      stop(
+      rlang::abort(
         "Delimiter could not be guessed. Consider using `strict = FALSE`, if not all lines are delimited."
       )
     }
   } else if (row_delim_prop <= 0.5) {
-    stop(
+    rlang::abort(
       "Delimiter could not be guessed. Is this tab- or comma-delimited data?"
     )
   }

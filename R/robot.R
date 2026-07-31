@@ -128,10 +128,10 @@ install_robot <- function(...) {
       )
     )
 
-    warning(
+    rlang::warn(paste0(
       "Non-zero exit code(s):\n",
-      paste0(non_zero_fxn, ": ", exit[non_zero_codes], "\n")
-    )
+      paste(paste0(non_zero_fxn, ": ", exit[non_zero_codes]), collapse = "\n")
+    ))
   }
 }
 

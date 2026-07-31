@@ -136,13 +136,13 @@ fill_subclass <- function(subtree_df) {
     }
     res_n <- nrow(new_rows[[lvl]])
     if (res_n > 0) {
-      message(
+      rlang::inform(paste0(
         "Round ",
         lvl,
         ": ",
         res_n,
         " IDs need to have children filled."
-      )
+      ))
     }
     lvl <- lvl + 1
   }
@@ -178,7 +178,9 @@ fill_subclass <- function(subtree_df) {
 #' @family format_axiom() helpers
 #' @noRd
 label_properties <- function(x, property_df) {
-  stopifnot(all(c("property", "label") %in% names(property_df)))
+  if (!all(c("property", "label") %in% names(property_df))) {
+    rlang::abort("`property_df` must have 'property' and 'label' columns.")
+  }
 
   obo_ns_pattern <- paste0("(", ns_prefix["obo"], "|obo:)")
   ns_label <- paste0(

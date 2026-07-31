@@ -30,7 +30,9 @@ collapse_to_string <- function(
   na.rm = FALSE,
   unique = FALSE
 ) {
-  assert_scalar_logical(na.rm)
+  if (!rlang::is_scalar_logical(na.rm)) {
+    rlang::abort("`na.rm` must be TRUE or FALSE.")
+  }
 
   x <- to_character(list(...))
   if (unique) {
@@ -177,16 +179,25 @@ collapse_col_flex <- function(df, ..., method = "unique", delim = "|") {
     purrr::map(rlang::as_string)
 
   if (any(names(dots_as_strings) != "")) {
-    assertthat::assert_that(all(names(dots_as_strings) %in% names(df)))
-    assertthat::assert_that(
-      all(purrr::map_int(dots_as_strings, length) == 1),
-      all(dots_as_strings %in% valid_methods)
-    )
+    if (!all(names(dots_as_strings) %in% names(df))) {
+      rlang::abort("Named arguments in `...` must be column names in `df`.")
+    }
+    if (
+      !all(purrr::map_int(dots_as_strings, length) == 1) ||
+        !all(dots_as_strings %in% valid_methods)
+    ) {
+      rlang::abort(paste0(
+        "Named argument values must be valid methods: ",
+        paste(valid_methods, collapse = ", ")
+      ))
+    }
 
     collapse_vars <- names(dots_as_strings)
     c_method <- dots_as_strings
   } else {
-    assertthat::assert_that(all(dots_as_strings %in% names(df)))
+    if (!all(dots_as_strings %in% names(df))) {
+      rlang::abort("Arguments in `...` must be column names in `df`.")
+    }
     collapse_vars <- unlist(dots_as_strings)
     c_method <- purrr::set_names(
       rep(method, length(collapse_vars)),

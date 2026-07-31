@@ -38,7 +38,9 @@ alliance_version <- function(alliance_obj, as_string = FALSE) {
 #' @export
 alliance_version.alliance_tbl <- function(alliance_obj, as_string = FALSE) {
   # validate
-  assertthat::assert_that(rlang::is_scalar_logical(as_string))
+  if (!rlang::is_scalar_logical(as_string)) {
+    rlang::abort("`as_string` must be TRUE or FALSE.")
+  }
 
   v <- attributes(alliance_obj)[c(
     "Alliance_Database_Version",
@@ -60,7 +62,9 @@ alliance_version.alliance_tbl <- function(alliance_obj, as_string = FALSE) {
 #' @export
 alliance_version.default <- function(alliance_obj, as_string = FALSE) {
   # validate
-  assertthat::assert_that(rlang::is_scalar_logical(as_string))
+  if (!rlang::is_scalar_logical(as_string)) {
+    rlang::abort("`as_string` must be TRUE or FALSE.")
+  }
 
   header <- readLines(alliance_obj, n = 30)
   version_date <- grep(

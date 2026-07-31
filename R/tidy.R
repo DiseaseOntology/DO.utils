@@ -252,7 +252,9 @@ tidy_pub_records.esummary_list <- function(x, ...) {
 #'
 #' @keywords internal
 tidy_ga_tbl <- function(ga_tbl, keep_total = FALSE) {
-  stopifnot(length(keep_total) == 1, is.logical(keep_total))
+  if (!rlang::is_bool(keep_total)) {
+    rlang::abort("`keep_total` must be TRUE or FALSE.")
+  }
   rlang::check_installed(
     pkg = c("dplyr", "stringr", "tidyr", "lubridate"),
     reason = "to use tidy_ga_tbl()"

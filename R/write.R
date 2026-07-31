@@ -69,10 +69,9 @@ write_graphml <- function(graph, file) {
 #'
 #' @export
 write_gs <- function(data, ss, sheet = NULL, hyperlink_curie = NULL, ...) {
-  stopifnot(
-    "`sheet` must be a character string or `NULL`" = is.null(sheet) ||
-      rlang::is_string(sheet)
-  )
+  if (!is.null(sheet) && !rlang::is_string(sheet)) {
+    rlang::abort("`sheet` must be a character string or NULL.")
+  }
   dot_nm <- names(list(...))
   if (any(dot_nm %in% c("sheet_nm", "datestamp"))) {
     rlang::abort(

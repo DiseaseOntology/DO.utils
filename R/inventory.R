@@ -47,7 +47,9 @@ inventory_omim <- function(
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
   when_pred_NA = "error"
 ) {
-  stopifnot("`onto_path` does not exist." = file.exists(onto_path))
+  if (!file.exists(onto_path)) {
+    rlang::abort("`onto_path` does not exist.")
+  }
 
   if ("omim_tbl" %in% class(omim_input)) {
     out <- omim_input
@@ -163,14 +165,9 @@ multimaps <- function(
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
   when_pred_NA = "error"
 ) {
-  stopifnot(
-    "`x`, `pred`, & `y` must be the same length" = dplyr::n_distinct(c(
-      length(x),
-      length(pred),
-      length(y)
-    )) ==
-      1
-  )
+  if (dplyr::n_distinct(c(length(x), length(pred), length(y))) != 1) {
+    rlang::abort("`x`, `pred`, & `y` must be the same length.")
+  }
 
   if (all(is.na(x)) || all(is.na(y))) {
     out <- rep(FALSE, length(x))

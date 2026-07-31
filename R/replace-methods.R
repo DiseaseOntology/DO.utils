@@ -19,7 +19,9 @@
 #'
 #' @export
 replace_na.list <- function(data, replace, ...) {
-  assertthat::assert_that(rlang::is_scalar_vector(replace))
+  if (!rlang::is_scalar_vector(replace)) {
+    rlang::abort("`replace` must be a scalar vector.")
+  }
 
   # identify vector elements (standard replace_na should work for these)
   out <- data
@@ -61,7 +63,9 @@ replace_na.list <- function(data, replace, ...) {
 #'
 #' @export
 replace_null <- function(data, replace) {
-  assertthat::assert_that(rlang::is_scalar_vector(replace))
+  if (!rlang::is_scalar_vector(replace)) {
+    rlang::abort("`replace` must be a scalar vector.")
+  }
 
   # replace NULL in top-level vectors
   out <- data
@@ -111,7 +115,9 @@ replace_blank <- function(data, replace = NA_character_, ...) {
 
 #' @export
 replace_blank.default <- function(data, replace = NA_character_, ...) {
-  assertthat::assert_that(rlang::is_scalar_character(replace))
+  if (!rlang::is_scalar_character(replace)) {
+    rlang::abort("`replace` must be a scalar character.")
+  }
   if (!is.character(data)) {
     return(data)
   }
@@ -121,7 +127,9 @@ replace_blank.default <- function(data, replace = NA_character_, ...) {
 
 #' @export
 replace_blank.list <- function(data, replace = NA_character_, ...) {
-  assertthat::assert_that(rlang::is_scalar_character(replace))
+  if (!rlang::is_scalar_character(replace)) {
+    rlang::abort("`replace` must be a scalar character.")
+  }
 
   # identify vector elements
   out <- data

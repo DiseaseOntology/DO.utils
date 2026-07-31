@@ -74,7 +74,9 @@ build_hyperlink <- function(
 #' @rdname build_hyperlink
 #' @export
 hyperlink_curie <- function(curie, as, ..., def = "obo_generic") {
-  stopifnot(any(is_curie(curie, def = def) | is.na(curie)))
+  if (!any(is_curie(curie, def = def) | is.na(curie))) {
+    rlang::abort("`curie` must contain at least one valid CURIE.")
+  }
   lui <- stringr::str_remove(curie, ".*:")
   prefix <- stringr::str_remove(curie, ":.*")
   build_hyperlink(x = lui, url = prefix, text = curie, as = as, ...)

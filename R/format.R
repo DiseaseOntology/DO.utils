@@ -71,7 +71,7 @@ format_obo <- function(
 
   if (validate) {
     valid_obo <- is_valid_obo(x, allow, ns_type)
-    assertthat::assert_that(all(valid_obo))
+    if (!all(valid_obo)) rlang::abort("Not all IDs are valid OBO IDs.")
   } else {
     # to reliably identify non-OBO IDs
     valid_obo <- is_valid_obo(x, allow = c("standard", "ns.lui"), ns_type)
@@ -123,7 +123,7 @@ format_doid <- function(
 
   if (validate) {
     valid_doid <- is_valid_doid(x, allow, ns_type)
-    assertthat::assert_that(all(valid_doid))
+    if (!all(valid_doid)) rlang::abort("Not all IDs are valid DOID IDs.")
   } else {
     # to reliably identify non-OBO IDs
     valid_doid <- is_valid_doid(x, allow = c("standard", "ns.lui"), ns_type)

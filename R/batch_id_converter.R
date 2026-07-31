@@ -40,9 +40,8 @@ batch_id_converter <- function(x, type = NULL, ...) {
 
 check_id_conv_status <- function(res) {
   if (any(res$status != "ok")) {
-    warning(
-      "ID converter API request returned an error, full responses returned for debugging",
-      call. = FALSE
+    rlang::warn(
+      "ID converter API request returned an error, full responses returned for debugging"
     )
     return(res)
   }

@@ -30,7 +30,7 @@ download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
 
   # avoid overwrite if file exists
   if (file.exists(dest_file)) {
-    message(dest_file, " exists. Archiving...\n")
+    rlang::inform(paste0(dest_file, " exists. Archiving..."))
     file_version <- alliance_version(dest_file, as_string = TRUE)
     archive_file <- stringr::str_replace(
       dest_file,
@@ -44,28 +44,25 @@ download_alliance_tsv <- function(dest_dir, url = NULL, ...) {
       archive_md5 <- tools::md5sum(archive_file)
 
       if (dest_file_md5 == archive_md5) {
-        message(
+        rlang::inform(paste0(
           "Archive file ",
           archive_file,
-          " already exists.\n Removing ",
-          dest_file,
-          "\n"
-        )
+          " already exists. Removing ",
+          dest_file
+        ))
 
         file.remove(dest_file)
       } else {
-        stop(
-          paste0(
-            "Archive file ",
-            archive_file,
-            " already exists but md5sums differ. Aborting..."
-          )
-        )
+        rlang::abort(paste0(
+          "Archive file ",
+          archive_file,
+          " already exists but md5sums differ. Aborting..."
+        ))
       }
       # if archive does not exist rename file with alliance version & file
       # datetime
     } else {
-      message("File archived as ", archive_file, "\n")
+      rlang::inform(paste0("File archived as ", archive_file))
       file.rename(dest_file, archive_file)
     }
   }
@@ -101,13 +98,12 @@ download_obo_ontology <- function(
     choices = obofoundry_metadata$id,
     several.ok = TRUE
   )
-  assertthat::assert_that(
-    length(oid) == length(ontology_id),
-    msg = paste0(
+  if (length(oid) != length(ontology_id)) {
+    rlang::abort(paste0(
       "ontology_id(s) do not match OBO Foundry ontology ID(s): ",
       vctr_to_string(ontology_id[!ontology_id %in% oid], delim = ", ")
-    )
-  )
+    ))
+  }
 
   # subset to non-obsolete ontologies and set dest_file
   obofoundry_records <- obofoundry_metadata |>
@@ -226,7 +222,9 @@ download_omim <- function(
 #'
 #' @export
 download_file <- function(url, dest_file, on_failure = "warn", ...) {
-  assertthat::assert_that(length(dest_file) == length(url))
+  if (length(dest_file) != length(url)) {
+    rlang::abort("`dest_file` and `url` must be the same length.")
+  }
   on_failure <- match.arg(
     on_failure,
     choices = c("warn", "abort", "list_failed", "warn-list_failed", "skip")

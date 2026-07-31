@@ -139,7 +139,7 @@ make_user_list_html <- function(file) {
     cotinue <- stringr::str_to_lower(continue)
   }
   if (continue == "n") {
-    message("Use make_use_case_html() instead.")
+    rlang::inform("Use make_use_case_html() instead.")
     return(invisible())
   }
 

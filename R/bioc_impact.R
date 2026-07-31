@@ -27,10 +27,9 @@ get_bioc_pkg_stats <- function(pkg, pkg_type, yr, delay_rng) {
     if (missing(delay_rng)) {
       delay_rng <- c(1, 10)
     }
-    assertthat::assert_that(
-      length(delay_rng) == 2,
-      is.numeric(delay_rng)
-    )
+    if (length(delay_rng) != 2 || !is.numeric(delay_rng)) {
+      rlang::abort("`delay_rng` must be a length-2 numeric vector.")
+    }
 
     pkg_stats <- purrr::pmap_dfr(
       .l = list(pkg, pkg_type, pkg_stat_url),
@@ -53,11 +52,15 @@ get_bioc_pkg_stats <- function(pkg, pkg_type, yr, delay_rng) {
 
 # Single-package version
 get_bioc_pkg_stats_ <- function(pkg, pkg_type, url) {
-  assertthat::assert_that(rlang::is_scalar_character(pkg))
-  assertthat::assert_that(
-    rlang::is_scalar_character(pkg_type),
-    pkg_type %in% bioc_pkg_types
-  )
+  if (!rlang::is_scalar_character(pkg)) {
+    rlang::abort("`pkg` must be a string.")
+  }
+  if (!rlang::is_scalar_character(pkg_type) || !pkg_type %in% bioc_pkg_types) {
+    rlang::abort(paste0(
+      "`pkg_type` must be one of: ",
+      paste(bioc_pkg_types, collapse = ", ")
+    ))
+  }
 
   df <- readr::read_tsv(url) |>
     dplyr::mutate(

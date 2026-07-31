@@ -62,8 +62,12 @@ lengthen_col <- function(
   trim = TRUE,
   convert = FALSE
 ) {
-  assert_scalar_logical(trim)
-  assert_scalar_logical(convert)
+  if (!rlang::is_scalar_logical(trim)) {
+    rlang::abort("`trim` must be TRUE or FALSE.")
+  }
+  if (!rlang::is_scalar_logical(convert)) {
+    rlang::abort("`convert` must be TRUE or FALSE.")
+  }
 
   df_sep <- dplyr::mutate(
     data,

@@ -61,7 +61,7 @@ NULL
 #' @export
 DOrepo <- function(path) {
   if (isFALSE(stringr::str_detect(path, "HumanDiseaseOntology"))) {
-    stop("`path` must be the local path to the HumanDiseaseOntology.")
+    rlang::abort("`path` must be the local path to the HumanDiseaseOntology.")
   }
 
   pyDOID$DOrepo(path)

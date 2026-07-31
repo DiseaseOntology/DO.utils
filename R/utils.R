@@ -26,7 +26,7 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
       length(placeholder) > 2 ||
       !is.character(placeholder)
   ) {
-    stop("`placeholder` must be a length-1 or -2 character vector.")
+    rlang::abort("`placeholder` must be a length-1 or -2 character vector.")
   }
 
   # str_replace_all code from stringr::str_escape() without $, because
@@ -258,9 +258,9 @@ suggest_regex <- function(x, pivot = "wide") {
 #' @export
 max_paren_depth <- function(x, unmatched_err = TRUE) {
   str_paren_depth <- function(s, unmatched_err = TRUE) {
-    stopifnot(
-      "`unmatched_err` must be a boolean" = rlang::is_bool(unmatched_err)
-    )
+    if (!rlang::is_bool(unmatched_err)) {
+      rlang::abort("`unmatched_err` must be a boolean.")
+    }
     chars <- strsplit(s, "")[[1]]
     paren <- ifelse(chars == "(", 1L, ifelse(chars == ")", -1L, 0L))
     if (length(paren) == 0) {
@@ -269,7 +269,11 @@ max_paren_depth <- function(x, unmatched_err = TRUE) {
     cum <- cumsum(paren)
     if (any(cum < 0) || utils::tail(cum, 1) != 0) {
       if (unmatched_err) {
-        stop("Unmatched parentheses detected in string: '", s, "'")
+        rlang::abort(paste0(
+          "Unmatched parentheses detected in string: '",
+          s,
+          "'"
+        ))
       }
       return(NA_integer_)
     }
@@ -352,21 +356,23 @@ glueV <- function(..., .envir = parent.frame()) {
 #' @keywords internal
 roll_middle <- function(x, limit, limit_type = "min") {
   limit_type <- match.arg(limit_type, choices = c("min", "max"))
-  stopifnot(
-    "`x` must be a numeric vector sorted in ascending order" = x == sort(x),
-    "`limit` must be a numeric scalar" = length(limit) == 1 && is.numeric(limit)
-  )
+  if (!all(x == sort(x))) {
+    rlang::abort("`x` must be a numeric vector sorted in ascending order.")
+  }
+  if (!(length(limit) == 1 && is.numeric(limit))) {
+    rlang::abort("`limit` must be a numeric scalar.")
+  }
 
   if (limit_type == "min") {
-    stopifnot(
-      "`limit` must be <= min(x) when `limit_type = 'start'`" = limit <= min(x)
-    )
+    if (limit > min(x)) {
+      rlang::abort("`limit` must be <= min(x) when `limit_type = 'start'`.")
+    }
     x_rng <- c(limit, x[-length(x)])
     out <- (x - x_rng) / 2 + x_rng
   } else {
-    stopifnot(
-      "`limit` must be >= max(x) when `limit_type = 'end'`" = limit >= max(x)
-    )
+    if (limit < max(x)) {
+      rlang::abort("`limit` must be >= max(x) when `limit_type = 'end'`.")
+    }
     x_rng <- c(x[-1], limit)
     out <- (x_rng - x) / 2 + x
   }

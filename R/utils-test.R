@@ -6,7 +6,9 @@
 #'
 #' @noRd
 examine_snapshots <- function(fn_name) {
-  stopifnot(rlang::is_string(fn_name))
+  if (!rlang::is_string(fn_name)) {
+    rlang::abort("`fn_name` must be a string.")
+  }
   fn <- switch(
     fn_name,
     format_axiom = examine_format_axiom_snapshots

@@ -27,7 +27,7 @@ extract_pmid.pmc_search <- function(x, ...) {
   pmids <- x$pmids
 
   if (length(pmids) == 0) {
-    stop("No PMIDs available. Was 'pmid' set to TRUE in search_pmc()?")
+    rlang::abort("No PMIDs available. Was 'pmid' set to TRUE in search_pmc()?")
   }
 
   pmid_missing <- is.na(pmids)
@@ -36,16 +36,15 @@ extract_pmid.pmc_search <- function(x, ...) {
     n_id <- length(pmids)
     pct_missing <- round(n_missing / n_id, 2)
 
-    warning(
+    rlang::warn(paste0(
       n_missing,
       " of ",
       n_id,
       " (",
       pct_missing,
       "%)",
-      " PMIDs are missing. Consider extracting PMCIDs.",
-      call. = FALSE
-    )
+      " PMIDs are missing. Consider extracting PMCIDs."
+    ))
   }
 
   pmids
@@ -57,7 +56,9 @@ extract_pmid.data.frame <- function(x, ...) {
   df <- dplyr::rename_with(x, .fn = tolower)
 
   if (!"pmid" %in% names(df)) {
-    stop("PMID column could not be identified. Name must be 'pmid' or 'PMID').")
+    rlang::abort(
+      "PMID column could not be identified. Name must be 'pmid' or 'PMID'."
+    )
   }
 
   pmids <- df$pmid
@@ -68,16 +69,15 @@ extract_pmid.data.frame <- function(x, ...) {
     n_id <- length(pmids)
     pct_missing <- round(n_missing / n_id, 2)
 
-    warning(
+    rlang::warn(paste0(
       n_missing,
       " of ",
       n_id,
       " (",
       pct_missing,
       "%)",
-      " PMIDs are missing. Consider extracting alternate IDs, if available.",
-      call. = FALSE
-    )
+      " PMIDs are missing. Consider extracting alternate IDs, if available."
+    ))
   }
 
   pmids
@@ -130,18 +130,18 @@ extract_pmid.elink <- function(
   }
 
   if (pm_n > 1 && is.null(linkname)) {
-    stop(
-      "linkname must be specified when elink object contains more than
-                one pubmed result. Identified linknames: ",
+    rlang::abort(paste0(
+      "linkname must be specified when elink object contains more than one ",
+      "pubmed result. Identified linknames: ",
       vctr_to_string(nm[pm_res], delim = ", ")
-    )
+    ))
   }
 
   pmid <- if (!is.null(linkname)) {
     x$links[[linkname]]
   } else {
     if (!quietly && length(nm) > 1) {
-      message("PubMed linkname identified: ", nm[pm_res])
+      rlang::inform(paste0("PubMed linkname identified: ", nm[pm_res]))
     }
     x$links[[pm_res]]
   }
@@ -321,7 +321,9 @@ extract_doid_url <- function(
 #' @export
 extract_subtree <- function(x, top_node, reload = FALSE) {
   owl <- access_owl_xml(x)
-  assert_string(top_node)
+  if (!rlang::is_string(top_node)) {
+    rlang::abort("`top_node` must be a string.")
+  }
 
   top_class <- format_doid(top_node, as = "obo_curie")
   q <- glue::glue(subtree_query_glue)

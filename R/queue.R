@@ -18,11 +18,13 @@ queue_xref_split <- function(.DOrepo, src = "all") {
   } else if (length(.class) == 1 && .class == "character") {
     repo <- DOrepo(.DOrepo)
   } else {
-    stop(
-      ".DOrepo must be the path to a local copy of the ",
-      "HumanDiseaseOntology repository or a pyDOID.repo.DOrepo object ",
-      "created by DO.utils::DOrepo().",
-      call. = FALSE
+    rlang::abort(
+      paste0(
+        ".DOrepo must be the path to a local copy of the ",
+        "HumanDiseaseOntology repository or a pyDOID.repo.DOrepo object ",
+        "created by DO.utils::DOrepo()."
+      ),
+      call = NULL
     )
   }
 

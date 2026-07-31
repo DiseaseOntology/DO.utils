@@ -16,8 +16,12 @@
 #'
 #' @export
 append_empty_col <- function(df, col, order = FALSE) {
-  stopifnot(is_boolean(order))
-  stopifnot(is.character(col))
+  if (!is_boolean(order)) {
+    rlang::abort("`order` must be TRUE or FALSE.")
+  }
+  if (!is.character(col)) {
+    rlang::abort("`col` must be a character vector.")
+  }
 
   new_col <- col[!col %in% names(df)]
   empty_df <- data.frame(

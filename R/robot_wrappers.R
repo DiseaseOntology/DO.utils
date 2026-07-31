@@ -20,12 +20,18 @@ convert_to_ofn <- function(
   gzip = FALSE,
   .robot_path = NULL
 ) {
-  stopifnot(
-    rlang::is_string(path),
-    is.null(out_path) || rlang::is_string(out_path),
-    rlang::is_bool(gzip),
-    is.null(.robot_path) || rlang::is_string(.robot_path)
-  )
+  if (!rlang::is_string(path)) {
+    rlang::abort("`path` must be a string.")
+  }
+  if (!is.null(out_path) && !rlang::is_string(out_path)) {
+    rlang::abort("`out_path` must be a string or NULL.")
+  }
+  if (!rlang::is_bool(gzip)) {
+    rlang::abort("`gzip` must be TRUE or FALSE.")
+  }
+  if (!is.null(.robot_path) && !rlang::is_string(.robot_path)) {
+    rlang::abort("`.robot_path` must be a string or NULL.")
+  }
 
   if (is.null(out_path)) {
     out_path <- tempfile(fileext = ".ofn")

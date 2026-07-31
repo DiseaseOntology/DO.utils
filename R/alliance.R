@@ -89,11 +89,15 @@ count_alliance_records <- function(
   assign_to = c("species", "curator")
 ) {
   # validate arguments
-  assertthat::assert_that(
-    is.null(term_subset) || is.character(term_subset),
-    rlang::is_scalar_logical(by_type),
-    rlang::is_scalar_logical(pivot)
-  )
+  if (!(is.null(term_subset) || is.character(term_subset))) {
+    rlang::abort("`term_subset` must be a character vector or NULL.")
+  }
+  if (!rlang::is_scalar_logical(by_type)) {
+    rlang::abort("`by_type` must be TRUE or FALSE.")
+  }
+  if (!rlang::is_scalar_logical(pivot)) {
+    rlang::abort("`pivot` must be TRUE or FALSE.")
+  }
   record_lvl <- match.arg(
     record_lvl,
     choices = c("full_record", "disease-object", "disease", "object")
