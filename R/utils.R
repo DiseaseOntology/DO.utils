@@ -44,11 +44,9 @@ sandwich_text <- function(x, placeholder, add_dup = TRUE) {
   }
 
   out <- x
-  purrr::map2(
-    pattern,
-    placeholder2,
-    function(.p, .r) out <<- stringr::str_replace(out, .p, .r)
-  )
+  for (i in seq_along(pattern)) {
+    out <- stringr::str_replace(out, pattern[[i]], placeholder2[[i]])
+  }
 
   if (!is.null(names(x))) {
     names(out) <- names(x)

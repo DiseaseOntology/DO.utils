@@ -38,15 +38,12 @@
 #'
 #' @export
 unnest_cross <- function(data, cols, ...) {
-  .df_out <- data
   .cols <- tidyselect::eval_select(rlang::enquo(cols), data)
-  purrr::walk(
-    .cols,
-    function(col) {
-      .df_out <<- tidyr::unnest(.df_out, {{ col }}, ...)
-    }
-  )
-  .df_out
+  out <- data
+  for (col in names(.cols)) {
+    out <- tidyr::unnest(out, dplyr::all_of(col), ...)
+  }
+  out
 }
 
 
