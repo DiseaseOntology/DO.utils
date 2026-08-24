@@ -189,7 +189,7 @@ copy_thead_to_tfoot <- function(table_html) {
       paste0("^\t{0,", min_tab, "}|[[:space:]]+$")
     ) |>
       paste0(collapse = "\n")
-    cli::cli_alert_info(
+    rlang::inform(
       c(
         "<tfoot> already exists in the HTML:",
         i = tfoot_show
@@ -204,7 +204,7 @@ copy_thead_to_tfoot <- function(table_html) {
       )
     }
     if (overwrite == "n") {
-      cli::cli_alert_info("Keeping existing <tfoot>")
+      rlang::inform("Keeping existing <tfoot>")
     } else {
       out <- stringr::str_replace(
         table_html,
