@@ -11,7 +11,9 @@
 #'   - `content`: name of the column in `data` used as `<td>` content (may be
 #'     pre-rendered HTML).
 #'   - `search`: *(optional)* name of the column in `data` used as the
-#'     `data-search` attribute value.
+#'     `data-search` attribute value. `NA` values are always omitted (the
+#'     `data-search` attribute is dropped entirely), regardless of
+#'     `replace_na`.
 #'   - `td_attr`: *(optional)* named list of additional static attributes
 #'     applied to every `<td>` in the column.
 #' @param tbl_id The `id` attribute for the `<table>` element, as a string.
@@ -24,6 +26,8 @@
 #'   `<table>` tag (each level adds two spaces; defaults to `0L`), or an
 #'   `html_indent` object as returned by [get_html_indent()] to match the
 #'   indentation style of an existing HTML file.
+#' @param replace_na A string to replace `NA` values with, or `NULL` to leave
+#'   them as-is.
 #'
 #' @returns A single character string containing the complete table HTML,
 #'   with newline-separated lines and consistent indentation.
@@ -35,7 +39,8 @@ build_datatable_html <- function(
   tbl_id = NULL,
   tbl_attr = list(),
   header_wrap = NULL,
-  indent = 0L
+  indent = 0L,
+  replace_na = ""
 ) {
   stopifnot(
     is.data.frame(data),
@@ -49,18 +54,25 @@ build_datatable_html <- function(
   )
 
   if (inherits(indent, "html_indent")) {
-    i <- function(n) paste0(indent$base, strrep(indent$unit, n))
+    add_indent <- function(n) paste0(indent$base, strrep(indent$unit, n))
   } else {
     indent <- as.integer(indent)
-    i <- function(n) strrep("  ", indent + n)
+    add_indent <- function(n) strrep("  ", indent + n)
   }
 
   # --- <th> elements ---
   th_text <- names(col_spec)
+  th_na <- is.na(th_text)
+  if (any(th_na)) {
+    warning(
+      "The following columns are missing names: ",
+      to_range(which(th_na))
+    )
+  }
   if (!is.null(header_wrap)) {
     th_text <- paste0(header_wrap[1], th_text, header_wrap[2])
   }
-  th_html <- paste0(i(3), "<th>", th_text, "</th>")
+  th_html <- paste0(add_indent(3), "<th>", th_text, "</th>")
 
   # --- <tr> rows ---
   row_html <- vapply(
@@ -70,6 +82,9 @@ build_datatable_html <- function(
         col_spec,
         function(spec) {
           content <- data[[spec$content]][row_i]
+          if (!is.null(replace_na) && is.na(content)) {
+            content <- replace_na
+          }
           extra_attr <- if (!is.null(spec$td_attr)) spec$td_attr else list()
           if (!is.null(spec$search)) {
             search_val <- data[[spec$search]][row_i]
@@ -80,12 +95,16 @@ build_datatable_html <- function(
           } else {
             ""
           }
-          paste0(i(3), "<td", attr_str, ">", content, "</td>")
+          paste0(add_indent(3), "<td", attr_str, ">", content, "</td>")
         },
         FUN.VALUE = character(1)
       )
       paste(
-        c(paste0(i(2), "<tr>"), unname(cells), paste0(i(2), "</tr>")),
+        c(
+          paste0(add_indent(2), "<tr>"),
+          unname(cells),
+          paste0(add_indent(2), "</tr>")
+        ),
         collapse = "\n"
       )
     },
@@ -106,16 +125,16 @@ build_datatable_html <- function(
   # --- assemble full table ---
   paste(
     c(
-      paste0(i(0), "<table", tbl_attr_str, ">"),
-      paste0(i(1), "<thead>"),
-      paste0(i(2), "<tr>"),
+      paste0(add_indent(0), "<table", tbl_attr_str, ">"),
+      paste0(add_indent(1), "<thead>"),
+      paste0(add_indent(2), "<tr>"),
       th_html,
-      paste0(i(2), "</tr>"),
-      paste0(i(1), "</thead>"),
-      paste0(i(1), "<tbody>"),
+      paste0(add_indent(2), "</tr>"),
+      paste0(add_indent(1), "</thead>"),
+      paste0(add_indent(1), "<tbody>"),
       row_html,
-      paste0(i(1), "</tbody>"),
-      paste0(i(0), "</table>")
+      paste0(add_indent(1), "</tbody>"),
+      paste0(add_indent(0), "</table>")
     ),
     collapse = "\n"
   )

@@ -10,7 +10,8 @@ build_datatable_html(
   tbl_id = NULL,
   tbl_attr = list(),
   header_wrap = NULL,
-  indent = 0L
+  indent = 0L,
+  replace_na = ""
 )
 }
 \arguments{
@@ -22,7 +23,9 @@ the \verb{<th>} header text. Each element is a list with:
 \item \code{content}: name of the column in \code{data} used as \verb{<td>} content (may be
 pre-rendered HTML).
 \item \code{search}: \emph{(optional)} name of the column in \code{data} used as the
-\code{data-search} attribute value.
+\code{data-search} attribute value. \code{NA} values are always omitted (the
+\code{data-search} attribute is dropped entirely), regardless of
+\code{replace_na}.
 \item \code{td_attr}: \emph{(optional)} named list of additional static attributes
 applied to every \verb{<td>} in the column.
 }}
@@ -40,6 +43,9 @@ Babel/Jinja2, e.g. \code{c('{{ _("', '") }}')}.}
 \verb{<table>} tag (each level adds two spaces; defaults to \code{0L}), or an
 \code{html_indent} object as returned by \code{\link[=get_html_indent]{get_html_indent()}} to match the
 indentation style of an existing HTML file.}
+
+\item{replace_na}{A string to replace \code{NA} values with, or \code{NULL} to leave
+them as-is.}
 }
 \value{
 A single character string containing the complete table HTML,
