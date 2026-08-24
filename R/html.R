@@ -26,41 +26,45 @@
 #' html_in_rows(c("<b>Hi!</b>", "", "", "What's", "your", "name"))
 #'
 #' @noRd
-html_in_rows <- function(cell_html, row_attr = NULL,
-                         cell_attr = NULL, per_row = 3, indent_n = 2) {
+html_in_rows <- function(
+  cell_html,
+  row_attr = NULL,
+  cell_attr = NULL,
+  per_row = 3,
+  indent_n = 2
+) {
+  # format row elements (include attributes)
+  r_start <- collapse_to_string(
+    indent_html(indent_n),
+    '<tr',
+    set_html_attr(row_attr),
+    '>',
+    delim = ""
+  )
+  r_end <- collapse_to_string(indent_html(indent_n), '</tr>', delim = "")
 
-    # format row elements (include attributes)
-    r_start <- collapse_to_string(
-        indent_html(indent_n),
-        '<tr',
-        set_html_attr(row_attr),
-        '>',
-        delim = ""
-    )
-    r_end <- collapse_to_string(indent_html(indent_n), '</tr>', delim = "")
+  # format cell elements (include attributes & html)
+  cell <- paste0(
+    collapse_to_string(
+      indent_html(indent_n + 1),
+      '<td',
+      set_html_attr(cell_attr),
+      '>',
+      delim = ""
+    ),
+    cell_html,
+    '</td>'
+  )
 
-    # format cell elements (include attributes & html)
-    cell <- paste0(
-        collapse_to_string(
-            indent_html(indent_n + 1),
-            '<td',
-            set_html_attr(cell_attr),
-            '>',
-            delim = ""
-        ),
-        cell_html,
-        '</td>'
-    )
+  # arrange cells in rows
+  cell_grouped <- partition(cell, n = per_row)
+  row_cell_html <- purrr::map(
+    cell_grouped,
+    ~ c(r_start, .x, r_end)
+  ) %>%
+    unlist(use.names = FALSE)
 
-    # arrange cells in rows
-    cell_grouped <- partition(cell, n = per_row)
-    row_cell_html <- purrr::map(
-        cell_grouped,
-        ~ c(r_start, .x, r_end)
-    ) %>%
-        unlist(use.names = FALSE)
-
-    row_cell_html
+  row_cell_html
 }
 
 
@@ -80,19 +84,21 @@ html_in_rows <- function(cell_html, row_attr = NULL,
 #' @encoding UTF-8
 #' @export
 as_html_img <- function(src, alt, ..., quote = "\"") {
-    src_len <- length(src)
-    alt_len <- length(alt)
-    if (src_len < 1 | alt_len < 1 | src_len != alt_len) {
-        rlang::abort("`src` and `alt` are required and must be the same length")
-    }
+  src_len <- length(src)
+  alt_len <- length(alt)
+  if (src_len < 1 | alt_len < 1 | src_len != alt_len) {
+    rlang::abort("`src` and `alt` are required and must be the same length")
+  }
 
-    arg_len <- purrr::map_int(list(...), length)
-    if (any(arg_len > 1 & arg_len != src_len)) {
-        rlang::abort("Additional `...` attributes must be length\u20111 or the same length as `src`")
-    }
-    attrs <- set_html_attr(src = src, alt = alt, ..., quote = quote)
-    attrs[is.na(src) | is.na(alt)] <- NA_character_
-    dplyr::if_else(!is.na(attrs), paste0('<img', attrs, '>'), NA_character_)
+  arg_len <- purrr::map_int(list(...), length)
+  if (any(arg_len > 1 & arg_len != src_len)) {
+    rlang::abort(
+      "Additional `...` attributes must be length\u20111 or the same length as `src`"
+    )
+  }
+  attrs <- set_html_attr(src = src, alt = alt, ..., quote = quote)
+  attrs[is.na(src) | is.na(alt)] <- NA_character_
+  dplyr::if_else(!is.na(attrs), paste0('<img', attrs, '>'), NA_character_)
 }
 
 
@@ -130,154 +136,167 @@ as_html_img <- function(src, alt, ..., quote = "\"") {
 #'
 #' @encoding UTF-8
 #' @export
-build_html_element <- function(tag, ..., content = NULL, close_empty = TRUE,
-                                   quote = "\"", include = "optional") {
-    include_opts <- c("optional", "required")
-    include <- match.arg(include, include_opts)
-    if (include == "optional") include <- include_opts
+build_html_element <- function(
+  tag,
+  ...,
+  content = NULL,
+  close_empty = TRUE,
+  quote = "\"",
+  include = "optional"
+) {
+  include_opts <- c("optional", "required")
+  include <- match.arg(include, include_opts)
+  if (include == "optional") {
+    include <- include_opts
+  }
 
-    if (length(tag) == 0) {
-        rlang::abort("`tag` must be a non-empty character vector")
+  if (length(tag) == 0) {
+    rlang::abort("`tag` must be a non-empty character vector")
+  }
+  tryCatch(
+    element_df <- tibble::tibble(
+      name = tag,
+      content = dplyr::coalesce(content, NA_character_)
+    ),
+    tibble_error_incompatible_size = function(e) {
+      rlang::abort("`tag` and `content` must be length <= 1 or the same length")
     }
-    tryCatch(
-        element_df <- tibble::tibble(
-            name = tag,
-            content = dplyr::coalesce(content, NA_character_)
+  )
+
+  element_df <- dplyr::left_join(
+    element_df,
+    .html_tags,
+    by = "name",
+    relationship = "many-to-one"
+  )
+  unknown <- unique(dplyr::filter(element_df, is.na(.data$start_tag))$name)
+  if (length(unknown) > 0) {
+    rlang::abort(
+      paste0(
+        "The following tag(s) are not official HTML & cannot be used: ",
+        paste0(unknown, collapse = ", ")
+      )
+    )
+  }
+
+  df_length <- nrow(element_df)
+  if (df_length > 1) {
+    element_df <- dplyr::mutate(
+      element_df,
+      attr_chr = set_html_attr(..., max_length = df_length, quote = quote)
+    )
+  } else {
+    element_df <- element_df |>
+      dplyr::mutate(attr_chr = list(set_html_attr(..., quote = quote))) |>
+      tidyr::unnest("attr_chr")
+  }
+
+  element_df <- dplyr::mutate(
+    element_df,
+    tag_use = dplyr::case_when(
+      .data$start_tag %in% include & .data$end_tag %in% include ~ "both",
+      # content must be between tags, except where forbidden
+      !is.na(.data$content) & .data$end_tag == "forbidden" ~ "error",
+      !is.na(.data$content) ~ "both",
+      # attributes require a start tag
+      !is.na(.data$attr_chr) & .data$end_tag %in% include ~ "both",
+      !is.na(.data$attr_chr) ~ "start",
+      # other scenarios
+      .data$start_tag %in% include ~ "start",
+      .data$end_tag %in% include ~ "end",
+      TRUE ~ "none"
+    )
+  )
+  forbidden <- unique(dplyr::filter(element_df, .data$tag_use == "error")$name)
+  if (length(forbidden) > 0) {
+    rlang::abort(
+      c(
+        paste0(
+          "The following tag(s) are not allowed to have content: ",
+          paste0(forbidden, collapse = ", ")
+        )
+      )
+    )
+  }
+
+  deprecated <- unique(dplyr::filter(element_df, .data$deprecated)$name)
+  if (length(deprecated) > 0) {
+    rlang::warn(
+      paste0(
+        "The following tag(s) are deprecated, consider removing them: ",
+        paste0(deprecated, collapse = ", ")
+      )
+    )
+  }
+
+  dropped <- which(element_df$tag_use == "none")
+  if (length(dropped) > 0) {
+    rlang::warn(
+      c(
+        paste0(
+          "The following optional tag(s) were dropped: ",
+          paste0(unique(element_df$name[dropped]), collapse = ", "),
+          " at positions ",
+          to_range(dropped)
         ),
-        tibble_error_incompatible_size = function(e) {
-            rlang::abort("`tag` and `content` must be length <= 1 or the same length")
-        }
+        "i" = "To include them use `include = \"optional\"`"
+      )
     )
+  }
 
-    element_df <- dplyr::left_join(
-        element_df,
-        .html_tags,
-        by = "name",
-        relationship = "many-to-one"
+  if (close_empty) {
+    close <- " />"
+  } else {
+    close <- ">"
+  }
+  element_df <- dplyr::mutate(
+    element_df,
+    out = dplyr::case_when(
+      .data$tag_use == "both" ~
+        paste0(
+          "<",
+          .data$name,
+          .data$attr_chr,
+          ">",
+          .data$content,
+          "</",
+          .data$name,
+          ">"
+        ),
+      .data$tag_use == "start" ~
+        paste0("<", .data$name, .data$attr_chr, close),
+      .data$tag_use == "end" ~ paste0("</", .data$name, ">"),
+      TRUE ~ NA_character_
     )
-    unknown <- unique(dplyr::filter(element_df, is.na(.data$start_tag))$name)
-    if (length(unknown) > 0) {
-        rlang::abort(
-            paste0(
-                "The following tag(s) are not official HTML & cannot be used: ",
-                paste0(unknown, collapse = ", ")
-            )
-        )
-    }
-
-    df_length <- nrow(element_df)
-    if (df_length > 1) {
-        element_df <- dplyr::mutate(
-            element_df,
-            attr_chr = set_html_attr(..., max_length = df_length, quote = quote)
-        )
-    } else {
-        element_df <- element_df |>
-            dplyr::mutate(attr_chr = list(set_html_attr(..., quote = quote))) |>
-            tidyr::unnest("attr_chr")
-    }
-
-    element_df <- dplyr::mutate(
-        element_df,
-        tag_use = dplyr::case_when(
-            .data$start_tag %in% include & .data$end_tag %in% include ~ "both",
-            # content must be between tags, except where forbidden
-            !is.na(.data$content) & .data$end_tag == "forbidden" ~ "error",
-            !is.na(.data$content) ~ "both",
-            # attributes require a start tag
-            !is.na(.data$attr_chr) & .data$end_tag %in% include ~ "both",
-            !is.na(.data$attr_chr) ~ "start",
-            # other scenarios
-            .data$start_tag %in% include ~ "start",
-            .data$end_tag %in% include ~ "end",
-            TRUE ~ "none"
-        )
-    )
-    forbidden <- unique(dplyr::filter(element_df, .data$tag_use == "error")$name)
-    if (length(forbidden) > 0) {
-        rlang::abort(
-            c(
-                paste0(
-                    "The following tag(s) are not allowed to have content: ",
-                    paste0(forbidden, collapse = ", ")
-                )
-            )
-        )
-    }
-
-    deprecated <- unique(dplyr::filter(element_df, .data$deprecated)$name)
-    if (length(deprecated) > 0) {
-        rlang::warn(
-            paste0(
-                "The following tag(s) are deprecated, consider removing them: ",
-                paste0(deprecated, collapse = ", ")
-            )
-        )
-    }
-
-    dropped <- which(element_df$tag_use == "none")
-    if (length(dropped) > 0) {
-        rlang::warn(
-            c(
-                paste0(
-                    "The following optional tag(s) were dropped: ",
-                    paste0(unique(element_df$name[dropped]), collapse = ", "),
-                    " at positions ",
-                    to_range(dropped)
-                ),
-                "i" = "To include them use `include = \"optional\"`"
-            )
-        )
-    }
-
-    if (close_empty) {
-        close <- " />"
-    } else {
-        close <- ">"
-    }
-    element_df <- dplyr::mutate(
-        element_df,
-        out = dplyr::case_when(
-            .data$tag_use == "both" ~
-                paste0(
-                    "<", .data$name, .data$attr_chr, ">",
-                    .data$content,
-                    "</", .data$name, ">"
-                ),
-            .data$tag_use == "start" ~
-                paste0("<", .data$name, .data$attr_chr, close),
-            .data$tag_use == "end" ~ paste0("</", .data$name, ">"),
-            TRUE ~ NA_character_
-        )
-    )
-    element_df$out
+  )
+  element_df$out
 }
 
 
 # Internal helpers --------------------------------------------------------
 
 get_html_table <- function(html, id) {
-    if (length(html) == 1) {
-        html_tbl <- stringr::str_extract(
-            html,
-            stringr::regex(
-                paste0("[ \t]*<table[^>]*id=\"", id, "\".*?</ *table>"),
-                dotall = TRUE,
-                ignore_case = TRUE
-            )
-        )
-    } else {
-        table_start <- html |>
-            stringr::str_detect(paste0("<table[^>]*id=\"", id, "\"")) |>
-            which()
-        table_ends <- html |>
-            stringr::str_detect("</ *table>") |>
-            which()
-        table_end <- table_ends[table_ends > table_start][1]
-        html_tbl <- html[table_start:table_end]
-        attr(html_tbl, "table_range") <- c(table_start, table_end)
-    }
-    html_tbl
+  if (length(html) == 1) {
+    html_tbl <- stringr::str_extract(
+      html,
+      stringr::regex(
+        paste0("[ \t]*<table[^>]*id=\"", id, "\".*?</ *table>"),
+        dotall = TRUE,
+        ignore_case = TRUE
+      )
+    )
+  } else {
+    table_start <- html |>
+      stringr::str_detect(paste0("<table[^>]*id=\"", id, "\"")) |>
+      which()
+    table_ends <- html |>
+      stringr::str_detect("</ *table>") |>
+      which()
+    table_end <- table_ends[table_ends > table_start][1]
+    html_tbl <- html[table_start:table_end]
+    attr(html_tbl, "table_range") <- c(table_start, table_end)
+  }
+  html_tbl
 }
 
 #' @returns A list of the form `list(type = " ", base = "  ", unit = "  ")`,
@@ -286,30 +305,32 @@ get_html_table <- function(html, id) {
 #' increment (the minimum increment above the base indent across all lines).
 #' @noRd
 get_html_indent <- function(html) {
-    if (length(html) == 1) html <- stringr::str_split(html, "\n")[[1]]
-    indents <- stringr::str_extract_all(html, "^\\s+") |>
-        unlist()
-    indent_types <- dplyr::if_else(
-        stringr::str_count(indents, "\t") > stringr::str_count(indents, " "),
-        "\t",
-        " "
-    ) |>
-        table()
-    preferred_indent <- indent_types == max(indent_types, na.rm = TRUE)
-    indent_type <- names(indent_types)[preferred_indent]
-    indent_n <- stringr::str_count(indents, indent_type)
-    indent_min <- min(indent_n)
-    min_pos <- which(indent_n == indent_min)[1]
-    increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
-        indent_min
-    increment <- min(increments, na.rm = TRUE)
-    out <- list(
-        type = indent_type,
-        base = strrep(indent_type, indent_min),
-        unit = strrep(indent_type, increment)
-    )
-    class(out) <- c("html_indent", class(out))
-    out
+  if (length(html) == 1) {
+    html <- stringr::str_split(html, "\n")[[1]]
+  }
+  indents <- stringr::str_extract_all(html, "^\\s+") |>
+    unlist()
+  indent_types <- dplyr::if_else(
+    stringr::str_count(indents, "\t") > stringr::str_count(indents, " "),
+    "\t",
+    " "
+  ) |>
+    table()
+  preferred_indent <- indent_types == max(indent_types, na.rm = TRUE)
+  indent_type <- names(indent_types)[preferred_indent]
+  indent_n <- stringr::str_count(indents, indent_type)
+  indent_min <- min(indent_n)
+  min_pos <- which(indent_n == indent_min)[1]
+  increments <- indent_n[indent_n > indent_min & 1:length(indent_n) > min_pos] -
+    indent_min
+  increment <- min(increments, na.rm = TRUE)
+  out <- list(
+    type = indent_type,
+    base = strrep(indent_type, indent_min),
+    unit = strrep(indent_type, increment)
+  )
+  class(out) <- c("html_indent", class(out))
+  out
 }
 
 #' Set HTML Attributes
@@ -342,38 +363,44 @@ get_html_indent <- function(html) {
 #' @encoding UTF-8
 #' @keywords internal
 set_html_attr <- function(..., max_length = NULL, quote = "\"") {
-    attr_list <- check_html_attr(..., max_length = max_length)
-    if (is.null(attr_list)) return(invisible(NULL))
-    if (is.null(max_length)) max_length <- attr(attr_list, "max_length")
+  attr_list <- check_html_attr(..., max_length = max_length)
+  if (is.null(attr_list)) {
+    return(invisible(NULL))
+  }
+  if (is.null(max_length)) {
+    max_length <- attr(attr_list, "max_length")
+  }
 
-    q_len <- length(quote)
-    if (q_len != 1 & q_len != max_length) {
-        rlang::abort("`quote` must be length\u20111 or the same length as the longest attribute")
-    }
-
-    attr_list <- purrr::map2(
-        attr_list,
-        names(attr_list),
-        ~ if (length(.x) == 1) {
-            purrr::set_names(rep(.x, max_length), rep(.y, max_length))
-        } else {
-            purrr::set_names(.x, rep(.y, length(.x)))
-        }
+  q_len <- length(quote)
+  if (q_len != 1 & q_len != max_length) {
+    rlang::abort(
+      "`quote` must be length\u20111 or the same length as the longest attribute"
     )
+  }
 
-    if (q_len == 1) {
-        attr_list[["quote"]] <- rep(quote, max_length)
+  attr_list <- purrr::map2(
+    attr_list,
+    names(attr_list),
+    ~ if (length(.x) == 1) {
+      purrr::set_names(rep(.x, max_length), rep(.y, max_length))
     } else {
-        attr_list[["quote"]] <- quote
+      purrr::set_names(.x, rep(.y, length(.x)))
     }
+  )
 
-    out <- purrr::pmap_chr(
-        attr_list,
-        function(..., q) {
-            dplyr::coalesce(paste_html_attr(...), NA_character_)
-        }
-    )
-    unname(out)
+  if (q_len == 1) {
+    attr_list[["quote"]] <- rep(quote, max_length)
+  } else {
+    attr_list[["quote"]] <- quote
+  }
+
+  out <- purrr::pmap_chr(
+    attr_list,
+    function(..., q) {
+      dplyr::coalesce(paste_html_attr(...), NA_character_)
+    }
+  )
+  unname(out)
 }
 
 #' Check HTML Attribute Inputs
@@ -389,47 +416,53 @@ set_html_attr <- function(..., max_length = NULL, quote = "\"") {
 #'
 #' @keywords internal
 check_html_attr <- function(..., max_length = NULL) {
-    attr_list <- list(...)
+  attr_list <- list(...)
+  attr_nm <- names(attr_list)
+  # try as if attributes were passed as a single character vector
+  if (is.null(attr_nm) & length(attr_list) == 1) {
+    attr_list <- as.list(attr_list[[1]])
     attr_nm <- names(attr_list)
-    # try as if attributes were passed as a single character vector
-    if (is.null(attr_nm) & length(attr_list) == 1) {
-        attr_list <- as.list(attr_list[[1]])
-        attr_nm <- names(attr_list)
-    }
+  }
 
-    empty_attr <- purrr::map_lgl(attr_list, ~ length(stats::na.omit(.x)) == 0)
-    attr_list <- attr_list[!empty_attr]
-    if (length(attr_list) == 0) return(invisible(NULL))
+  empty_attr <- purrr::map_lgl(attr_list, ~ length(stats::na.omit(.x)) == 0)
+  attr_list <- attr_list[!empty_attr]
+  if (length(attr_list) == 0) {
+    return(invisible(NULL))
+  }
 
-    attr_len <- purrr::map_int(attr_list, length)
-    if (is.null(max_length)) max_length <- max(attr_len)
-    if (any(attr_len > 1 & attr_len != max_length)) {
-        rlang::abort(
-            "All attributes must have length <= 1 or be of the same length as all length > 1 html inputs"
-        )
-    }
+  attr_len <- purrr::map_int(attr_list, length)
+  if (is.null(max_length)) {
+    max_length <- max(attr_len)
+  }
+  if (any(attr_len > 1 & attr_len != max_length)) {
+    rlang::abort(
+      "All attributes must have length <= 1 or be of the same length as all length > 1 html inputs"
+    )
+  }
 
-    if (!rlang::is_named(attr_list)) {
-        rlang::abort("All attributes must be named")
-    }
-    attr_nm_dup <- table(attr_nm) > 1
-    if (any(attr_nm_dup)) rlang::abort("Attribute names must be unique")
+  if (!rlang::is_named(attr_list)) {
+    rlang::abort("All attributes must be named")
+  }
+  attr_nm_dup <- table(attr_nm) > 1
+  if (any(attr_nm_dup)) {
+    rlang::abort("Attribute names must be unique")
+  }
 
-    attr(attr_list, "max_length") <- max_length
-    attr_list
+  attr(attr_list, "max_length") <- max_length
+  attr_list
 }
 
 paste_html_attr <- function(..., quote = "\"") {
-    .attr <- c(...)
-    .attr <- .attr[!is.na(.attr)]
-    paste0(
-        # to add spec required space before all attributes
-        " ",
-        paste0(names(.attr), '=', sandwich_text(.attr, quote)),
-        collapse = ""
-    )
+  .attr <- c(...)
+  .attr <- .attr[!is.na(.attr)]
+  paste0(
+    # to add spec required space before all attributes
+    " ",
+    paste0(names(.attr), '=', sandwich_text(.attr, quote)),
+    collapse = ""
+  )
 }
 
 indent_html <- function(n) {
-    collapse_to_string(rep('  ', n), delim = "")
+  collapse_to_string(rep('  ', n), delim = "")
 }
