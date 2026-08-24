@@ -1,86 +1,82 @@
-#' Make HTML for DO Use Case Tables
+#' Update Table on Use Cases Page
 #'
-#' Makes the row and cell html code for the various sections/tables of the
-#' disease-ontology.org "Use Cases" page from the DO team's "DO_uses" google
-#' sheet. This function explicitly avoids including the html code for defining
-#' the table itself to provide for flexibility. The "html" output in the files
-#' specified must be manually copied and pasted into the disease-ontology.org
-#' "Use Cases" file in the appropriate section/table.
-#'
-#' @param out_dir The path to the directory where output should be saved, as a
-#' string.
-#' @param group The group(s) to generate html for, as a character vector. One or
-#' more of: "all" (default) or specific values in the `type` column of the
+#' Updates the data in the table on the "Use Cases" page of disease-ontology.org
+#' to match the curated use cases in the
 #' [DO_uses](https://docs.google.com/spreadsheets/d/1wG-d0wt-9YbwhQTaelxqRzbm4qnu11WDM2rv3THy5mY/?gid=1972219724#gid=1972219724)
-#' `DO_website_user_list` sheet.
+#' google sheet.
 #'
-#' @returns
-#' One "html" file in `out_dir` for each `group` named as
-#' "DO_use_case-\{group\}.html" and the "User" data from the Google Sheet
-#' invisibly.
+#' @param use_cases_path The file path to the "Use Cases" page HTML file, as a
+#' string.
+#' @param table_id The id of the table to update in the HTML file, as a string.
+#'
+#' @returns The page's update HTML, invisibly.
 #'
 #' @export
-make_use_case_html <- function(out_dir = "graphics/website", group = "all") {
-  # validate arguments
-  if (!rlang::is_string(out_dir) || !dir.exists(out_dir)) {
-    rlang::abort(
-      message = "`out_dir` is not a single directory or does not exist."
-    )
-  }
+update_website_use_cases <- function(use_cases_path, table_id = "use-cases") {
+  stopifnot(file.exists(use_cases_path))
 
-  # prep data
-  use_case_gs <- googlesheets4::read_sheet(
-    ss = .DO_gs$users$ss,
-    sheet = .DO_gs$users$sheet,
-    range = "A:E",
-    col_types = "lcccc"
+  # read current HTML & table
+  html <- readr::read_file(use_cases_path)
+  existing_table <- get_html_table(html, table_id)
+  table_indent <- get_html_indent(existing_table)
+
+  # get & reformat data
+  uc_gs <- googlesheets4::read_sheet(
+    ss = .DO_gs$user$ss,
+    sheet = .DO_gs$user$sheet
   )
-  use_case_df <- use_case_gs |>
-    dplyr::filter(!is.na(.data$added)) |>
-    dplyr::mutate(sort_col = stringr::str_to_lower(.data$name))
 
-  possible_use_cases <- unique(use_case_df$type) |>
-    stats::na.omit()
-  group <- match.arg(group, c("all", possible_use_cases), several.ok = TRUE)
-  if ("all" %in% group) {
-    group <- possible_use_cases
-  }
-
-  out_file <- file.path(out_dir, paste0("DO_use_case-", group, ".html"))
-
-  use_case_list <- purrr::map(
-    group,
-    ~ dplyr::filter(use_case_df, .data$type == .x) |>
-      # ensure use cases are alphabetical by column
-      dplyr::arrange(.data$sort_col) |>
-      html_col_sort(3)
-  ) |>
-    rlang::set_names(nm = group)
-
-  # build html
-  use_case_html_list <- purrr::map(
-    use_case_list,
-    function(.df) {
-      glue::glue_data(
-        .x = .df,
-        '<a href="{url}" target="_blank">{name}</a>'
-      ) |>
-        html_in_rows(
-          per_row = 3,
-          indent_n = 2,
-          cell_attr = c(class = "default")
+  uc_df <- uc_gs |>
+    # drop rows with missing data or w/o checkbox in 'added' column
+    dplyr::filter(
+      !dplyr::if_any(c("added", "name", "url"), is.na)
+    ) |>
+    dplyr::select("name", "url", "primary_category") |>
+    dplyr::arrange(.data$name) |>
+    dplyr::mutate(
+      dplyr::across(dplyr::everything(), stringr::str_trim),
+      url = DO.utils::format_hyperlink(
+        .data$url,
+        as = "html",
+        text = .data$name,
+        target = "_blank"
+      ),
+      category_span = stringr::str_split(.data$primary_category, ", *") |>
+        purrr::map_chr(
+          ~ glue::glue(
+            '<span class="badge rounded-pill uc-tag" ',
+            'data-category="{category}">{category}</span>',
+            category = .x
+          ) |>
+            paste0(collapse = ", ")
         )
-    }
+    )
+
+  new_table <- build_datatable_html(
+    uc_df,
+    col_spec = list(
+      "Name" = list(content = "url", search = "name"),
+      "Category" = list(
+        content = "category_span",
+        search = "primary_category"
+      )
+    ),
+    tbl_id = table_id,
+    tbl_attr = list(style = "width:100%;", class = "display"),
+    header_wrap = c('{{ _("', '") }}'),
+    indent = 0L
   )
 
-  # save files
-  purrr::walk2(
-    .x = use_case_html_list,
-    .y = out_file,
-    ~ readr::write_lines(x = .x, file = .y)
-  )
+  out <- html |>
+    stringr::str_replace(
+      stringr::str_escape(existing_table),
+      new_table
+    ) |>
+    copy_thead_to_tfoot() |>
+    add_table_indent(table_indent)
 
-  invisible(use_case_gs)
+  res <- readr::write_file(out, use_cases_path)
+  invisible(out)
 }
 
 
@@ -114,114 +110,155 @@ update_website_count_tables <- function(DO_repo, tag, svn_repo) {
 }
 
 
-#' Make HTML for DO User List (DEPRECATED)
+#' Update 'Registry of Contributor' Tables on Web Pages
 #'
-#' Makes the row and cell html code for the "Users of the Disease Ontology"
-#' section of the collaborators page on disease-ontology.org from the DO team's
-#' "Uses" google sheet. This function explicitly avoids including the html
-#' code for defining the table itself to provide for flexibility.
+#' Updates data in the 'Registry of Contributor' tables of disease-ontology.org
+#' to match the curated contributor data in the
+#' [DO_contributors](https://docs.google.com/spreadsheets/d/1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM/)
+#' google sheet.
 #'
-#' @param file The file path where the output should be saved, as a string.
+#' @param contrib_path The file path to the "Contributors" page HTML file, as a
+#' string.
+#' @param table_id The id of the table to update in the HTML file, as a string.
 #'
-#' @section Deprecation Notice:
-#' The information this was formatting for disease-ontology.org was moved from
-#' the "Collaborators" page to the new "Use Cases" page in mid-2022 and was
-#' split from one section into three, making this function obsolete. Use
-#' [make_use_case_html()] instead.
+#' @returns The page's updated HTML, invisibly.
 #'
 #' @export
-make_user_list_html <- function(file) {
-  continue <- NA
-  while (!continue %in% c("y", "n")) {
-    continue <- readline(
-      "This function has been deprecated. Would you like to continue anyway? y/n"
+update_website_contributors <- function(contrib_path, table_id) {
+  stopifnot(file.exists(contrib_path))
+  table_id_possible <- names(.DO_gs$contributors)
+  if (!table_id %in% table_id_possible) {
+    stop(
+      "Invalid table_id: ",
+      table_id,
+      ". Must be one of: ",
+      paste(table_id_possible, collapse = ", ")
     )
-    cotinue <- stringr::str_to_lower(continue)
-  }
-  if (continue == "n") {
-    rlang::inform("Use make_use_case_html() instead.")
-    return(invisible())
   }
 
-  # get data
-  user_list <- googlesheets4::read_sheet(
-    ss = .DO_gs$users$ss,
-    sheet = .DO_gs$users$sheet,
-    range = "A:E",
-    col_types = "lcccc"
-  )
-  ws_user_list <- user_list |>
-    dplyr::filter(!is.na(.data$added)) |>
-    # ensure list is alphabetical
-    dplyr::arrange(.data$name)
+  # read current HTML & table
+  html <- readr::read_file(contrib_path)
+  existing_table <- get_html_table(html, table_id)
+  table_indent <- get_html_indent(existing_table)
 
-  # build html
-  user_html <- glue::glue_data(
-    .x = ws_user_list,
-    '<a href="{url}" target="_blank">{name}</a>'
-  )
-  html_rows <- html_in_rows(
-    user_html,
-    per_row = 3,
-    indent_n = 2,
-    cell_attr = c(class = "default")
+  # get & reformat data
+  contrib_gs <- googlesheets4::read_sheet(
+    ss = .DO_gs$contributors[[table_id]]$ss,
+    sheet = .DO_gs$contributors[[table_id]]$sheet,
+    col_types = "c"
   )
 
-  readr::write_lines(html_rows, file = file)
-}
+  brand_regex <- unique_to_string(
+    stringr::str_escape(names(brand_fa)),
+    delim = "|"
+  ) |>
+    length_sort(decreasing = TRUE)
 
-
-#' Make "Contributors" HTML
-#'
-#' Makes the "Contributor" `<li>` elements for disease-ontology.org. Can be used
-#' for any ontology given the appropriate input.
-#'
-#' @param contrib_df A data.frame with information about contributors, including
-#' the required columns: 'name', 'team_member', 'github', and 'orcid'. 'github'
-#' and 'orcid' columns can have data missing but at least one should be present
-#' for each contributor.
-#'
-#' @examplesIf interactive()
-#' trans_contributors <- googlesheets4::read_sheet(
-#'     ss = "1kD7rgOWO2uVUwKYoKFSLBEpv1WZFf-GDhEusAq_H5sM",
-#'     sheet = "TRANS",
-#'     col_types = "c"
-#' ) |>
-#'     dplyr::mutate(dplyr::across(dplyr::everything(), readr::parse_guess))
-#' trans_contributors
-#'
-#' make_contributors_html(trans_contributors)
-#'
-#' @export
-make_contributor_html <- function(contrib_df) {
-  .data <- contrib_df |>
+  contrib_df <- contrib_gs |>
     dplyr::mutate(
-      github = build_hyperlink(
-        x = .data$github,
-        url = "github",
-        as = "html",
-        text = "Github"
+      # add id column (to disambuiguate identical names)
+      id = dplyr::row_number(),
+      # use GitHub username as name when name is missing
+      name = dplyr::if_else(
+        !is.na(name),
+        .data$name,
+        stringr::str_match(.data$github, "github.com/([^/]+)")[, 2]
+      )
+    ) |>
+    tidyr::unite(
+      col = "links",
+      "github",
+      "orcid",
+      "other_links",
+      sep = "|",
+      remove = TRUE,
+      na.rm = TRUE
+    ) |>
+    lengthen_col(cols = "links", delim = "|") |>
+    dplyr::mutate(
+      # identify link_type (special handling for URLs)
+      link_type = stringr::str_extract(
+        .data$links,
+        stringr::regex(brand_regex, ignore_case = TRUE)
       ),
-      orcid = build_hyperlink(
-        x = .data$orcid,
-        url = "orcid",
-        as = "html",
-        text = "ORCID"
+      link_type = dplyr::if_else(
+        is.na(.data$link_type) &
+          stringr::str_detect(
+            .data$links,
+            stringr::regex("^https?://", ignore_case = TRUE),
+          ),
+        "url",
+        .data$link_type
       ),
-      links = purrr::map2_chr(
-        .data$github,
-        .data$orcid,
-        ~ vctr_to_string(c(.x, .y), delim = ", ", na.rm = TRUE)
+      link_type = factor(
+        .data$link_type,
+        levels = c(names(brand_fa), "url")
+      ),
+      # drop private or un-hyperlinkable links (e.g. emails)
+      links = dplyr::if_else(
+        !is.na(.data$link_type),
+        .data$links,
+        NA_character_
+      )
+    ) |>
+    # order links by preference (set by brand_fa order), then alphabetically
+    dplyr::arrange(.data$id, .data$link_type, .data$links)
+
+  contrib_df_html <- contrib_df |>
+    # generate icon links
+    dplyr::mutate(
+      icon = to_fa_icon(.data$link_type, size = "fa-xl"),
+      # include full URLs when no logo is available
+      links = dplyr::case_when(
+        .data$link_type == "url" ~ DO.utils::format_hyperlink(
+          .data$links,
+          as = "html",
+          target = "_blank"
+        ),
+        !is.na(.data$icon) ~ DO.utils::format_hyperlink(
+          .data$links,
+          as = "html",
+          text = .data$icon,
+          target = "_blank"
+        ),
+        .default = NA_character_
+      )
+    ) |>
+    # drop rows with missing name or noted as "exclude"
+    dplyr::filter(
+      !is.na(.data$name),
+      is.na(.data$status) | !stringr::str_detect(.data$status, "exclude")
+    ) |>
+    dplyr::select("id", "name", "links", "affiliation") |>
+    DO.utils::collapse_col(.cols = -"id", delim = ", ") |>
+    dplyr::select(-"id") |>
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::everything(),
+        ~ stringr::str_replace_all(.x, "\n+", ", ")
       )
     )
 
-  member <- dplyr::filter(.data, .data$team_member) |>
-    dplyr::arrange(.data$name)
-  member_html <- glue::glue_data(.x = member, "<li>{name} ({links})</li>")
+  new_table <- build_datatable_html(
+    contrib_df_html,
+    col_spec = list(
+      "Name" = list(content = "name"),
+      "Links" = list(content = "links"),
+      "Affiliation" = list(content = "affiliation")
+    ),
+    tbl_id = table_id,
+    tbl_attr = list(style = "width:100%;", class = "display"),
+    header_wrap = c('{{ _("', '") }}'),
+    indent = 0L
+  ) |>
+    copy_thead_to_tfoot() |>
+    add_table_indent(table_indent)
 
-  nonmember <- dplyr::filter(.data, !.data$team_member) |>
-    dplyr::arrange(.data$name)
-  nonmember_html <- glue::glue_data(.x = nonmember, "<li>{name} ({links})</li>")
+  out <- html |>
+    stringr::str_replace(
+      stringr::str_escape(existing_table),
+      new_table
+    )
 
-  list(member = member_html, nonmember = nonmember_html)
+  readr::write_file(out, contrib_path)
 }

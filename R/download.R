@@ -251,8 +251,7 @@ download_file <- function(url, dest_file, on_failure = "warn", ...) {
     dl_status$warn()
   }
 
-  dl_status$
-  return(
+  dl_status$return(
     w_failed = stringr::str_detect(on_failure, "list_failed$")
   )
 }
