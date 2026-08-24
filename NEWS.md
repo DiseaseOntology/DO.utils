@@ -1,4 +1,27 @@
-# DO.utils (development version)
+# DO.utils 0.3.7
+
+## Website
+
+### BREAKING CHANGES
+* `make_use_case_html()`, `make_user_list_html()`, and `make_contributor_html()` are now **_hard deprecated_**, replaced by `update_use_cases_html()` and `update_website_contributors()`.
+
+### New
+* `build_datatable_html()` replaces the `tableHTML` dependency, preparing DataTables-compatible table output.
+* `update_use_cases_html()` replaces `make_use_case_html()`, adding support for pill-box, category-based search alongside text search.
+* `update_website_contributors()` replaces `make_contributor_html()`, using a new input format with data derived and managed by GHContrib.
+
+### Updates
+* `get_html_table()` (internal) simplified output with the new `html_indent` class.
+
+## DO Management & Analysis
+
+### New
+* `inventory_omim_susc()` extends OMIM inventory capabilities.
+    * `prefer_mim()` (internal) encapsulates the OMIM-to-MIM prefix preference change.
+
+## Internal
+* Fixed errors and style issues identified by `lintr`
+
 
 # DO.utils 0.3.6
 
