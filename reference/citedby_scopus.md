@@ -63,7 +63,7 @@ citedby_scopus(
 - view:
 
   type of view to give, see
-  <https://api.elsevier.com/documentation/ScopusSearchAPI.wadl>
+  <https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl>
 
 - start:
 

@@ -124,7 +124,7 @@ read_ga(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE, ...)
       By default, reading a file without a column specification will
       print a message showing what `readr` guessed they were. To remove
       this message, set `show_col_types = FALSE` or set
-      \`options(readr.show_col_types = FALSE).
+      `options(readr.show_col_types = FALSE)`.
 
   `col_select`
 
@@ -204,11 +204,16 @@ read_ga(ga_file, read_all = FALSE, tidy = TRUE, keep_total = FALSE, ...)
       - `"unique"` (default value): Make sure names are unique and not
         empty.
 
-      - `"check_unique"`: no name repair, but check they are `unique`.
+      - `"check_unique"`: No name repair, but check they are `unique`.
+
+      - `"unique_quiet"`: Repair with the `unique` strategy, quietly.
 
       - `"universal"`: Make the names `unique` and syntactic.
 
-      - A function: apply custom name repair (e.g.,
+      - `"universal_quiet"`: Repair with the `universal` strategy,
+        quietly.
+
+      - A function: Apply custom name repair (e.g.,
         `name_repair = make.names` for names in the style of base R).
 
       - A purrr-style anonymous function, see

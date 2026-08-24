@@ -1,5 +1,22 @@
 # Changelog
 
+## DO.utils 0.3.6
+
+### Internal
+
+- Reformatted all files with [air](https://posit-dev.github.io/air/) for
+  consistent code style.
+- Replaced the magrittr pipe (`%>%`) throughout with the base pipe
+  (`|>`), dropping the magrittr dependency.
+- Standardized condition signaling (errors, warnings, messages) and name
+  setting on `rlang`.
+- Updated data masking and tidy selection to current dplyr/tidyselect
+  conventions.
+- Replaced fragile iterator super-assignment (`<<-`) patterns with plain
+  `for` loops.
+- Fixed miscellaneous fragile or otherwise poor code in older functions.
+- Replaced roxygen2 `@return` tags with `@returns` throughout.
+
 ## DO.utils 0.3.5
 
 ### General

@@ -7,13 +7,13 @@
 ## Citation
 
 Baron JA (2026). *DO.utils: Public Resource Utilities Designed by/for
-the Disease Ontology*. R package version 0.3.5,
+the Disease Ontology*. R package version 0.3.6,
 <https://diseaseontology.github.io/DO.utils/>.
 
     @Manual{,
       title = {DO.utils: Public Resource Utilities Designed by/for the Disease Ontology},
       author = {J. Allen Baron},
       year = {2026},
-      note = {R package version 0.3.5},
+      note = {R package version 0.3.6},
       url = {https://diseaseontology.github.io/DO.utils/},
     }

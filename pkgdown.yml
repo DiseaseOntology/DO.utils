@@ -6,7 +6,7 @@ articles:
   obtain_use_records: obtain_use_records.html
   articles/parse-omim-name: parse-omim-name.html
   use-reticulate-python: use-reticulate-python.html
-last_built: 2026-07-30T21:10Z
+last_built: 2026-08-24T18:37Z
 urls:
   reference: https://diseaseontology.github.io/DO.utils/reference
   article: https://diseaseontology.github.io/DO.utils/articles

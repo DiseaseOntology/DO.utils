@@ -114,7 +114,8 @@ format_obo(x, as = "ns.lui")
 
 # ns.lui input can be validated, if explicitly specified
 try(format_obo(c(x, "DOID_0001816"), allow = "standard"))
-#> Error : Elements 6 of valid_obo are not true
+#> Error in format_obo(c(x, "DOID_0001816"), allow = "standard") : 
+#>   Not all IDs are valid OBO IDs.
 format_obo(c(x, "DOID_0001816"), allow = c("standard", "ns.lui"))
 #> [1] "DOID:0001816"  "CL:0000066"    "SYMP:0000000"  "so:has_origin"
 #> [5] "DOID:4"        "DOID:0001816" 
@@ -153,7 +154,8 @@ format_doid(x, as = "curie")
 
 # ...but other OBO Foundry ontology IDs will error on validation
 try(format_doid(c(x, "obo:CL_0000066")))
-#> Error : Elements 5 of valid_doid are not true
+#> Error in format_doid(c(x, "obo:CL_0000066")) : 
+#>   Not all IDs are valid DOID IDs.
 
 # though they can be passed through if validation is turned off
 mixed_input <- c(x, "obo:SYMP_0000000", "foaf:Person", "random_text", "0050117")

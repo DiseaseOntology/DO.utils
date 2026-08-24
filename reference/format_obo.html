@@ -13,7 +13,7 @@ format_doid is a convenience function focused solely on DOIDs."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -159,7 +159,8 @@ assumed to be URIs and is either stripped or surrounded by angle brackets.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ns.lui input can be validated, if explicitly specified</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">format_obo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"DOID_0001816"</span><span class="op">)</span>, allow <span class="op">=</span> <span class="st">"standard"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error : Elements 6 of valid_obo are not true</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in format_obo(c(x, "DOID_0001816"), allow = "standard") : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Not all IDs are valid OBO IDs.</span>
 <span class="r-in"><span><span class="fu">format_obo</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"DOID_0001816"</span><span class="op">)</span>, allow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"standard"</span>, <span class="st">"ns.lui"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DOID:0001816"  "CL:0000066"    "SYMP:0000000"  "so:has_origin"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "DOID:4"        "DOID:0001816" </span>
@@ -198,7 +199,8 @@ assumed to be URIs and is either stripped or surrounded by angle brackets.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ...but other OBO Foundry ontology IDs will error on validation</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">format_doid</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"obo:CL_0000066"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Error : Elements 5 of valid_doid are not true</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in format_doid(c(x, "obo:CL_0000066")) : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Not all IDs are valid DOID IDs.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># though they can be passed through if validation is turned off</span></span></span>
 <span class="r-in"><span><span class="va">mixed_input</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"obo:SYMP_0000000"</span>, <span class="st">"foaf:Person"</span>, <span class="st">"random_text"</span>, <span class="st">"0050117"</span><span class="op">)</span></span></span>

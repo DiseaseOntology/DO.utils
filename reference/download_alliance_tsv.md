@@ -8,7 +8,11 @@ link of a desired file and select "Copy Link" to get the file URL.
 ## Usage
 
 ``` r
-download_alliance_tsv(dest_dir, url = NULL, ...)
+download_alliance_tsv(
+  dest_dir,
+  url = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz",
+  ...
+)
 ```
 
 ## Arguments
@@ -19,7 +23,8 @@ download_alliance_tsv(dest_dir, url = NULL, ...)
 
 - url:
 
-  URL to Alliance file; if not provided, will be requested at console
+  URL to Alliance file; the default is the Alliance's complete
+  disease-linked data file
 
 - ...:
 

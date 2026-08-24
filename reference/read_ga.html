@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -128,7 +128,7 @@ character represents one column:</p><ul><li><p>c = character</p></li>
 <li><p>_ or - = skip</p></li>
 </ul><p>By default, reading a file without a column specification will print a
 message showing what <code>readr</code> guessed they were. To remove this message,
-set <code>show_col_types = FALSE</code> or set `options(readr.show_col_types = FALSE).</p></dd>
+set <code>show_col_types = FALSE</code> or set <code>options(readr.show_col_types = FALSE)</code>.</p></dd>
 
     <dt><code>col_select</code></dt>
 <dd><p>Columns to include in the results. You can use the same
@@ -185,9 +185,11 @@ See <code><a href="https://readr.tidyverse.org/articles/column-types.html" class
 ensure column names are <code>"unique"</code>. Various repair strategies are
 supported:</p><ul><li><p><code>"minimal"</code>: No name repair or checks, beyond basic existence of names.</p></li>
 <li><p><code>"unique"</code> (default value): Make sure names are unique and not empty.</p></li>
-<li><p><code>"check_unique"</code>: no name repair, but check they are <code>unique</code>.</p></li>
+<li><p><code>"check_unique"</code>: No name repair, but check they are <code>unique</code>.</p></li>
+<li><p><code>"unique_quiet"</code>: Repair with the <code>unique</code> strategy, quietly.</p></li>
 <li><p><code>"universal"</code>: Make the names <code>unique</code> and syntactic.</p></li>
-<li><p>A function: apply custom name repair (e.g., <code>name_repair = make.names</code>
+<li><p><code>"universal_quiet"</code>: Repair with the <code>universal</code> strategy, quietly.</p></li>
+<li><p>A function: Apply custom name repair (e.g., <code>name_repair = make.names</code>
 for names in the style of base R).</p></li>
 <li><p>A purrr-style anonymous function, see <code><a href="https://rlang.r-lib.org/reference/as_function.html" class="external-link">rlang::as_function()</a></code>.</p></li>
 </ul><p>This argument is passed on as <code>repair</code> to <code><a href="https://vctrs.r-lib.org/reference/vec_as_names.html" class="external-link">vctrs::vec_as_names()</a></code>.

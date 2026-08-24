@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_bioc_pkg_stats</span><span class="op">(</span><span class="va">pkg</span>, <span class="va">pkg_type</span>, <span class="va">yr</span>, <span class="va">delay_rng</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_bioc_pkg_stats</span><span class="op">(</span><span class="va">pkg</span>, <span class="va">pkg_type</span>, yr <span class="op">=</span> <span class="cn">NULL</span>, delay_rng <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -63,8 +63,9 @@ of Bioconductor package; one of "software", "annotation", "experiment", or
 
 
 <dt id="arg-yr">yr<a class="anchor" aria-label="anchor" href="#arg-yr"></a></dt>
-<dd><p>character scalar; 4-digit year of stats desired,
-default = current year (currently implemented only for single yr)</p></dd>
+<dd><p>character scalar; 4-digit year of stats desired; if <code>NULL</code>
+(default), will use the current year (currently implemented only for single
+yr)</p></dd>
 
 
 <dt id="arg-delay-rng">delay_rng<a class="anchor" aria-label="anchor" href="#arg-delay-rng"></a></dt>

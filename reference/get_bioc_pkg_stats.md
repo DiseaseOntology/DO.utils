@@ -5,7 +5,7 @@ Get download statistics for specific Bioconductor packages.
 ## Usage
 
 ``` r
-get_bioc_pkg_stats(pkg, pkg_type, yr, delay_rng)
+get_bioc_pkg_stats(pkg, pkg_type, yr = NULL, delay_rng = c(1, 10))
 ```
 
 ## Arguments
@@ -22,8 +22,8 @@ get_bioc_pkg_stats(pkg, pkg_type, yr, delay_rng)
 
 - yr:
 
-  character scalar; 4-digit year of stats desired, default = current
-  year (currently implemented only for single yr)
+  character scalar; 4-digit year of stats desired; if `NULL` (default),
+  will use the current year (currently implemented only for single yr)
 
 - delay_rng:
 

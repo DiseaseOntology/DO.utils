@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,19 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.6" id="doutils-036">DO.utils 0.3.6<a class="anchor" aria-label="anchor" href="#doutils-036"></a></h2>
+<div class="section level3">
+<h3 id="internal-0-3-6">Internal<a class="anchor" aria-label="anchor" href="#internal-0-3-6"></a></h3>
+<ul><li>Reformatted all files with <a href="https://posit-dev.github.io/air/" class="external-link">air</a> for consistent code style.</li>
+<li>Replaced the magrittr pipe (<code>%&gt;%</code>) throughout with the base pipe (<code>|&gt;</code>), dropping the magrittr dependency.</li>
+<li>Standardized condition signaling (errors, warnings, messages) and name setting on <code>rlang</code>.</li>
+<li>Updated data masking and tidy selection to current dplyr/tidyselect conventions.</li>
+<li>Replaced fragile iterator super-assignment (<code>&lt;&lt;-</code>) patterns with plain <code>for</code> loops.</li>
+<li>Fixed miscellaneous fragile or otherwise poor code in older functions.</li>
+<li>Replaced roxygen2 <code>@return</code> tags with <code>@returns</code> throughout.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.5" id="doutils-035">DO.utils 0.3.5<a class="anchor" aria-label="anchor" href="#doutils-035"></a></h2>
 <div class="section level3">

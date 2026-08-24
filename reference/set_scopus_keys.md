@@ -7,7 +7,7 @@ subsequent Scopus functions.
 ## Usage
 
 ``` r
-set_scopus_keys(api_key, insttoken)
+set_scopus_keys(api_key = NULL, insttoken = NULL)
 ```
 
 ## Arguments
