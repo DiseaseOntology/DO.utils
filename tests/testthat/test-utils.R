@@ -141,11 +141,11 @@ test_that("match_arg_several() works for integer vectors", {
   expect_equal(.z(rep(1L, 2), 1:2), rep(1L, 2))
   expect_error(
     .z(1L, 2L),
-    regexp = '`x` must be one of: 2\n.*Not 1 \\(pos: 1\\)'
+    regexp = "`x` must be one of: 2\n.*Not 1 \\(pos: 1\\)"
   )
   expect_error(
     .z(1:3, 1:2),
-    regexp = '`x` must be one of: 1, 2\n.*Not 3 \\(pos: 3\\)'
+    regexp = "`x` must be one of: 1, 2\n.*Not 3 \\(pos: 3\\)"
   )
 })
 

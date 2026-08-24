@@ -34,7 +34,7 @@ pmc_summary <- function(
   # strip PMC from identifier, if present (API uses bare number)
   id <- stringr::str_remove(id, "^PMC")
 
-  if (is.null(web_history) & length(id) > 200) {
+  if (is.null(web_history) && length(id) > 200) {
     web_history <- rentrez::entrez_post("pmc", id = id)
     id <- NULL
   }

@@ -560,7 +560,7 @@ vctr_to_mancode <- function(x, regex = NULL, use_names = FALSE) {
     x <- x[stringr::str_detect(x, regex)]
   }
   # vctr_to_string(
-  sandwich_text(x, c('\\code{', '}')) #, ", ")
+  sandwich_text(x, c("\\code{", "}")) #, ", ")
 }
 
 

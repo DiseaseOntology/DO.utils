@@ -4,7 +4,7 @@ has_doid_url <- function(doid_edit) {
 }
 
 # extract_subtree() helper
-subtree_query_glue <- '
+subtree_query_glue <- ' # nolint: quotes_linter.
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX obo: <http://purl.obolibrary.org/obo/>

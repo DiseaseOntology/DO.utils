@@ -6,11 +6,11 @@ pub_id_types <- names(pub_id_match)
 df_all <- DO_pubs |>
   # ensure priority order here matches that set by pub_id_types & all present
   dplyr::select(dplyr::one_of(pub_id_types)) |>
-  (\(x) x[1:length(pub_id_types), ])()
+  (\(x) x[seq_along(pub_id_types), ])()
 
 df_NA <- purrr::map2(
   .x = df_all,
-  .y = 1:length(df_all),
+  .y = seq_along(df_all),
   function(col, pos) {
     col[-pos] <- NA
     col
@@ -47,11 +47,11 @@ test_that("match_citations(): works for single, similar type w/matches", {
   # df vs vector, exact match
   expect_eq_no_msg(
     match_citations(df_all[1], df_all[[1]]),
-    1:nrow(df_all)
+    seq_len(nrow(df_all))
   )
   expect_eq_no_msg(
     match_citations(df_all[[1]], df_all[1]),
-    1:nrow(df_all)
+    seq_len(nrow(df_all))
   )
 })
 
@@ -74,7 +74,7 @@ test_that("match_citations(): add_col works", {
   # most important
   expect_eq_no_msg(
     match_citations(df_all, df_NA, add_col = "match"),
-    dplyr::mutate(df_all, match = 1:length(pub_id_types))
+    dplyr::mutate(df_all, match = seq_along(pub_id_types))
   )
 })
 
@@ -82,7 +82,7 @@ test_that("match_citations(): add_col works when input df has only 1 ID type", {
   # most important
   expect_eq_no_msg(
     match_citations(df_all[1], df_all, add_col = "match"),
-    dplyr::mutate(df_all[1], match = 1:length(pub_id_types))
+    dplyr::mutate(df_all[1], match = seq_along(pub_id_types))
   )
 })
 

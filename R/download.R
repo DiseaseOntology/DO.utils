@@ -290,9 +290,8 @@ download_status <- methods::setRefClass(
         fail_status <<- c(fail_status, status)
       }
 
-      if (abort & length(failed) > 0) {
+      if (abort && length(failed) > 0) {
         if (length(successful) > 0) {
-          # rlang::inform(c("Successfully downloaded:", successful))
           successful
         }
         rlang::abort(

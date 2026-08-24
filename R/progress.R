@@ -11,11 +11,11 @@ progress_bar <- methods::setRefClass(
   fields = c("bar", "tick"),
   methods = list(
     initialize = function(n, ...) {
-      'Initializes a progress bar when called with \\code{progress_bar$new(n, ...)}.
+      "Initializes a progress bar when called with \\code{progress_bar$new(n, ...)}.
             \\describe{
             \\item{\\code{n}}{: Total number of ticks.}
             \\item{\\code{...}}{: Arguments passed on to \\code{\\link[utils:txtProgressBar]{utils::txtProgressBar()}}.}
-            }'
+            }"
       args <- list(...)
       bar <<- utils::txtProgressBar(
         min = 0,
@@ -39,7 +39,7 @@ progress_bar <- methods::setRefClass(
       tick <<- 1L
     },
     advance = function(...) {
-      'Advances progress bar one tick.'
+      "Advances progress bar one tick."
       utils::setTxtProgressBar(bar, tick, ...)
       tick <<- tick + 1
     }

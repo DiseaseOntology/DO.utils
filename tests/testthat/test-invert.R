@@ -9,7 +9,7 @@ nm <- list(
 pos <- unname(purrr::map(nm, unname))
 nm_increment <- purrr::map2(
   nm,
-  1:length(nm),
+  seq_along(nm),
   function(.x, .y) {
     rlang::set_names(.x, c(paste0(names(.x)[1], .y), names(.x)[2]))
   }

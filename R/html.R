@@ -36,24 +36,24 @@ html_in_rows <- function(
   # format row elements (include attributes)
   r_start <- collapse_to_string(
     indent_html(indent_n),
-    '<tr',
+    "<tr",
     set_html_attr(row_attr),
-    '>',
+    ">",
     delim = ""
   )
-  r_end <- collapse_to_string(indent_html(indent_n), '</tr>', delim = "")
+  r_end <- collapse_to_string(indent_html(indent_n), "</tr>", delim = "")
 
   # format cell elements (include attributes & html)
   cell <- paste0(
     collapse_to_string(
       indent_html(indent_n + 1),
-      '<td',
+      "<td",
       set_html_attr(cell_attr),
-      '>',
+      ">",
       delim = ""
     ),
     cell_html,
-    '</td>'
+    "</td>"
   )
 
   # arrange cells in rows
@@ -86,7 +86,7 @@ html_in_rows <- function(
 as_html_img <- function(src, alt, ..., quote = "\"") {
   src_len <- length(src)
   alt_len <- length(alt)
-  if (src_len < 1 | alt_len < 1 | src_len != alt_len) {
+  if (src_len < 1 || alt_len < 1 || src_len != alt_len) {
     rlang::abort("`src` and `alt` are required and must be the same length")
   }
 
@@ -98,7 +98,7 @@ as_html_img <- function(src, alt, ..., quote = "\"") {
   }
   attrs <- set_html_attr(src = src, alt = alt, ..., quote = quote)
   attrs[is.na(src) | is.na(alt)] <- NA_character_
-  dplyr::if_else(!is.na(attrs), paste0('<img', attrs, '>'), NA_character_)
+  dplyr::if_else(!is.na(attrs), paste0("<img", attrs, ">"), NA_character_)
 }
 
 
@@ -374,7 +374,7 @@ set_html_attr <- function(..., max_length = NULL, quote = "\"") {
   }
 
   q_len <- length(quote)
-  if (q_len != 1 & q_len != max_length) {
+  if (q_len != 1 && q_len != max_length) {
     rlang::abort(
       "`quote` must be length\u20111 or the same length as the longest attribute"
     )
@@ -421,7 +421,7 @@ check_html_attr <- function(..., max_length = NULL) {
   attr_list <- list(...)
   attr_nm <- names(attr_list)
   # try as if attributes were passed as a single character vector
-  if (is.null(attr_nm) & length(attr_list) == 1) {
+  if (is.null(attr_nm) && length(attr_list) == 1) {
     attr_list <- as.list(attr_list[[1]])
     attr_nm <- names(attr_list)
   }
@@ -460,11 +460,11 @@ paste_html_attr <- function(..., quote = "\"") {
   paste0(
     # to add spec required space before all attributes
     " ",
-    paste0(names(.attr), '=', sandwich_text(.attr, quote)),
+    paste0(names(.attr), "=", sandwich_text(.attr, quote)),
     collapse = ""
   )
 }
 
 indent_html <- function(n) {
-  collapse_to_string(rep('  ', n), delim = "")
+  collapse_to_string(rep("  ", n), delim = "")
 }

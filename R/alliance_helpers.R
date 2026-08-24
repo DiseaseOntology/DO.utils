@@ -117,7 +117,7 @@ id_mod <- function(x) {
     `OMIM Via RGD` = "RGD",
     SGD = "SGD",
     WB = "WormBase",
-    ZFIN = "ZFIN" #, Alliance = "Alliance"
+    ZFIN = "ZFIN"
   )
 
   dplyr::recode(x, !!!mod_codes)

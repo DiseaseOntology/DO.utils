@@ -116,7 +116,7 @@ append_empty_col <- function(df, col, order = FALSE) {
 append_to_url <- function(x, url, sep = "") {
   if (length(url) > 1) {
     if (length(url) != length(x)) {
-      rlang::abort('`url` must be the same length as `x` or length == 1')
+      rlang::abort("`url` must be the same length as `x` or length == 1")
     }
     url <- purrr::map_chr(
       url,
@@ -127,7 +127,7 @@ append_to_url <- function(x, url, sep = "") {
   }
 
   if (length(sep) > 1 && length(sep) != length(x)) {
-    rlang::abort('`sep` must be the same length as `x` or length == 1')
+    rlang::abort("`sep` must be the same length as `x` or length == 1")
   }
 
   ignore_sep <- purrr::map2_lgl(

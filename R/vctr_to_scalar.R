@@ -58,7 +58,7 @@ unique_if_invariant <- function(x, na.rm = FALSE, incl_nm = FALSE, ...) {
   }
 
   uniq <- x
-  if (na.rm & !all(is.na(x))) {
+  if (na.rm && !all(is.na(x))) {
     if (ndim == 0) {
       uniq <- stats::na.omit(uniq)
     } else {

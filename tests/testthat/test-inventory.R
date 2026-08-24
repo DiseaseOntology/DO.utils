@@ -9,14 +9,26 @@
 )
 
 test_that("multimap() works with defaults", {
-  expect_equal(multimaps(.tbl$x, .tbl$p, .tbl$y), c(T, T, F, F, T, T))
-  expect_equal(multimaps(.tbl$y, .tbl$p, .tbl$x), c(T, T, T, F, T, F))
+  expect_equal(
+    multimaps(.tbl$x, .tbl$p, .tbl$y),
+    c(TRUE, TRUE, FALSE, FALSE, TRUE, TRUE)
+  )
+  expect_equal(
+    multimaps(.tbl$y, .tbl$p, .tbl$x),
+    c(TRUE, TRUE, TRUE, FALSE, TRUE, FALSE)
+  )
 })
 
 test_that("multimaps() ignores unknown predicates", {
   .tbl$p[2] <- "random:mapping"
-  expect_equal(multimaps(.tbl$x, .tbl$p, .tbl$y), c(F, F, F, F, T, T))
-  expect_equal(multimaps(.tbl$y, .tbl$p, .tbl$x), c(T, F, T, F, F, F))
+  expect_equal(
+    multimaps(.tbl$x, .tbl$p, .tbl$y),
+    c(FALSE, FALSE, FALSE, FALSE, TRUE, TRUE)
+  )
+  expect_equal(
+    multimaps(.tbl$y, .tbl$p, .tbl$x),
+    c(TRUE, FALSE, TRUE, FALSE, FALSE, FALSE)
+  )
 })
 
 test_that("multimap() works including only skos:(exact|close)Match, excludes oboInOwl:hasDbXref", {
@@ -27,7 +39,7 @@ test_that("multimap() works including only skos:(exact|close)Match, excludes obo
       .tbl$y,
       include_pred = c("skos:exactMatch", "skos:closeMatch")
     ),
-    c(T, T, F, F, F, F)
+    c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE)
   )
   expect_equal(
     multimaps(
@@ -36,7 +48,7 @@ test_that("multimap() works including only skos:(exact|close)Match, excludes obo
       .tbl$x,
       include_pred = c("skos:exactMatch", "skos:closeMatch")
     ),
-    c(F, F, F, F, F, F)
+    c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)
   )
 })
 

@@ -43,6 +43,6 @@ check_id_conv_status <- function(res) {
     rlang::warn(
       "ID converter API request returned an error, full responses returned for debugging"
     )
-    return(res)
+    res
   }
 }

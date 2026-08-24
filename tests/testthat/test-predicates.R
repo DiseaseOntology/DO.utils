@@ -58,14 +58,14 @@ test_that("is_valid_obo() works", {
 
 test_that("is_valid_obo() allow arg works", {
   expect_is_valid_obo_format <- function(x, allow) {
-    res <- setNames(rep(F, length(x)), names(x))
+    res <- setNames(rep(FALSE, length(x)), names(x))
     if ("standard" %in% allow) {
       allow <- union(
         setdiff(allow, "standard"),
         c("curie", "obo_curie", "uri", "<uri>")
       )
     }
-    res[names(x) %in% allow] <- T
+    res[names(x) %in% allow] <- TRUE
     expect_equal(
       is_valid_obo(x, allow = allow),
       res,
@@ -184,7 +184,7 @@ test_that("is_valid_doid() works", {
 
 test_that("is_valid_doid() allow arg works", {
   expect_is_valid_doid_format <- function(x, allow) {
-    res <- setNames(rep(F, length(x)), names(x))
+    res <- setNames(rep(FALSE, length(x)), names(x))
     if ("standard" %in% allow) {
       allow <- union(
         setdiff(allow, "standard"),
@@ -195,7 +195,7 @@ test_that("is_valid_doid() allow arg works", {
       names(x) %in%
         allow &
         stringr::str_detect(x, stringr::coll("doid", ignore_case = TRUE))
-    ] <- T
+    ] <- TRUE
     expect_equal(
       is_valid_doid(x, allow = allow),
       res,
@@ -301,13 +301,13 @@ test_that("is_invariant() default method works (chr, lgl)", {
   expect_false(is_invariant(.chr_na))
   expect_true(is_invariant(.chr_na, na.rm = TRUE))
 
-  .lgl <- c(T, F)
-  .lgl_invar <- rep(T, 2)
+  .lgl <- c(TRUE, FALSE)
+  .lgl_invar <- rep(TRUE, 2)
 
   expect_false(is_invariant(.lgl))
   expect_true(is_invariant(.lgl_invar))
 
-  .lgl_na <- c(T, NA_character_)
+  .lgl_na <- c(TRUE, NA_character_)
 
   expect_false(is_invariant(.lgl_na))
   expect_true(is_invariant(.lgl_na, na.rm = TRUE))

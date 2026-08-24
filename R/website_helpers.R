@@ -266,7 +266,7 @@ to_fa_icon <- function(brand, size = "fa-lg", report_unknown = 3) {
   icon <- paste0(
     '<i class="fa-brands ',
     dplyr::recode(brand_tidy, !!!brand_fa),
-    ' ',
+    " ",
     size,
     '"></i>'
   )

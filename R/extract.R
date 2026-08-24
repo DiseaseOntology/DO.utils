@@ -179,7 +179,7 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
             )
           } else {
             cond_msg <<- cond$message
-            return(NULL)
+            NULL
           }
         }
       )
@@ -190,7 +190,7 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
   # keep only those with results
   out <- purrr::compact(res)
   discard <- names(res)[!names(res) %in% names(out)]
-  if (no_result != "none" & length(discard) > 0) {
+  if (no_result != "none" && length(discard) > 0) {
     rlang::signal(
       message = c(
         paste0(cond_msg, ", discarded:"),

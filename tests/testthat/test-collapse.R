@@ -4,7 +4,7 @@
 df <- data.frame(
   dbl = c(1, 2.5),
   int = 1:2,
-  lgl = c(T, F),
+  lgl = c(TRUE, FALSE),
   chr = c("a", "b"),
   fac = factor(c("a", "b")),
   dat = structure(c(18963, 18964), class = "Date"),
@@ -166,13 +166,13 @@ test_that("collapse_col(): duplicated rows (3-4) are always collapsed", {
 })
 
 test_that("collapse_col(method = 'first') works", {
-  expect_identical(collapse_col(cc_df, z, method = 'first'), z_first)
-  expect_identical(collapse_col(cc_df, c(y, z), method = 'first'), yz_first)
+  expect_identical(collapse_col(cc_df, z, method = "first"), z_first)
+  expect_identical(collapse_col(cc_df, c(y, z), method = "first"), yz_first)
 })
 
 test_that("collapse_col(method = 'last') works", {
-  expect_identical(collapse_col(cc_df, z, method = 'last'), z_last)
-  expect_identical(collapse_col(cc_df, c(y, z), method = 'last'), yz_last)
+  expect_identical(collapse_col(cc_df, z, method = "last"), z_last)
+  expect_identical(collapse_col(cc_df, c(y, z), method = "last"), yz_last)
 })
 
 
@@ -199,15 +199,15 @@ test_that("collapse_col(na.rm = TRUE) works with NA in collapsed cols", {
   )
 
   expect_identical(
-    collapse_col(cc_na, c(y, z), method = 'unique', na.rm = TRUE),
+    collapse_col(cc_na, c(y, z), method = "unique", na.rm = TRUE),
     yz_na_uniq
   )
   expect_identical(
-    collapse_col(cc_na, c(y, z), method = 'first', na.rm = TRUE),
+    collapse_col(cc_na, c(y, z), method = "first", na.rm = TRUE),
     yz_na_first
   )
   expect_identical(
-    collapse_col(cc_na, c(y, z), method = 'last', na.rm = TRUE),
+    collapse_col(cc_na, c(y, z), method = "last", na.rm = TRUE),
     yz_na_last
   )
 })
@@ -235,15 +235,15 @@ test_that("collapse_col(na.rm = TRUE) works with NA in non-collapsed cols", {
   )
 
   expect_identical(
-    collapse_col(cc_na, c(y, z), method = 'unique', na.rm = TRUE),
+    collapse_col(cc_na, c(y, z), method = "unique", na.rm = TRUE),
     yz_na_uniq
   )
   expect_identical(
-    collapse_col(cc_na, c(y, z), method = 'first', na.rm = TRUE),
+    collapse_col(cc_na, c(y, z), method = "first", na.rm = TRUE),
     yz_na_first
   )
   expect_identical(
-    collapse_col(cc_na, c(y, z), method = 'last', na.rm = TRUE),
+    collapse_col(cc_na, c(y, z), method = "last", na.rm = TRUE),
     yz_na_last
   )
 })

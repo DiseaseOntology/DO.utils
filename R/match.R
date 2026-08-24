@@ -43,7 +43,7 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
   if (!is.null(add_col) && !rlang::is_string(add_col)) {
     rlang::abort("`add_col` must be a string or NULL.")
   }
-  if (!is.null(add_col) & !is.data.frame(x)) {
+  if (!is.null(add_col) && !is.data.frame(x)) {
     rlang::abort(
       message = "To add results with add_col, x must be a data.frame."
     )
@@ -67,7 +67,7 @@ match_citations <- function(x, ref, add_col = NULL, nomatch = NA_integer_) {
 
   # error if no matching columns
   if (length(type_both) == 0) {
-    msg_header <- if (is.data.frame(x) & is.data.frame(ref)) {
+    msg_header <- if (is.data.frame(x) && is.data.frame(ref)) {
       "No matching ID columns in x & ref"
     } else {
       "No IDs of same type identified"

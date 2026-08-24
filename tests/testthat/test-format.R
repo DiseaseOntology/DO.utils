@@ -415,9 +415,9 @@ test_that("format_hyperlink(preserve = 'url') returns NA from url input", {
 test_that("format_hyperlink(preserve = 'text') errors without text input", {
   url <- "https://www.google.com/"
 
-  expect_error(format_hyperlink(url, "gs", preserve = 'text'))
-  expect_error(format_hyperlink(url, "xlsx", preserve = 'text'))
-  expect_error(format_hyperlink(url, "html", preserve = 'text'))
+  expect_error(format_hyperlink(url, "gs", preserve = "text"))
+  expect_error(format_hyperlink(url, "xlsx", preserve = "text"))
+  expect_error(format_hyperlink(url, "html", preserve = "text"))
 })
 
 test_that("format_hyperlink(preserve = 'text') returns text input", {
