@@ -59,6 +59,7 @@ preprocess_omim_dl <- function(file, ...) {
         comment = "#",
         col_names = header,
         show_col_types = FALSE,
+        progress = FALSE,
         ...
       )
     } else {
@@ -87,6 +88,7 @@ preprocess_omim_dl <- function(file, ...) {
         name_repair = "minimal",
         trim_ws = TRUE,
         col_types = readr::cols(.default = readr::col_character()),
+        progress = FALSE,
         ...
       )
 
@@ -114,6 +116,7 @@ preprocess_omim_dl <- function(file, ...) {
       name_repair = "minimal",
       trim_ws = TRUE,
       col_types = readr::cols(.default = readr::col_character()),
+      progress = FALSE,
       ...
     )
 

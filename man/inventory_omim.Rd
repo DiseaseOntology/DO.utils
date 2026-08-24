@@ -16,8 +16,8 @@ inventory_omim(
 \item{onto_path}{The path to an ontology file, as a string.}
 
 \item{omim_input}{An \code{omim_tbl} created by \code{\link[=read_omim]{read_omim()}} or the path to a
-.tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}} and
-includes OMIM data to compare against the mappings in the ontology.
+.tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}}
+and includes OMIM data to compare against the mappings in the ontology.
 
 NOTE: If an \code{omim_tbl} is provided, \code{keep_mim} will be ignored.}
 
@@ -71,10 +71,11 @@ comparison.
 }
 \examples{
 \dontrun{
-# manually copy or download data from https://www.omim.org/phenotypicSeries/PS609060
+# execute within the HumanDiseaseOntology repository and download data from
+# https://www.omim.org/phenotypicSeries/PS609060 to omimps.tsv
 inventory_omim(
-    onto_path = "~/Ontologies/HumanDiseaseOntology/src/ontology/doid-edit.owl",
-    omim_input = "omimps.csv",
+  onto_path = "src/ontology/doid-edit.owl",
+  omim_input = "omimps.tsv",
 )
 }
 

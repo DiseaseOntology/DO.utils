@@ -98,6 +98,7 @@ read_ga <- function(
           readr::read_csv,
           file = paste(.data[.x:.y], "\n"),
           show_col_types = FALSE,
+          progress = FALSE,
           !!!dot_args
         )
       }
@@ -113,6 +114,7 @@ read_ga <- function(
         "\n"
       ),
       show_col_types = FALSE,
+      progress = FALSE,
       ...
     )
 

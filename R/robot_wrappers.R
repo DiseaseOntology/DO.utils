@@ -163,7 +163,8 @@ robot_query <- function(
     out <- readr::read_tsv(
       output,
       col_types = col_types,
-      show_col_types = FALSE
+      show_col_types = FALSE,
+      progress = FALSE
     )
     out <- tidy_sparql(out, tidy_what)
   }
