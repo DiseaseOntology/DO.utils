@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DO.utils</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.7</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,47 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.7" id="doutils-037">DO.utils 0.3.7<a class="anchor" aria-label="anchor" href="#doutils-037"></a></h2>
+<div class="section level3">
+<h3 id="website-0-3-7">Website<a class="anchor" aria-label="anchor" href="#website-0-3-7"></a></h3>
+<div class="section level4">
+<h4 id="breaking-changes-0-3-7">BREAKING CHANGES<a class="anchor" aria-label="anchor" href="#breaking-changes-0-3-7"></a></h4>
+<ul><li>
+<code><a href="../reference/deprecated-website.html">make_use_case_html()</a></code>, <code><a href="../reference/deprecated-website.html">make_user_list_html()</a></code>, and <code><a href="../reference/deprecated-website.html">make_contributor_html()</a></code> are now <strong><em>hard deprecated</em></strong>, replaced by <code>update_use_cases_html()</code> and <code><a href="../reference/update_website_contributors.html">update_website_contributors()</a></code>.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="new-0-3-7">New<a class="anchor" aria-label="anchor" href="#new-0-3-7"></a></h4>
+<ul><li>
+<code><a href="../reference/build_datatable_html.html">build_datatable_html()</a></code> replaces the <code>tableHTML</code> dependency, preparing DataTables-compatible table output.</li>
+<li>
+<code>update_use_cases_html()</code> replaces <code><a href="../reference/deprecated-website.html">make_use_case_html()</a></code>, adding support for pill-box, category-based search alongside text search.</li>
+<li>
+<code><a href="../reference/update_website_contributors.html">update_website_contributors()</a></code> replaces <code><a href="../reference/deprecated-website.html">make_contributor_html()</a></code>, using a new input format with data derived and managed by GHContrib.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="updates-0-3-7">Updates<a class="anchor" aria-label="anchor" href="#updates-0-3-7"></a></h4>
+<ul><li>
+<code>get_html_table()</code> (internal) simplified output with the new <code>html_indent</code> class.</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="do-management--analysis-0-3-7">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-7"></a></h3>
+<div class="section level4">
+<h4 id="new-0-3-7-1">New<a class="anchor" aria-label="anchor" href="#new-0-3-7-1"></a></h4>
+<ul><li>
+<code><a href="../reference/inventory_omim_susc.html">inventory_omim_susc()</a></code> extends OMIM inventory capabilities.
+<ul><li>
+<code>prefer_mim()</code> (internal) encapsulates the OMIM-to-MIM prefix preference change.</li>
+</ul></li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="internal-0-3-7">Internal<a class="anchor" aria-label="anchor" href="#internal-0-3-7"></a></h3>
+<ul><li>Fixed errors and style issues identified by <code>lintr</code>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.6" id="doutils-036">DO.utils 0.3.6<a class="anchor" aria-label="anchor" href="#doutils-036"></a></h2>
 <div class="section level3">
@@ -264,7 +305,7 @@
 <h3 id="do-management--analysis-0-3-0">DO Management &amp; Analysis<a class="anchor" aria-label="anchor" href="#do-management--analysis-0-3-0"></a></h3>
 <div class="section level4">
 <h4 id="website-supporting-updates-0-3-0">WEBSITE-Supporting Updates<a class="anchor" aria-label="anchor" href="#website-supporting-updates-0-3-0"></a></h4>
-<ul><li>Fix <code><a href="../reference/make_use_case_html.html">make_use_case_html()</a></code> to have case-insensitive sorting.</li>
+<ul><li>Fix <code><a href="../reference/deprecated-website.html">make_use_case_html()</a></code> to have case-insensitive sorting.</li>
 <li>
 <code><a href="../reference/plot_citedby.html">plot_citedby()</a></code>
 <ul><li>Now accepts manually-defined color sets, in addition to color sets provided by <code>DO.utils</code>.</li>
@@ -475,7 +516,7 @@
 <h2 class="pkg-version" data-toc-text="0.2.5" id="doutils-025">DO.utils 0.2.5<a class="anchor" aria-label="anchor" href="#doutils-025"></a></h2>
 <div class="section level3">
 <h3 id="deprecations-0-2-5">Deprecations<a class="anchor" aria-label="anchor" href="#deprecations-0-2-5"></a></h3>
-<p><strong>Website</strong> * <code><a href="../reference/make_user_list_html.html">make_user_list_html()</a></code> is deprecated because the user/use case information on disease-ontology.org was moved from the ‘Collaborators’ page to the new ‘Use Cases’ page. Replaced by <code><a href="../reference/make_use_case_html.html">make_use_case_html()</a></code>.</p>
+<p><strong>Website</strong> * <code><a href="../reference/deprecated-website.html">make_user_list_html()</a></code> is deprecated because the user/use case information on disease-ontology.org was moved from the ‘Collaborators’ page to the new ‘Use Cases’ page. Replaced by <code><a href="../reference/deprecated-website.html">make_use_case_html()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="breaking-changes-0-2-5">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-5"></a></h3>
@@ -496,7 +537,7 @@
 <div class="section level3">
 <h3 id="new-0-2-5">New<a class="anchor" aria-label="anchor" href="#new-0-2-5"></a></h3>
 <p><strong>Ontology Extracters/Modifiers</strong> * <code>extract_*_axiom()</code> family: Extract equivalentClass (‘eq’), subClassOf (‘subclass’), or both (‘class’) logical axioms. * <code><a href="../reference/queue_xref_split.html">queue_xref_split()</a></code>: Creates a ‘curation queue’ of diseases that may need to split because they have multiple cross-references from the same source. * <code><a href="../reference/tidy_sparql.html">tidy_sparql()</a></code>: Tidies SPARQL query results.</p>
-<p><strong>Website</strong> * <code><a href="../reference/update_website_count_tables.html">update_website_count_tables()</a></code>: Update counts in tables on ‘DO Imports’ and ‘DO Slims’ pages with data from a specified release of doid-merged.owl. <em>Updates data in place</em>. * <code><a href="../reference/make_use_case_html.html">make_use_case_html()</a></code>: Produces the html for the new ‘Use Cases’ page, split into 3 files, 1 per section for: Ontologies, Resources, and Methodologies. * <em>Does not update data in place.</em> HTML for the rows &amp; cells must be copied and pasted over the HTML for each section in the ‘Use Cases’ file. * Content is sorted alphabetically by column. * <code><a href="../reference/make_contributor_html.html">make_contributor_html()</a></code>: Produces HTML list of contributors as <code>&lt;li&gt;</code> elements for disease-ontology.org, including links to Github and ORCID, as available.</p>
+<p><strong>Website</strong> * <code><a href="../reference/update_website_count_tables.html">update_website_count_tables()</a></code>: Update counts in tables on ‘DO Imports’ and ‘DO Slims’ pages with data from a specified release of doid-merged.owl. <em>Updates data in place</em>. * <code><a href="../reference/deprecated-website.html">make_use_case_html()</a></code>: Produces the html for the new ‘Use Cases’ page, split into 3 files, 1 per section for: Ontologies, Resources, and Methodologies. * <em>Does not update data in place.</em> HTML for the rows &amp; cells must be copied and pasted over the HTML for each section in the ‘Use Cases’ file. * Content is sorted alphabetically by column. * <code><a href="../reference/deprecated-website.html">make_contributor_html()</a></code>: Produces HTML list of contributors as <code>&lt;li&gt;</code> elements for disease-ontology.org, including links to Github and ORCID, as available.</p>
 <p><strong>URLs</strong> * <code><a href="../reference/format_hyperlink.html">format_hyperlink()</a></code>: Converts URLs into hyperlinks for Google Sheets, Excel, or HTML. * <code><a href="../reference/build_hyperlink.html">build_hyperlink()</a></code>: Shorthand for common <code><a href="../reference/append_to_url.html">append_to_url()</a></code> plus <code><a href="../reference/format_hyperlink.html">format_hyperlink()</a></code> combination.</p>
 <p><strong>Cited by / Search</strong> * <code>pub_id_match</code> (DATA): A named character vector of regex’s to identify/extract publication IDs (currently PMID, PMCID, DOI, &amp; Scopus EID).</p>
 <p><strong>General Utilities</strong> * <code><a href="../reference/sandwich_text.html">sandwich_text()</a></code>: Pastes text around strings. * <code><a href="../reference/wrap_onscreen.html">wrap_onscreen()</a></code>: Wraps messages to be printed on the screen. * <code><a href="../reference/invert_sublists.html">invert_sublists()</a></code>: Swaps the list elements between depths 2 &amp; 3, essentially inverting the grouping. * <code><a href="../reference/lengthen_col.html">lengthen_col()</a></code>: Splits column(s) by a delimiter and lengthens the data.frame so each value is in its own row. * <strong>NOTES:</strong> * This is the reverse of <code><a href="../reference/collapse_col.html">collapse_col()</a></code> but will not recreate the original data.frame after round trip <em>in most cases</em>. * Uses <code><a href="../reference/unnest_cross.html">unnest_cross()</a></code> internally so the results will always be the cartesian product of lengthened columns. * <code><a href="../reference/count_delim.html">count_delim()</a></code>: Counts the values in delimited columns; essentially the combination of <code><a href="../reference/lengthen_col.html">lengthen_col()</a></code> and <code><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">dplyr::count()</a></code>.</p>
@@ -700,12 +741,12 @@
 <div class="section level3">
 <h3 id="feature-website-updates-0-1-6">Feature: Website Updates<a class="anchor" aria-label="anchor" href="#feature-website-updates-0-1-6"></a></h3>
 <ul><li>Added functions to create statistics graphs: <code><a href="../reference/plot_citedby.html">plot_citedby()</a></code>, <code>plot_terms_def_counts()</code>, <code><a href="../reference/plot_branch_counts.html">plot_branch_counts()</a></code>, <code><a href="../reference/plot_xref_counts.html">plot_xref_counts()</a></code>.</li>
-<li>Added <code><a href="../reference/make_user_list_html.html">make_user_list_html()</a></code> to create rows of table in Community &gt; Collaborators &gt; Users of the Disease Ontology from the DO team’s curated “Uses” Google sheet.</li>
+<li>Added <code><a href="../reference/deprecated-website.html">make_user_list_html()</a></code> to create rows of table in Community &gt; Collaborators &gt; Users of the Disease Ontology from the DO team’s curated “Uses” Google sheet.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-use-only-0-1-6">Internal Use Only<a class="anchor" aria-label="anchor" href="#internal-use-only-0-1-6"></a></h3>
 <ul><li>Added <code><a href="../reference/to_character.html">to_character()</a></code>, helper for <code>cast_to_string()</code>, to reduce lists and data frames to character vectors while limiting data loss.</li>
-<li>Added <code>html_in_rows()</code>, helper for <code><a href="../reference/make_user_list_html.html">make_user_list_html()</a></code>, to format html elements in rows (with optional row &amp; cell attributes).</li>
+<li>Added <code>html_in_rows()</code>, helper for <code><a href="../reference/deprecated-website.html">make_user_list_html()</a></code>, to format html elements in rows (with optional row &amp; cell attributes).</li>
 <li>Added Google sheets identifiers for programmatic access.</li>
 </ul></div>
 </div>

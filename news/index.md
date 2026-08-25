@@ -1,5 +1,51 @@
 # Changelog
 
+## DO.utils 0.3.7
+
+### Website
+
+#### BREAKING CHANGES
+
+- [`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md),
+  [`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md),
+  and
+  [`make_contributor_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md)
+  are now ***hard deprecated***, replaced by `update_use_cases_html()`
+  and
+  [`update_website_contributors()`](https://diseaseontology.github.io/DO.utils/reference/update_website_contributors.md).
+
+#### New
+
+- [`build_datatable_html()`](https://diseaseontology.github.io/DO.utils/reference/build_datatable_html.md)
+  replaces the `tableHTML` dependency, preparing DataTables-compatible
+  table output.
+- `update_use_cases_html()` replaces
+  [`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md),
+  adding support for pill-box, category-based search alongside text
+  search.
+- [`update_website_contributors()`](https://diseaseontology.github.io/DO.utils/reference/update_website_contributors.md)
+  replaces
+  [`make_contributor_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md),
+  using a new input format with data derived and managed by GHContrib.
+
+#### Updates
+
+- `get_html_table()` (internal) simplified output with the new
+  `html_indent` class.
+
+### DO Management & Analysis
+
+#### New
+
+- [`inventory_omim_susc()`](https://diseaseontology.github.io/DO.utils/reference/inventory_omim_susc.md)
+  extends OMIM inventory capabilities.
+  - `prefer_mim()` (internal) encapsulates the OMIM-to-MIM prefix
+    preference change.
+
+### Internal
+
+- Fixed errors and style issues identified by `lintr`
+
 ## DO.utils 0.3.6
 
 ### Internal
@@ -287,7 +333,7 @@
 #### WEBSITE-Supporting Updates
 
 - Fix
-  [`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/make_use_case_html.md)
+  [`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md)
   to have case-insensitive sorting.
 - [`plot_citedby()`](https://diseaseontology.github.io/DO.utils/reference/plot_citedby.md)
   - Now accepts manually-defined color sets, in addition to color sets
@@ -554,11 +600,11 @@ assessment publication.
 ### Deprecations
 
 **Website** \*
-[`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/make_user_list_html.md)
+[`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md)
 is deprecated because the user/use case information on
 disease-ontology.org was moved from the ‘Collaborators’ page to the new
 ‘Use Cases’ page. Replaced by
-[`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/make_use_case_html.md).
+[`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md).
 
 ### Breaking Changes
 
@@ -631,13 +677,13 @@ Tidies SPARQL query results.
 [`update_website_count_tables()`](https://diseaseontology.github.io/DO.utils/reference/update_website_count_tables.md):
 Update counts in tables on ‘DO Imports’ and ‘DO Slims’ pages with data
 from a specified release of doid-merged.owl. *Updates data in place*. \*
-[`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/make_use_case_html.md):
+[`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md):
 Produces the html for the new ‘Use Cases’ page, split into 3 files, 1
 per section for: Ontologies, Resources, and Methodologies. \* *Does not
 update data in place.* HTML for the rows & cells must be copied and
 pasted over the HTML for each section in the ‘Use Cases’ file. \*
 Content is sorted alphabetically by column. \*
-[`make_contributor_html()`](https://diseaseontology.github.io/DO.utils/reference/make_contributor_html.md):
+[`make_contributor_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md):
 Produces HTML list of contributors as `<li>` elements for
 disease-ontology.org, including links to Github and ORCID, as available.
 
@@ -944,7 +990,7 @@ If improvements are made they will likely facilitate one or more of:
   [`plot_branch_counts()`](https://diseaseontology.github.io/DO.utils/reference/plot_branch_counts.md),
   [`plot_xref_counts()`](https://diseaseontology.github.io/DO.utils/reference/plot_xref_counts.md).
 - Added
-  [`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/make_user_list_html.md)
+  [`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md)
   to create rows of table in Community \> Collaborators \> Users of the
   Disease Ontology from the DO team’s curated “Uses” Google sheet.
 
@@ -955,7 +1001,7 @@ If improvements are made they will likely facilitate one or more of:
   helper for `cast_to_string()`, to reduce lists and data frames to
   character vectors while limiting data loss.
 - Added `html_in_rows()`, helper for
-  [`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/make_user_list_html.md),
+  [`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/deprecated-website.md),
   to format html elements in rows (with optional row & cell attributes).
 - Added Google sheets identifiers for programmatic access.
 

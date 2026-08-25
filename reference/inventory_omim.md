@@ -95,10 +95,11 @@ Output will have the class `omim_inventory`, a type of class
 
 ``` r
 if (FALSE) { # \dontrun{
-# manually copy or download data from https://www.omim.org/phenotypicSeries/PS609060
+# execute within the HumanDiseaseOntology repository and download data from
+# https://www.omim.org/phenotypicSeries/PS609060 to omimps.tsv
 inventory_omim(
-    onto_path = "~/Ontologies/HumanDiseaseOntology/src/ontology/doid-edit.owl",
-    omim_input = "omimps.csv",
+  onto_path = "src/ontology/doid-edit.owl",
+  omim_input = "omimps.tsv",
 )
 } # }
 ```

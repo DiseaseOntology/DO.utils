@@ -182,6 +182,9 @@ including, for example, those that assist with:
 - [`batch_id_converter()`](https://diseaseontology.github.io/DO.utils/reference/batch_id_converter.md)
   : Convert IDs in Batches
 
+- [`build_datatable_html()`](https://diseaseontology.github.io/DO.utils/reference/build_datatable_html.md)
+  : Build a DataTables-Compatible HTML Table
+
 - [`build_html_element()`](https://diseaseontology.github.io/DO.utils/reference/build_html_element.md)
   : Build HTML Element(s)
 
@@ -300,6 +303,9 @@ including, for example, those that assist with:
 - [`get_bioc_pkg_stats()`](https://diseaseontology.github.io/DO.utils/reference/get_bioc_pkg_stats.md)
   : Get Bioconductor Package Statistics
 
+- [`get_html_indent()`](https://diseaseontology.github.io/DO.utils/reference/get_html_indent.md)
+  : Get HTML Indentation Data
+
 - [`iff_all_vals()`](https://diseaseontology.github.io/DO.utils/reference/iff_all_vals.md)
   : Test for All Values
 
@@ -308,6 +314,9 @@ including, for example, those that assist with:
 
 - [`inventory_omim()`](https://diseaseontology.github.io/DO.utils/reference/inventory_omim.md)
   : Assess whether OMIM Data is in DO
+
+- [`inventory_omim_susc()`](https://diseaseontology.github.io/DO.utils/reference/inventory_omim_susc.md)
+  : Assess whether OMIM susceptibilities are in the DO
 
 - [`invert_sublists()`](https://diseaseontology.github.io/DO.utils/reference/invert_sublists.md)
   : Invert Sublists
@@ -333,15 +342,6 @@ including, for example, those that assist with:
 
 - [`is_boolean()`](https://diseaseontology.github.io/DO.utils/reference/lgl_predicates.md)
   : Logical predicate
-
-- [`make_contributor_html()`](https://diseaseontology.github.io/DO.utils/reference/make_contributor_html.md)
-  : Make "Contributors" HTML
-
-- [`make_use_case_html()`](https://diseaseontology.github.io/DO.utils/reference/make_use_case_html.md)
-  : Make HTML for DO Use Case Tables
-
-- [`make_user_list_html()`](https://diseaseontology.github.io/DO.utils/reference/make_user_list_html.md)
-  : Make HTML for DO User List (DEPRECATED)
 
 - [`match_carefully()`](https://diseaseontology.github.io/DO.utils/reference/match_carefully.md)
   : Matches Carefully
@@ -533,8 +533,14 @@ including, for example, those that assist with:
 - [`unnest_mapping()`](https://diseaseontology.github.io/DO.utils/reference/unnest_mapping.md)
   : Unnest Mapping
 
+- [`update_website_contributors()`](https://diseaseontology.github.io/DO.utils/reference/update_website_contributors.md)
+  : Update 'Registry of Contributor' Tables on Web Pages
+
 - [`update_website_count_tables()`](https://diseaseontology.github.io/DO.utils/reference/update_website_count_tables.md)
   : Update Counts in DO Website HTML
+
+- [`update_website_use_cases()`](https://diseaseontology.github.io/DO.utils/reference/update_website_use_cases.md)
+  : Update Table on Use Cases Page
 
 - [`vctr_to_string()`](https://diseaseontology.github.io/DO.utils/reference/vctr_to_string.md)
   [`unique_to_string()`](https://diseaseontology.github.io/DO.utils/reference/vctr_to_string.md)
