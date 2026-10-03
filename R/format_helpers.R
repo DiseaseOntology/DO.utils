@@ -15,7 +15,10 @@
 as_subtree_tidygraph <- function(subtree_df, top_node, id_string) {
   parent_col <- paste0("parent_", id_string)
   # keep all parent info in labels
-  label_df <- collapse_col(subtree_df, c(parent_col, "parent_label"))
+  label_df <- collapse_col(
+    subtree_df,
+    c(dplyr::all_of(parent_col), "parent_label")
+  )
 
   # exclude parents which are not subclasses of top_node (usually due to
   #   multi-parentage)
