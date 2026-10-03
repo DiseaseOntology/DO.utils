@@ -25,18 +25,18 @@ as_subtree_tidygraph <- function(subtree_df, top_node, id_string) {
   df <- fill_subclass(df, id_string)
 
   # create tidygraph
-  tg <- df %>%
-    dplyr::select(dplyr::all_of(c(id_string, parent_col))) %>%
-    tidygraph::as_tbl_graph() %>%
+  tg <- df |>
+    dplyr::select(dplyr::all_of(c(id_string, parent_col))) |>
+    tidygraph::as_tbl_graph() |>
     # fix needed for labels to match correctly
-    tidygraph::activate("nodes") %>%
+    tidygraph::activate("nodes") |>
     dplyr::mutate(
       name = dplyr::if_else(
         .data$name %in% label_df[[id_string]],
         .data$name,
         stringr::str_remove(.data$name, "-[0-9]+$")
       )
-    ) %>%
+    ) |>
     # add labels
     tidygraph::left_join(
       label_df,
@@ -66,13 +66,13 @@ pivot_subtree <- function(subtree_tg, top_node, id_string) {
   tg <- tidygraph::arrange(subtree_tg, .data$label)
 
   # get top_node position in tidygraph; required for depth-first search fxns
-  node_df <- tg %>%
-    tidygraph::activate("nodes") %>%
+  node_df <- tg |>
+    tidygraph::activate("nodes") |>
     tidygraph::as_tibble()
   root_pos <- which(node_df$name == top_node)
 
-  pivoted <- tg %>%
-    tidygraph::activate("nodes") %>%
+  pivoted <- tg |>
+    tidygraph::activate("nodes") |>
     tidygraph::mutate(
       order = tidygraph::dfs_rank(
         root = root_pos,
@@ -83,22 +83,22 @@ pivot_subtree <- function(subtree_tg, top_node, id_string) {
         mode = "in"
       ),
       insert = paste0("V", .data$dist)
-    ) %>%
-    tidygraph::arrange(.data$order) %>%
-    tidygraph::as_tibble() %>%
+    ) |>
+    tidygraph::arrange(.data$order) |>
+    tidygraph::as_tibble() |>
     # identify duplicates; useful when trying to identify changes over time
-    dplyr::mutate(duplicated = all_duplicated(.data$name)) %>%
+    dplyr::mutate(duplicated = all_duplicated(.data$name)) |>
     # mv supporting info to left & tree to right
     dplyr::select(
       dplyr::all_of(parent_col),
       "parent_label",
       id = "name",
       dplyr::everything()
-    ) %>%
+    ) |>
     tidyr::pivot_wider(
       names_from = "insert",
       values_from = "label"
-    ) %>%
+    ) |>
     # drop unnecessary info
     dplyr::select(-"order", -"dist")
 
@@ -125,12 +125,12 @@ fill_subclass <- function(subtree_df, id_string) {
 
   while (res_n > 0) {
     if (lvl == 1) {
-      new_rows[[lvl]] <- subtree_df %>%
-        dplyr::filter(duplicated(.data[[id_string]])) %>%
+      new_rows[[lvl]] <- subtree_df |>
+        dplyr::filter(duplicated(.data[[id_string]])) |>
         dplyr::mutate(id_new = paste(.data[[id_string]], lvl, sep = "-"))
     } else {
-      new_rows[[lvl]] <- subtree_df %>%
-        dplyr::filter(.data[[parent_col]] %in% new_rows[[lvl - 1]]$id) %>%
+      new_rows[[lvl]] <- subtree_df |>
+        dplyr::filter(.data[[parent_col]] %in% new_rows[[lvl - 1]]$id) |>
         dplyr::mutate(
           id_new = paste(.data[[id_string]], lvl, sep = "-"),
           parent_id_new = paste(.data[[parent_col]], lvl - 1, sep = "-")
@@ -138,18 +138,18 @@ fill_subclass <- function(subtree_df, id_string) {
     }
     res_n <- nrow(new_rows[[lvl]])
     if (res_n > 0) {
-      message(
+      rlang::inform(paste0(
         "Round ",
         lvl,
         ": ",
         res_n,
         " IDs need to have children filled."
-      )
+      ))
     }
     lvl <- lvl + 1
   }
 
-  filled_df <- dplyr::bind_rows(not_dup, new_rows) %>%
+  filled_df <- dplyr::bind_rows(not_dup, new_rows) |>
     dplyr::mutate(
       # currently using workaround for coalesce,
       #   https://github.com/tidyverse/funs/issues/54#issuecomment-892377998
@@ -161,7 +161,7 @@ fill_subclass <- function(subtree_df, id_string) {
         dplyr::coalesce,
         rev(dplyr::across(dplyr::starts_with(parent_col)))
       )
-    ) %>%
+    ) |>
     dplyr::select(
       dplyr::all_of(
         c(id_string, "label", parent_col, "parent_label")
@@ -184,7 +184,9 @@ fill_subclass <- function(subtree_df, id_string) {
 #' @family format_axiom() helpers
 #' @noRd
 label_properties <- function(x, property_df) {
-  stopifnot(all(c("property", "label") %in% names(property_df)))
+  if (!all(c("property", "label") %in% names(property_df))) {
+    rlang::abort("`property_df` must have 'property' and 'label' columns.")
+  }
 
   obo_ns_pattern <- paste0("(", ns_prefix["obo"], "|obo:)")
   ns_label <- paste0(
@@ -197,7 +199,7 @@ label_properties <- function(x, property_df) {
     property_df$label,
     "'"
   )
-  prop_replacement <- purrr::set_names(
+  prop_replacement <- rlang::set_names(
     ns_label,
     nm = stringr::str_replace(
       property_df$property,

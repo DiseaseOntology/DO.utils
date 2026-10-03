@@ -24,17 +24,24 @@
 #' collapse_to_string(c(3, 1, 2), 1:4, unique = TRUE)
 #'
 #' @export
-collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) {
-    assert_scalar_logical(na.rm)
+collapse_to_string <- function(
+  ...,
+  delim = "|",
+  na.rm = FALSE,
+  unique = FALSE
+) {
+  if (!rlang::is_scalar_logical(na.rm)) {
+    rlang::abort("`na.rm` must be TRUE or FALSE.")
+  }
 
-    x <- to_character(list(...))
-    if (unique) {
-        string <- unique_to_string(x, delim = delim, na.rm = na.rm)
-    } else {
-        string <- vctr_to_string(x, delim = delim, na.rm = na.rm)
-    }
+  x <- to_character(list(...))
+  if (unique) {
+    string <- unique_to_string(x, delim = delim, na.rm = na.rm)
+  } else {
+    string <- vctr_to_string(x, delim = delim, na.rm = na.rm)
+  }
 
-    string
+  string
 }
 
 
@@ -50,7 +57,7 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #'     "first", or "last".
 #' @inheritParams vctr_to_string
 #'
-#' @return
+#' @returns
 #' A data.frame with the specified columns collapsed. Also **NOTE** the
 #' following:
 #'
@@ -83,25 +90,30 @@ collapse_to_string <- function(..., delim = "|", na.rm = FALSE, unique = FALSE) 
 #' one or more specified columns.
 #'
 #' @export
-collapse_col <- function(df, .cols, delim = "|", method = "unique",
-                         na.rm = FALSE) {
-    valid_methods <- c("unique", "first", "last")
-    method <- match.arg(method, choices = valid_methods)
-    df %>%
-        dplyr::group_by(dplyr::across(-{{ .cols }})) %>%
-        dplyr::summarize(
-            dplyr::across(
-                .cols = dplyr::everything(),
-                .fns = ~ collapse_method(
-                    .x,
-                    method = method,
-                    delim = delim,
-                    na.rm = na.rm
-                )
-            )
-        ) %>%
-        dplyr::ungroup() %>%
-        dplyr::select(dplyr::all_of(names(df)))
+collapse_col <- function(
+  df,
+  .cols,
+  delim = "|",
+  method = "unique",
+  na.rm = FALSE
+) {
+  valid_methods <- c("unique", "first", "last")
+  method <- match.arg(method, choices = valid_methods)
+  df |>
+    dplyr::group_by(dplyr::across(-{{ .cols }})) |>
+    dplyr::summarize(
+      dplyr::across(
+        .cols = dplyr::everything(),
+        .fns = ~ collapse_method(
+          .x,
+          method = method,
+          delim = delim,
+          na.rm = na.rm
+        )
+      )
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::select(dplyr::all_of(names(df)))
 }
 
 
@@ -119,7 +131,7 @@ collapse_col <- function(df, .cols, delim = "|", method = "unique",
 #'     "first", or "last"
 #' @inheritParams vctr_to_string
 #'
-#' @return
+#' @returns
 #' A data.frame with the specified columns collapsed. Also **NOTE** the
 #' following:
 #'
@@ -158,46 +170,53 @@ collapse_col <- function(df, .cols, delim = "|", method = "unique",
 #' pseudo-reverse operation that lengthens/expands one or more specified columns.
 #'
 #' @export
-collapse_col_flex <- function(df, ..., method = "unique",
-                         delim = "|") {
+collapse_col_flex <- function(df, ..., method = "unique", delim = "|") {
+  # validate method argument
+  valid_methods <- c("unique", "first", "last")
+  method <- match.arg(method, choices = valid_methods)
 
-    # validate method argument
-    valid_methods <- c("unique", "first", "last")
-    method <- match.arg(method, choices = valid_methods)
+  dots_as_strings <- rlang::enexprs(...) |>
+    purrr::map(rlang::as_string)
 
-    dots_as_strings <- rlang::enexprs(...) %>%
-        purrr::map(rlang::as_string)
-
-    if (any(names(dots_as_strings) != "")) {
-        assertthat::assert_that(all(names(dots_as_strings) %in% names(df)))
-        assertthat::assert_that(
-            all(purrr::map_int(dots_as_strings, length) == 1),
-            all(dots_as_strings %in% valid_methods)
-        )
-
-        collapse_vars <- names(dots_as_strings)
-        c_method <- dots_as_strings
-    } else {
-        assertthat::assert_that(all(dots_as_strings %in% names(df)))
-        collapse_vars <- unlist(dots_as_strings)
-        c_method <- purrr::set_names(
-            rep(method, length(collapse_vars)),
-            nm = collapse_vars
-        )
+  if (any(names(dots_as_strings) != "")) {
+    if (!all(names(dots_as_strings) %in% names(df))) {
+      rlang::abort("Named arguments in `...` must be column names in `df`.")
+    }
+    if (
+      !all(purrr::map_int(dots_as_strings, length) == 1) ||
+        !all(dots_as_strings %in% valid_methods)
+    ) {
+      rlang::abort(paste0(
+        "Named argument values must be valid methods: ",
+        paste(valid_methods, collapse = ", ")
+      ))
     }
 
-    df %>%
-        dplyr::group_by(dplyr::across(-{{ collapse_vars }})) %>%
-        dplyr::summarize(
-            dplyr::across(
-                .cols = dplyr::everything(),
-                .fns = ~ collapse_method(
-                    .x,
-                    c_method[[dplyr::cur_column()]],
-                    delim = delim
-                )
-            )
-        ) %>%
-        dplyr::ungroup() %>%
-        dplyr::select(dplyr::all_of(names(df)))
+    collapse_vars <- names(dots_as_strings)
+    c_method <- dots_as_strings
+  } else {
+    if (!all(dots_as_strings %in% names(df))) {
+      rlang::abort("Arguments in `...` must be column names in `df`.")
+    }
+    collapse_vars <- unlist(dots_as_strings)
+    c_method <- rlang::set_names(
+      rep(method, length(collapse_vars)),
+      nm = collapse_vars
+    )
+  }
+
+  df |>
+    dplyr::group_by(dplyr::across(-{{ collapse_vars }})) |>
+    dplyr::summarize(
+      dplyr::across(
+        .cols = dplyr::everything(),
+        .fns = ~ collapse_method(
+          .x,
+          c_method[[dplyr::cur_column()]],
+          delim = delim
+        )
+      )
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::select(dplyr::all_of(names(df)))
 }

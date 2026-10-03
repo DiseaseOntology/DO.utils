@@ -1,0 +1,50 @@
+# SPARQL query: List all mappings output as SSSOM
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX obo: <http://purl.obolibrary.org/obo/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT ?subject_id ?subject_label ?predicate_id ?object_id 
+  ?subject_source_version ?status
+WHERE {
+  VALUES ?predicate_id {
+    oboInOwl:hasDbXref
+    skos:exactMatch skos:closeMatch
+    skos:broadMatch skos:narrowMatch
+    skos:relatedMatch
+  }
+
+  ?class a owl:Class ;
+    oboInOwl:id ?subject_id ;
+    rdfs:label ?lang_raw ;
+    ?predicate_id ?object_id .
+
+  # limit to default language labels only (English)
+  FILTER(langMatches(lang(?lang_raw), "en") || lang(?lang_raw) = "")
+  BIND(str(?lang_raw) AS ?subject_label)
+
+  # for subject_source_version: get version IRI (with fall back to today's date)
+  OPTIONAL {
+    ?ontology a owl:Ontology ;
+      owl:versionIRI ?versionIRI .
+ }
+  BIND(now() as ?datetime)
+  BIND(
+    COALESCE(
+      ?versionIRI,
+      CONCAT(year(?datetime), "-", month(?datetime), "-", day(?datetime))
+    ) AS ?subject_source_version
+  )
+
+  # for status: deprecated or active
+  OPTIONAL { ?class owl:deprecated ?deprecated . }
+  BIND(
+    if(
+      BOUND(?deprecated) && ?deprecated = true,
+      "deprecated",
+      "active"
+    ) AS ?status
+)
+}

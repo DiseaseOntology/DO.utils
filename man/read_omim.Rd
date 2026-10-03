@@ -47,13 +47,17 @@ containing the search used.
 representing the OMIM phenotypic series itself.
 }
 
-Output with columns typical OMIM phenotype entries, including \code{omim_PS}, will
-have an additional \code{geno_inheritance} column containing a best guess at
-inheritance from the GENO ontology. This simplifies adding inheritance as
-logical subClassOf axioms supporting curation.
+Output with typical OMIM phenotype entries, including \code{omim_PS}, will have 2
+additional columns to simplify and support curation:
+\enumerate{
+\item \strong{\code{title_std} (search) or \code{phenotype_std} (entries/phenotypic series):}
+the standardized phenotype name, as produced by \code{\link[=parse_omim_name]{parse_omim_name()}}
+\item \strong{\code{geno_inheritance}}: containing a best guess at inheritance from the
+GENO ontology
+}
 
 NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
-entries but column are ordered differently.
+entries but columns are ordered differently.
 }
 \description{
 Reads and formats OMIM data copied or manually downloaded from

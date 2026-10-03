@@ -4,7 +4,7 @@
 \alias{get_bioc_pkg_stats}
 \title{Get Bioconductor Package Statistics}
 \usage{
-get_bioc_pkg_stats(pkg, pkg_type, yr, delay_rng)
+get_bioc_pkg_stats(pkg, pkg_type, yr = NULL, delay_rng = c(1, 10))
 }
 \arguments{
 \item{pkg}{character vector; name of Bioconductor package(s)}
@@ -13,8 +13,9 @@ get_bioc_pkg_stats(pkg, pkg_type, yr, delay_rng)
 of Bioconductor package; one of "software", "annotation", "experiment", or
 "workflow"}
 
-\item{yr}{character scalar; 4-digit year of stats desired,
-default = current year (currently implemented only for single yr)}
+\item{yr}{character scalar; 4-digit year of stats desired; if \code{NULL}
+(default), will use the current year (currently implemented only for single
+yr)}
 
 \item{delay_rng}{\code{c(min, max)} number of seconds to wait between requests;
 default = \code{c(1, 10)}}

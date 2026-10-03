@@ -1,3 +1,95 @@
+# DO.utils (development version)
+
+# DO.utils 0.3.7
+
+## Website
+
+### BREAKING CHANGES
+* `make_use_case_html()`, `make_user_list_html()`, and `make_contributor_html()` are now **_hard deprecated_**, replaced by `update_use_cases_html()` and `update_website_contributors()`.
+
+### New
+* `build_datatable_html()` replaces the `tableHTML` dependency, preparing DataTables-compatible table output.
+* `update_use_cases_html()` replaces `make_use_case_html()`, adding support for pill-box, category-based search alongside text search.
+* `update_website_contributors()` replaces `make_contributor_html()`, using a new input format with data derived and managed by GHContrib.
+
+### Updates
+* `get_html_table()` (internal) simplified output with the new `html_indent` class.
+
+## DO Management & Analysis
+
+### New
+* `inventory_omim_susc()` extends OMIM inventory capabilities.
+    * `prefer_mim()` (internal) encapsulates the OMIM-to-MIM prefix preference change.
+
+## Internal
+* Fixed errors and style issues identified by `lintr`
+
+
+# DO.utils 0.3.6
+
+## Internal
+
+* Reformatted all files with [air](https://posit-dev.github.io/air/) for consistent code style.
+* Replaced the magrittr pipe (`%>%`) throughout with the base pipe (`|>`), dropping the magrittr dependency.
+* Standardized condition signaling (errors, warnings, messages) and name setting on `rlang`.
+* Updated data masking and tidy selection to current dplyr/tidyselect conventions.
+* Replaced fragile iterator super-assignment (`<<-`) patterns with plain `for` loops.
+* Fixed miscellaneous fragile or otherwise poor code in older functions.
+* Replaced roxygen2 `@return` tags with `@returns` throughout.
+
+
+# DO.utils 0.3.5
+
+## General
+
+### BREAKING CHANGES
+* `parse_omim_name()` no longer accepts data frame input; the `col` argument has been dropped. Output is now a character vector of normalized names with abbreviations preserved (previously a tibble with `name` and `abbreviation` columns).
+
+### New
+* `paste_na_rm()` pastes elements together while omitting `NA` values, returning `NA` only if all values are `NA`.
+* `omim_qualifiers` dataset: a character vector of OMIM adjective qualifier tokens (e.g. `CONGENITAL`, `SYNDROMIC`) used by `parse_omim_name()` to control name rearrangement.
+
+### Updates
+* `parse_omim_name()` gains a `qualifiers` argument (defaulting to `omim_qualifiers`) for finer control over name rearrangement; formatting improvements include appending alphanumeric suffixes with a space instead of a hyphen, and improved roman numeral and single-letter capitalization.
+* `read_omim()` now adds a standardized name column — `title_std` for search results and `phenotype_std` for entries/phenotypic series — using `parse_omim_name()`.
+* `disease_cap_patterns` and `disease_eponyms` datasets updated.
+
+## DO Management & Analysis
+
+### Updates
+* `tidy_sparql()` now signals an error for unrecognized `tidy_what` values instead of silently dropping them.
+
+
+# DO.utils 0.3.4
+
+## General
+
+### New
+* `parse_omim_name()` parses OMIM entry names with inverted filing convention, converting them to normalized, case-corrected names and abbreviations. Supports both character vectors and data frame input.
+* `is_uri()` tests whether values are valid URIs, with optional checking for empty URIs.
+* `max_paren_depth()` calculates the maximum nesting depth of parentheses in strings, with options for handling unmatched parentheses.
+* `as_html_img()` vectorized constructor for HTML `img` tags with required `src` and `alt` attributes.
+* `build_html_element()` vectorized constructor for HTML elements with support for tags, attributes, and content, distinguishing between required and optional tags.
+* `hyperlink_curie()` converts CURIEs to hyperlinks formatted for Google Sheets, Excel, or HTML display, building on `build_hyperlink()`.
+
+### Updates
+* ggplot2 dependency updated to >= 3.4.0 from unversioned requirement.
+* `theme_DO()` margins widened to avoid label truncation and updated internally to align with ggplot2 3.4.0+ API changes (deprecated `size` parameter).
+* `append_to_url()` now returns `NA` for non-URIs, improving consistency with the new `is_uri()` function.
+* `read_delim_auto()` extended to handle literal data in addition to file paths.
+* `read_omim()` improved auto-identification of headers in OMIM data.
+* `write_gs()` updated with new `data.frame` method alongside existing methods.
+* `elucidate.omim_inventory()` fixed reporting logic for deprecated classes.
+
+## DO Management & Analysis
+
+### New
+* `extract_obo_mappings()` extracts mappings from OBO Foundry ontologies in SSSOM format with optional filtering by ID. Handles version extraction and date suffix processing.
+
+### Updates
+* OBO formatting function validation predicates fixed and formatting functions updated.
+
+
 # DO.utils 0.3.3
 
 ## Updates

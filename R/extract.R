@@ -27,7 +27,7 @@ extract_pmid.pmc_search <- function(x, ...) {
   pmids <- x$pmids
 
   if (length(pmids) == 0) {
-    stop("No PMIDs available. Was 'pmid' set to TRUE in search_pmc()?")
+    rlang::abort("No PMIDs available. Was 'pmid' set to TRUE in search_pmc()?")
   }
 
   pmid_missing <- is.na(pmids)
@@ -36,16 +36,15 @@ extract_pmid.pmc_search <- function(x, ...) {
     n_id <- length(pmids)
     pct_missing <- round(n_missing / n_id, 2)
 
-    warning(
+    rlang::warn(paste0(
       n_missing,
       " of ",
       n_id,
       " (",
       pct_missing,
       "%)",
-      " PMIDs are missing. Consider extracting PMCIDs.",
-      call. = FALSE
-    )
+      " PMIDs are missing. Consider extracting PMCIDs."
+    ))
   }
 
   pmids
@@ -57,7 +56,9 @@ extract_pmid.data.frame <- function(x, ...) {
   df <- dplyr::rename_with(x, .fn = tolower)
 
   if (!"pmid" %in% names(df)) {
-    stop("PMID column could not be identified. Name must be 'pmid' or 'PMID').")
+    rlang::abort(
+      "PMID column could not be identified. Name must be 'pmid' or 'PMID'."
+    )
   }
 
   pmids <- df$pmid
@@ -68,16 +69,15 @@ extract_pmid.data.frame <- function(x, ...) {
     n_id <- length(pmids)
     pct_missing <- round(n_missing / n_id, 2)
 
-    warning(
+    rlang::warn(paste0(
       n_missing,
       " of ",
       n_id,
       " (",
       pct_missing,
       "%)",
-      " PMIDs are missing. Consider extracting alternate IDs, if available.",
-      call. = FALSE
-    )
+      " PMIDs are missing. Consider extracting alternate IDs, if available."
+    ))
   }
 
   pmids
@@ -130,18 +130,18 @@ extract_pmid.elink <- function(
   }
 
   if (pm_n > 1 && is.null(linkname)) {
-    stop(
-      "linkname must be specified when elink object contains more than
-                one pubmed result. Identified linknames: ",
+    rlang::abort(paste0(
+      "linkname must be specified when elink object contains more than one ",
+      "pubmed result. Identified linknames: ",
       vctr_to_string(nm[pm_res], delim = ", ")
-    )
+    ))
   }
 
   pmid <- if (!is.null(linkname)) {
     x$links[[linkname]]
   } else {
     if (!quietly && length(nm) > 1) {
-      message("PubMed linkname identified: ", nm[pm_res])
+      rlang::inform(paste0("PubMed linkname identified: ", nm[pm_res]))
     }
     x$links[[pm_res]]
   }
@@ -179,7 +179,7 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
             )
           } else {
             cond_msg <<- cond$message
-            return(NULL)
+            NULL
           }
         }
       )
@@ -190,11 +190,11 @@ extract_pmid.elink_list <- function(x, no_result = "warning", ...) {
   # keep only those with results
   out <- purrr::compact(res)
   discard <- names(res)[!names(res) %in% names(out)]
-  if (no_result != "none" & length(discard) > 0) {
+  if (no_result != "none" && length(discard) > 0) {
     rlang::signal(
       message = c(
         paste0(cond_msg, ", discarded:"),
-        purrr::set_names(discard, rep("i", length(discard)))
+        rlang::set_names(discard, rep("i", length(discard)))
       ),
       class = c("no_result", no_result),
       use_cli_format = TRUE
@@ -261,7 +261,7 @@ extract_pm_date <- function(citation) {
 #' @param w_raw_match Whether to include the full line of doid-edit.owl where
 #'     each URL was extracted from, as a boolean (default: `FALSE`).
 #'
-#' @return
+#' @returns
 #' A tibble of DOIDs and their associated URLs.
 #'
 #' @noRd
@@ -279,8 +279,8 @@ extract_doid_url <- function(
   )
 
   # tidy
-  df <- df %>%
-    tidyr::unnest_longer(.data$url_str) %>%
+  df <- df |>
+    tidyr::unnest_longer(.data$url_str) |>
     dplyr::mutate(
       doid = stringr::str_replace(.data$doid, ".*DOID[_:]", "DOID:"),
       url = stringr::str_remove_all(.data$url_str, '^url:|"'),
@@ -424,12 +424,15 @@ extract_subtree <- function(x, top_node, reload = FALSE) {
   rlang::warn(
     "`extract_subtree()` is deprecated. Use `extract_obo_class()` instead."
   )
+
   owl <- access_owl_xml(x)
-  assert_string(top_node)
+  if (!rlang::is_string(top_node)) {
+    rlang::abort("`top_node` must be a string.")
+  }
 
   top_class <- format_doid(top_node, as = "obo_curie")
   q <- glue::glue(subtree_query_glue)
-  subtree <- owl$query(q, reload = reload) %>%
+  subtree <- owl$query(q, reload = reload) |>
     tibble::as_tibble()
 
   subtree
@@ -544,7 +547,7 @@ extract_as_tidygraph <- function(
     info["query"] <- query
   }
 
-  qres <- x$query(query) %>%
+  qres <- x$query(query) |>
     tidy_sparql()
   qres <- collapse_col(
     qres,
@@ -558,8 +561,8 @@ extract_as_tidygraph <- function(
   annotate <- dplyr::bind_rows(
     dplyr::select(qres, -dplyr::one_of("parent", "plabel")),
     dplyr::select(qres, "id" = "parent", "label" = "plabel")
-  ) %>%
-    dplyr::rename("name" = "id") %>%
+  ) |>
+    dplyr::rename("name" = "id") |>
     unique()
   if (debug) {
     info["annotation_df"] <- annotate
@@ -567,8 +570,8 @@ extract_as_tidygraph <- function(
 
   tg <- tidygraph::as_tbl_graph(
     dplyr::select(qres, "id", "parent")
-  ) %>%
-    tidygraph::activate("nodes") %>%
+  ) |>
+    tidygraph::activate("nodes") |>
     dplyr::left_join(annotate, by = "name")
   if (debug) {
     info["tidygraph"] <- tg

@@ -22,5 +22,5 @@
 #'
 #' @export
 wrap_onscreen <- function(msg, exdent = 2, ...) {
-    paste0(strwrap(msg, exdent = exdent, ...), collapse = "\n")
+  paste0(strwrap(msg, exdent = exdent, ...), collapse = "\n")
 }

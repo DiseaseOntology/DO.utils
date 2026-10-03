@@ -18,15 +18,15 @@
 #'
 #' @export
 drop_blank <- function(x) {
-    UseMethod("drop_blank")
+  UseMethod("drop_blank")
 }
 
 #' @export
 drop_blank.character <- function(x) {
-    x[!is_blank(x)]
+  x[!is_blank(x)]
 }
 
 #' @export
 drop_blank.list <- function(x) {
-    purrr::map(x, ~ .x[!is_blank(.x)])
+  purrr::map(x, ~ .x[!is_blank(.x)])
 }

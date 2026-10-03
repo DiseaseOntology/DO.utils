@@ -4,12 +4,17 @@
 \alias{download_alliance_tsv}
 \title{Download Alliance .tsv.gz File}
 \usage{
-download_alliance_tsv(dest_dir, url = NULL, ...)
+download_alliance_tsv(
+  dest_dir,
+  url = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz",
+  ...
+)
 }
 \arguments{
 \item{dest_dir}{path to directory where file will be saved}
 
-\item{url}{URL to Alliance file; if not provided, will be requested at console}
+\item{url}{URL to Alliance file; the default is the Alliance's complete
+disease-linked data file}
 
 \item{...}{Additional arguments passed on to \code{\link[utils:download.file]{utils::download.file()}}.}
 }

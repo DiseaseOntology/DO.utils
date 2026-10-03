@@ -1,0 +1,22 @@
+# SPARQL query: List all OMIM susceptibilities with their related disease IRIs
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX RO: <http://purl.obolibrary.org/obo/RO_>
+
+SELECT ?iri ?label ?dep ?do_iri
+WHERE {
+    ?iri a owl:Class ;
+        rdfs:label ?label_raw .
+
+    OPTIONAL { ?iri owl:deprecated ?dep_untidy . }
+    OPTIONAL {
+        ?iri rdfs:subClassOf ?restriction .
+        ?restriction owl:onProperty RO:0003304 ; # contributes to condition
+            owl:someValuesFrom ?do_iri .
+    }
+
+    # clean up output: F where missing and no language tags
+    BIND( if( BOUND( ?dep_untidy ), ?dep_untidy, false) AS ?dep)
+    BIND( str(?label_raw) AS ?label )
+}
