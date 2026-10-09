@@ -24,7 +24,7 @@ more than one result in the case of ties.}
 a term.}
 
 \item{...}{
-  Arguments passed on to \code{\link[=extract_ScoredMatch]{extract_ScoredMatch}}
+  Arguments passed on to \code{\link{extract_ScoredMatch}}
   \describe{
     \item{\code{prefix}}{\emph{Optional} prefix to add to namespace local unique identifiers
 (LUI; e.g. 4, the LUI for "disease" in DO), as a string; preferably to

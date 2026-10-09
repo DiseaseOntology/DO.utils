@@ -12,7 +12,7 @@ unnest_cross(data, cols, ...)
 \item{cols}{<\code{\link[tidyr:tidyr_tidy_select]{tidy-select}}> Columns to unnest.}
 
 \item{...}{
-  Arguments passed on to \code{\link[tidyr:chop]{tidyr::unchop}}, \code{\link[tidyr:pack]{tidyr::unpack}}
+  Arguments passed on to \code{\link[tidyr:unchop]{tidyr::unchop}}, \code{\link[tidyr:unpack]{tidyr::unpack}}
   \describe{
     \item{\code{error_call}}{The execution environment of a currently
 running function, e.g. \code{caller_env()}. The function will be
@@ -28,6 +28,17 @@ of missing values.}
 coerce \code{cols} to, overriding the default that will be guessed from
 combining the individual values. Alternatively, a single empty ptype
 can be supplied, which will be applied to all \code{cols}.}
+    \item{\code{data,.data}}{A data frame.}
+    \item{\code{names_sep,.names_sep}}{If \code{NULL}, the default, the names will be left
+as is. In \code{pack()}, inner names will come from the former outer names;
+in \code{unpack()}, the new outer names will come from the inner names.
+
+If a string, the inner and outer names will be used together. In
+\code{unpack()}, the names of the new outer columns will be formed by pasting
+together the outer and the inner column names, separated by \code{names_sep}. In
+\code{pack()}, the new inner names will have the outer names + \code{names_sep}
+automatically stripped. This makes \code{names_sep} roughly symmetric between
+packing and unpacking.}
     \item{\code{names_repair}}{Used to check that output data frame has valid
 names. Must be one of the following options:
 \itemize{
@@ -42,6 +53,10 @@ names. Must be one of the following options:
 
 See \code{\link[vctrs:vec_as_names]{vctrs::vec_as_names()}} for more details on these terms and the
 strategies used to enforce them.}
+    \item{\code{error_call,.error_call}}{The execution environment of a currently
+running function, e.g. \code{caller_env()}. The function will be
+mentioned in error messages as the source of the error. See the
+\code{call} argument of \code{\link[rlang:abort]{abort()}} for more information.}
   }}
 }
 \description{

@@ -17,8 +17,8 @@ Equivalent class axioms in OWL functional format, as a character vector.
 Extract \code{owl:equivalentClass} axioms from the doid-edit.owl file.
 }
 \seealso{
-Other \verb{extract_*_axiom} functions: 
-\code{\link{extract_class_axiom}()},
-\code{\link{extract_subclass_axiom}()}
+Other \verb{extract_*_axiom} functions:
+\code{\link[=extract_class_axiom]{extract_class_axiom()}},
+\code{\link[=extract_subclass_axiom]{extract_subclass_axiom()}}
 }
 \concept{\verb{extract_*_axiom} functions}

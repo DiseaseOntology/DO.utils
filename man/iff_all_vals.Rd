@@ -20,12 +20,12 @@ Returns \code{TRUE} if, and only if, all \code{values} are present in \code{x} a
 those \code{values} are present in \code{x}.
 }
 \seealso{
-Other predicates: 
-\code{\link{all_duplicated}()},
+Other predicates:
+\code{\link[=all_duplicated]{all_duplicated()}},
 \code{\link{char_val_predicates}},
-\code{\link{is_curie}()},
-\code{\link{is_invariant}()},
-\code{\link{is_uri}()},
+\code{\link[=is_curie]{is_curie()}},
+\code{\link[=is_invariant]{is_invariant()}},
+\code{\link[=is_uri]{is_uri()}},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}

@@ -19,8 +19,8 @@ Extract \code{owl:equivalentClass} and \code{owl:subClassOf} axioms from the
 doid-edit.owl file.
 }
 \seealso{
-Other \verb{extract_*_axiom} functions: 
-\code{\link{extract_eq_axiom}()},
-\code{\link{extract_subclass_axiom}()}
+Other \verb{extract_*_axiom} functions:
+\code{\link[=extract_eq_axiom]{extract_eq_axiom()}},
+\code{\link[=extract_subclass_axiom]{extract_subclass_axiom()}}
 }
 \concept{\verb{extract_*_axiom} functions}
