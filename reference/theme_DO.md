@@ -35,4 +35,5 @@ theme_DO(
 
 ## Background
 
-For more information refer to ggplot2's theme documentation.
+For more information refer to ggplot2's [theme
+documentation](https://ggplot2.tidyverse.org/reference/ggtheme.html).

@@ -52,6 +52,23 @@ unnest_cross(data, cols, ...)
       combining the individual values. Alternatively, a single empty
       ptype can be supplied, which will be applied to all `cols`.
 
+  `data,.data`
+
+  :   A data frame.
+
+  `names_sep,.names_sep`
+
+  :   If `NULL`, the default, the names will be left as is. In `pack()`,
+      inner names will come from the former outer names; in `unpack()`,
+      the new outer names will come from the inner names.
+
+      If a string, the inner and outer names will be used together. In
+      `unpack()`, the names of the new outer columns will be formed by
+      pasting together the outer and the inner column names, separated
+      by `names_sep`. In `pack()`, the new inner names will have the
+      outer names + `names_sep` automatically stripped. This makes
+      `names_sep` roughly symmetric between packing and unpacking.
+
   `names_repair`
 
   :   Used to check that output data frame has valid names. Must be one
@@ -78,6 +95,14 @@ unnest_cross(data, cols, ...)
       [`vctrs::vec_as_names()`](https://vctrs.r-lib.org/reference/vec_as_names.html)
       for more details on these terms and the strategies used to enforce
       them.
+
+  `error_call,.error_call`
+
+  :   The execution environment of a currently running function, e.g.
+      `caller_env()`. The function will be mentioned in error messages
+      as the source of the error. See the `call` argument of
+      [`abort()`](https://rlang.r-lib.org/reference/abort.html) for more
+      information.
 
 ## Examples
 

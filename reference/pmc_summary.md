@@ -15,9 +15,14 @@ pmc_summary(input, config = NULL, version = "2.0", retmode = "xml", ...)
 
 - input:
 
-  One of the following: 1. A vector with unique PubMed Central IDs. 2. A
-  list of vectors with unique PubMed Central IDs. 3. A `web_history`
-  object (see NCBI Entrez API documentation for information).
+  One of the following:
+
+  1.  A vector with unique PubMed Central IDs.
+
+  2.  A list of vectors with unique PubMed Central IDs.
+
+  3.  A `web_history` object (see NCBI Entrez API documentation for
+      information).
 
 - config:
 

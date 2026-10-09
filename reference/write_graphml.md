@@ -15,7 +15,8 @@ write_graphml(graph, file)
 
   A
   [tidygraph](https://tidygraph.data-imaginist.com/reference/tidygraph-package.html)
-  or igraph object.
+  or [igraph](https://r.igraph.org/reference/aaa-igraph-package.html)
+  object.
 
 - file:
 

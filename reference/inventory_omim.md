@@ -13,7 +13,8 @@ inventory_omim(
   omim_input,
   keep_mim = c("#", "%"),
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-  when_pred_NA = "error"
+  when_pred_NA = "error",
+  .robot_path = NULL
 )
 ```
 
@@ -65,6 +66,14 @@ inventory_omim(
   "error" (default), "warn", or NULL (do nothing). `NA` predicates are
   *always* ignored when no mapping exists (i.e. one or both
   corresponding values of `x` or `y` is/are also `NA`).
+
+- .robot_path:
+
+  The path to a ROBOT executable or .jar file, as a string. When `NULL`
+  (default), if a system ROBOT executable is available it will be used,
+  otherwise an error will be signaled.
+
+  **NOTE:** `DO.utils` caches the last ROBOT used for future use.
 
 ## Value
 
