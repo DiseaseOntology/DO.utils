@@ -32,7 +32,7 @@ not be necessary.
 }
 
 \seealso{
-Other pyDOID classes: 
-\code{\link{DOrepo}()}
+Other pyDOID classes:
+\code{\link[=DOrepo]{DOrepo()}}
 }
 \concept{pyDOID classes}

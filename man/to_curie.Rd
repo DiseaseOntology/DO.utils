@@ -52,7 +52,7 @@ to_curie(
 
 }
 \seealso{
-Other identifier converters: 
-\code{\link{to_uri}()}
+Other identifier converters:
+\code{\link[=to_uri]{to_uri()}}
 }
 \concept{identifier converters}

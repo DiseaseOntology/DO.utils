@@ -8,10 +8,12 @@ pmc_summary(input, config = NULL, version = "2.0", retmode = "xml", ...)
 }
 \arguments{
 \item{input}{One of the following:
-1. A vector with unique PubMed Central IDs.
-2. A list of vectors with unique PubMed Central IDs.
-3. A \code{web_history} object (see NCBI Entrez API documentation for
-information).}
+\enumerate{
+\item A vector with unique PubMed Central IDs.
+\item A list of vectors with unique PubMed Central IDs.
+\item A \code{web_history} object (see NCBI Entrez API documentation for
+information).
+}}
 
 \item{config}{vector configuration options passed to \code{httr::GET}}
 

@@ -12,6 +12,7 @@
 #'   NOTE: If an `omim_tbl` is provided, `keep_mim` will be ignored.
 #' @inheritParams read_omim
 #' @inheritParams multimaps
+#' @inheritParams robot_query
 #'
 #' @returns
 #' The `omim_input` with 5 additional columns:
@@ -46,7 +47,8 @@ inventory_omim <- function(
   omim_input,
   keep_mim = c("#", "%"),
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-  when_pred_NA = "error"
+  when_pred_NA = "error",
+  .robot_path = NULL
 ) {
   if (!file.exists(onto_path)) {
     rlang::abort("`onto_path` does not exist.")
@@ -69,7 +71,7 @@ inventory_omim <- function(
     package = "DO.utils",
     mustWork = TRUE
   )
-  do_mappings <- robot_query(onto_path, q, tidy_what = "everything")
+  do_mappings <- robot_query(onto_path, q, tidy_what = "everything", .robot_path = .robot_path)
 
   do_omim <- do_mappings |>
     dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) |>

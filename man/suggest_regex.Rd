@@ -47,9 +47,9 @@ suggest_regex(x, "long")
 \seealso{
 \code{\link[=print.suggested_regex]{print.suggested_regex()}} for the print method.
 
-Other general utilities: 
-\code{\link{length_sort}()},
-\code{\link{max_paren_depth}()},
-\code{\link{sandwich_text}()}
+Other general utilities:
+\code{\link[=length_sort]{length_sort()}},
+\code{\link[=max_paren_depth]{max_paren_depth()}},
+\code{\link[=sandwich_text]{sandwich_text()}}
 }
 \concept{general utilities}

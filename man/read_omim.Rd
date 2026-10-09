@@ -26,7 +26,7 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
 }}
 
 \item{...}{
-  Arguments passed on to \code{\link[=read_delim_auto]{read_delim_auto}}
+  Arguments passed on to \code{\link{read_delim_auto}}
   \describe{
     \item{\code{strict}}{Whether delimiter should be found in all lines (default:
 \code{TRUE}), or just a majority of lines. If \code{FALSE}, an attempt is made to guess

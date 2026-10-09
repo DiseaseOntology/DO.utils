@@ -30,9 +30,9 @@ sandwich_text("bah", placeholder = "h", add_dup = FALSE)
 
 }
 \seealso{
-Other general utilities: 
-\code{\link{length_sort}()},
-\code{\link{max_paren_depth}()},
-\code{\link{suggest_regex}()}
+Other general utilities:
+\code{\link[=length_sort]{length_sort()}},
+\code{\link[=max_paren_depth]{max_paren_depth()}},
+\code{\link[=suggest_regex]{suggest_regex()}}
 }
 \concept{general utilities}
