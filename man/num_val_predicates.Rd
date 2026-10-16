@@ -28,21 +28,21 @@ in numeric vectors.
 }
 \details{
 \code{is_whole_number()} should generally be used when a whole number is
-desired (whether integer or double) instead of \link[base:integer]{base::is.integer} or the
-\link[rlang:type-predicates]{rlang::is_integer} family because those test the data type no the value.
+desired (whether integer or double) instead of \link[base:is.integer]{base::is.integer} or the
+\link[rlang:is_integer]{rlang::is_integer} family because those test the data type no the value.
 }
 \seealso{
-Other value predicates: 
+Other value predicates:
 \code{\link{char_val_predicates}},
-\code{\link{is_invariant}()}
+\code{\link[=is_invariant]{is_invariant()}}
 
-Other predicates: 
-\code{\link{all_duplicated}()},
+Other predicates:
+\code{\link[=all_duplicated]{all_duplicated()}},
 \code{\link{char_val_predicates}},
-\code{\link{iff_all_vals}()},
-\code{\link{is_curie}()},
-\code{\link{is_invariant}()},
-\code{\link{is_uri}()},
+\code{\link[=iff_all_vals]{iff_all_vals()}},
+\code{\link[=is_curie]{is_curie()}},
+\code{\link[=is_invariant]{is_invariant()}},
+\code{\link[=is_uri]{is_uri()}},
 \code{\link{lgl_predicates}},
 \code{\link{obo_ID_predicates}}
 }

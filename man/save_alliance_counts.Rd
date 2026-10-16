@@ -12,7 +12,7 @@ save_alliance_counts(counts_tbl, file, ...)
 
 \item{file}{file to write to}
 
-\item{...}{arguments to pass on to \code{\link[readr:write_delim]{readr::write_csv()}}}
+\item{...}{arguments to pass on to \code{\link[readr:write_csv]{readr::write_csv()}}}
 }
 \value{
 Returns the \code{counts_tbl} with its version info footer invisibly.
@@ -22,9 +22,9 @@ Writes Alliance record counts to a .csv file with the version info of the
 Alliance file it came from as a footer.
 }
 \seealso{
-Other Alliance functions: 
-\code{\link{count_alliance_records}()},
-\code{\link{download_alliance_tsv}()},
-\code{\link{read_alliance}()}
+Other Alliance functions:
+\code{\link[=count_alliance_records]{count_alliance_records()}},
+\code{\link[=download_alliance_tsv]{download_alliance_tsv()}},
+\code{\link[=read_alliance]{read_alliance()}}
 }
 \concept{Alliance functions}

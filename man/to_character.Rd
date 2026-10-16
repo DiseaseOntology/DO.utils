@@ -12,7 +12,7 @@ to_character(x, ...)
 \item{...}{further arguments passed to or from other methods.}
 }
 \description{
-Provides all character conversion methods of \code{\link[base:character]{base::as.character()}} and
+Provides all character conversion methods of \code{\link[base:as.character]{base::as.character()}} and
 additional methods for lists and data.frames. \code{to_character()} was created to
 enable \code{\link[=collapse_to_string]{collapse_to_string()}} to handle many data types while avoiding unintended
 conversions to character, which would have occurred if these methods were

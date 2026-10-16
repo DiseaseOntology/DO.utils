@@ -9,7 +9,8 @@ inventory_omim(
   omim_input,
   keep_mim = c("#", "\%"),
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-  when_pred_NA = "error"
+  when_pred_NA = "error",
+  .robot_path = NULL
 )
 }
 \arguments{
@@ -44,6 +45,12 @@ ignored.}
 string; one of "error" (default), "warn", or NULL (do nothing). \code{NA}
 predicates are \emph{always} ignored when no mapping exists (i.e. one or both
 corresponding values of \code{x} or \code{y} is/are also \code{NA}).}
+
+\item{.robot_path}{The path to a ROBOT executable or .jar file, as a string.
+When \code{NULL} (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.
+
+\strong{NOTE:} \code{DO.utils} caches the last ROBOT used for future use.}
 }
 \value{
 The \code{omim_input} with 5 additional columns:

@@ -13,10 +13,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{rentrez}{\code{\link[rentrez]{set_entrez_key}}}
+  \item{rentrez}{\code{\link[rentrez:set_entrez_key]{set_entrez_key()}}}
 
-  \item{tibble}{\code{\link[tibble]{as_tibble}}}
+  \item{tibble}{\code{\link[tibble:as_tibble]{as_tibble()}}}
 
-  \item{tidyr}{\code{\link[tidyr]{replace_na}}}
+  \item{tidyr}{\code{\link[tidyr:replace_na]{replace_na()}}}
 }}
 

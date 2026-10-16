@@ -17,12 +17,12 @@ Built on \code{\link[base:duplicated]{base::duplicated()}} but, unlike \code{bas
 identifies all duplicates \emph{including} the first occurrence.
 }
 \seealso{
-Other predicates: 
+Other predicates:
 \code{\link{char_val_predicates}},
-\code{\link{iff_all_vals}()},
-\code{\link{is_curie}()},
-\code{\link{is_invariant}()},
-\code{\link{is_uri}()},
+\code{\link[=iff_all_vals]{iff_all_vals()}},
+\code{\link[=is_curie]{is_curie()}},
+\code{\link[=is_invariant]{is_invariant()}},
+\code{\link[=is_uri]{is_uri()}},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}

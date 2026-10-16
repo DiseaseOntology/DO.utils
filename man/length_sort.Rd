@@ -73,9 +73,9 @@ length_order(x, c("y", "z"), decreasing = TRUE)
 
 }
 \seealso{
-Other general utilities: 
-\code{\link{max_paren_depth}()},
-\code{\link{sandwich_text}()},
-\code{\link{suggest_regex}()}
+Other general utilities:
+\code{\link[=max_paren_depth]{max_paren_depth()}},
+\code{\link[=sandwich_text]{sandwich_text()}},
+\code{\link[=suggest_regex]{suggest_regex()}}
 }
 \concept{general utilities}

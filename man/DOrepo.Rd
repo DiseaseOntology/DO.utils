@@ -39,7 +39,7 @@ instantiation of \code{DOrepo}, but are loaded automatically when the first
 }
 
 \seealso{
-Other pyDOID classes: 
-\code{\link{owl_xml}()}
+Other pyDOID classes:
+\code{\link[=owl_xml]{owl_xml()}}
 }
 \concept{pyDOID classes}

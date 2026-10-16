@@ -50,7 +50,7 @@ List PubMed publications citing those specified by \code{id}, optionally split
 \code{by_id}.
 }
 \seealso{
-Other citedby_functions: 
-\code{\link{citedby_scopus}()}
+Other citedby_functions:
+\code{\link[=citedby_scopus]{citedby_scopus()}}
 }
 \concept{citedby_functions}

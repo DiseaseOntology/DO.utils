@@ -35,16 +35,16 @@ Test if an object is invariant (\emph{i.e.} all values are equal, within a given
 tolerance for numeric vectors).
 }
 \seealso{
-Other value predicates: 
+Other value predicates:
 \code{\link{char_val_predicates}},
 \code{\link{num_val_predicates}}
 
-Other predicates: 
-\code{\link{all_duplicated}()},
+Other predicates:
+\code{\link[=all_duplicated]{all_duplicated()}},
 \code{\link{char_val_predicates}},
-\code{\link{iff_all_vals}()},
-\code{\link{is_curie}()},
-\code{\link{is_uri}()},
+\code{\link[=iff_all_vals]{iff_all_vals()}},
+\code{\link[=is_curie]{is_curie()}},
+\code{\link[=is_uri]{is_uri()}},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}

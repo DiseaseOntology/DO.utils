@@ -15,13 +15,13 @@ This predicate is designed to identify boolean vectors (i.e. length 1 logical
 vectors).
 }
 \seealso{
-Other predicates: 
-\code{\link{all_duplicated}()},
+Other predicates:
+\code{\link[=all_duplicated]{all_duplicated()}},
 \code{\link{char_val_predicates}},
-\code{\link{iff_all_vals}()},
-\code{\link{is_curie}()},
-\code{\link{is_invariant}()},
-\code{\link{is_uri}()},
+\code{\link[=iff_all_vals]{iff_all_vals()}},
+\code{\link[=is_curie]{is_curie()}},
+\code{\link[=is_invariant]{is_invariant()}},
+\code{\link[=is_uri]{is_uri()}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}
 }

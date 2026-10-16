@@ -37,9 +37,9 @@ promotes reproducibility and ensures future access if needed.
 }
 
 \seealso{
-Other Alliance functions: 
-\code{\link{count_alliance_records}()},
-\code{\link{read_alliance}()},
-\code{\link{save_alliance_counts}()}
+Other Alliance functions:
+\code{\link[=count_alliance_records]{count_alliance_records()}},
+\code{\link[=read_alliance]{read_alliance()}},
+\code{\link[=save_alliance_counts]{save_alliance_counts()}}
 }
 \concept{Alliance functions}
