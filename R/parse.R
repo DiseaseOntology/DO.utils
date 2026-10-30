@@ -23,6 +23,104 @@ parse_mapping <- function(py_gilda_res_list, ...) {
 }
 
 
+#' Parse HTML (mat-)table to Dataframe
+#'
+#' Parses an HTML table or mat-table to a data.frame.
+#'
+#' @param html A file path to, or a string of, HTML content containing a
+#'   (mat-)table.
+#' @param type The type of table to parse, as a string. One of:
+#'   - `"table"` (default): A standard HTML table.
+#'   - `"mat-table"`: An Angular Material table.
+#'   - `"unknown"`: attempt to parse any existing table of either type.
+#' @param n The position of the table to parse, as a positive integer (default:
+#' 1).
+#' @returns A `tibble` with the table content.
+#' @export
+parse_html_table <- function(html, type = "table", n = 1L) {
+  rlang::check_installed("rvest", reason = "to use parse_html_table()")
+
+  if (!is.integer(n) && sign(n) != 1) {
+    rlang::abort(
+      "`n` must be a positive integer specifying a table position"
+    )
+  }
+  type <- match.arg(type, c("table", "mat-table", "unknown"))
+  parsed <- rvest::read_html(html)
+  # extract only the first table
+  if (type %in% c("table", "unknown")) {
+    df_list <- rvest::html_table(parsed)
+    out <- extract_table_n(df_list, n, error = type != "unknown")
+  }
+
+  if (type == "mat-table" || (type == "unknown" && nrow(out) == 0)) {
+    h_tables <- rvest::html_elements(parsed, "table")
+    h_table <- extract_table_n(h_tables, n)
+    h_cells <- rvest::html_elements(h_table, "mat-header-cell")
+    header <- stringr::str_trim(rvest::html_text(h_cells))
+    b_rows <- rvest::html_elements(h_table, "mat-row")
+    body_list <- lapply(
+      b_rows,
+      function(x) {
+        stringr::str_trim(
+          rvest::html_text(rvest::html_elements(x, "mat-cell"))
+        )
+      }
+    )
+    body_matrix <- do.call(rbind, body_list)
+    head_n <- length(header)
+    col_n <- ncol(body_matrix)
+    if (head_n == col_n) {
+      colnames(body_matrix) <- header
+      out <- tibble::as_tibble(body_matrix)
+    } else if (head_n == 0) {
+      rlang::warn(
+        "header could not be identified in table. Unique column names will be generated..."
+      )
+      out <- tibble::as_tibble(body_matrix, .name_repair = "universal")
+    } else {
+      rlang::abort(
+        paste0(
+          "header length did not match column number: ",
+          head_n,
+          " vs. ",
+          col_n,
+          " columns"
+        )
+      )
+    }
+  }
+
+  if (nrow(out) == 0) {
+    rlang::abort("No table could be identified to parse.")
+  }
+  out
+}
+
+
+# parse_html_table() helpers ----------------------------------------------
+
+#' Extract Table at Position (INTERNAL)
+#'
+#' @param tables_list A list of extracted HTML tables.
+#' @param choice The table position to extract, as a positive integer.
+#' @param error Whether to signal an error if the table position does not exist.
+#'
+#' @noRd
+extract_table_n <- function(tables_list, choice, error = TRUE) {
+  table_n <- length(tables_list)
+  if (table_n < choice) {
+    if (!error) {
+      return(tibble::tibble())
+    }
+    msg <- "`n` does not correspond to an existing table position."
+    msg_n <- glue::glue("{table_n} table(s) identified.")
+    rlang::abort(c(msg, i = msg_n))
+  }
+  tables_list[[choice]]
+}
+
+
 # parse_mapping() utils ---------------------------------------------------
 
 #' Parse Mapping for Single Term (INTERNAL)

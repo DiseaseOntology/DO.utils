@@ -1,3 +1,39 @@
+# parse_html_table() -------------------------------------------------------
+
+test_that("parse_html_table() works", {
+  skip_if_not_installed("rvest")
+
+  expect_snapshot(parse_html_table("data/html/table1.html"))
+})
+
+test_that("parse_html_table() `type` arg works", {
+  skip_if_not_installed("rvest")
+
+  expect_snapshot(
+    parse_html_table("data/html/mattable1.html", type = "mat-table")
+  )
+  expect_snapshot(
+    parse_html_table("data/html/mattable1.html", type = "unknown")
+  )
+  expect_snapshot(
+    parse_html_table("data/html/table1.html", type = "unknown")
+  )
+})
+
+test_that("parse_html_table() `n` arg works", {
+  skip_if_not_installed("rvest")
+
+  expect_snapshot(
+    parse_html_table("data/html/table3.html", type = "unknown", n = 3L)
+  )
+  expect_snapshot(
+    parse_html_table("data/html/mattable2.html", type = "unknown", n = 2L)
+  )
+  expect_error(
+    parse_html_table("data/html/mattable2.html", type = "unknown", n = 4L)
+  )
+})
+
 # parse_omim_name() -------------------------------------------------------
 # Test data: tests/testthat/data/omim/entry_names.tsv
 #   - Max 4 examples per number of comma-separated qualifiers (0–5+)
@@ -29,7 +65,10 @@ test_that("parse_omim_name() lowercases simple entries with no comma", {
   )
   # Multi-word proper noun with internal lowercase particles
   expect_equal(
-    parse_omim_name("DEN HOED-DE BOER-VOISIN SYNDROME; DHDBV", eponyms = NULL),
+    parse_omim_name(
+      "DEN HOED-DE BOER-VOISIN SYNDROME; DHDBV",
+      eponyms = NULL
+    ),
     "den hoed-de boer-voisin syndrome; DHDBV"
   )
 })
@@ -230,7 +269,10 @@ test_that("parse_omim_name() applies immunoglobulin capitalization", {
 test_that("parse_omim_name() applies eponym corrections", {
   result <- parse_omim_name(
     "PERIPHERAL DEMYELINATING NEUROPATHY, CENTRAL DYSMYELINATION, WAARDENBURG SYNDROME, AND HIRSCHSPRUNG DISEASE; PCWH", # nolint: line_length_linter.
-    eponyms = c("waardenburg" = "Waardenburg", "hirschsprung" = "Hirschsprung")
+    eponyms = c(
+      "waardenburg" = "Waardenburg",
+      "hirschsprung" = "Hirschsprung"
+    )
   )
   expect_match(result, "Waardenburg")
   expect_match(result, "Hirschsprung")
@@ -313,7 +355,9 @@ test_that("parse_omim_name() places qualifiers AFTER numbers", {
     "primary ciliary dyskinesia 47 and lissencephaly"
   )
   expect_equal(
-    parse_omim_name("Ciliary dyskinesia, primary, 48, without situs inversus"),
+    parse_omim_name(
+      "Ciliary dyskinesia, primary, 48, without situs inversus"
+    ),
     "primary ciliary dyskinesia 48 without situs inversus"
   )
 })

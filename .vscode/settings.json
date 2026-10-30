@@ -1,0 +1,15 @@
+{
+  // general file settings
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // file type & programming language-specific settings
+  "[tsv]": {
+    "files.trimTrailingWhitespace": false
+  },
+  "[r]": {
+    "editor.defaultFormatter": "Posit.air-vscode",
+    "editor.formatOnSave": true,
+  }
+}
