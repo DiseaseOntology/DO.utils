@@ -71,7 +71,12 @@ inventory_omim <- function(
     package = "DO.utils",
     mustWork = TRUE
   )
-  do_mappings <- robot_query(onto_path, q, tidy_what = "everything", .robot_path = .robot_path)
+  do_mappings <- robot_query(
+    onto_path,
+    q,
+    tidy_what = "everything",
+    .robot_path = .robot_path
+  )
 
   do_omim <- do_mappings |>
     dplyr::filter(stringr::str_detect(.data$mapping, "O?MIM")) |>
