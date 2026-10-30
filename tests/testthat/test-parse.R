@@ -1,10 +1,14 @@
 # parse_html_table() -------------------------------------------------------
 
 test_that("parse_html_table() works", {
+  skip_if_not_installed("rvest")
+
   expect_snapshot(parse_html_table("data/html/table1.html"))
 })
 
 test_that("parse_html_table() `type` arg works", {
+  skip_if_not_installed("rvest")
+
   expect_snapshot(
     parse_html_table("data/html/mattable1.html", type = "mat-table")
   )
@@ -17,6 +21,8 @@ test_that("parse_html_table() `type` arg works", {
 })
 
 test_that("parse_html_table() `n` arg works", {
+  skip_if_not_installed("rvest")
+
   expect_snapshot(
     parse_html_table("data/html/table3.html", type = "unknown", n = 3L)
   )

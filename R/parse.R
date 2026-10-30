@@ -28,16 +28,18 @@ parse_mapping <- function(py_gilda_res_list, ...) {
 #' Parses an HTML table or mat-table to a data.frame.
 #'
 #' @param html A file path to, or a string of, HTML content containing a
-#' (mat-)table.
+#'   (mat-)table.
 #' @param type The type of table to parse, as a string. One of:
-#' - `"table"` (default): A standard HTML table.
-#' - `"mat-table"`: An Angular Material table.
-#' - `"unknown"`: attempt to parse any existing table of either type.
+#'   - `"table"` (default): A standard HTML table.
+#'   - `"mat-table"`: An Angular Material table.
+#'   - `"unknown"`: attempt to parse any existing table of either type.
 #' @param n The position of the table to parse, as a positive integer (default:
 #' 1).
 #' @returns A `tibble` with the table content.
 #' @export
 parse_html_table <- function(html, type = "table", n = 1L) {
+  rlang::check_installed("rvest", reason = "to use parse_html_table()")
+
   if (!is.integer(n) && sign(n) != 1) {
     rlang::abort(
       "`n` must be a positive integer specifying a table position"

@@ -48,7 +48,8 @@ Suggests:
     waldo,
     keyring,
     withr,
-    yaml
+    yaml,
+    rvest
 Config/testthat/edition: 3
 Config/reticulate:
     list(
