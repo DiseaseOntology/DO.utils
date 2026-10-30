@@ -10,7 +10,7 @@ unique_if_invariant(x, na.rm = FALSE, incl_nm = FALSE, ...)
 \item{x}{An R object, except arrays which are not supported.}
 
 \item{na.rm}{A logical scalar indicating whether \code{NA} values should be
-removed (default: FALSE); powered by \code{\link[stats:na.fail]{stats::na.omit()}} and may be
+removed (default: FALSE); powered by \code{\link[stats:na.omit]{stats::na.omit()}} and may be
 limited by its methods.}
 
 \item{incl_nm}{A logic scalar indicating whether names should also be

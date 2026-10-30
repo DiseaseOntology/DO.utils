@@ -1,0 +1,114 @@
+---
+title: "Maintainer Guide"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Maintainer Guide}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+This article documents workflows for maintaining and rebuilding package datasets. It is intended for the package maintainer and contributors, not general users.
+
+---
+
+## `disease_eponyms` — Eponym capitalization vector
+
+`disease_eponyms` is a named character vector mapping lowercase words to their correctly capitalized forms (e.g. `c("waardenburg" = "Waardenburg")`). It is used as the default `eponyms` argument to `parse_omim_name()`.
+
+### Source files
+
+| File | Purpose |
+|---|---|
+| `data-raw/omim_eponyms.R` | Mines OMIM for capitalization candidates; updates `disease_eponyms_curated.tsv` |
+| `data-raw/disease_eponyms_curated.tsv` | Shared hand-curated TSV; single authoritative source for all candidates regardless of provenance |
+| `data-raw/build_disease_eponyms.R` | Reads the curated TSV and saves the `.rda` dataset |
+
+### Curated TSV columns
+
+| Column | Description |
+|---|---|
+| `word_lower` | Lowercase word (primary key; unique across all sources) |
+| `word_cap` | Correctly capitalized form; `NA` for contested words until manually resolved |
+| `alt_caps` | Competing capitalization forms with counts, e.g. `"MacLeod (48); Macleod (2)"` |
+| `examples` | Up to 3 source names where the word appeared |
+| `status` | `"cap"` (capitalize), `"lower"` (leave lowercase), or `"pending"` (awaiting review) |
+| `source` | Provenance of the candidate (e.g. `"OMIM"`); used to scope refreshes per source |
+| `notes` | Free-text annotation (optional) |
+
+### Workflow
+
+1. **Mine candidates** — run a source-specific script to update `disease_eponyms_curated.tsv`:
+
+    ```r
+    source("data-raw/omim_eponyms.R")   # requires OMIM API key; see ?download_omim
+    ```
+
+    New candidates are appended with `status = "pending"`. Existing OMIM rows have
+    `alt_caps` and `examples` refreshed from the latest download.
+
+2. **Review pending rows** — open `data-raw/disease_eponyms_curated.tsv` and for each
+   `"pending"` row set `status` to:
+   - `"cap"` — this word should be capitalized in output
+   - `"lower"` — this word should stay lowercase
+
+   For contested words (`alt_caps` is non-empty), verify `word_cap` before approving.
+   Roman numerals and alphanumeric suffixes (e.g. `IIb`, `2a`) are handled automatically
+   by `fix_disease_caps()` and should be marked `"lower"`.
+
+3. **Rebuild the dataset**:
+
+    ```r
+    source("data-raw/build_disease_eponyms.R")
+    ```
+
+### Adding a new source
+
+Create a new mining script (e.g. `data-raw/do_eponyms.R`) that:
+
+1. Generates a candidate data frame with columns `word_lower`, `word_cap`,
+   `alt_caps`, `examples`.
+2. Reads `disease_eponyms_curated.tsv`, appends rows for words not already
+   present (with `source = "<SOURCE>"` and `status = "pending"`), and writes
+   the file back.
+3. Does **not** touch rows belonging to other sources.
+
+After curation, run `data-raw/build_disease_eponyms.R` as above.
+
+---
+
+## `disease_cap_patterns` — Phrase-level capitalization pattern vector
+
+`disease_cap_patterns` is a named character vector of regex substitutions applied
+*after* `disease_eponyms` by `parse_omim_name()`. Use it for words whose
+correct capitalization depends on context (e.g. `SHORT` as an acronym in
+*SHORT syndrome* vs `short` as an adjective elsewhere).
+
+Names are case-insensitive regex patterns; values are replacement strings. Longer
+patterns take priority over shorter ones and override conflicting `disease_eponyms`
+entries.
+
+### Source file
+
+`data-raw/disease_cap_patterns.R` — fully hand-curated; no mining step.
+
+### Workflow
+
+1. Open `data-raw/disease_cap_patterns.R` and add a named element to the
+   `disease_cap_patterns` vector, e.g.:
+
+    ```r
+    disease_cap_patterns <- c(
+      disease_cap_patterns,
+      "\\bshort syndrome\\b" = "SHORT syndrome"
+    )
+    ```
+
+2. Rebuild the dataset:
+
+    ```r
+    source("data-raw/disease_cap_patterns.R")
+    ```

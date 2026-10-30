@@ -32,7 +32,7 @@ to_curie(c("SYMP:0000000", "not a CURIE", "bioregistry.collection:0000001"))
 
 }
 \seealso{
-Other identifier converters: 
-\code{\link{to_curie}()}
+Other identifier converters:
+\code{\link[=to_curie]{to_curie()}}
 }
 \concept{identifier converters}

@@ -1,6 +1,18 @@
 utils::globalVariables(
-    names = c("DO_colors", "DO_pubs", "ST_pubs", "obofoundry_metadata",
-              "ns_prefix")
+  names = c(
+    "DO_colors",
+    "DO_pubs",
+    "ST_pubs",
+    "obofoundry_metadata",
+    "ns_prefix",
+    "not_obo_prefix",
+    "obo_prefix",
+    "obo_ont_prefix",
+    "obo_prop_prefix",
+    "disease_eponyms",
+    "disease_cap_patterns",
+    "omim_qualifiers"
+  )
 )
 
 #' @keywords internal
@@ -13,10 +25,10 @@ pkg_user_agent <- "DO.utils (github.com/DiseaseOntology/DO.utils)"
 #' prioritized as follows:
 #' \describe{ `r vctr_to_string(names(pub_id_match), delim = " > ")` }
 pub_id_match <- c(
-    pmid = "[0-9]{1,8}",
-    pmcid = "PMC[0-9]+",
-    doi = "10.+/.+",
-    scopus_eid = "2-s2.0-[0-9]{11,}"
+  pmid = "[0-9]{1,8}",
+  pmcid = "PMC[0-9]+",
+  doi = "10.+/.+",
+  scopus_eid = "2-s2.0-[0-9]{11,}"
 )
 
 
@@ -110,33 +122,24 @@ NULL
 #' Namespace Prefixes
 #'
 #' Prefixes for namespaces, primarily sourced from
-#' [ROBOT](http://robot.obolibrary.org/), that cover most uses in OBO Foundry
+#' [`ROBOT`](http://robot.obolibrary.org/), that cover most uses in OBO Foundry
 #' ontologies, with slight modification to match the prefixes as used in the
 #' Human Disease Ontology and a few additional prefixes for cross-references and
-#' DO-related SPARQL query support.
+#' DO-related SPARQL query support. These prefixes _should_ be up-to-date with
+#' the latest OBO Foundry ontologies (https://github.com/ontodev/robot/issues/51).
 #'
 #' @format
 #' Character vectors of namespaces named by their corresponding prefix:
 #'
-#' `ns_prefix`: Superset of all `r length(ns_prefix)` objects listed below.
+#' `ns_prefix`: Superset of all `r length(ns_prefix)` prefix/namespaces listed
+#' below.
 #'
-#' @source `ROBOT` (v1.9.4) via data-raw/ns_prefix.R; last updated 2023-06-12.
+#' @source `ROBOT export-prefixes` (v1.9.8) via `data-raw/ns_prefix.R`; last
+#' updated 2025-12-09.
 "ns_prefix"
 
-#' @format `obo_prefix`: `r length(obo_prefix)` _standard_ OBO Foundry
-#' namespaces
-#' (e.g.`r paste0('\ua0', utils::head(names(obo_prefix), 1), '\ua0=\ua0"', utils::head(obo_prefix, 1), '"')`).
-#' @rdname ns_prefix
-"obo_prefix"
-
-#' @format `obo_prop_prefix`: `r length(obo_prop_prefix)` OBO Foundry _property_
-#' namespaces; _these may not all be in actual use_
-#' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
-#' @rdname ns_prefix
-"obo_prop_prefix"
-
-#' @format `not_obo_prefix`: `r length(not_obo_prefix)` namespaces outside but
-#' commonly used in the OBO Foundry
+#' @format `not_obo_prefix`: `r length(not_obo_prefix)` prefix/namespaces
+#' outside but commonly used in the OBO Foundry
 #' (e.g.`r paste0('\ua0', names(not_obo_prefix["dc"]), '\ua0=\ua0"', not_obo_prefix["dc"], '"')`),
 #' or in federated SPARQL queries with the DO
 #' (e.g.`r paste0('\ua0', names(not_obo_prefix["up"]), '\ua0=\ua0"', not_obo_prefix["up"], '"')`).
@@ -144,8 +147,99 @@ NULL
 #' @rdname ns_prefix
 "not_obo_prefix"
 
+#' @format `obo_prefix`: Superset of all `r length(obo_prefix)` OBO Foundry
+#' prefix/namespaces, including those listed below and, additionally, including
+#' the general `obo` prefix.
+#' @rdname ns_prefix
+"obo_prefix"
+
+#' @format `obo_ont_prefix`: `r length(obo_ont_prefix)` OBO Foundry ontology
+#' _primary_ prefix/namespaces
+#' (e.g.`r paste0('\ua0', utils::head(names(obo_ont_prefix), 1), '\ua0=\ua0"', utils::head(obo_ont_prefix, 1), '"')`).
+#' @rdname ns_prefix
+"obo_ont_prefix"
+
+#' @format `obo_prop_prefix`: `oboInOwl` (along with the common prefix variant
+#' `oio`) and `r length(obo_prop_prefix) - 1` OBO Foundry ontology _property_
+#' namespaces (_these may not all be in actual use_)
+#' (e.g.`r paste0('\ua0', utils::head(names(obo_prop_prefix), 1), '\ua0=\ua0"', utils::head(obo_prop_prefix, 1), '"')`)
+#' @rdname ns_prefix
+"obo_prop_prefix"
+
 
 # all possible extensions of OBO Foundry ontologies
-ontology_ext <- c("OBO Graphs JSON" = "json", "OBO Format" = "obo",
-                  "OWL Functional" = "ofn", "Manchester" = "omn",
-                  "RDF/XML" = "owl", "OWL/XML" = "owx", "Turtle" = "ttl")
+ontology_ext <- c(
+  "OBO Graphs JSON" = "json",
+  "OBO Format" = "obo",
+  "OWL Functional" = "ofn",
+  "Manchester" = "omn",
+  "RDF/XML" = "owl",
+  "OWL/XML" = "owx",
+  "Turtle" = "ttl"
+)
+
+
+#' Disease Name Eponym Replacement Vector
+#'
+#' A named character vector for correcting proper noun (eponym) capitalization
+#' in disease entry names after they have been parsed by [parse_omim_name()].
+#' Names are the lowercase form of each word; values are the correctly
+#' capitalized replacement (e.g. `c("waardenburg" = "Waardenburg")`).
+#'
+#' [parse_omim_name()] uses this dataset as its default `eponyms` argument,
+#' applying whole-word, case-insensitive substitutions to the lowercased output.
+#'
+#' @format A named character vector. Names are lowercase words; values are
+#'   their correctly capitalized replacements. Length 0 until first curation
+#'   run.
+#'
+#' @seealso [parse_omim_name()] which uses this vector by default;
+#'   [disease_cap_patterns] for the companion phrase-level replacement vector;
+#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
+#'   for the full dataset-building and curation workflow.
+"disease_eponyms"
+
+
+#' Disease Name Capitalization Pattern Vector
+#'
+#' A named character vector of phrase-level regex substitutions applied to
+#' lowercased disease entry names by [parse_omim_name()], *after* word-level
+#' [disease_eponyms] replacements. Use `disease_cap_patterns` for words whose
+#' correct capitalization depends on context (e.g. `SHORT` as an acronym in
+#' *SHORT syndrome* vs `short` as an adjective elsewhere).
+#'
+#' Names are case-insensitive regex patterns matched against the full
+#' lowercased name; values are the replacement strings. Longer patterns take
+#' priority over shorter ones, and patterns override conflicting
+#' [disease_eponyms] substitutions.
+#'
+#' @format A named character vector. Names are case-insensitive regex
+#'   patterns; values are their replacements. Length 0 until first curation
+#'   run.
+#'
+#' @seealso [parse_omim_name()] which uses this vector by default;
+#'   [disease_eponyms] for the companion word-level replacement vector;
+#'   the [Maintainer Guide](https://allenbaron.github.io/DO.utils/articles/maintainer-guide.html)
+#'   for the full dataset-building and curation workflow.
+"disease_cap_patterns"
+
+
+#' OMIM Adjective Qualifier Vector
+#'
+#' A character vector of uppercase OMIM qualifier tokens that trigger name
+#' rearrangement in [parse_omim_name()]. These are adjective/onset qualifiers
+#' that OMIM places as comma-separated tokens after the primary disease term
+#' but that belong before it in natural-language order (e.g. `CONGENITAL`,
+#' `SYNDROMIC`, `PROGRESSIVE`).
+#'
+#' Structural qualifiers — pure numbers, `TYPE`/`MULTIPLE TYPES`, and
+#' definitive inheritance terms such as `AUTOSOMAL RECESSIVE` or `X-LINKED` —
+#' are handled by hardcoded rules in `parse_omim_name()` and are not included
+#' here.
+#'
+#' @format A character vector of uppercase qualifier tokens.
+#'
+#' @seealso [parse_omim_name()] which uses this vector by default;
+#'   [disease_eponyms] and [disease_cap_patterns] for companion capitalization
+#'   datasets.
+"omim_qualifiers"

@@ -44,7 +44,7 @@ results exist in a response; one of "error", "warning" (default),
 "message" or "none".}
 
 \item{view}{type of view to give, see
-\url{https://api.elsevier.com/documentation/ScopusSearchAPI.wadl}}
+\url{https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl}}
 
 \item{start}{where should the records start gathering}
 
@@ -75,7 +75,7 @@ List Scopus publications citing those specified by \code{title}, optionally spli
 \code{by_id}.
 }
 \seealso{
-Other citedby_functions: 
-\code{\link{citedby_pubmed}()}
+Other citedby_functions:
+\code{\link[=citedby_pubmed]{citedby_pubmed()}}
 }
 \concept{citedby_functions}

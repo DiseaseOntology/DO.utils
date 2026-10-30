@@ -4,7 +4,7 @@
 \alias{set_scopus_keys}
 \title{Set Keys for Scopus API Access}
 \usage{
-set_scopus_keys(api_key, insttoken)
+set_scopus_keys(api_key = NULL, insttoken = NULL)
 }
 \arguments{
 \item{api_key}{Elsevier API key, as a string.}

@@ -21,114 +21,133 @@
 #'     [Scopus Search Documentation: API Specification](https://dev.elsevier.com/documentation/ScopusSearchAPI.wadl).
 #' @param headers Additional headers to be added by [httr::add_headers()].
 #'
-#' @return If `by_id = FALSE`, the list result from the Scopus Search API (as
+#' @returns If `by_id = FALSE`, the list result from the Scopus Search API (as
 #'     produced by [rscopus::scopus_search]). If `by_id = TRUE`, an `id` named
 #'     list of `scopus_search` result lists.
 #'
 #' @family citedby_functions
 #' @export
-citedby_scopus <- function(title, by_id = FALSE, id = NULL, api_key = NULL,
-                           insttoken = NULL, no_result = "warning",
-                           view = "STANDARD", start = 0,
-                           count = NULL, max_count = 20000, headers = NULL,
-                           wait_time = 0, verbose = FALSE, ...) {
-    assert_character(title)
-    assert_scalar_logical(by_id)
-    no_result <- match.arg(
-        no_result,
-        c("error", "warning", "message", "none")
+citedby_scopus <- function(
+  title,
+  by_id = FALSE,
+  id = NULL,
+  api_key = NULL,
+  insttoken = NULL,
+  no_result = "warning",
+  view = "STANDARD",
+  start = 0,
+  count = NULL,
+  max_count = 20000,
+  headers = NULL,
+  wait_time = 0,
+  verbose = FALSE,
+  ...
+) {
+  if (!is.character(title)) {
+    rlang::abort("`title` must be a character vector.")
+  }
+  if (!rlang::is_scalar_logical(by_id)) {
+    rlang::abort("`by_id` must be TRUE or FALSE.")
+  }
+  no_result <- match.arg(
+    no_result,
+    c("error", "warning", "message", "none")
+  )
+  no_res_msg <- "0 Scopus citedby results"
+  # if count unspecified, set to max count allowed for specified view
+  #   this is just pagination (not sure why it can be user-specified),
+  #   max_count controls the max number of records returned
+  if (is.null(count)) {
+    count <- switch(view, STANDARD = 200, COMPLETE = 25)
+  }
+  headers <- use_scopus_insttoken(insttoken, headers)
+
+  if (by_id && length(title) > 1) {
+    if (!is.character(id)) {
+      rlang::abort("`id` must be a character vector.")
+    }
+    if (length(title) != length(id)) {
+      rlang::abort("`title` and `id` must be the same length.")
+    }
+
+    cited_by <- purrr::map(
+      title,
+      function(t) {
+        q <- scopus_title_query(t)
+        res <- rscopus::scopus_search(
+          query = q,
+          api_key = api_key,
+          view = view,
+          start = start,
+          count = count,
+          max_count = max_count,
+          headers = headers,
+          wait_time = wait_time,
+          verbose = verbose,
+          ...
+        )
+        class(res) <- ss_class
+        res
+      }
     )
-    no_res_msg <- "0 Scopus citedby results"
-    # if count unspecified, set to max count allowed for specified view
-    #   this is just pagination (not sure why it can be user-specified),
-    #   max_count controls the max number of records returned
-    if (is.null(count)) {
-        count <- switch(view, STANDARD = 200, COMPLETE = 25)
-    }
-    headers <- use_scopus_insttoken(insttoken, headers)
+    names(cited_by) <- id
 
-    if (by_id && length(title) > 1) {
-        assert_character(id)
-        assertthat::assert_that(length(title) == length(id))
+    no_res <- purrr::map_lgl(cited_by, ~ .x$total_results == 0)
+    if (any(no_res)) {
+      discard <- id[no_res]
+      # preserve Scopus API responses when discarded
+      tmp <- cited_by[!no_res]
+      attr(tmp, "discarded_response") <- purrr::map(
+        cited_by[discard],
+        ~ .x$get_statements
+      )
+      cited_by <- tmp
 
-        cited_by <- purrr::map(
-            title,
-            function(t) {
-                q <- scopus_title_query(t)
-                res <- rscopus::scopus_search(
-                    query = q,
-                    api_key = api_key,
-                    view = view,
-                    start = start,
-                    count = count,
-                    max_count = max_count,
-                    headers = headers,
-                    wait_time = wait_time,
-                    verbose = verbose,
-                    ...
-                )
-                class(res) <- ss_class
-                res
-            }
+      if (no_result != "none") {
+        rlang::signal(
+          message = c(
+            paste0("Discarded (", no_res_msg, ")"),
+            rlang::set_names(discard, rep("i", length(discard)))
+          ),
+          class = c("no_result", no_result),
+          use_cli_format = TRUE
         )
-        names(cited_by) <- id
-
-        no_res <- purrr::map_lgl(cited_by, ~ .x$total_results == 0)
-        if (any(no_res)) {
-            discard <- id[no_res]
-            # preserve Scopus API responses when discarded
-            tmp <- cited_by[!no_res]
-            attr(tmp, "discarded_response") <- purrr::map(
-                cited_by[discard],
-                ~ .x$get_statements
-            )
-            cited_by <- tmp
-
-            if (no_result != "none") {
-                rlang::signal(
-                    message = c(
-                        paste0("Discarded (", no_res_msg, ")"),
-                        purrr::set_names(discard, rep("i", length(discard)))
-                    ),
-                    class = c("no_result", no_result),
-                    use_cli_format = TRUE
-                )
-            }
-        }
-        if (length(cited_by) != 0) class(cited_by) <- ss_list_class
-    } else {
-        q <- scopus_title_query(title)
-        cited_by <- rscopus::scopus_search(
-            query = q,
-            api_key = api_key,
-            view = view,
-            start = start,
-            count = count,
-            max_count = max_count,
-            headers = headers,
-            wait_time = wait_time,
-            verbose = verbose,
-            ...
-        )
-        class(cited_by) <- ss_class
-
-        if (cited_by$total_results == 0) {
-            if (no_result != "none") {
-                rlang::signal(
-                    message = c(no_res_msg, i = title),
-                    class = c("no_result", no_result),
-                    use_cli_format = TRUE
-                )
-            }
-
-            # preserve Scopus API responses when discarded
-            tmp <- list()
-            attr(tmp, "discarded_response") <- cited_by$get_statements
-            cited_by <- tmp
-        }
+      }
     }
+    if (length(cited_by) != 0) class(cited_by) <- ss_list_class
+  } else {
+    q <- scopus_title_query(title)
+    cited_by <- rscopus::scopus_search(
+      query = q,
+      api_key = api_key,
+      view = view,
+      start = start,
+      count = count,
+      max_count = max_count,
+      headers = headers,
+      wait_time = wait_time,
+      verbose = verbose,
+      ...
+    )
+    class(cited_by) <- ss_class
 
-    cited_by
+    if (cited_by$total_results == 0) {
+      if (no_result != "none") {
+        rlang::signal(
+          message = c(no_res_msg, i = title),
+          class = c("no_result", no_result),
+          use_cli_format = TRUE
+        )
+      }
+
+      # preserve Scopus API responses when discarded
+      tmp <- list()
+      attr(tmp, "discarded_response") <- cited_by$get_statements
+      cited_by <- tmp
+    }
+  }
+
+  cited_by
 }
 
 
@@ -143,27 +162,33 @@ citedby_scopus <- function(title, by_id = FALSE, id = NULL, api_key = NULL,
 #'
 #' @family citedby_functions
 #' @export
-citedby_pubmed <- function(id = NULL, web_history = NULL, by_id = FALSE,
-                           no_result = "warning", config = NULL,
-                           version = "2.0", retmode = "xml", ...) {
+citedby_pubmed <- function(
+  id = NULL,
+  web_history = NULL,
+  by_id = FALSE,
+  no_result = "warning",
+  config = NULL,
+  version = "2.0",
+  retmode = "xml",
+  ...
+) {
+  pmid_raw <- citedby_pmid(
+    id = id,
+    web_history = web_history,
+    by_id = by_id,
+    config = config,
+    ...
+  )
 
-    pmid_raw <- citedby_pmid(
-        id = id,
-        web_history = web_history,
-        by_id = by_id,
-        config = config,
-        ...
-    )
+  pmid <- extract_pmid(
+    pmid_raw,
+    no_result = no_result,
+    linkname = "pubmed_pubmed_citedin"
+  )
 
-    pmid <- extract_pmid(
-        pmid_raw,
-        no_result = no_result,
-        linkname = "pubmed_pubmed_citedin"
-    )
+  citedby <- pubmed_summary(pmid, version = version, retmode = retmode)
 
-    citedby <- pubmed_summary(pmid, version = version, retmode = retmode)
-
-    citedby
+  citedby
 }
 
 
@@ -193,28 +218,32 @@ citedby_pubmed <- function(id = NULL, web_history = NULL, by_id = FALSE,
 #' rentrez::entrez_post() to function fully.
 #'
 #' @export
-citedby_pmid <- function(id = NULL, web_history = NULL, by_id = FALSE,
-                         config = NULL, ...) {
+citedby_pmid <- function(
+  id = NULL,
+  web_history = NULL,
+  by_id = FALSE,
+  config = NULL,
+  ...
+) {
+  if (is.null(web_history) && length(id) > 200) {
+    web_history <- rentrez::entrez_post("pubmed", id = id)
+    id <- NULL
+  }
 
-    if (is.null(web_history) & length(id) > 200) {
-        web_history <- rentrez::entrez_post("pubmed", id = id)
-        id <- NULL
-    }
+  cited_by <- rentrez::entrez_link(
+    id = id,
+    web_history = web_history,
+    by_id = by_id,
+    config = config,
+    dbfrom = "pubmed",
+    db = "pubmed",
+    cmd = "neighbor",
+    linkname = "pubmed_pubmed_citedin",
+    ...
+  )
+  if (by_id) {
+    names(cited_by) <- id
+  }
 
-    cited_by <- rentrez::entrez_link(
-        id = id,
-        web_history = web_history,
-        by_id = by_id,
-        config = config,
-        dbfrom = "pubmed",
-        db = "pubmed",
-        cmd = "neighbor",
-        linkname = "pubmed_pubmed_citedin",
-        ...
-    )
-    if (by_id) {
-        names(cited_by) <- id
-    }
-
-    cited_by
+  cited_by
 }

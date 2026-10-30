@@ -35,9 +35,7 @@ removed (default: \code{FALSE}).}
 (default: \code{FALSE}).}
 
 \item{decreasing}{logical.  Should the sort be increasing or decreasing?
-    For the \code{"radix"} method, this can be a vector of
-    length equal to the number of arguments in \code{\dots}. For the
-    other methods, it must be length one. Not available for partial sorting.}
+    Not available for partial sorting.}
 
 \item{...}{arguments to be passed to or from methods or (for the
     default methods and objects without a class) to \code{sort.int}.}

@@ -39,9 +39,9 @@ max_paren_depth(
 
 }
 \seealso{
-Other general utilities: 
-\code{\link{length_sort}()},
-\code{\link{sandwich_text}()},
-\code{\link{suggest_regex}()}
+Other general utilities:
+\code{\link[=length_sort]{length_sort()}},
+\code{\link[=sandwich_text]{sandwich_text()}},
+\code{\link[=suggest_regex]{suggest_regex()}}
 }
 \concept{general utilities}

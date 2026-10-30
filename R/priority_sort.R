@@ -7,12 +7,11 @@
 #'
 #' @export
 priority_sort <- function(x, levels, exclude = NA) {
+  x_fctr <- factor(x, levels = levels, exclude = exclude, ordered = FALSE)
+  x_sort <- sort(x_fctr)
+  x_out <- as.character(x_sort)
 
-    x_fctr <- factor(x, levels = levels, exclude = exclude, ordered = FALSE)
-    x_sort <- sort(x_fctr)
-    x_out <- as.character(x_sort)
+  class(x_out) <- class(x)
 
-    class(x_out) <- class(x)
-
-    x_out
+  x_out
 }

@@ -2,40 +2,70 @@
 % Please edit documentation in R/format.R
 \name{format_obo}
 \alias{format_obo}
+\alias{format_doid}
 \title{Format OBO Foundry IDs}
 \usage{
-format_obo(x, as = "CURIE", validate_input = TRUE)
+format_obo(
+  x,
+  as = "curie",
+  validate = TRUE,
+  allow = "standard",
+  ns_type = "obo"
+)
+
+format_doid(
+  x,
+  as = "curie",
+  validate = TRUE,
+  allow = "standard",
+  ns_type = "obo"
+)
 }
 \arguments{
 \item{x}{A set of IDs, as a character vector.}
 
-\item{as}{The format to convert the OBO IDs to, as a string. The following
-formats are possible options:
-\itemize{
-\item \code{"CURIE"} (default)
-\item \code{"URI"}
-\item \code{"bracketed_URI"}: e.g. \code{"<http://purl.obolibrary.org/obo/CL_0000066>"}
-\item \code{"ns_lui"}: namespace with local unique identifier (preserves separator).
-\item \code{"ns"}: namespace of ontology only
-}
+\item{as}{The format to convert the OBO IDs to, as a string.  One of:
+\code{"curie"} (default), \code{"obo_curie"} (e.g. \code{obo:DOID_4},
+\code{obo:doid#DO_rare_slim}), \code{"uri"}, \code{"<uri>"} (URI surrounded by angle
+brackets), \code{"ns.lui"} (i.e. an OBO CURIE without \verb{obo:}).}
 
-As valid OBO formats, the first three formats may be modified repeatedly
-by \code{format_obo()}. The 'ns' formats, on the other hand, are not valid OBO
-formats and cannot be formatted again by \code{format_obo()}.}
+\item{validate}{Whether to ensure only valid OBO IDs are included in
+\code{x}, \code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-OBO ID input will
+be handled differently depending on \code{as} (see \verb{Non-OBO CURIE/URIs} section).}
 
-\item{validate_input}{Whether to ensure only valid OBO IDs are included in
-\code{x},\code{TRUE} (default) or \code{FALSE}. When \code{FALSE}, non-OBO ID input will
-\emph{most likely} be returned unchanged.}
+\item{allow}{The OBO ID format(s) to consider valid; as a character vector.
+One or more of: \code{"curie"}, \code{"obo_curie"} (e.g. \code{obo:DOID_4}), \code{"uri"},
+\code{"<uri>"} (URI in angle brackets), or \code{"ns.lui"} (i.e. an OBO CURIE without
+\verb{obo:}).
+
+\code{"standard"} (default) is a generic grouping that represents syntactically
+correct formats (\code{"curie"}, \code{"obo_curie"}, \code{"uri"} and \code{"<uri>"}).
+
+\code{"ns.lui"} will only be included if explicitly specified.}
+
+\item{ns_type}{The type of OBO namespaces to consider valid; as a character
+vector. One of: \code{"obo"} (default), \code{"ont"} (ontology primary namespaces
+only), or \code{"prop"} (ontology property namespaces only; may not be exhaustive).}
 }
 \description{
 Convert valid OBO Foundry ontology IDs to a specified format. Input
 \emph{may} be tested to ensure it matches a valid OBO ID format but no attempt is
 made to confirm IDs match actual terms in any OBO Foundry ontology.
-}
-\section{Caution}{
 
-Be extra cautious when using \code{format_obo()} with \code{validate_input = FALSE} as
-unexpected text conversion may occur.
+\code{format_doid} is a convenience function focused solely on DOIDs.
+}
+\section{Note on \code{ns_type}}{
+
+The \code{ns_type} argument affects both validation \emph{AND} formatting.
+}
+
+\section{Non-OBO CURIE/URIs}{
+
+Be extra cautious when using \code{format_obo()} with non-OBO Foundry CURIE/URIs
+(i.e. \code{validate = FALSE}). In an effort to allow meaningful
+pass-through in some situations, non-OBO CURIE/URIs are returned unchanged,
+except when \code{as = "uri"} or \code{"<uri>"}, in which case the original input is
+assumed to be URIs and is either stripped or surrounded by angle brackets.
 }
 
 \examples{
@@ -43,25 +73,46 @@ x <- c(
     "http://purl.obolibrary.org/obo/DOID_0001816",
     "<http://purl.obolibrary.org/obo/CL_0000066>",
     "obo:SYMP_0000000",
-    "obo:so#has_origin"
+    "obo:so#has_origin",
+    "DOID:4"
 )
 
-# reversible
-format_obo(x, as = "CURIE")
-format_obo(x, as = "URI")
-format_obo(x, as = "bracketed_URI")
+format_obo(x, as = "curie")
+format_obo(x, as = "uri")
+format_obo(x, as = "<uri>")
+format_obo(x, as = "obo_curie")
+format_obo(x, as = "ns.lui")
 
-# irreversible
-format_obo(x, as = "ns_lui")
-format_obo(x, as = "ns")
+# ns.lui input can be validated, if explicitly specified
+try(format_obo(c(x, "DOID_0001816"), allow = "standard"))
+format_obo(c(x, "DOID_0001816"), allow = c("standard", "ns.lui"))
 
 # non-OBO IDs can be passed as input with caution, if desired
-mixed_input <- c(x, "random_text", "0050117", "obo:SYMP:0000000")
-format_obo(mixed_input, validate_input = FALSE)
+mixed_input <- c(
+    x, "rdfs:label", "<http://xmlns.com/foaf/0.1/Person>",
+    "random_text", "0050117", "obo:SYMP:0000000"
+)
+format_obo(mixed_input, validate = FALSE)
+
+# ns_type will influence output, even when validate = FALSE
+# e.g. only obo:so#has_origin (property) is converted to a CURIE (so:has_origin)
+format_obo(x, as = "curie", validate = FALSE, ns_type = "prop")
+
+# format_doid() works the same
+x <- c(
+    "http://purl.obolibrary.org/obo/DOID_0001816",
+    "DOID:4",
+    "obo:DOID_14566",
+    "<http://purl.obolibrary.org/obo/DOID_156>"
+)
+
+format_doid(x, as = "curie")
+
+# ...but other OBO Foundry ontology IDs will error on validation
+try(format_doid(c(x, "obo:CL_0000066")))
+
+# though they can be passed through if validation is turned off
+mixed_input <- c(x, "obo:SYMP_0000000", "foaf:Person", "random_text", "0050117")
+format_doid(mixed_input, validate = FALSE)
 
 }
-\seealso{
-Other format IDs: 
-\code{\link{format_doid}()}
-}
-\concept{format IDs}

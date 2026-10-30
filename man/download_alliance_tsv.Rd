@@ -4,12 +4,17 @@
 \alias{download_alliance_tsv}
 \title{Download Alliance .tsv.gz File}
 \usage{
-download_alliance_tsv(dest_dir, url = NULL, ...)
+download_alliance_tsv(
+  dest_dir,
+  url = "https://fms.alliancegenome.org/download/DISEASE-ALLIANCE_COMBINED.tsv.gz",
+  ...
+)
 }
 \arguments{
 \item{dest_dir}{path to directory where file will be saved}
 
-\item{url}{URL to Alliance file; if not provided, will be requested at console}
+\item{url}{URL to Alliance file; the default is the Alliance's complete
+disease-linked data file}
 
 \item{...}{Additional arguments passed on to \code{\link[utils:download.file]{utils::download.file()}}.}
 }
@@ -32,9 +37,9 @@ promotes reproducibility and ensures future access if needed.
 }
 
 \seealso{
-Other Alliance functions: 
-\code{\link{count_alliance_records}()},
-\code{\link{read_alliance}()},
-\code{\link{save_alliance_counts}()}
+Other Alliance functions:
+\code{\link[=count_alliance_records]{count_alliance_records()}},
+\code{\link[=read_alliance]{read_alliance()}},
+\code{\link[=save_alliance_counts]{save_alliance_counts()}}
 }
 \concept{Alliance functions}

@@ -24,16 +24,16 @@ in character vectors.
 }
 }
 \seealso{
-Other value predicates: 
-\code{\link{is_invariant}()},
+Other value predicates:
+\code{\link[=is_invariant]{is_invariant()}},
 \code{\link{num_val_predicates}}
 
-Other predicates: 
-\code{\link{all_duplicated}()},
-\code{\link{iff_all_vals}()},
-\code{\link{is_curie}()},
-\code{\link{is_invariant}()},
-\code{\link{is_uri}()},
+Other predicates:
+\code{\link[=all_duplicated]{all_duplicated()}},
+\code{\link[=iff_all_vals]{iff_all_vals()}},
+\code{\link[=is_curie]{is_curie()}},
+\code{\link[=is_invariant]{is_invariant()}},
+\code{\link[=is_uri]{is_uri()}},
 \code{\link{lgl_predicates}},
 \code{\link{num_val_predicates}},
 \code{\link{obo_ID_predicates}}

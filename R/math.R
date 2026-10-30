@@ -10,13 +10,12 @@
 #'
 #' @export
 round_up <- function(x, digits = 0) {
+  if (digits == 0) {
+    return(ceiling(x))
+  }
 
-    if (digits == 0) {
-        return(ceiling(x))
-    }
-
-    place <- 10^(-digits)
-    x + place - x %% place
+  place <- 10^(-digits)
+  x + place - x %% place
 }
 
 
@@ -32,13 +31,12 @@ round_up <- function(x, digits = 0) {
 #'
 #' @export
 round_down <- function(x, digits = 0) {
+  if (digits == 0) {
+    return(floor(x))
+  }
 
-    if (digits == 0) {
-        return(floor(x))
-    }
-
-    place <- 10^(-digits)
-    x - x %% place
+  place <- 10^(-digits)
+  x - x %% place
 }
 
 #' Round Number to Zero
@@ -53,9 +51,9 @@ round_down <- function(x, digits = 0) {
 #'
 #' @export
 round_zero <- function(x, digits) {
-    ifelse(
-        sign(x) > 0,
-        round_down(x, digits = digits),
-        round_up(x, digits = digits)
-    )
+  ifelse(
+    sign(x) > 0,
+    round_down(x, digits = digits),
+    round_up(x, digits = digits)
+  )
 }

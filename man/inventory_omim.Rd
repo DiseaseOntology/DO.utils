@@ -9,15 +9,16 @@ inventory_omim(
   omim_input,
   keep_mim = c("#", "\%"),
   include_pred = c("skos:exactMatch", "skos:closeMatch", "oboInOwl:hasDbXref"),
-  when_pred_NA = "error"
+  when_pred_NA = "error",
+  .robot_path = NULL
 )
 }
 \arguments{
 \item{onto_path}{The path to an ontology file, as a string.}
 
 \item{omim_input}{An \code{omim_tbl} created by \code{\link[=read_omim]{read_omim()}} or the path to a
-.tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}} and
-includes OMIM data to compare against the mappings in the ontology.
+.tsv or .csv file (possibly compressed) that can be read by \code{\link[=read_omim]{read_omim()}}
+and includes OMIM data to compare against the mappings in the ontology.
 
 NOTE: If an \code{omim_tbl} is provided, \code{keep_mim} will be ignored.}
 
@@ -29,10 +30,10 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
    MIM symbol \tab MIM type \cr
    \code{*} \tab gene \cr
    \code{+} \tab gene, includes phenotype \cr
-   \verb{#} \tab phenotype \cr
-   \verb{\%} \tab phenotype, unknown molecular basis \cr
+   \verb{#} \tab descriptive entry, not unique locus; usually a phenotype \cr
+   \verb{\%} \tab phenotype / phenotypic locus, unknown molecular basis \cr
    \code{^} \tab deprecated \cr
-   \code{none} \tab phenotype, suspected/overlap \cr
+   \code{none} \tab phenotype (usually), suspected or possibly overlapping \cr
 }}
 
 \item{include_pred}{The predicates to include when testing for one-to-multiple
@@ -44,6 +45,12 @@ ignored.}
 string; one of "error" (default), "warn", or NULL (do nothing). \code{NA}
 predicates are \emph{always} ignored when no mapping exists (i.e. one or both
 corresponding values of \code{x} or \code{y} is/are also \code{NA}).}
+
+\item{.robot_path}{The path to a ROBOT executable or .jar file, as a string.
+When \code{NULL} (default), if a system ROBOT executable is available it will
+be used, otherwise an error will be signaled.
+
+\strong{NOTE:} \code{DO.utils} caches the last ROBOT used for future use.}
 }
 \value{
 The \code{omim_input} with 5 additional columns:
@@ -71,10 +78,11 @@ comparison.
 }
 \examples{
 \dontrun{
-# manually copy or download data from https://www.omim.org/phenotypicSeries/PS609060
+# execute within the HumanDiseaseOntology repository and download data from
+# https://www.omim.org/phenotypicSeries/PS609060 to omimps.tsv
 inventory_omim(
-    onto_path = "~/Ontologies/HumanDiseaseOntology/src/ontology/doid-edit.owl",
-    omim_input = "omimps.csv",
+  onto_path = "src/ontology/doid-edit.owl",
+  omim_input = "omimps.tsv",
 )
 }
 

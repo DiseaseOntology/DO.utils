@@ -19,16 +19,18 @@ The \href{https://www.omim.org/help/faq#1_3}{OMIM} defined MIM symbols are:\tabu
    MIM symbol \tab MIM type \cr
    \code{*} \tab gene \cr
    \code{+} \tab gene, includes phenotype \cr
-   \verb{#} \tab phenotype \cr
-   \verb{\%} \tab phenotype, unknown molecular basis \cr
+   \verb{#} \tab descriptive entry, not unique locus; usually a phenotype \cr
+   \verb{\%} \tab phenotype / phenotypic locus, unknown molecular basis \cr
    \code{^} \tab deprecated \cr
-   \code{none} \tab phenotype, suspected/overlap \cr
+   \code{none} \tab phenotype (usually), suspected or possibly overlapping \cr
 }}
 
 \item{...}{
-  Arguments passed on to \code{\link[=read_delim_auto]{read_delim_auto}}
+  Arguments passed on to \code{\link{read_delim_auto}}
   \describe{
-    \item{\code{}}{}
+    \item{\code{strict}}{Whether delimiter should be found in all lines (default:
+\code{TRUE}), or just a majority of lines. If \code{FALSE}, an attempt is made to guess
+the delimiter for data that may not be entirely delimited.}
   }}
 }
 \value{
@@ -45,13 +47,17 @@ containing the search used.
 representing the OMIM phenotypic series itself.
 }
 
-Output with columns typical OMIM phenotype entries, including \code{omim_PS}, will
-have an additional \code{geno_inheritance} column containing a best guess at
-inheritance from the GENO ontology. This simplifies adding inheritance as
-logical subClassOf axioms supporting curation.
+Output with typical OMIM phenotype entries, including \code{omim_PS}, will have 2
+additional columns to simplify and support curation:
+\enumerate{
+\item \strong{\code{title_std} (search) or \code{phenotype_std} (entries/phenotypic series):}
+the standardized phenotype name, as produced by \code{\link[=parse_omim_name]{parse_omim_name()}}
+\item \strong{\code{geno_inheritance}}: containing a best guess at inheritance from the
+GENO ontology
+}
 
 NOTE: OMIM phenotypic series on https://omim.org/ include the same data as
-entries but column are ordered differently.
+entries but columns are ordered differently.
 }
 \description{
 Reads and formats OMIM data copied or manually downloaded from
@@ -93,5 +99,27 @@ Some data are available for download without an API key. This includes:
 }
 
 Additional data is available with an approved API key.
+}
+
+\section{Meaning of additional OMIM shorthand}{
+
+Along with symbols used to indicate MIM entry types, OMIM uses additional
+shorthand, as follows (from \url{https://www.omim.org/help/faq}):
+\subsection{Name-based shorthand}{
+\itemize{
+\item Brackets (\code{[} \verb{]}): "nondiseases"
+\item Braces (\verb{\{} \verb{\}}): susceptibility
+\item Leading question mark (\verb{?}): provisional phenotype-gene relationship
+}
+}
+
+\subsection{Phenotype mapping numbers}{
+\itemize{
+\item \code{1}: disorder was positioned by mapping of the
+\item \code{2}: disease phenotype was mapped
+\item \code{3}: disorder with known molecular basis
+\item \code{4}: chromosome deletion or duplication syndrome
+}
+}
 }
 

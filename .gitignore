@@ -11,3 +11,9 @@ setup_docs/*pseudocode*
 setup_docs/benchmarks/*reprex*
 __pycache__
 /.idea
+
+# Mac files
+.DS_Store
+
+# downloaded source files for building internal datasets
+data-raw/downloads/

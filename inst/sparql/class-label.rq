@@ -1,0 +1,16 @@
+# SPARQL query: List all classes with their labels and deprecation status
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+
+SELECT ?iri ?label ?dep
+WHERE {
+    ?iri a owl:Class ;
+        rdfs:label ?label_raw .
+
+    OPTIONAL { ?iri owl:deprecated ?dep_untidy . }
+
+    # clean up output: F where missing and no language tags
+    BIND( if( BOUND( ?dep_untidy ), ?dep_untidy, false) AS ?dep)
+    BIND( str(?label_raw) AS ?label )
+}

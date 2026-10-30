@@ -30,7 +30,7 @@ in the given column.
 }}
 
 \item{...}{
-  Arguments passed on to \code{\link[=to_curie]{to_curie}}
+  Arguments passed on to \code{\link{to_curie}}
   \describe{
     \item{\code{strip_angle_brackets}}{Whether to remove all \code{<} and \code{>} from the
 input, as a boolean (default: \code{TRUE}). Where this might have undesirable

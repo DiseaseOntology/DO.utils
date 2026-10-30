@@ -7,7 +7,7 @@
 #' @param x A vector.
 #' @param n An integer specifying instances per partition.
 #'
-#' @return
+#' @returns
 #' A list with `x/n` items (rounded up) each containing `n` elements from `x`.
 #' When `x %% n != 0` the last list item will have < `n` elements from `x`.
 #'
@@ -21,7 +21,7 @@ NULL
 #' @name chunk
 #' @export
 partition <- function(x, n) {
-    pos <- seq_along(x)
-    groups <- (pos - 1) %/% n
-    split(x, groups)
+  pos <- seq_along(x)
+  groups <- (pos - 1) %/% n
+  split(x, groups)
 }
