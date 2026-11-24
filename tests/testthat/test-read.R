@@ -331,7 +331,7 @@ test_that("read_omim() works for COPIED data (PS or with entry info)", {
 })
 
 # confirm presence & type of `phenotype_std` column
-test_that("read_omim() adds phenotype_std column for OFFICIAL download of PHENOTYPIC SERIES", {
+test_that("read_omim() adds phenotype_std column for COPIED data", {
   expect_true("phenotype_std" %in% names(res_ps_cp))
   expect_true(is.character(res_ps_cp$phenotype_std))
   expect_true(all(!is.na(res_ps_cp$phenotype_std)))
