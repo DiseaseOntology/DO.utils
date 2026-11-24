@@ -336,3 +336,28 @@ test_that("read_omim() adds phenotype_std column for OFFICIAL download of PHENOT
   expect_true(is.character(res_ps_cp$phenotype_std))
   expect_true(all(!is.na(res_ps_cp$phenotype_std)))
 })
+
+# copy table from gene entry, including all phenotypes associated with the gene
+test_that("read_omim() works for COPIED data (gene entry, multiple phenotypes)", {
+  res_gene <- read_omim("data/omim/omim-cp-gene-phen.csv")
+
+  # 1. must remove 'View Clinical Synopses' (not always present)
+  #   --> implemented in read_helpers.R > preprocess_omim_dl()
+  expect_true("phenotype" %in% names(res_gene))
+  expect_false(all(stringr::str_detect(names(res_gene), "synops.s")))
+
+  # 2. must fill down location & shift values over by 1 column
+  expect_true(all(res_gene$location == "11q12.3"))
+  expect_false(any(is.na(res_gene[[ncol(res_gene)]])))
+  expect_equal(
+    res_gene$inheritance,
+    c(
+      "AD",
+      "AR",
+      "AD",
+      "AR",
+      "AR",
+      "AD"
+    )
+  )
+})

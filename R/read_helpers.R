@@ -150,8 +150,30 @@ preprocess_omim_dl <- function(file, ...) {
         headers[missing_header] <- new_header
       }
 
-      names(df) <- headers
+      names(df) <- headers |>
+        # rm "View Clinical Synopses" from copied gene entry tables (has test)
+        stringr::str_remove(
+          stringr::regex(
+            "view clinical synops.s",
+            ignore_case = TRUE
+          )
+        ) |>
+        stringr::str_trim()
+
       df <- df[!header_in_df, ]
+
+      # shift location if needed (has test)
+      if (stringr::str_to_lower(names(df)[1]) == "location" && nrow(df) > 1) {
+        row_loc_issue <- !stringr::str_detect(df[[1]], "^[0-9.pq-]+$")
+        last_col_na <- is.na(df[[ncol(df)]])
+        row_shift <- row_loc_issue & last_col_na
+        if (any(row_shift)) {
+          df[row_shift, 2:ncol(df)] <- df[row_shift, 1:(ncol(df) - 1)]
+          df[[1]] <- dplyr::if_else(row_shift, NA_character_, df[[1]])
+          df <- tidyr::fill(df, names(df)[1], .direction = "down")
+        }
+      }
+
       attr(df, "omim_official") <- FALSE
     }
   }
