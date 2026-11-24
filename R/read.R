@@ -275,12 +275,17 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
     "phenotype",
     "phenotype_mim_number",
     "inheritance",
-    "phenotype_mapping_key",
+    "phenotype_mapping_key"
+  )
+  phen_col_ordered <- c(
+    entry_col_ordered,
     "gene_locus",
     "gene_locus_mim_number"
   )
-  omim_phenotype <- all(entry_col_ordered %in% names(df))
-  if (omim_type == "omim_PS" || omim_phenotype) {
+
+  omim_entry <- all(entry_col_ordered %in% names(df))
+  omim_phenotype <- all(phen_col_ordered %in% names(df))
+  if (omim_type == "omim_PS" || omim_entry) {
     df <- df |>
       dplyr::mutate(
         omim = paste0("MIM:", .data$phenotype_mim_number),
@@ -309,7 +314,11 @@ read_omim <- function(file, keep_mim = c("#", "%"), ...) {
       df,
       col = c(
         "omim",
-        entry_col_ordered,
+        if (omim_phenotype) {
+          phen_col_ordered
+        } else {
+          entry_col_ordered
+        },
         "phenotype_std",
         "geno_inheritance"
       ),
